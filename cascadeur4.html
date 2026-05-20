@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projekt 04 · Hinsetzen auf Stuhl · Cascadeur-Lernreihe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3ecdc;
+    --paper-warm: #ede4d0;
+    --paper-dark: #e2d6b8;
+    --ink: #1f1a14;
+    --ink-soft: #5a4d3a;
+    --ink-faint: #8a7d68;
+    --terracotta: #b85528;
+    --terracotta-deep: #7a3414;
+    --cobalt: #284858;
+    --sage: #8a9878;
+    --warning: #c46b3a;
+    --rule: #c8b89a;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'DM Sans', -apple-system, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--paper);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    -webkit-font-smoothing: antialiased;
+  }
+  .doc { max-width: 1100px; margin: 0 auto; }
+
+  .cover {
+    padding: 3.5rem 5rem 2.5rem;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -10%; right: -8%;
+    width: 50%; aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(184, 85, 40, 0.08) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .cover-marker {
+    display: flex; align-items: center; gap: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 1.5rem;
+  }
+  .cover-marker .ml { width: 60px; height: 1px; background: var(--terracotta); }
+  .cover h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.6rem, 5vw, 4.2rem);
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 50;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+    max-width: 18ch;
+  }
+  .cover h1 em {
+    font-style: italic;
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    color: var(--terracotta);
+  }
+  .cover .subtitle {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.2rem;
+    color: var(--ink-soft);
+    max-width: 58ch;
+    margin-bottom: 2rem;
+  }
+  .cover-meta {
+    display: flex; gap: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    flex-wrap: wrap;
+  }
+  .mb { display: flex; flex-direction: column; gap: 0.2rem; }
+  .mb-label {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .mb span:last-child {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--ink);
+  }
+
+  .section {
+    padding: 3rem 5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .section-head {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.8rem;
+    align-items: start;
+  }
+  .section-num {
+    font-family: var(--font-display);
+    font-size: 2.8rem;
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    font-style: italic;
+    color: var(--terracotta);
+    line-height: 1;
+  }
+  .section-tag {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 0.4rem;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 3vw, 2.4rem);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    max-width: 26ch;
+  }
+  .section-title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--terracotta);
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  }
+
+  .section p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .section p.lead {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.18rem;
+    color: var(--ink-soft);
+    margin-bottom: 1.5rem;
+    max-width: 60ch;
+  }
+  .section h3 {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 1.6rem 0 0.6rem;
+    color: var(--ink);
+  }
+
+  .phase-banner {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 2rem;
+    margin: 2rem 0 2.5rem;
+    padding: 1.4rem 1.8rem;
+    background: linear-gradient(90deg, rgba(184, 85, 40, 0.10), transparent);
+    border-left: 4px solid var(--terracotta);
+    align-items: center;
+  }
+  .phase-letter {
+    font-family: var(--font-display);
+    font-size: 5rem;
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    font-style: italic;
+    color: var(--terracotta);
+    line-height: 0.85;
+    text-align: center;
+  }
+  .phase-banner h4 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+  }
+  .phase-banner .phase-meta {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.5rem;
+  }
+  .phase-banner p {
+    font-size: 0.97rem;
+    color: var(--ink);
+    margin-bottom: 0;
+    max-width: 65ch;
+  }
+  .phase-banner em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 1.8rem;
+    margin: 1.6rem 0;
+    padding: 1.6rem 1.8rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+  }
+  .step-diagram {
+    background: #f3ecdc;
+    border: 1px solid #c8b89a;
+    border-radius: 6px;
+    padding: 1rem 0.6rem 0.6rem;
+    align-self: start;
+  }
+  .step-diagram svg { width: 100%; height: auto; display: block; }
+  .step-diagram .caption {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .step-num-row {
+    display: flex; align-items: baseline; gap: 0.8rem;
+    margin-bottom: 0.6rem;
+  }
+  .step-num {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 300;
+    font-style: italic;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    color: var(--terracotta);
+    line-height: 1;
+  }
+  .step-title {
+    font-family: var(--font-display);
+    font-size: 1.18rem;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .step p { font-size: 0.96rem; margin-bottom: 0.6rem; max-width: none; }
+  .step p:last-child { margin-bottom: 0; }
+  .step em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+  .shortcut-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.7rem;
+    align-items: center;
+    margin: 0.5rem 0 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+  kbd {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0.05rem 0.4rem;
+    color: var(--ink);
+    box-shadow: 0 1px 0 var(--rule);
+  }
+
+  .box {
+    margin: 1.4rem 0;
+    padding: 1.1rem 1.3rem;
+    border-radius: 0 4px 4px 0;
+    max-width: none;
+  }
+  .step .box { margin: 0.9rem 0 0.4rem; }
+  .box-label {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .box-label::before { content: ''; width: 14px; height: 1.5px; background: currentColor; }
+  .box p { font-size: 0.93rem; margin-bottom: 0.4rem; }
+  .box p:last-child { margin-bottom: 0; }
+  .box-why { background: rgba(40, 72, 88, 0.10); border-left: 3px solid var(--cobalt); }
+  .box-why .box-label { color: var(--cobalt); }
+  .box-stolper { background: rgba(196, 107, 58, 0.13); border-left: 3px solid var(--warning); }
+  .box-stolper .box-label { color: var(--warning); }
+  .box-merk { background: rgba(184, 85, 40, 0.10); border-left: 3px solid var(--terracotta); }
+  .box-merk .box-label { color: var(--terracotta); }
+  .box-check { background: rgba(138, 152, 120, 0.18); border-left: 3px solid var(--sage); }
+  .box-check .box-label { color: var(--sage); }
+
+  /* Insight rail */
+  .insight {
+    margin: 1.4rem 0;
+    padding: 1.1rem 1.3rem;
+    background: var(--paper-warm);
+    border: 1px dashed var(--rule);
+    border-radius: 6px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.96rem;
+    color: var(--ink-soft);
+    max-width: 65ch;
+  }
+  .insight::before {
+    content: 'Randnotiz';
+    display: block;
+    font-family: var(--font-mono);
+    font-style: normal;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 0.4rem;
+  }
+
+  .doc-footer {
+    padding: 2.5rem 5rem;
+    border-top: 2px solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex; justify-content: space-between;
+  }
+  .doc-footer .terracotta { color: var(--terracotta); }
+
+  @media (max-width: 900px) {
+    .cover, .section, .doc-footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .section-head { grid-template-columns: 1fr; gap: 0.5rem; }
+    .step { grid-template-columns: 1fr; gap: 1rem; }
+    .step-diagram { max-width: 280px; margin: 0 auto; }
+    .phase-banner { grid-template-columns: 1fr; gap: 0.5rem; }
+    .phase-letter { text-align: left; font-size: 3.5rem; }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #1a1612;
+      --paper-warm: #221d17;
+      --paper-dark: #2a241c;
+      --ink: #ebe3d0;
+      --ink-soft: #b8a98a;
+      --ink-faint: #7a6e58;
+      --terracotta: #e8814a;
+      --terracotta-deep: #c25a2a;
+      --cobalt: #6a9aab;
+      --sage: #a8b898;
+      --warning: #e2884d;
+      --rule: #3a3026;
+    }
+    body {
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    }
+    .step-diagram { background: #f3ecdc !important; border-color: #c8b89a !important; }
+    .step-diagram .caption { color: #5a4d3a !important; }
+  }
+</style>
+</head>
+<body>
+
+<article class="doc">
+
+<!-- COVER -->
+<header class="cover">
+  <div class="cover-marker">
+    <span>Cascadeur · Lernreihe</span>
+    <div class="ml"></div>
+    <span>Projekt 04 · v 1.0</span>
+  </div>
+  <h1>Hinsetzen <em>auf einen Stuhl</em>:<br>der CoM-<br>S-Kurven-Pfad.</h1>
+  <p class="subtitle">Vier Sekunden vom Stand zum Sitzen. Erste Brochüre mit Constraints. Erstmals bewegt sich der Schwerpunkt in zwei Achsen gleichzeitig — vorn und unten — und beendet die Bewegung auf einem zweiten Kontakt: der Sitzfläche.</p>
+  <div class="cover-meta">
+    <div class="mb"><span class="mb-label">Charakter</span><span>UE5-Manny</span></div>
+    <div class="mb"><span class="mb-label">Dauer</span><span>4 s · 120 Frames</span></div>
+    <div class="mb"><span class="mb-label">Neu</span><span>Constraints · Set Priority Frame</span></div>
+    <div class="mb"><span class="mb-label">Pipeline-Ziel</span><span>UE5 Sequencer</span></div>
+    <div class="mb"><span class="mb-label">Schritte</span><span>17</span></div>
+  </div>
+</header>
+
+
+<!-- § 1 — WAS DU BAUST -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§1</div>
+    <div>
+      <div class="section-tag">Sitz-Konzept und neue Werkzeuge</div>
+      <h2 class="section-title">CoM in <em>zwei Achsen</em>, Kontakt in zwei Stufen.</h2>
+    </div>
+  </div>
+
+  <p class="lead">Bisher: Bodenkontakt, Lokomotion, Geste. Jetzt erstmals ein Übergang zwischen zwei Posen-Klassen — Stand zu Sitz — mit einem zweiten Kontaktpunkt, der mitten in der Bewegung neu hinzukommt.</p>
+
+  <p>Manny steht vor einem Stuhl. Über vier Sekunden geht er in die Knie, lehnt sich leicht nach vorn (das ist die Anticipation), senkt sich ab, berührt mit dem Gesäß die Sitzfläche, lehnt sich zurück, ruht. Drei Bewegungs-Schichten überlagern sich: <strong>CoM-Pfad</strong> (eine S-Kurve nach unten und vorn), <strong>Kontaktwechsel</strong> (Füße bleiben, Gesäß kommt dazu), <strong>Settle</strong> (kurzes Nachfedern nach dem Sitzkontakt).</p>
+
+  <p>Zwei neue Werkzeuge kommen in dieser Brochüre dazu, die in jedem späteren Interaktions-Projekt wiederkehren — <strong>Constraints</strong> für die Verbindung zwischen Charakter und Objekt, und <strong>Set Priority Frame</strong> als gezielter AutoPhysics-Eingriff für kritische Kontakt-Momente.</p>
+
+  <div class="box box-why">
+    <div class="box-label">Warum dieser Übergang nicht trivial ist</div>
+    <p>Bei Walk in Projekt 03 wechselten die Fulcrum-Punkte zwischen den Füßen, blieben aber immer am Boden. Hier wechselt die <em>Klasse</em> des Kontakts mitten in der Animation — von Stehkontakt zu Sitzkontakt. AutoPhysics ist darauf nicht voreingestellt; ohne Set Priority Frame interpretiert es den Sitz-Moment oft als Sturz und versucht zu korrigieren. Constraints sagen Cascadeur, dass eine Beziehung zwischen Body-Part und Stuhl existiert, die erhalten bleiben muss.</p>
+  </div>
+
+  <div class="insight">
+    Sitzen auf Stühlen ist evolutionsgeschichtlich jung — Stuhl-Sitzen ist ein Akt von etwa fünftausend Jahren. Davor und in vielen Kulturen heute saßen und sitzen Menschen am Boden, hockten, oder lehnten an Wänden. Der Sit-Bewegungs-Pfad, den du in dieser Brochüre baust, ist ein Kultur-Akt — bei einem Karate-Schüler oder einem koreanischen Bauern würde dieselbe Bewegung anders aussehen. Manny ist ein westlicher Industriebewohner. Sein Sitzen folgt entsprechend westlichen Stuhl-Konventionen.
+  </div>
+</section>
+
+
+<!-- § 2 — PHASE A: SETUP -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§2</div>
+    <div>
+      <div class="section-tag">Phase A · Setup</div>
+      <h2 class="section-title">Manny, <em>Stuhl-Proxy</em>, Startpose.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">A</div>
+    <div>
+      <h4>Setup</h4>
+      <div class="phase-meta">Scene · Stuhl-Mesh · Track-Hierarchie · Frame 0</div>
+      <p>Manny vor dem Stuhl positionieren. Stuhl als einfaches Würfel-Mesh in der Scene — Detail kommt später in UE5. Track-Hierarchie aktualisieren. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Manny standing on left -->
+        <g>
+          <circle cx="80" cy="50" r="11" fill="none" stroke="#1f1a14" stroke-width="1.8"/>
+          <line x1="80" y1="61" x2="80" y2="115" stroke="#1f1a14" stroke-width="1.8"/>
+          <circle cx="80" cy="73" r="2.5" fill="#1f1a14"/>
+          <line x1="73" y1="115" x2="87" y2="115" stroke="#1f1a14" stroke-width="1.8"/>
+          <line x1="80" y1="73" x2="80" y2="110" stroke="#1f1a14" stroke-width="1.8"/>
+          <line x1="73" y1="115" x2="73" y2="160" stroke="#1f1a14" stroke-width="1.8"/>
+          <line x1="87" y1="115" x2="87" y2="160" stroke="#1f1a14" stroke-width="1.8"/>
+          <line x1="67" y1="160" x2="79" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="81" y1="160" x2="93" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+        </g>
+        <!-- Chair proxy on right -->
+        <g>
+          <!-- Seat -->
+          <rect x="180" y="120" width="80" height="8" fill="#ede4d0" stroke="#b85528" stroke-width="1.8"/>
+          <!-- Backrest -->
+          <rect x="240" y="80" width="20" height="48" fill="#ede4d0" stroke="#b85528" stroke-width="1.8"/>
+          <!-- Front legs -->
+          <line x1="185" y1="128" x2="185" y2="160" stroke="#b85528" stroke-width="1.8"/>
+          <line x1="255" y1="128" x2="255" y2="160" stroke="#b85528" stroke-width="1.8"/>
+        </g>
+        <!-- Distance marker -->
+        <line x1="95" y1="170" x2="175" y2="170" stroke="#8a7d68" stroke-width="0.8" stroke-dasharray="3,2"/>
+        <text x="135" y="183" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">~30 cm</text>
+        <!-- Seat height -->
+        <line x1="270" y1="124" x2="285" y2="124" stroke="#8a7d68" stroke-width="0.8"/>
+        <line x1="277" y1="124" x2="277" y2="160" stroke="#8a7d68" stroke-width="0.8" stroke-dasharray="3,2"/>
+        <text x="282" y="145" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">45 cm</text>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#8a7d68">SCENE-SETUP · PROFIL</text>
+      </svg>
+      <div class="caption">Manny vor dem Stuhl. Sitzhöhe Standard 45 cm, Distanz Manny-Stuhl ca. 30 cm.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">01</span>
+        <span class="step-title">Scene mit Stuhl-Proxy aufsetzen</span>
+      </div>
+      <p>Manny laden, 30 fps, Timeline 0 bis 120. Profilansicht. Manny am Weltursprung platzieren, mit Blickrichtung auf positive X-Achse.</p>
+      <p>Stuhl-Proxy in die Scene: ein simples Würfel-Mesh als Sitzfläche, Höhe ca. 45 cm, hinter Manny in Blickrichtung. Falls vorhanden, kann der detaillierte Stuhl-Mesh später beim UE5-Import ersetzt werden — für die Animation reicht die Sitz-Geometrie als Kollisionsfläche. Den Würfel über <em>File → Import</em> oder direkt als Mesh-Object über das Add-Menü erzeugen.</p>
+      <p><em>Aus Erinnerung, nicht final verifiziert:</em> Cascadeur unterstützt nativ einfache Primitive-Geometrie über den Object-Editor; falls nicht direkt verfügbar, einen Würfel in Blender exportieren und als FBX importieren.</p>
+      <p>Wichtig: Manny steht ca. 30 cm <em>vor</em> der Sitzfläche, nicht direkt davor — er muss die Knie noch beugen können ohne sofort gegen den Stuhl zu stoßen. Speichern als <code>projekt-04-hinsetzen.casc</code>.</p>
+      <div class="box box-merk">
+        <div class="box-label">Stuhl-Höhe als Charakter-Modifikator</div>
+        <p>Sitzhöhe 45 cm ist Standard-Esstisch-Stuhl. 35 cm wäre ein Kinderstuhl oder ein Sofa — der Sit-Pfad wird länger und stärker nach hinten. 55 cm wäre ein Barhocker — Manny würde sich fast hinstellen statt setzen. Die Sitzhöhe ist der wichtigste Modifikator des CoM-Pfads.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Track hierarchy update reminder -->
+        <rect x="60" y="40" width="200" height="120" fill="#f3ecdc" stroke="#b85528" stroke-width="1.8"/>
+        <text x="160" y="62" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#b85528">RIG MODE</text>
+        <line x1="80" y1="72" x2="240" y2="72" stroke="#c8b89a" stroke-width="1"/>
+        <text x="80" y="92" font-family="DM Sans, sans-serif" font-size="11" fill="#1f1a14">Quick Rigging Tool</text>
+        <text x="80" y="112" font-family="DM Sans, sans-serif" font-size="11" fill="#1f1a14">→ Generate Rig</text>
+        <text x="80" y="135" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Pelvis</text>
+        <text x="95" y="148" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">└ Torso → Head, Arms</text>
+        <text x="160" y="180" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#5a4d3a">STANDARDSCHRITT · AB PROJEKT 02</text>
+      </svg>
+      <div class="caption">Track-Hierarchie ist ab 2025.3+ Inbetweening-Pflicht. Quick Rigging Tool aufrufen, Generate Rig.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">02</span>
+        <span class="step-title">Track-Hierarchie via Quick Rigging Tool aktualisieren</span>
+      </div>
+      <p>Wie in jedem Projekt ab 02: in den Rig-Mode wechseln, Quick Rigging Tool, <strong>Generate Rig</strong>. Sicherstellen, dass die Track-Hierarchie sauber ist mit Pelvis → Torso → Head/Arms und Pelvis → Legs.</p>
+      <p>Beim UE5-Manny aus der Sample-Szene meist schon korrekt. Stuhl-Mesh bleibt von der Rig-Generierung unberührt — er ist ein eigenständiges Mesh-Object ohne Rig.</p>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Manny standing pose, profile -->
+        <g>
+          <circle cx="80" cy="38" r="12" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="80" y1="50" x2="80" y2="110" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="80" cy="65" r="2.8" fill="#1f1a14"/>
+          <line x1="72" y1="110" x2="88" y2="110" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Arm relaxed at side -->
+          <line x1="80" y1="65" x2="83" y2="105" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="83" y1="105" x2="84" y2="135" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Legs straight -->
+          <line x1="72" y1="110" x2="73" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="88" y1="110" x2="87" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="65" y1="160" x2="81" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="79" y1="160" x2="95" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <!-- CoM marker -->
+          <circle cx="80" cy="100" r="4" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+          <line x1="80" y1="100" x2="80" y2="160" stroke="#b85528" stroke-width="0.8" stroke-dasharray="2,2"/>
+        </g>
+        <!-- R-pin markers -->
+        <text x="73" y="175" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528" font-weight="600">R</text>
+        <text x="87" y="175" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528" font-weight="600">R</text>
+        <!-- Chair behind -->
+        <g opacity="0.5">
+          <rect x="180" y="120" width="70" height="6" fill="none" stroke="#b85528" stroke-width="1.5"/>
+          <rect x="232" y="80" width="18" height="46" fill="none" stroke="#b85528" stroke-width="1.5"/>
+          <line x1="185" y1="126" x2="185" y2="160" stroke="#b85528" stroke-width="1.5"/>
+          <line x1="245" y1="126" x2="245" y2="160" stroke="#b85528" stroke-width="1.5"/>
+        </g>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#b85528">FRAME 0 · STAND</text>
+      </svg>
+      <div class="caption">Startpose: stabiler Stand, Blickrichtung auf den Stuhl im Rücken. Beide Füße via R fixiert.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">03</span>
+        <span class="step-title">Frame 0 — Startpose vor dem Stuhl</span>
+      </div>
+      <p>In AutoPosing-Mode. Stabile Stand-Pose, Knie ganz leicht gelöst, Schultern entspannt, Arme seitlich am Körper. Blickrichtung leicht nach unten — Manny weiß, wohin er sich setzen wird.</p>
+      <p>Beide Füße via <kbd>R</kbd> fixieren. Auf IK lassen — die Füße bleiben durchgehend am Boden, dort gilt: Bodenkontakt = IK.</p>
+      <p>Keyframe setzen. CoM-Marker einblenden (siehe Projekt 01) — du wirst seine Trajektorie über die nächsten Phasen verfolgen.</p>
+      <div class="shortcut-row">
+        <span>Fixation:</span><kbd>R</kbd>
+        <span>Kamera-Center:</span><kbd>T</kbd>
+        <span>CoM-Anzeige:</span><span>Object Settings · Show Center of Mass</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 3 — PHASE B: GROBSCHNITT -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§3</div>
+    <div>
+      <div class="section-tag">Phase B · Grobschnitt (Iteration 1)</div>
+      <h2 class="section-title">Drei Anker, <em>der S-Kurven-Pfad</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">B</div>
+    <div>
+      <h4>Grobschnitt</h4>
+      <div class="phase-meta">Anker-Posen · Knie-Beuge · Sitz-Kontakt</div>
+      <p>Drei Anker: Stand, Knee-Bend mit Vorlehnung, Sitz. Dazwischen darf der CoM eine S-Kurve nach unten und vorn ziehen. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Manny in deep knee bend, leaning forward -->
+        <g>
+          <!-- Head tilted forward -->
+          <circle cx="115" cy="65" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Spine leaning forward -->
+          <line x1="115" y1="76" x2="100" y2="125" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="113" cy="85" r="2.5" fill="#1f1a14"/>
+          <!-- Hip lower and forward -->
+          <line x1="92" y1="125" x2="108" y2="125" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Arms hang forward -->
+          <line x1="113" y1="85" x2="125" y2="125" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="125" y1="125" x2="135" y2="148" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Bent knees -->
+          <line x1="92" y1="125" x2="80" y2="148" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="80" y1="148" x2="80" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="108" y1="125" x2="120" y2="148" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="120" y1="148" x2="120" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Feet stay at original position -->
+          <line x1="72" y1="160" x2="88" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="112" y1="160" x2="128" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <!-- CoM lower and slightly forward -->
+          <circle cx="100" cy="120" r="4" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+          <line x1="100" y1="120" x2="100" y2="160" stroke="#b85528" stroke-width="0.8" stroke-dasharray="2,2"/>
+          <!-- Original CoM trajectory dot from frame 0 for comparison -->
+          <circle cx="80" cy="100" r="3" fill="none" stroke="#b85528" stroke-width="1" opacity="0.5"/>
+          <path d="M 80 100 Q 88 110, 100 120" fill="none" stroke="#b85528" stroke-width="1" stroke-dasharray="3,2" opacity="0.6"/>
+        </g>
+        <!-- Chair behind -->
+        <g opacity="0.5">
+          <rect x="180" y="120" width="70" height="6" fill="none" stroke="#b85528" stroke-width="1.5"/>
+          <rect x="232" y="80" width="18" height="46" fill="none" stroke="#b85528" stroke-width="1.5"/>
+        </g>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#b85528">FRAME 50 · KNIE GEBEUGT, VORGELEHNT</text>
+      </svg>
+      <div class="caption">Anticipation-Anker: Knie gebeugt, Spine vorgelehnt. CoM ist niedriger und leicht vorne.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">04</span>
+        <span class="step-title">Anker — Knee-Bend mit Vorlehnung (Frame 50)</span>
+      </div>
+      <p>Frame 50 — etwa 40 % des Animationspfads, kurz bevor das Gesäß den Stuhl berührt. Manny ist mitten im Sit-Pfad: Knie deutlich gebeugt, Wirbelsäule nach vorn geneigt (etwa 20–25° aus der Vertikalen), Hüfte abgesenkt und leicht nach vorn verschoben.</p>
+      <p>Wichtig: die <strong>Füße bleiben</strong> wo sie waren. Cascadeur erlaubt das, weil sie via <kbd>R</kbd> fixiert sind und auf IK stehen. Das ist die Pose-Mechanik, mit der das Hinsetzen funktioniert — Hüfte und Spine machen die Arbeit, die Füße sind die Anker.</p>
+      <p>Arme: hängen frei nach vorn, leicht von der Schwerkraft gezogen. CoM ist jetzt etwa 20 cm tiefer als bei Frame 0 und 10 cm weiter vorne — auf dem Weg zur Sitzfläche, aber noch nicht angekommen.</p>
+      <p>Keyframe setzen. Standard IK belassen, weil die Füße immer noch Bodenkontakt haben.</p>
+      <div class="insight">
+        Ein klinischer Mobility-Test für ältere Menschen heißt <em>Sit-to-Stand Test</em>: wie oft kann eine Person aus dem Stuhl aufstehen und sich wieder hinsetzen in 30 Sekunden, ohne die Arme zu benutzen. Das ist nicht zufällig — die Bewegung verlangt CoM-Kontrolle über zwei Achsen, simultane Beuge von Knien und Hüfte, koordinierten Spine-Lean. Wer den Bewegungspfad nicht mehr beherrscht, verliert Selbstständigkeit. Manny baut den Pfad als Junior-Athlet — alles geschmeidig.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Chair (now solid, important context) -->
+        <g>
+          <rect x="180" y="120" width="70" height="6" fill="#ede4d0" stroke="#b85528" stroke-width="2"/>
+          <rect x="232" y="80" width="18" height="46" fill="#ede4d0" stroke="#b85528" stroke-width="2"/>
+          <line x1="185" y1="126" x2="185" y2="160" stroke="#b85528" stroke-width="2"/>
+          <line x1="245" y1="126" x2="245" y2="160" stroke="#b85528" stroke-width="2"/>
+        </g>
+        <!-- Manny seated -->
+        <g>
+          <circle cx="195" cy="60" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Spine vertical, slight forward lean -->
+          <line x1="195" y1="71" x2="200" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="195" cy="83" r="2.5" fill="#1f1a14"/>
+          <!-- Hip at seat -->
+          <line x1="190" y1="118" x2="210" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Arms relaxed on lap -->
+          <line x1="195" y1="83" x2="187" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="187" y1="118" x2="195" y2="135" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="195" y1="83" x2="208" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="208" y1="118" x2="215" y2="135" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Thighs horizontal -->
+          <line x1="190" y1="118" x2="170" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="210" y1="118" x2="190" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Lower legs vertical -->
+          <line x1="170" y1="120" x2="160" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="190" y1="120" x2="180" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="152" y1="160" x2="168" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="172" y1="160" x2="188" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <!-- CoM at seat level, over chair -->
+          <circle cx="200" cy="110" r="4" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+          <!-- Contact point on seat -->
+          <circle cx="200" cy="120" r="3.5" fill="#b85528"/>
+        </g>
+        <text x="210" y="143" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">Sitzkontakt</text>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#b85528">FRAME 90 · SITZ-KONTAKT</text>
+      </svg>
+      <div class="caption">Sit-Pose: Gesäß auf dem Stuhl, Rücken aufrecht, Füße haben Position behalten.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">05</span>
+        <span class="step-title">Anker — Sit-Pose (Frame 90)</span>
+      </div>
+      <p>Frame 90. Manny sitzt: Gesäß berührt die Sitzfläche, Rücken aufrecht (Wirbelsäule wieder vertikal nach kurzem Vorlehnen), Knie und Hüfte etwa rechtwinklig, Oberschenkel horizontal, Unterschenkel vertikal.</p>
+      <p>Wichtig: die <strong>Füße sind noch an ihrer ursprünglichen Position</strong>. Realistisch verschiebt sich der Charakter durch das Hinsetzen ein paar Zentimeter rückwärts (weil Pelvis zur Sitzfläche kommt) — aber die Fußposition bleibt fix. Cascadeur regelt das automatisch durch die IK-Constraint auf den fixierten Füßen.</p>
+      <p>Hier ist der <strong>Sitz-Kontakt</strong> der entscheidende neue Punkt. CoM liegt jetzt über der Sitzfläche, nicht mehr über den Füßen. Ohne Stuhl würde Manny in diesem Frame fallen — der Stuhl ist sein neuer Fulcrum-Punkt.</p>
+      <p>Arme können auf den Oberschenkeln ruhen oder neben den Körper hängen. Keyframe setzen. Standard IK lassen (kommt später Constraint dazu).</p>
+      <div class="box box-merk">
+        <div class="box-label">Pelvis als zweiter Fulcrum-Punkt</div>
+        <p>Im Sit ist das Becken der primäre Bodenkontakt, die Füße sind sekundär (sie stabilisieren). AutoPhysics muss in Phase E diese Hierarchie erkennen — und das ist nicht trivial, weil Cascadeur per Default die Füße als Fulcrums sucht. Set Priority Frame auf Frame 90 wird das in Phase E lösen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- CoM trajectory as S-curve -->
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Start CoM -->
+        <circle cx="80" cy="100" r="6" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="80" y="92" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">0</text>
+        <!-- Mid CoM (knee bend) -->
+        <circle cx="140" cy="120" r="6" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="140" y="112" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">50</text>
+        <!-- Sit CoM -->
+        <circle cx="200" cy="110" r="6" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="200" y="102" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">90</text>
+        <!-- S-curve through points -->
+        <path d="M 80 100 Q 100 105, 120 115 Q 140 120, 160 122 Q 180 118, 200 110" fill="none" stroke="#b85528" stroke-width="1.8"/>
+        <!-- Feet position constant -->
+        <line x1="65" y1="160" x2="80" y2="160" stroke="#284858" stroke-width="2.5"/>
+        <line x1="82" y1="160" x2="97" y2="160" stroke="#284858" stroke-width="2.5"/>
+        <text x="81" y="178" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#284858">Füße fix</text>
+        <!-- Direction labels -->
+        <line x1="270" y1="100" x2="270" y2="125" stroke="#5a4d3a" stroke-width="1"/>
+        <path d="M 268 123 L 270 127 L 272 123 z" fill="#5a4d3a"/>
+        <text x="276" y="115" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">unten</text>
+        <line x1="265" y1="135" x2="295" y2="135" stroke="#5a4d3a" stroke-width="1"/>
+        <path d="M 293 133 L 297 135 L 293 137 z" fill="#5a4d3a"/>
+        <text x="280" y="148" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">vorne</text>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#b85528">COM-PFAD · S-KURVE</text>
+      </svg>
+      <div class="caption">CoM bewegt sich in zwei Achsen: nach unten und vorn. Eine kleine S-Kurve über die ganze Animation.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">06</span>
+        <span class="step-title">CoM-Trajectory aktivieren und prüfen</span>
+      </div>
+      <p>Bevor Inbetweening läuft, einmal die CoM-Trajectory mit den drei Ankern ansehen. CoM-Controller selektieren, <kbd>\</kbd> für persistente Trajectory. In der Side-View siehst du jetzt die drei Punkte — und kannst beurteilen, ob der Pfad plausibel ist.</p>
+      <p>Idealer CoM-Pfad bei Hinsetzen: eine flache S-Kurve, die nach unten und gleichzeitig nach vorn führt, dann am Sitz leicht zurück und parallel zum Boden ausläuft. Nicht eine gerade Linie nach unten (das wäre Knie-Beugen ohne Vorlehnen — funktioniert physikalisch nicht, weil der CoM dann nicht über den Stuhl käme).</p>
+      <p>Falls der Pfad zackig ist oder nicht durch die richtigen Punkte führt: einer der Anker passt nicht. Meistens ist Frame 50 zu wenig vorgelehnt — Manny lehnt sich zu spät vor, der CoM-Pfad bricht.</p>
+      <div class="shortcut-row">
+        <span>Persistente Trajectory:</span><kbd>\</kbd>
+        <span>Play:</span><kbd>Space</kbd>
+      </div>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase B</div>
+        <p>Drei Anker stehen. CoM-Trajectory ist eine S-Kurve nach vorn-unten, geht durch alle drei Anker. Manny bewegt sich von Stand zu Knee-Bend zu Sitz. Bezier-Interpolation zwischen Ankern erzeugt erste Bewegung. Noch mechanisch und ohne Constraint — aber strukturell korrekt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 4 — PHASE C: INBETWEENING -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§4</div>
+    <div>
+      <div class="section-tag">Phase C · Inbetweening (Iteration 2)</div>
+      <h2 class="section-title">Inbetweening für Pelvis und Beine, <em>Bezier oben</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">C</div>
+    <div>
+      <h4>Inbetweening</h4>
+      <div class="phase-meta">Track-Separation · FK-Setting · Generation</div>
+      <p>Wie in Projekt 03: Pelvis und Bein-Tracks auf Inbetweening, Torso/Arms/Head auf Bezier. FK-Keyframes für Pelvis. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <rect x="40" y="40" width="240" height="20" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="50" y="54">Head</text>
+          <text x="270" y="54" text-anchor="end" fill="#284858">Bezier</text>
+
+          <rect x="40" y="62" width="240" height="20" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="50" y="76">Torso · Spine</text>
+          <text x="270" y="76" text-anchor="end" fill="#284858">Bezier</text>
+
+          <rect x="40" y="84" width="240" height="20" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="50" y="98">Arms</text>
+          <text x="270" y="98" text-anchor="end" fill="#284858">Bezier · FK-Keyframes</text>
+
+          <rect x="40" y="106" width="240" height="20" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="50" y="120" fill="#f3ecdc">Pelvis</text>
+          <text x="270" y="120" text-anchor="end" fill="#f3ecdc">Inbetweening · FK</text>
+
+          <rect x="40" y="128" width="240" height="20" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="50" y="142" fill="#f3ecdc">L_Leg · R_Leg</text>
+          <text x="270" y="142" text-anchor="end" fill="#f3ecdc">Inbetweening · IK auf Boden</text>
+        </g>
+        <text x="160" y="175" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Beine bleiben IK bei Bodenkontakt — Sit verändert das nicht</text>
+      </svg>
+      <div class="caption">Track-Separation wie in Projekt 03. Beine bleiben IK weil Bodenkontakt durchgehend.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">07</span>
+        <span class="step-title">Track-Separation und FK-Setting</span>
+      </div>
+      <p>Im Outliner: Pelvis-Track und beide Bein-Tracks auf <strong>Inbetweening</strong>. Torso, Head, beide Arm-Tracks auf <strong>Bezier Clamped</strong>.</p>
+      <p>FK-Keyframe-Setting für die Pelvis-Track-Keyframes (Frame 0, 50, 90, 120): selektieren und im Keyframe-Panel auf FK. Damit interpretiert Inbetweening die Pelvis-Bewegung relativ zum Spine-Parent.</p>
+      <p>Die Bein-Keyframes bleiben <strong>IK</strong>, weil die Füße durchgehend Bodenkontakt haben. Das ist anders als bei Walk in Projekt 03 — dort wechselten die Beine zwischen IK (Bodenkontakt) und FK (Schwung). Hier bleiben sie konstant IK, weil sich die Fußposition nicht ändert.</p>
+      <p>Auch FK-Setting für die Arm-Keyframes — sie behalten ihre Pose relativ zum Torso, schwingen nicht wild im Weltraum.</p>
+      <div class="box box-merk">
+        <div class="box-label">Wenn der Wechsel zu Inbetweening alles kaputt macht</div>
+        <p>Beim ersten Wechsel auf Inbetweening kann es passieren, dass Manny seltsam wandert oder zappelt. Das ist die FK-Stolperfalle in einem komplexen Setup. Lösung-Reihenfolge: 1) Sicherstellen, dass Pelvis-Keyframes FK sind. 2) Falls Arm-Posen verloren gehen — auch Arm-Keyframes auf FK. 3) Falls Beine seltsam laufen — Bein-Keyframes auf IK belassen, aber Pelvis muss FK sein.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Ghost figures showing motion progression -->
+        <!-- Frame 0 -->
+        <g opacity="0.3">
+          <circle cx="70" cy="60" r="9" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="70" y1="69" x2="70" y2="115" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="63" y1="115" x2="77" y2="115" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="63" y1="115" x2="63" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="77" y1="115" x2="77" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        </g>
+        <!-- Frame 25 (generated) -->
+        <g opacity="0.5">
+          <circle cx="105" cy="65" r="9" fill="none" stroke="#b85528" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <line x1="105" y1="74" x2="100" y2="118" stroke="#b85528" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <line x1="93" y1="118" x2="107" y2="118" stroke="#b85528" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <line x1="93" y1="118" x2="90" y2="160" stroke="#b85528" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <line x1="107" y1="118" x2="110" y2="160" stroke="#b85528" stroke-width="1.5" stroke-dasharray="2,2"/>
+        </g>
+        <!-- Frame 50 anchor -->
+        <g>
+          <circle cx="140" cy="73" r="10" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="140" y1="83" x2="125" y2="128" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="115" y1="128" x2="133" y2="128" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="115" y1="128" x2="105" y2="148" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="105" y1="148" x2="105" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="133" y1="128" x2="143" y2="148" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="143" y1="148" x2="143" y2="160" stroke="#1f1a14" stroke-width="2"/>
+        </g>
+        <!-- Frame 70 (generated) -->
+        <g opacity="0.5">
+          <circle cx="180" cy="70" r="9" fill="none" stroke="#b85528" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <line x1="180" y1="79" x2="180" y2="120" stroke="#b85528" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <line x1="172" y1="120" x2="195" y2="120" stroke="#b85528" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <line x1="172" y1="120" x2="160" y2="140" stroke="#b85528" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <line x1="160" y1="140" x2="155" y2="160" stroke="#b85528" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <line x1="195" y1="120" x2="183" y2="140" stroke="#b85528" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <line x1="183" y1="140" x2="178" y2="160" stroke="#b85528" stroke-width="1.5" stroke-dasharray="2,2"/>
+        </g>
+        <!-- Frame 90 -->
+        <g opacity="0.6">
+          <circle cx="225" cy="65" r="9" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="225" y1="74" x2="225" y2="115" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="218" y1="115" x2="235" y2="115" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="218" y1="115" x2="205" y2="117" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="205" y1="117" x2="195" y2="155" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="235" y1="115" x2="218" y2="118" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="218" y1="118" x2="208" y2="155" stroke="#1f1a14" stroke-width="1.5"/>
+        </g>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">INBETWEENING-LAUF · ZWISCHEN-FRAMES</text>
+        <text x="70" y="180" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">F0</text>
+        <text x="105" y="180" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">F25</text>
+        <text x="140" y="180" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">F50</text>
+        <text x="180" y="180" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">F70</text>
+        <text x="225" y="180" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">F90</text>
+      </svg>
+      <div class="caption">Inbetweening generiert die Zwischen-Frames. Gepunktete Figuren sind KI-generiert, durchgezogene sind deine Anker.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">08</span>
+        <span class="step-title">Erste Generation — auf die Beine achten</span>
+      </div>
+      <p>Play drücken. Inbetweening rechnet die Frames zwischen den Ankern — Knee-Bend setzt langsam ein, Spine lehnt sich vor, dann das Absenken, dann der Sitz.</p>
+      <p>Was du in dieser ersten Generation siehst, ist <em>noch ohne Constraints</em>. Manny sitzt also <em>durch</em> den Stuhl hindurch — er weiß noch nicht, dass die Sitzfläche da ist. Das ist normal und kommt in Phase D dran.</p>
+      <p>Konzentriere dich darauf, ob die <strong>Beine</strong> sauber sind: Knie biegen sich symmetrisch, Füße bleiben fix (sollten sich nicht heben oder verschieben — falls doch: Fixation R nicht aktiv), Pelvis-Pfad ist die erwartete S-Kurve.</p>
+      <p>Falls die Beine zappeln oder seltsame Zwischenposen einnehmen: meist ein Pose-Konflikt — Frame 50 vorgelehnt zu wenig oder zu viel, der KI-Generator versucht zu kompensieren. Anker anpassen, Inbetweening rechnet sofort neu.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase C</div>
+        <p>Manny bewegt sich kontinuierlich vom Stand zum Sitz — durch die Knee-Bend-Phase, ohne Brüche. Beine bleiben am Boden, Hüfte sinkt mit S-Kurven-Pfad. Arme schwingen leicht mit. Aber: Manny sitzt durch den Stuhl, weil noch keine Constraints existieren. Das ist der nächste Schritt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 5 — PHASE D: VERFEINERUNG (CONSTRAINTS) -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§5</div>
+    <div>
+      <div class="section-tag">Phase D · Verfeinerung (Iteration 3)</div>
+      <h2 class="section-title">Constraints, <em>Anticipation</em>, Settle.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">D</div>
+    <div>
+      <h4>Verfeinerung</h4>
+      <div class="phase-meta">Constraint-Setup · Anticipation · Settle · Leading Action</div>
+      <p>Constraint zwischen Pelvis und Stuhl, damit der Sitz-Kontakt stabil ist. Anticipation-Anker vor dem Sitz. Settle-Anker nach dem Sitz. Leading Action für Kopf. <em>Vier Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 9 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">CONSTRAINT-SETUP · COMMANDS-MENÜ</text>
+        <!-- Workflow diagram -->
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <rect x="30" y="50" width="80" height="40" fill="#ede4d0" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="70" y="68" text-anchor="middle" font-weight="600" font-size="11">1.</text>
+          <text x="70" y="82" text-anchor="middle">Select target</text>
+          <line x1="115" y1="70" x2="135" y2="70" stroke="#1f1a14" stroke-width="1" marker-end="url(#arr)"/>
+
+          <rect x="140" y="50" width="80" height="40" fill="#ede4d0" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="180" y="68" text-anchor="middle" font-weight="600" font-size="11">2.</text>
+          <text x="180" y="82" text-anchor="middle">Shift+sel driver</text>
+          <line x1="225" y1="70" x2="245" y2="70" stroke="#1f1a14" stroke-width="1" marker-end="url(#arr)"/>
+
+          <rect x="250" y="50" width="60" height="40" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="280" y="68" text-anchor="middle" fill="#f3ecdc" font-weight="600" font-size="11">3.</text>
+          <text x="280" y="82" text-anchor="middle" fill="#f3ecdc">Constrain</text>
+
+          <defs>
+            <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+              <path d="M 0 0 L 8 4 L 0 8 z" fill="#1f1a14"/>
+            </marker>
+          </defs>
+        </g>
+        <!-- Menu path -->
+        <text x="160" y="115" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Commands → Constrain → Transform</text>
+        <text x="160" y="135" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">parent: Stuhl-Sitzfläche</text>
+        <text x="160" y="165" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Constraint MUSS auf Keyframe UND Interpolation aktiviert werden</text>
+        <text x="160" y="183" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#c46b3a">— sonst wirkt sie nicht</text>
+      </svg>
+      <div class="caption">Drei-Schritt-Constraint-Setup. Target zuerst, Driver via Shift, dann Commands-Menü.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">09</span>
+        <span class="step-title">Constraint zwischen Pelvis und Stuhl-Sitzfläche</span>
+      </div>
+      <p>Auf Frame 90 (Sitz-Kontakt-Moment). Wir wollen ab diesem Frame, dass das Pelvis-Controller-Set an die Sitzfläche „gebunden" ist. Damit: wenn der Stuhl sich bewegt (was später nicht der Fall ist, aber das Prinzip), folgt Manny mit. Wichtiger noch: AutoPhysics weiß, dass hier ein Kontakt existiert.</p>
+      <p>Setup-Sequenz aus den Cascadeur-Tutorials:</p>
+      <ol style="margin: 0.5rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Pelvis-Controller-Punkte selektieren (alle drei oder vier, die das Pelvis ausmachen)</li>
+        <li><kbd>Shift</kbd> halten und das Stuhl-Mesh oder einen Joint im Stuhl-Object dazu-selektieren — das ist der Driver</li>
+        <li>Menü: <strong>Commands → Constrain → Transform</strong> (oder Point Constraint je nach gewünschter Constraint-Art)</li>
+        <li>Im Pop-up den Stuhl als <em>parent</em> wählen</li>
+      </ol>
+      <p>Jetzt existiert die Constraint. Aber sie wirkt noch nicht — du musst sie aktivieren.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Constraint Keyframe vs Interpolation</div>
+        <p>Cascadeur-Constraints arbeiten anders als in Maya. Sie müssen separat für den <strong>Keyframe</strong> und für die <strong>Interpolation</strong> aktiviert werden — beide sind unabhängige Toggles in den Object Properties. Wenn nur das Keyframe-Toggle an ist, hält die Constraint genau auf dem Keyframe, driftet aber zwischen den Keyframes. Wenn nur Interpolation an ist, gilt sie nur zwischen Keyframes. <em>Lösung:</em> für stabilen Halt beide aktivieren.</p>
+      </div>
+      <div class="box box-merk">
+        <div class="box-label">Constraint nur ab Sitz-Frame aktiv</div>
+        <p>Die Constraint soll erst ab Frame 90 wirken (Sitz-Kontakt). Davor steht Manny — keine Constraint nötig. Lösung: Constraint global anlegen, aber auf den Keyframes 0-89 als <em>inactive</em> markieren, ab Frame 90 als <em>active</em>. Cascadeur unterstützt das per Keyframe-spezifischem Constraint-Aktivierungs-Toggle.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 10 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">CONSTRAINT-ACTIVATION-PROPERTIES</text>
+        <!-- Object properties panel mockup -->
+        <rect x="50" y="50" width="220" height="120" fill="#ede4d0" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#b85528">Object Properties · Pelvis</text>
+        <line x1="60" y1="78" x2="260" y2="78" stroke="#c8b89a" stroke-width="1"/>
+        <text x="60" y="98" font-family="DM Sans, sans-serif" font-size="11" fill="#1f1a14">Constraint to Chair</text>
+        <line x1="60" y1="105" x2="260" y2="105" stroke="#c8b89a" stroke-width="0.5"/>
+        <text x="60" y="125" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Keyframe Active</text>
+        <rect x="200" y="115" width="50" height="14" fill="#8a9878" stroke="#1f1a14" stroke-width="1"/>
+        <text x="225" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#f3ecdc">✓ ON</text>
+        <text x="60" y="148" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Interpolation Active</text>
+        <rect x="200" y="138" width="50" height="14" fill="#8a9878" stroke="#1f1a14" stroke-width="1"/>
+        <text x="225" y="148" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#f3ecdc">✓ ON</text>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Beide Toggles auf ON. Sonst Drift zwischen Keyframes.</text>
+      </svg>
+      <div class="caption">Constraint-Toggle für Keyframe und Interpolation. Beide an für stabilen Sitz-Halt.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">10</span>
+        <span class="step-title">Constraint aktivieren mit Linear Interpolation</span>
+      </div>
+      <p>Mit dem Pelvis-Controller selektiert: Object Properties öffnen. Im Constraints-Bereich für das aktuelle Frame (90) sowohl <strong>Keyframe Active</strong> als auch <strong>Interpolation Active</strong> auf ON setzen.</p>
+      <p>Für die Frames 90 bis 120 (Sitz-Phase) sollte beide aktiv sein. Davor (0-89) auf OFF.</p>
+      <p>Zusätzlich: für die Pelvis-Bin-Tracks im Constraint-Setup die Interpolation auf <strong>Linear</strong> setzen, nicht Bezier. Cascadeur-Constraints können zwischen Keyframes driften, wenn die Interpolation kurvig ist. Linear hält die Position konstant zwischen den Keyframes.</p>
+      <div class="shortcut-row">
+        <span>Linear Interpolation:</span><span>Interpolations-Menü · Linear</span>
+        <span>Object Properties:</span><kbd>N</kbd>
+      </div>
+      <div class="box box-why">
+        <div class="box-label">Linear bei Constraints — anders als üblich</div>
+        <p>Normalerweise ist Bezier oder Inbetweening der Default. Aber Cascadeur-Constraints sind ein Sonderfall: sie validieren die Position nur an den Keyframes, dazwischen läuft die Interpolation als zweiter Schritt. Bei Bezier kann das zu kleinen Drifts führen — sichtbar als Wackeln am Sitz-Kontakt. Linear vermeidet das, weil zwischen Keyframes keine Kurven-Interpolation passiert.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 11 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Anticipation pose: head slightly forward and down -->
+        <g>
+          <circle cx="100" cy="50" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Slight forward head lean before main motion -->
+          <line x1="105" y1="51" x2="115" y2="60" stroke="#b85528" stroke-width="1.4"/>
+          <line x1="100" y1="61" x2="100" y2="113" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="100" cy="75" r="2.5" fill="#1f1a14"/>
+          <line x1="93" y1="113" x2="107" y2="113" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="75" x2="90" y2="113" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="75" x2="110" y2="113" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="93" y1="113" x2="93" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="107" y1="113" x2="107" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="85" y1="160" x2="101" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="99" y1="160" x2="115" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+        </g>
+        <!-- Head pre-tilt arrow -->
+        <path d="M 95 35 Q 100 40, 105 47" fill="none" stroke="#b85528" stroke-width="1.2"/>
+        <text x="55" y="40" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">Kopf voraus</text>
+        <!-- Chair behind -->
+        <g opacity="0.4">
+          <rect x="180" y="120" width="70" height="6" fill="none" stroke="#b85528" stroke-width="1.5"/>
+        </g>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#b85528">FRAME 15 · ANTICIPATION</text>
+      </svg>
+      <div class="caption">Anticipation: Kopf und Spine neigen sich minimal vor — die Bewegung beginnt im Oberkörper.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">11</span>
+        <span class="step-title">Anticipation-Anker (Frame 15)</span>
+      </div>
+      <p>Frame 15 — kurz nach dem Beginn, bevor die Knee-Bend richtig einsetzt. Kopf neigt sich ganz leicht nach vorn und unten, als ob Manny den Stuhl im Rücken sucht. Spine minimal vorgelehnt (3-5°). Die Beine sind noch fast komplett gestreckt.</p>
+      <p>Keyframe setzen. Im Keyframe-Panel FK für Pelvis prüfen.</p>
+      <p>Diese kleine Geste — Kopf und Spine als Erste in Bewegung — entscheidet, ob Manny absichtlich sitzt oder zufällig fällt. Ohne Anticipation wirkt die Bewegung wie eine Knie-Fehlfunktion. Mit Anticipation kommuniziert Manny Absicht.</p>
+      <div class="insight">
+        Frank Thomas und Ollie Johnston nannten diese Pattern <em>„the eyes lead"</em> — bevor der Körper eine Aktion macht, schaut der Kopf das Ziel an. In Live-Action-Film ist das ein Klassiker — der Schauspieler schaut auf das Glas, dann greift die Hand nach dem Glas. Sich-Hinsetzen ist das Glas auf dem Stuhl: erst der Blick, dann die Bewegung.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 12 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Chair -->
+        <g>
+          <rect x="80" y="120" width="160" height="6" fill="#ede4d0" stroke="#b85528" stroke-width="2"/>
+        </g>
+        <!-- Settle pose: very slight bounce after contact -->
+        <g opacity="0.5">
+          <!-- Original Frame 90 -->
+          <circle cx="155" cy="65" r="11" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="155" y1="76" x2="155" y2="116" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="148" y1="116" x2="162" y2="116" stroke="#1f1a14" stroke-width="1.5"/>
+        </g>
+        <g>
+          <!-- Frame 100 with slight bounce -->
+          <circle cx="155" cy="68" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="155" y1="79" x2="155" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="155" cy="90" r="2.5" fill="#1f1a14"/>
+          <line x1="148" y1="118" x2="162" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Arms -->
+          <line x1="155" y1="90" x2="143" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="143" y1="118" x2="143" y2="135" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="155" y1="90" x2="167" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="167" y1="118" x2="167" y2="135" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Thighs and legs -->
+          <line x1="148" y1="118" x2="130" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="162" y1="118" x2="180" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="130" y1="120" x2="120" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="180" y1="120" x2="170" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="112" y1="160" x2="128" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="162" y1="160" x2="178" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+        </g>
+        <!-- Settle indicator -->
+        <path d="M 135 60 Q 130 65, 135 72" fill="none" stroke="#b85528" stroke-width="1.2"/>
+        <text x="125" y="50" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">Nachfedern</text>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#b85528">FRAME 100 · SETTLE</text>
+      </svg>
+      <div class="caption">Settle: 1-2 cm Nachfedern in die Sitzfläche, dann Stillstand. Realistische Inertia nach Kontakt.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">12</span>
+        <span class="step-title">Settle-Anker (Frame 100)</span>
+      </div>
+      <p>Frame 100, 10 Frames nach dem Sitz-Kontakt. Manny senkt sich minimal weiter ab — 1-2 cm, kaum sichtbar — und kommt dann zur Ruhe. Das ist das physikalische Settle: Inertia trifft auf elastischen Sitz, kurzes Nachgeben, dann Halt.</p>
+      <p>Praktisch: die Sit-Pose von Frame 90 kopieren, dann den CoM-Controller um wenige Zentimeter weiter absenken. Keyframe setzen mit aktiver Constraint.</p>
+      <p>Für Frame 120 (Endposition): zurück zur Frame 90-Pose. Die Settle-Bewegung schwingt aus.</p>
+      <div class="box box-merk">
+        <div class="box-label">Settle als Gewicht-Indikator</div>
+        <p>Ein leichter Settle (1-2 cm) macht Manny zu einem normalen Erwachsenen mit ~80 kg. Ein starker Settle (5-6 cm + längere Schwingung) macht ihn schwer (Übergewicht, oder schwere Last). Ein null-Settle (sofort statisch) macht ihn übermenschlich kontrolliert (Akrobat, Tänzer). Der Settle-Anker ist ein direkter Gewichts-Modifikator.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 6 — PHASE E: PHYSICS -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§6</div>
+    <div>
+      <div class="section-tag">Phase E · Physics + Set Priority Frame</div>
+      <h2 class="section-title">AutoPhysics <em>mit Constraint-Awareness</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">E</div>
+    <div>
+      <h4>Physics</h4>
+      <div class="phase-meta">Set Priority Frame · AutoPhysics 2026.1 · Constraint-Mode</div>
+      <p>Set Priority Frame auf den Sitz-Kontakt-Moment. Dann AutoPhysics in drei Durchläufen — aber mit der 2026.1-Constraint-Aware-Variante (weniger Filter). <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 13 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">SET PRIORITY FRAME · FRAME 90</text>
+        <!-- Timeline with priority marker -->
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- All keyframes -->
+        <rect x="26" y="93" width="10" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <rect x="55" y="93" width="10" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <rect x="125" y="93" width="10" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <!-- Priority frame — emphasized -->
+        <rect x="195" y="88" width="14" height="24" fill="#b85528" stroke="#1f1a14" stroke-width="2"/>
+        <polygon points="195,88 209,88 209,82 215,86 209,90 195,90" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="202" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528" font-weight="600">★ PRIORITY</text>
+        <rect x="223" y="93" width="10" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <rect x="280" y="93" width="10" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <!-- Frame labels -->
+        <text x="31" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">0</text>
+        <text x="60" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">15</text>
+        <text x="130" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">50</text>
+        <text x="202" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528" font-weight="600">90</text>
+        <text x="228" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">100</text>
+        <text x="285" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">120</text>
+        <text x="160" y="160" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Cascadeur muss diese Pose unverändert lassen</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">— der Sit-Kontakt ist die kritische Geometrie</text>
+      </svg>
+      <div class="caption">Set Priority Frame markiert den Sitz-Kontakt-Frame als unveränderlich für AutoPhysics.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">13</span>
+        <span class="step-title">Set Priority Frame auf Frame 90</span>
+      </div>
+      <p>Auf Frame 90 navigieren (Sitz-Kontakt). In den Physics-Tab. <strong>Set Priority Frame</strong> aktivieren — Button im Physics-Panel, meist im Bereich der Constraint-Optionen.</p>
+      <p>Was das tut: Cascadeur weiß jetzt, dass die Pose von Frame 90 unter keinen Umständen verändert werden darf, egal was AutoPhysics sonst empfiehlt. Der Sitz-Kontakt-Moment ist die kritische Geometrie — wenn der CoM hier auch nur 2 cm wandert, sitzt Manny daneben statt im Stuhl.</p>
+      <p>Ohne Set Priority Frame würde AutoPhysics manchmal versuchen, den scharfen Übergang (Stehkontakt → Sitzkontakt) zu glätten und dabei Frame 90 verschieben. Mit Set Priority Frame bleibt der Anker felsenfest.</p>
+      <div class="box box-merk">
+        <div class="box-label">Set Priority Frame als gezieltes Werkzeug</div>
+        <p>Bisher in der Reihe war Set Priority Frame nur ein Notfall-Werkzeug (orange Timeline-Stolperfalle). Hier wird es zum ersten Mal als <em>vorbeugendes</em> Werkzeug eingesetzt — bevor AutoPhysics überhaupt läuft. Dasselbe Pattern in jedem Projekt mit Kontakt-Wechseln: Sitz, Aufstehen, Tisch berühren, Tür öffnen, Wand stoßen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 14 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="20" y="35" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">AUTOPHYSICS 2026.1 · CONSTRAINT-MODE</text>
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <text x="20" y="60">Physics Character</text>
+          <line x1="170" y1="56" x2="290" y2="56" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="56" x2="290" y2="56" stroke="#b85528" stroke-width="3"/>
+          <circle cx="290" cy="56" r="4" fill="#b85528"/>
+          <text x="295" y="60" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">100</text>
+
+          <text x="20" y="85">Smooth Trajectory</text>
+          <line x1="170" y1="81" x2="290" y2="81" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="81" x2="210" y2="81" stroke="#b85528" stroke-width="3"/>
+          <circle cx="210" cy="81" r="4" fill="#b85528"/>
+          <text x="295" y="85" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~30</text>
+
+          <text x="20" y="110" fill="#c46b3a">Smooth Rotation</text>
+          <line x1="170" y1="106" x2="290" y2="106" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="106" x2="170" y2="106" stroke="#c46b3a" stroke-width="3"/>
+          <circle cx="170" cy="106" r="4" fill="#c46b3a"/>
+          <text x="295" y="110" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">0 · weg</text>
+
+          <text x="20" y="135" fill="#c46b3a">Compensation Motion</text>
+          <line x1="170" y1="131" x2="290" y2="131" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="131" x2="170" y2="131" stroke="#c46b3a" stroke-width="3"/>
+          <circle cx="170" cy="131" r="4" fill="#c46b3a"/>
+          <text x="295" y="135" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">0 · weg</text>
+
+          <text x="20" y="160">Secondary Motion</text>
+          <line x1="170" y1="156" x2="290" y2="156" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="156" x2="205" y2="156" stroke="#b85528" stroke-width="3"/>
+          <circle cx="205" cy="156" r="4" fill="#b85528"/>
+          <text x="295" y="160" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~25</text>
+        </g>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Constraints aktiv: weniger Filter, sonst kollidiert AutoPhysics mit Constraint-Logik</text>
+      </svg>
+      <div class="caption">AutoPhysics 2026.1 mit Constraints: nur Physics Character, Smooth Trajectory, Secondary Motion.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">14</span>
+        <span class="step-title">AutoPhysics Pass 1 + 2 (Constraint-Mode)</span>
+      </div>
+      <p>Physics Assistance an, Physics-Ghost erscheint. <strong>Pass 1 + 2</strong> nur mit Physics Corrector aktiv. Wie gewohnt: ganze Sequenz selektieren, Solve, Snap to Physics, wiederholen.</p>
+      <p>Wichtig — neu für Constraint-Animation: in Cascadeur 2026.1 erkennt AutoPhysics aktive Constraints und passt seine Logik an. Bei aktivem Constraint sollten nur <strong>Physics Character</strong>, <strong>Smooth Trajectory</strong> und <strong>Secondary Motion</strong> verwendet werden. Die anderen Filter (Smooth Rotation, Compensation Motion, Separation of Motion) können mit der Constraint-Logik kollidieren und das Sitz-Verhalten verzerren.</p>
+      <p>Falls deine Cascadeur-Version älter ist als 2026.1: AutoPhysics erkennt die Constraint nicht automatisch. Workaround — die Constraint vor dem AutoPhysics-Pass temporär deaktivieren, AutoPhysics laufen lassen, dann Constraint wieder aktivieren. Mühsam, aber funktioniert.</p>
+      <div class="box box-stolper">
+        <div class="box-label">AutoPhysics ohne Constraint-Awareness</div>
+        <p>Wenn du Filter wie Compensation Motion bei aktiver Constraint hochdrehst, kann es passieren: Manny sitzt korrekt, aber sein Pelvis-Bewegungspfad wird vom Filter „korrigiert" und reißt sich von der Sitzfläche los. Konsequenz: Manny schwebt 5 cm über dem Stuhl, oder fällt durch ihn hindurch. Lösung: Filter aus oder Constraint vor AutoPhysics temporär deaktivieren.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 15 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Final result: clean sit -->
+        <g>
+          <rect x="170" y="120" width="80" height="6" fill="#ede4d0" stroke="#b85528" stroke-width="2"/>
+          <rect x="232" y="80" width="18" height="46" fill="#ede4d0" stroke="#b85528" stroke-width="2"/>
+          <line x1="175" y1="126" x2="175" y2="160" stroke="#b85528" stroke-width="2"/>
+          <line x1="245" y1="126" x2="245" y2="160" stroke="#b85528" stroke-width="2"/>
+          <!-- Manny seated properly -->
+          <circle cx="195" cy="60" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="195" y1="71" x2="200" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="195" cy="83" r="2.5" fill="#1f1a14"/>
+          <line x1="190" y1="118" x2="210" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="195" y1="83" x2="187" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="187" y1="118" x2="195" y2="135" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="195" y1="83" x2="208" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="208" y1="118" x2="215" y2="135" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="190" y1="118" x2="170" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="210" y1="118" x2="190" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="170" y1="120" x2="160" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="190" y1="120" x2="180" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="152" y1="160" x2="168" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="172" y1="160" x2="188" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <!-- Secondary motion indicator on shoulders -->
+          <path d="M 195 78 Q 190 80, 195 85" fill="none" stroke="#b85528" stroke-width="1"/>
+          <path d="M 195 78 Q 200 80, 195 85" fill="none" stroke="#b85528" stroke-width="1"/>
+        </g>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#8a9878">SECONDARY MOTION · SUBTIL</text>
+      </svg>
+      <div class="caption">Nach Secondary Motion: minimaler Mitschwung in Schultern und Armen beim Sit-Settle.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">15</span>
+        <span class="step-title">Pass 3 und Secondary Motion</span>
+      </div>
+      <p>Pass 3 — mit aktiven Constraints sehr zurückhaltend:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Physics Character</strong> 100 — bleibt aktiv</li>
+        <li><strong>Smooth Trajectory</strong> ~30 — glättet den CoM-S-Kurven-Pfad</li>
+        <li><strong>Smooth Rotation</strong> 0 — weg (kollidiert mit Constraint)</li>
+        <li><strong>Compensation Motion</strong> 0 — weg (kollidiert)</li>
+        <li><strong>Separation of Motion</strong> 0 — weg</li>
+        <li><strong>Secondary Motion</strong> ~25 — leichter Mitschwung in Armen und Schultern beim Settle</li>
+      </ul>
+      <p>Ganze Sequenz, Solve, Snap to Physics. Physics Assistance ausschalten.</p>
+      <p>Das Endergebnis: Manny geht in die Knie, lehnt sich vor, sitzt sich, federt minimal nach, ruht. Constraint hält das Becken auf der Sitzfläche. Settle gibt ein Hauch von Gewicht. Arme schwingen leicht nach. Saubere Sit-Animation.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase E</div>
+        <p>Sitz-Kontakt auf Frame 90 ist exakt — Pelvis berührt die Sitzfläche, keine Penetration, kein Schweben. CoM-Pfad ist eine saubere S-Kurve. Settle ist subtil (1-2 cm). Bei Slow Motion sieht der Kontakt-Moment plausibel aus: kein abrupter Ruck, kein Drift. Constraint hält durchgehend.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 7 — PHASE F: EXPORT -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§7</div>
+    <div>
+      <div class="section-tag">Phase F · Export</div>
+      <h2 class="section-title">FBX <em>ohne Stuhl</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">F</div>
+    <div>
+      <h4>Export</h4>
+      <div class="phase-meta">FBX · Skeleton only · UE5-Stuhl im Sequencer</div>
+      <p>Nur die Manny-Animation exportieren — der Stuhl bleibt in UE5 als separates Asset. Constraint braucht in UE5 keine Übersetzung, weil sie nur den Sit-Pfad geformt hat. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 16 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="60" y="50" width="100" height="100" rx="6" fill="#f3ecdc" stroke="#1f1a14" stroke-width="2"/>
+        <text x="110" y="80" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#b85528">FBX</text>
+        <text x="110" y="100" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">hinsetzen.fbx</text>
+        <line x1="70" y1="110" x2="150" y2="110" stroke="#c8b89a" stroke-width="1"/>
+        <text x="110" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">120 Frames</text>
+        <text x="110" y="138" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">Skeleton only</text>
+
+        <path d="M 175 100 L 200 100" stroke="#1f1a14" stroke-width="1.5" marker-end="url(#arrx)"/>
+        <defs>
+          <marker id="arrx" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M 0 0 L 8 4 L 0 8 z" fill="#1f1a14"/>
+          </marker>
+        </defs>
+
+        <rect x="210" y="50" width="80" height="100" rx="6" fill="#284858" stroke="#1f1a14" stroke-width="2"/>
+        <text x="250" y="80" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#f3ecdc">UE5</text>
+        <text x="250" y="100" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#ede4d0">Manny +</text>
+        <text x="250" y="115" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#ede4d0">UE5-Stuhl</text>
+        <text x="250" y="135" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#ede4d0">parallel platziert</text>
+
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Cascadeur-Stuhl ist Proxy · UE5-Stuhl ersetzt ihn</text>
+      </svg>
+      <div class="caption">FBX nur mit Manny. Stuhl wird in UE5 als eigenständiges Asset platziert.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">16</span>
+        <span class="step-title">FBX-Export ohne Stuhl-Mesh</span>
+      </div>
+      <p>File → Export → FBX. Im Export-Dialog die Selection so wählen, dass nur Manny exportiert wird — der Stuhl-Proxy bleibt zurück. Settings: Bake animation, 30 fps, 0-120 Frames, Skeleton only.</p>
+      <p>Die Constraint zwischen Pelvis und Stuhl wird beim Export <em>nicht</em> übersetzt — sie war ein Cascadeur-internes Werkzeug, um die Animation zu konstruieren. Im exportierten FBX ist nur die fertige Pelvis-Animation, mit dem Pelvis genau dort wo der Stuhl war.</p>
+      <p>Dateiname <code>manny-hinsetzen-v01.fbx</code>.</p>
+      <div class="box box-merk">
+        <div class="box-label">Constraints sind Animation-Build-Werkzeuge</div>
+        <p>Constraints in Cascadeur sind primär dazu da, die Animation während der Build-Phase korrekt zu halten. Nach dem Bake (Snap to Physics, Export) sind sie nicht mehr nötig — die Animation enthält die korrekten Positionen direkt. In UE5 braucht es keine Constraint-Übersetzung. Lediglich beim Reimport in Cascadeur müsste die Constraint neu gesetzt werden.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 17 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="50" width="280" height="110" fill="none" stroke="#284858" stroke-width="1.5"/>
+        <text x="160" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#284858">UE5 · SEQUENCER</text>
+        <line x1="40" y1="82" x2="280" y2="82" stroke="#284858" stroke-width="0.6"/>
+        <!-- Layer 1: Manny -->
+        <rect x="40" y="92" width="240" height="18" fill="#b85528" opacity="0.5"/>
+        <text x="50" y="105" font-family="JetBrains Mono, monospace" font-size="9" fill="#f3ecdc">Manny · hinsetzen.fbx</text>
+        <!-- Layer 2: Chair (static) -->
+        <rect x="40" y="114" width="240" height="18" fill="#284858" opacity="0.4"/>
+        <text x="50" y="127" font-family="JetBrains Mono, monospace" font-size="9" fill="#1f1a14">Stuhl-Mesh · statisch</text>
+        <!-- Layer 3: MetaHuman face -->
+        <rect x="40" y="136" width="240" height="18" fill="#8a9878" opacity="0.4"/>
+        <text x="50" y="149" font-family="JetBrains Mono, monospace" font-size="9" fill="#1f1a14">MetaHuman Face · Performance</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Drei Tracks im Sequencer · Manny und Stuhl räumlich aufeinander platziert</text>
+      </svg>
+      <div class="caption">UE5-Sequencer: Manny-Animation, Stuhl als Static Mesh, MetaHuman-Face on top.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">17</span>
+        <span class="step-title">UE5-Import und räumliche Platzierung</span>
+      </div>
+      <p>FBX in UE5 importieren mit Manny-Skelett als Target.</p>
+      <p>In der Level-Scene: einen ordentlichen Stuhl-Mesh platzieren (aus dem UE5-Stuhl-Asset-Pack oder einem externen Asset-Marketplace). Position so wählen, dass der Stuhl exakt dort steht, wo dein Cascadeur-Stuhl-Proxy war. Wenn du beim Manny-Skelett-Position 0,0,0 startest, sollte der Stuhl 50 cm hinter Manny in seiner Blickrichtung stehen — Sitzhöhe 45 cm über Boden.</p>
+      <p>Im Sequencer: Manny-Animation als Animation Sequence, Stuhl als Static Mesh. Die räumliche Position ist die Anker-Logik — Manny setzt sich auf den Stuhl, weil seine animierte Pelvis-Position mit der Stuhl-Sitzfläche zusammenfällt.</p>
+      <p>Falls der Sitzkontakt nicht exakt passt (Manny sitzt 2 cm zu hoch oder zu niedrig): den Stuhl-Mesh in der Level-Scene vertikal verschieben — schneller als die Animation neu zu exportieren. UE5-Pipeline-Standard.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase F</div>
+        <p>In UE5: Manny startet stehend, geht über vier Sekunden in die Knee-Bend und sitzt sich auf den Stuhl. Sitz-Kontakt ist visuell sauber (Gesäß berührt Sitzfläche, keine Penetration). Subtle Settle nach Kontakt sichtbar. MetaHuman-Face-Performance kann zeitlich abgestimmt eingelegt werden — Manny setzt sich und spricht oder schaut nach. Bewegung ist ohne weiteren Polish einsatzbereit.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 8 — OUTRO -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§8</div>
+    <div>
+      <div class="section-tag">Ausblick</div>
+      <h2 class="section-title">Was du <em>jetzt zusätzlich</em> hast.</h2>
+    </div>
+  </div>
+
+  <p>Mit Projekt 04 sind zwei zentrale Werkzeuge im Vokabular: <strong>Constraints</strong> für Charakter-zu-Objekt-Verbindung und <strong>Set Priority Frame</strong> als gezielter AutoPhysics-Eingriff. Dazu die Erkenntnis, dass <strong>AutoPhysics-Filter bei aktiven Constraints reduziert werden müssen</strong> (Cascadeur 2026.1 Constraint-Awareness).</p>
+
+  <p>Die direkte Fortsetzung ist Projekt 05 — <strong>Aufstehen vom Stuhl</strong>. Dort wird der CoM-Pfad rückwärts gespielt, aber mit anderen Mechaniken: Anticipation kommt diesmal stärker (Manny muss vorwärts kippen, um sich aus dem Stuhl zu drücken), Push-Phase mit gestreckten Beinen, Settle nach Aufrichten. Die Constraint-Logik bleibt — sie wird aktiv im Sitz-Start-Frame und löst sich nach dem Push.</p>
+
+  <p>Bei Projekt 11+ (Kombinations-Szenen) treffen die Animationen aus 01-05 aufeinander: ein Charakter steht, geht zum Stuhl, setzt sich, gestikuliert, steht auf, geht weiter. Jede einzelne Animation ist ein eigenständiger Building Block, kombinierbar im UE5-Sequencer.</p>
+
+  <div class="box box-merk">
+    <div class="box-label">Was Projekt 04 nicht macht</div>
+    <p>Keine Stuhl-Variation (Hocker, Sofa, Boden). Kein Sich-Setzen mit Last (Tasche absetzen während des Sit). Kein Multi-Schritt-Hinsetzen mit Vor-Greifen zum Stuhl. Kein Sich-Setzen unter Beobachtung (mit Selbstkontrolle, im Bewerbungsgespräch). All das sind Pose-Modulationen des selben Pfads — die Workflow-Logik bleibt identisch.</p>
+  </div>
+
+  <div class="insight">
+    Eames-Stuhl-Designer haben den Sit-Pfad in den Mittelpunkt ihres Stuhl-Designs gestellt: der Stuhl unterstützt nicht das Sitzen, sondern den <em>Übergang</em> ins Sitzen. Wie weit sinkt der Körper ab? Wie viel Vorlehnen ist nötig? Wie nachgiebig ist die Sitzfläche? Le Corbusiers berühmter LC4-Liegestuhl verschiebt den Pfad fast komplett — der Übergang dauert länger, weil der Körper zwei Sekunden in eine Liege fällt statt eine in einen Stuhl. Manny in deiner Brochüre ist beim Standard-Esstisch-Stuhl. Aber das CoM-Pfad-Vokabular gilt für jeden Stuhl der Welt.
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="doc-footer">
+  <div><span class="terracotta">Projekt 04 · v 1.0</span></div>
+  <div>17 Schritte · 6 Phasen + Constraint-Setup</div>
+  <div>Cascadeur · Lernreihe</div>
+</footer>
+
+</article>
+
+</body>
+</html>
