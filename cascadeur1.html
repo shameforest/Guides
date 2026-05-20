@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projekt 01 · Lebendige Idle-Pose · Cascadeur-Lernreihe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3ecdc;
+    --paper-warm: #ede4d0;
+    --paper-dark: #e2d6b8;
+    --ink: #1f1a14;
+    --ink-soft: #5a4d3a;
+    --ink-faint: #8a7d68;
+    --terracotta: #b85528;
+    --terracotta-deep: #7a3414;
+    --cobalt: #284858;
+    --sage: #8a9878;
+    --warning: #c46b3a;
+    --rule: #c8b89a;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'DM Sans', -apple-system, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--paper);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    -webkit-font-smoothing: antialiased;
+  }
+  .doc { max-width: 1100px; margin: 0 auto; }
+
+  /* Cover */
+  .cover {
+    padding: 3.5rem 5rem 2.5rem;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -10%; right: -8%;
+    width: 50%; aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(184, 85, 40, 0.08) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .cover-marker {
+    display: flex; align-items: center; gap: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 1.5rem;
+  }
+  .cover-marker .ml { width: 60px; height: 1px; background: var(--terracotta); }
+  .cover h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.6rem, 5vw, 4.2rem);
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 50;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+    max-width: 18ch;
+  }
+  .cover h1 em {
+    font-style: italic;
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    color: var(--terracotta);
+  }
+  .cover .subtitle {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.2rem;
+    color: var(--ink-soft);
+    max-width: 58ch;
+    margin-bottom: 2rem;
+  }
+  .cover-meta {
+    display: flex; gap: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    flex-wrap: wrap;
+  }
+  .mb { display: flex; flex-direction: column; gap: 0.2rem; }
+  .mb-label {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .mb span:last-child {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--ink);
+  }
+
+  /* Sections */
+  .section {
+    padding: 3rem 5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .section-head {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.8rem;
+    align-items: start;
+  }
+  .section-num {
+    font-family: var(--font-display);
+    font-size: 2.8rem;
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    font-style: italic;
+    color: var(--terracotta);
+    line-height: 1;
+  }
+  .section-tag {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 0.4rem;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 3vw, 2.4rem);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    max-width: 26ch;
+  }
+  .section-title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--terracotta);
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  }
+
+  .section p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .section p.lead {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.18rem;
+    color: var(--ink-soft);
+    margin-bottom: 1.5rem;
+    max-width: 60ch;
+  }
+  .section h3 {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 1.6rem 0 0.6rem;
+    color: var(--ink);
+  }
+
+  /* Phase banner */
+  .phase-banner {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 2rem;
+    margin: 2rem 0 2.5rem;
+    padding: 1.4rem 1.8rem;
+    background: linear-gradient(90deg, rgba(184, 85, 40, 0.10), transparent);
+    border-left: 4px solid var(--terracotta);
+    align-items: center;
+  }
+  .phase-letter {
+    font-family: var(--font-display);
+    font-size: 5rem;
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    font-style: italic;
+    color: var(--terracotta);
+    line-height: 0.85;
+    text-align: center;
+  }
+  .phase-banner h4 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+  }
+  .phase-banner .phase-meta {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.5rem;
+  }
+  .phase-banner p {
+    font-size: 0.97rem;
+    color: var(--ink);
+    margin-bottom: 0;
+    max-width: 65ch;
+  }
+  .phase-banner em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  /* Step card */
+  .step {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 1.8rem;
+    margin: 1.6rem 0;
+    padding: 1.6rem 1.8rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+  }
+  .step-diagram {
+    background: #f3ecdc;
+    border: 1px solid #c8b89a;
+    border-radius: 6px;
+    padding: 1rem 0.6rem 0.6rem;
+    align-self: start;
+  }
+  .step-diagram svg { width: 100%; height: auto; display: block; }
+  .step-diagram .caption {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .step-num-row {
+    display: flex; align-items: baseline; gap: 0.8rem;
+    margin-bottom: 0.6rem;
+  }
+  .step-num {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 300;
+    font-style: italic;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    color: var(--terracotta);
+    line-height: 1;
+  }
+  .step-title {
+    font-family: var(--font-display);
+    font-size: 1.18rem;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .step p { font-size: 0.96rem; margin-bottom: 0.6rem; max-width: none; }
+  .step p:last-child { margin-bottom: 0; }
+  .step em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+  .shortcut-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.7rem;
+    align-items: center;
+    margin: 0.5rem 0 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+  kbd {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0.05rem 0.4rem;
+    color: var(--ink);
+    box-shadow: 0 1px 0 var(--rule);
+  }
+
+  /* Boxes */
+  .box {
+    margin: 1.4rem 0;
+    padding: 1.1rem 1.3rem;
+    border-radius: 0 4px 4px 0;
+    max-width: none;
+  }
+  .step .box { margin: 0.9rem 0 0.4rem; }
+  .box-label {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .box-label::before { content: ''; width: 14px; height: 1.5px; background: currentColor; }
+  .box p { font-size: 0.93rem; margin-bottom: 0.4rem; }
+  .box p:last-child { margin-bottom: 0; }
+  .box-why { background: rgba(40, 72, 88, 0.10); border-left: 3px solid var(--cobalt); }
+  .box-why .box-label { color: var(--cobalt); }
+  .box-stolper { background: rgba(196, 107, 58, 0.13); border-left: 3px solid var(--warning); }
+  .box-stolper .box-label { color: var(--warning); }
+  .box-merk { background: rgba(184, 85, 40, 0.10); border-left: 3px solid var(--terracotta); }
+  .box-merk .box-label { color: var(--terracotta); }
+  .box-check { background: rgba(138, 152, 120, 0.18); border-left: 3px solid var(--sage); }
+  .box-check .box-label { color: var(--sage); }
+
+  /* Triptychon — three poses */
+  .triptychon {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.8rem;
+    margin: 1rem 0;
+  }
+  .triptychon .step-diagram { padding: 0.7rem 0.4rem 0.5rem; }
+  .triptychon .caption { font-size: 0.74rem; margin-top: 0.4rem; }
+
+  /* Pose-comparison: two diagrams side by side */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+
+  /* Insight rail */
+  .insight {
+    margin: 1.4rem 0;
+    padding: 1.1rem 1.3rem;
+    background: var(--paper-warm);
+    border: 1px dashed var(--rule);
+    border-radius: 6px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.96rem;
+    color: var(--ink-soft);
+    max-width: 65ch;
+  }
+  .insight::before {
+    content: 'Randnotiz';
+    display: block;
+    font-family: var(--font-mono);
+    font-style: normal;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 0.4rem;
+  }
+
+  /* Footer */
+  .doc-footer {
+    padding: 2.5rem 5rem;
+    border-top: 2px solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex; justify-content: space-between;
+  }
+  .doc-footer .terracotta { color: var(--terracotta); }
+
+  @media (max-width: 900px) {
+    .cover, .section, .doc-footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .section-head { grid-template-columns: 1fr; gap: 0.5rem; }
+    .step { grid-template-columns: 1fr; gap: 1rem; }
+    .step-diagram { max-width: 280px; margin: 0 auto; }
+    .phase-banner { grid-template-columns: 1fr; gap: 0.5rem; }
+    .phase-letter { text-align: left; font-size: 3.5rem; }
+    .triptychon { grid-template-columns: 1fr; }
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #1a1612;
+      --paper-warm: #221d17;
+      --paper-dark: #2a241c;
+      --ink: #ebe3d0;
+      --ink-soft: #b8a98a;
+      --ink-faint: #7a6e58;
+      --terracotta: #e8814a;
+      --terracotta-deep: #c25a2a;
+      --cobalt: #6a9aab;
+      --sage: #a8b898;
+      --warning: #e2884d;
+      --rule: #3a3026;
+    }
+    body {
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    }
+    /* Diagram-Inseln bleiben hell — Strichmännchen sind dafür gebaut */
+    .step-diagram { background: #f3ecdc !important; border-color: #c8b89a !important; }
+    .step-diagram .caption { color: #5a4d3a !important; }
+  }
+</style>
+</head>
+<body>
+
+<article class="doc">
+
+<!-- COVER -->
+<header class="cover">
+  <div class="cover-marker">
+    <span>Cascadeur · Lernreihe</span>
+    <div class="ml"></div>
+    <span>Projekt 01 · v 2.0</span>
+  </div>
+  <h1>Lebendige <em>Idle-Pose</em>:<br>Stand mit Atem<br>und Gewicht.</h1>
+  <p class="subtitle">Fünf Sekunden, kein Schritt. Manny atmet, verlagert sein Gewicht und steht trotzdem. Foundation für alles, was später läuft, springt, kämpft.</p>
+  <div class="cover-meta">
+    <div class="mb"><span class="mb-label">Charakter</span><span>UE5-Manny</span></div>
+    <div class="mb"><span class="mb-label">Dauer</span><span>5 s · 150 Frames</span></div>
+    <div class="mb"><span class="mb-label">Kern-Werkzeuge</span><span>AutoPosing · Bezier · AutoPhysics</span></div>
+    <div class="mb"><span class="mb-label">Pipeline-Ziel</span><span>UE5 Sequencer</span></div>
+    <div class="mb"><span class="mb-label">Schritte</span><span>17</span></div>
+  </div>
+</header>
+
+
+<!-- § 1 — WAS DU BAUST -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§1</div>
+    <div>
+      <div class="section-tag">Lernziel und Pose-Konzept</div>
+      <h2 class="section-title">Stillstand, der <em>nicht stillsteht</em>.</h2>
+    </div>
+  </div>
+
+  <p class="lead">Eine Idle-Pose, die Gewicht hat und atmet. Kein Schritt, kein Drehen, kein Geste — und trotzdem nie ein Foto.</p>
+
+  <p>Manny steht entspannt mit leichtem Standbein-Spielbein-Versatz. Über die fünf Sekunden verlagert sich sein Schwerpunkt zweimal sanft von einer Seite zur anderen, der Brustkorb hebt und senkt sich mit der Atmung, der Kopf macht eine winzige Mikrobewegung. Drei Ebenen liegen übereinander: <strong>Pose</strong> (was), <strong>Gewichtsverlagerung</strong> (wo) und <strong>Atmung</strong> (wie).</p>
+
+  <p>Das Projekt führt das Werkzeug-Vokabular für alles ein, was später kommt — <em>AutoPosing</em> für blitzschnelles Posing, <em>CoM/Grounder/Fixation</em> für Balance, <em>Bezier-Interpolation zwischen Anker-Posen</em> als klassisches Verfahren, <em>AutoPhysics in drei Durchläufen</em> als Polish-Schicht. Inbetweening kommt hier <em>nicht</em> zum Einsatz — das wird ab Projekt 02 das neue Rückgrat.</p>
+
+  <div class="box box-why">
+    <div class="box-label">Warum kein Inbetweening hier</div>
+    <p>Inbetweening braucht eine Mindestdistanz zwischen Posen, um plausibel zu generieren — bei sehr kurzen oder sehr ähnlichen Intervallen (idle-typisch) sind die Ergebnisse schwach. Außerdem soll diese Brochüre das saubere Setzen von Anker-Posen lehren, ohne dass ein KI-Generator zwischendrin Verantwortung übernimmt. Ab Projekt 02 wird Inbetweening zum Hauptwerkzeug.</p>
+  </div>
+
+  <div class="insight">
+    Die Bildhauerei kennt das seit Polyklet: <em>Contrapposto</em>. Doryphoros steht mit dem Gewicht auf einem Bein, das andere ist gelöst — die Hüfte kippt zur Standseite hoch, die Schulter zur Gegenseite. Das ist kein Stil, das ist die Lösung des Problems „wie steht ein Körper, ohne zu fallen". Genau diesen Kontrapost baust du in Schritt 4 bis 6.
+  </div>
+</section>
+
+
+<!-- § 2 — PHASE A: SETUP -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§2</div>
+    <div>
+      <div class="section-tag">Phase A · Setup</div>
+      <h2 class="section-title">Scene, <em>Diagnose-Helfer</em>, neutrale Pose.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">A</div>
+    <div>
+      <h4>Setup</h4>
+      <div class="phase-meta">Scene · CoM · Grounder · Frame 0</div>
+      <p>Manny laden, Diagnose-Helfer aktivieren, neutrale Ausgangs-Pose auf Frame 0 setzen. Ab hier hast du das saubere Fundament für alles weitere. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <!-- Ground line -->
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#8a7d68" stroke-width="0.7" stroke-dasharray="3,3"/>
+        <!-- Manny stick frontal, neutral -->
+        <!-- Head -->
+        <circle cx="100" cy="40" r="14" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Neck/spine -->
+        <line x1="100" y1="54" x2="100" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Shoulders -->
+        <line x1="75" y1="72" x2="125" y2="72" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Hip line -->
+        <line x1="82" y1="130" x2="118" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Arms -->
+        <line x1="75" y1="72" x2="65" y2="125" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="65" y1="125" x2="62" y2="160" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="125" y1="72" x2="135" y2="125" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="135" y1="125" x2="138" y2="160" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Legs -->
+        <line x1="82" y1="130" x2="80" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="80" y1="175" x2="80" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="118" y1="130" x2="120" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="120" y1="175" x2="120" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Feet -->
+        <line x1="70" y1="220" x2="90" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <line x1="110" y1="220" x2="130" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <!-- CoM marker -->
+        <circle cx="100" cy="115" r="4" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <text x="108" y="118" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">CoM</text>
+        <!-- Frame label -->
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#8a7d68">FRAME 0 · T-NEUTRAL</text>
+      </svg>
+      <div class="caption">Neutraler Stand. CoM zentral, Hüfte gerade, Schultern entspannt.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">01</span>
+        <span class="step-title">Scene mit UE5-Manny laden</span>
+      </div>
+      <p>Cascadeur starten, eine der Manny-Beispielszenen aus dem Cascadeur-Sample-Pack laden. Falls nicht vorhanden: FBX-Import des UE5-Manny-Mesh, dann <em>Quick Rigging Tool</em> für die Rig-Generierung. Scene-Settings: Framerate auf <strong>30 fps</strong>, Timeline auf <strong>0 bis 150</strong>.</p>
+      <p>Speichern als <code>projekt-01-idle.casc</code> bevor du irgendwas anderes machst — Cascadeur fragt sonst beim ersten <kbd>Ctrl</kbd>+<kbd>S</kbd> nach dem Speicherort, was den Workflow unterbricht.</p>
+      <div class="shortcut-row">
+        <span>Save:</span><kbd>Ctrl</kbd>+<kbd>S</kbd>
+        <span>Frame-Navigation:</span><kbd>A</kbd> · <kbd>D</kbd>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <!-- Ground -->
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Grid hint -->
+        <line x1="40" y1="220" x2="40" y2="225" stroke="#8a7d68" stroke-width="0.7"/>
+        <line x1="80" y1="220" x2="80" y2="225" stroke="#8a7d68" stroke-width="0.7"/>
+        <line x1="120" y1="220" x2="120" y2="225" stroke="#8a7d68" stroke-width="0.7"/>
+        <line x1="160" y1="220" x2="160" y2="225" stroke="#8a7d68" stroke-width="0.7"/>
+        <!-- Body -->
+        <circle cx="100" cy="40" r="14" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="100" y1="54" x2="100" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="75" y1="72" x2="125" y2="72" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="82" y1="130" x2="118" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="75" y1="72" x2="65" y2="125" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="65" y1="125" x2="62" y2="160" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="125" y1="72" x2="135" y2="125" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="135" y1="125" x2="138" y2="160" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="82" y1="130" x2="80" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="80" y1="175" x2="80" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="118" y1="130" x2="120" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="120" y1="175" x2="120" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="70" y1="220" x2="90" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <line x1="110" y1="220" x2="130" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <!-- CoM -->
+        <circle cx="100" cy="115" r="5" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <!-- CoM drop line -->
+        <line x1="100" y1="115" x2="100" y2="220" stroke="#b85528" stroke-width="1" stroke-dasharray="3,2"/>
+        <!-- Fulcrum points on feet — green -->
+        <circle cx="78" cy="220" r="3.5" fill="#8a9878"/>
+        <circle cx="88" cy="220" r="3.5" fill="#8a9878"/>
+        <circle cx="112" cy="220" r="3.5" fill="#8a9878"/>
+        <circle cx="122" cy="220" r="3.5" fill="#8a9878"/>
+        <!-- Annotations -->
+        <text x="148" y="118" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">CoM</text>
+        <text x="100" y="237" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#8a9878">Fulcrums</text>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#8a7d68">DIAGNOSE-HELFER AN</text>
+      </svg>
+      <div class="caption">CoM-Marker und Fulcrum-Punkte sichtbar. Die Lotlinie fällt zentral zwischen die Füße.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">02</span>
+        <span class="step-title">Diagnose-Helfer aktivieren</span>
+      </div>
+      <p>Center of Mass und Fulcrum-Visualisierung einblenden. Der CoM-Marker erscheint als kleiner Punkt im Becken-Bereich, die Fulcrum-Punkte sitzen unten an den Fußsohlen. Frames mit Bodenkontakt zeigen grüne Fulcrum-Punkte — das ist deine wichtigste Diagnose-Anzeige für die spätere AutoPhysics-Phase.</p>
+      <p>Oberhalb der Timeline erscheint ein Fulcrum-Balken: <em>dunkelgrün</em> = beide Füße am Boden, <em>hellgrün</em> = ein Fuß, <em>orange</em> = ballistisch (kein Kontakt). Für eine Idle-Pose sollte der Balken durchgehend dunkelgrün sein.</p>
+      <div class="box box-merk">
+        <div class="box-label">CoM lesen, nicht raten</div>
+        <p>Solange die Lotlinie des CoM zwischen den beiden Fußkontakten landet, steht Manny stabil. Wandert sie raus, kippt er. Diese eine Regel löst neun von zehn Balance-Problemen — keine Animations-Theorie nötig.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Body — relaxed, slight knee bend -->
+        <circle cx="100" cy="42" r="14" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="100" y1="56" x2="100" y2="132" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Shoulders slightly relaxed -->
+        <line x1="73" y1="74" x2="127" y2="74" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="82" y1="132" x2="118" y2="132" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Arms hang naturally -->
+        <line x1="73" y1="74" x2="68" y2="128" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="68" y1="128" x2="65" y2="165" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="127" y1="74" x2="132" y2="128" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="132" y1="128" x2="135" y2="165" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Legs slight knee bend -->
+        <line x1="82" y1="132" x2="80" y2="178" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="80" y1="178" x2="82" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="118" y1="132" x2="120" y2="178" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="120" y1="178" x2="118" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="72" y1="220" x2="92" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <line x1="108" y1="220" x2="128" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <!-- CoM centered -->
+        <circle cx="100" cy="115" r="4" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <!-- R-pin markers on feet -->
+        <text x="80" y="234" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528" font-weight="600">R</text>
+        <text x="120" y="234" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528" font-weight="600">R</text>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#8a7d68">FRAME 0 · NEUTRAL</text>
+      </svg>
+      <div class="caption">Knie leicht gelöst, Arme hängen natürlich. Füße sind via R fixiert.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">03</span>
+        <span class="step-title">Neutrale Ausgangs-Pose auf Frame 0</span>
+      </div>
+      <p>In <em>AutoPosing-Mode</em> wechseln. Die grünen AutoPosing-Punkte sind passiv (sie werden vom Solver gelöst), die blauen aktiv (du hast sie selbst gesetzt). Auf Frame 0 die Pose mit minimalen Eingriffen aufbauen: Füße schulterbreit, Knie ganz leicht gelöst (nicht durchgestreckt), Arme entspannt am Körper, Kopf gerade.</p>
+      <p>Beide Füße mit <kbd>R</kbd> fixieren — das sagt Cascadeur, dass die Fußposition als gesetzt gilt und nicht vom AutoPosing-Solver wegoptimiert wird. Das ist die wichtigste Fixation der ganzen Animation; wenn die Füße driften, baut die spätere AutoPhysics-Phase Murks.</p>
+      <div class="shortcut-row">
+        <span>Fixation:</span><kbd>R</kbd>
+        <span>alle AutoPosing-Controller:</span><kbd>Ctrl</kbd>+<kbd>A</kbd>
+        <span>Kamera zentrieren:</span><kbd>T</kbd>
+      </div>
+      <div class="box box-stolper">
+        <div class="box-label">Knie durchgestreckt = später kein Spielraum</div>
+        <p>Wenn die Knie auf Frame 0 voll durchgestreckt sind, gibt es weder für die Gewichtsverlagerung noch für die Atmung Reserve. Ein paar Grad Beugung schon hier — Manny wirkt sofort weniger steif, und alle späteren Layer haben Platz.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 3 — PHASE B: GROBSCHNITT -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§3</div>
+    <div>
+      <div class="section-tag">Phase B · Grobschnitt</div>
+      <h2 class="section-title">Drei Anker, <em>ein Kontrapost</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">B</div>
+    <div>
+      <h4>Grobschnitt</h4>
+      <div class="phase-meta">Anker-Posen · Bezier · Gewichtsverlagerung</div>
+      <p>Drei Anker-Posen über die fünf Sekunden: Gewicht links, neutral durch, Gewicht rechts. Bezier-Interpolation zwischen den Ankern erzeugt die erste schwankende Bewegung. Hier wird der Kontrapost gebaut. <em>Vier Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Body — weight on LEFT leg (his left = viewer's right) -->
+        <!-- Head slight tilt to viewer-left -->
+        <circle cx="105" cy="42" r="14" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="105" y1="56" x2="108" y2="135" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Shoulders: viewer-left UP, viewer-right DOWN -->
+        <line x1="78" y1="68" x2="132" y2="80" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Hip: viewer-left DOWN, viewer-right UP (counter) -->
+        <line x1="86" y1="138" x2="120" y2="128" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Arms -->
+        <line x1="78" y1="68" x2="68" y2="125" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="68" y1="125" x2="65" y2="165" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="132" y1="80" x2="140" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="140" y1="130" x2="142" y2="168" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Standing leg: viewer-right (straight, supports) -->
+        <line x1="120" y1="128" x2="120" y2="218" stroke="#1f1a14" stroke-width="2.4"/>
+        <!-- Spielbein: viewer-left, slightly bent -->
+        <line x1="86" y1="138" x2="83" y2="178" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="83" y1="178" x2="78" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="70" y1="220" x2="88" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <line x1="110" y1="220" x2="130" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <!-- CoM shifted to viewer-right (over standing leg) -->
+        <circle cx="115" cy="115" r="5" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <line x1="115" y1="115" x2="120" y2="218" stroke="#b85528" stroke-width="1" stroke-dasharray="3,2"/>
+        <!-- Annotations -->
+        <text x="50" y="120" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Spielbein</text>
+        <text x="145" y="180" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Standbein</text>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 30 · GEWICHT RECHTS</text>
+      </svg>
+      <div class="caption">Standbein gestreckt, Spielbein entlastet. Hüfte hoch zur Standseite, Schulter zur Gegenseite — Kontrapost.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">04</span>
+        <span class="step-title">Anker 1 — Gewicht rechts (Frame 30)</span>
+      </div>
+      <p>Auf Frame 30 springen. Den CoM-Controller selektieren und ca. eine halbe Schritt-Breite zur Charakter-rechten Seite verschieben (in der Frontalansicht nach <em>rechts</em>, da Manny zum Betrachter schaut). Das rechte Bein wird zum Standbein, das linke zum Spielbein.</p>
+      <p>Was jetzt automatisch passieren <em>sollte</em>: die Hüfte kippt zur Standseite hoch, die Gegenschulter senkt sich leicht ab. Falls der AutoPosing-Solver das nicht von allein macht — Hüfte-Controller selektieren und einen leichten Roll geben, dann Schulter-Controller in die Gegenrichtung. Drei bis fünf Grad reichen.</p>
+      <p>Neuen Keyframe setzen (Standard ist IK). Fußkontakte mit <kbd>R</kbd> bleiben geankert.</p>
+      <div class="box box-merk">
+        <div class="box-label">IK für Fußkontakte — immer</div>
+        <p>Solange die Füße den Boden berühren, müssen die Keyframes IK bleiben (Default). FK würde die Fußposen lokal an den Bein-Parent koppeln, das Standbein würde beim CoM-Shift mitwandern. Praxisregel: <em>Bodenkontakt = IK, in der Luft = FK oder GR.</em></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Body — neutral pass-through (slightly weighted but central) -->
+        <circle cx="100" cy="42" r="14" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="100" y1="56" x2="100" y2="132" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="75" y1="74" x2="125" y2="74" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="83" y1="132" x2="117" y2="132" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="75" y1="74" x2="67" y2="128" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="67" y1="128" x2="64" y2="165" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="125" y1="74" x2="133" y2="128" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="133" y1="128" x2="136" y2="165" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="83" y1="132" x2="81" y2="178" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="81" y1="178" x2="82" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="117" y1="132" x2="119" y2="178" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="119" y1="178" x2="118" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="72" y1="220" x2="92" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <line x1="108" y1="220" x2="128" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <circle cx="100" cy="115" r="4" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <line x1="100" y1="115" x2="100" y2="220" stroke="#b85528" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 75 · DURCHGANG</text>
+      </svg>
+      <div class="caption">CoM passiert die Mitte. Pose minimal von Frame 0 — kein voller T-Stand, sondern Übergang.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">05</span>
+        <span class="step-title">Anker 2 — Durchgang (Frame 75)</span>
+      </div>
+      <p>Auf Frame 75 (Animation-Mitte). CoM zurück zur zentralen Lotlinie zwischen den Füßen schieben. Hüfte und Schultern fast neutral — aber nicht <em>exakt</em> wie Frame 0. Ein paar Millimeter Rotation behalten, sonst wirkt der Durchgang wie eine Statue.</p>
+      <p>Keyframe setzen. Diese Pose ist absichtlich nicht spannend — sie ist der Hochpunkt der Bewegung, an dem das Gewicht von einer Seite zur anderen kippt.</p>
+      <div class="insight">
+        Disney-Animator Frank Thomas nannte das den <em>moving hold</em>: eine Pose, die scheinbar steht, aber innerlich immer im Übergang ist. Eine echte stille Pose existiert in der Realität nicht — auch der gelangweilteste Mensch im Wartezimmer schwankt mit etwa einem halben Hertz und ein paar Millimetern Amplitude. Frame 75 ist Mannys Wartezimmer-Moment.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Body — weight on viewer-LEFT (his right) -->
+        <circle cx="95" cy="42" r="14" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="95" y1="56" x2="92" y2="135" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Shoulders: viewer-left DOWN, viewer-right UP -->
+        <line x1="68" y1="80" x2="122" y2="68" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Hip: viewer-left UP, viewer-right DOWN -->
+        <line x1="80" y1="128" x2="114" y2="138" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Arms -->
+        <line x1="68" y1="80" x2="60" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="60" y1="130" x2="58" y2="168" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="122" y1="68" x2="132" y2="125" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="132" y1="125" x2="135" y2="165" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Standing leg viewer-LEFT, straight -->
+        <line x1="80" y1="128" x2="80" y2="218" stroke="#1f1a14" stroke-width="2.4"/>
+        <!-- Spielbein viewer-right, slightly bent -->
+        <line x1="114" y1="138" x2="117" y2="178" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="117" y1="178" x2="122" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="70" y1="220" x2="90" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <line x1="112" y1="220" x2="132" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <!-- CoM shifted to viewer-LEFT -->
+        <circle cx="85" cy="115" r="5" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <line x1="85" y1="115" x2="80" y2="218" stroke="#b85528" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 120 · GEWICHT LINKS</text>
+      </svg>
+      <div class="caption">Spiegelung von Frame 30. Standbein links, Spielbein rechts. Hüfte hoch links, Schulter hoch rechts.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">06</span>
+        <span class="step-title">Anker 3 — Gewicht links (Frame 120)</span>
+      </div>
+      <p>Auf Frame 120. Wesentlich schneller als Schritt 4, weil du die Logik kennst: CoM zur charakter-linken Seite (in Frontal: <em>links</em>), Hüfte/Schulter spiegelbildlich. Du kannst auch die Pose von Frame 30 kopieren und über die Center-Achse spiegeln, falls das in deiner Cascadeur-Version sauber funktioniert.</p>
+      <p><em>Aus Erinnerung, nicht final verifiziert:</em> Mirror-Pose-Funktion sitzt im Posing-Menü; bei Manny mit seinem L_/R_-Naming sollte sie sauber arbeiten. Bei eigenem Naming nochmal kontrollieren.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Symmetrie ist zu langweilig</div>
+        <p>Wenn Frame 120 mathematisch exakt das Spiegelbild von Frame 30 ist, sieht die Animation wie ein Metronom aus. Subtile Asymmetrien — leicht andere Kopf-Neigung, eine Hand minimal anders — machen es lebendig. Nicht überarbeiten, aber auch nicht stumpf spiegeln.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Timeline -->
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Keyframes -->
+        <rect x="26" y="93" width="14" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="88" y="93" width="14" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="160" y="93" width="14" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="226" y="93" width="14" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="280" y="93" width="14" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <!-- Frame labels -->
+        <text x="33" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">0</text>
+        <text x="95" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">30</text>
+        <text x="167" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">75</text>
+        <text x="233" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">120</text>
+        <text x="287" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">149</text>
+        <!-- Interpolation arcs above timeline -->
+        <path d="M 40 100 Q 64 75, 88 100" fill="none" stroke="#8a9878" stroke-width="1.5"/>
+        <path d="M 102 100 Q 131 70, 160 100" fill="none" stroke="#8a9878" stroke-width="1.5"/>
+        <path d="M 174 100 Q 200 70, 226 100" fill="none" stroke="#8a9878" stroke-width="1.5"/>
+        <path d="M 240 100 Q 260 75, 280 100" fill="none" stroke="#8a9878" stroke-width="1.5"/>
+        <text x="160" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#8a9878">BEZIER · CLAMP</text>
+        <text x="160" y="170" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.12em" fill="#1f1a14">5 ANKER · 4 INTERVALLE</text>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Frame 0 = Frame 149 → Loop-tauglich</text>
+      </svg>
+      <div class="caption">Timeline-Skizze. Bezier zwischen allen Ankern, Frame 149 kopiert Frame 0 für sauberen Loop.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">07</span>
+        <span class="step-title">Loop schließen und Interpolation prüfen</span>
+      </div>
+      <p>Auf Frame 149 die Pose von Frame 0 duplizieren — Cascadeur erlaubt das Kopieren via <kbd>Shift</kbd>+<kbd>Mittelklick</kbd>+<kbd>Drag</kbd> auf einen Keyframe. Damit ist die Animation am Ende wieder in der Neutralpose, und du kannst den Clip später in UE5 nahtlos loopen.</p>
+      <p>Interpolations-Typ aller Intervalle prüfen: <strong>Bezier Clamp</strong> ist Default und richtig für diese Animation. Linear würde Roboter-Ruck geben, Step würde die Posen wie Karteikarten umschlagen. Falls einzelne Intervalle versehentlich auf Fixed (grün) gesprungen sind — selektieren und zurück auf Bezier.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Fix Interpolation on Change Interval</div>
+        <p>Diese Option ist per Default an. Sobald du Frames in einem Intervall veränderst, werden sie automatisch zu Fixed Interpolation gebaked. Timeline wird grün, deine Bezier-Interpolation ist weg. <strong>Lösung:</strong> in den Settings ausschalten — oder im Schadensfall die betroffenen Frames selektieren und Interpolation manuell auf Bezier zurücksetzen.</p>
+      </div>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase B</div>
+        <p>Play drücken (<kbd>Space</kbd>). Manny verlagert das Gewicht zweimal sanft. Die Bewegung ist noch flach und etwas hölzern — das ist normal. Atmung und Detail kommen in Phase D. <em>Kein Schritt, kein Drift, kein Wackel.</em> Fulcrum-Balken durchgehend dunkelgrün.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 4 — PHASE D: VERFEINERUNG -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§4</div>
+    <div>
+      <div class="section-tag">Phase D · Verfeinerung</div>
+      <h2 class="section-title">Atmung als <em>zweite Schicht</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">D</div>
+    <div>
+      <h4>Verfeinerung</h4>
+      <div class="phase-meta">Atmung · Kopf-Mikro · Tween Machine · Spacing</div>
+      <p>Über die Gewichts-Schicht legst du eine zweite, langsamere Schicht: Atmung im Brustkorb und mikrokleine Kopf-Bewegungen. Tween Machine justiert das Spacing zwischen Ankern. <em>Vier Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Two overlay bodies: inhale (lighter) and exhale (darker) -->
+        <!-- Exhale -->
+        <g opacity="0.45">
+          <circle cx="100" cy="44" r="14" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="58" x2="100" y2="132" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="78" y1="76" x2="122" y2="76" stroke="#1f1a14" stroke-width="2"/>
+        </g>
+        <!-- Inhale (chest lifted, slightly) -->
+        <g>
+          <circle cx="100" cy="40" r="14" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="54" x2="100" y2="132" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Shoulders raised -->
+          <line x1="76" y1="70" x2="124" y2="70" stroke="#b85528" stroke-width="2"/>
+          <line x1="83" y1="132" x2="117" y2="132" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="76" y1="70" x2="65" y2="128" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="65" y1="128" x2="62" y2="165" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="124" y1="70" x2="135" y2="128" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="135" y1="128" x2="138" y2="165" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="83" y1="132" x2="81" y2="178" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="81" y1="178" x2="82" y2="218" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="117" y1="132" x2="119" y2="178" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="119" y1="178" x2="118" y2="218" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="72" y1="220" x2="92" y2="220" stroke="#1f1a14" stroke-width="3"/>
+          <line x1="108" y1="220" x2="128" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        </g>
+        <!-- Breath arrow -->
+        <path d="M 155 110 Q 165 90, 155 70" fill="none" stroke="#b85528" stroke-width="1.4" marker-end="url(#arrow)"/>
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M 0 0 L 8 4 L 0 8 z" fill="#b85528"/>
+          </marker>
+        </defs>
+        <text x="168" y="92" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">Atmung</text>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#8a7d68">SPINE / CHEST · ±2 GRAD</text>
+      </svg>
+      <div class="caption">Brustkorb hebt sich subtil über zwei Atemzüge. Untere Body-Hälfte bleibt unberührt.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">08</span>
+        <span class="step-title">Atmungs-Layer auf Spine</span>
+      </div>
+      <p>Atmung als eigene Schicht über die Gewichtsverlagerung legen. Bei 30 fps und ruhiger Atmung: zwei volle Atemzüge in 150 Frames. Einatmen ~2 s (60 Frames), ausatmen ~3 s (90 Frames) — also ein Zyklus alle 75 Frames. Das ergibt zwei Atemzyklen perfekt synchronisiert zur Gewichts-Schwingung.</p>
+      <p>Spine-Controller selektieren (mittlerer Brustkorb-Bereich). Auf Frame 0 = Ausatmen-Tief. Frame 30 = Einatmen-Hoch (Brust 1-2 cm gehoben, leichte Schulter-Lift, ~2-3 Grad Spine-Extension). Frame 75 wieder tief, Frame 120 wieder hoch, Frame 149 zurück tief. Drei zusätzliche Keyframes nur auf dem Spine-Controller — der Rest des Körpers bleibt unverändert.</p>
+      <div class="box box-merk">
+        <div class="box-label">Subtilität ist die Regel</div>
+        <p>Sichtbare Atmung in Animation ist fast immer zu groß. Bei einem ruhig stehenden Manny reichen 2-3 Grad Spine-Rotation und ein paar Millimeter Brust-Lift. Wenn man die Atmung beim ersten Hinsehen <em>bemerkt</em>, ist sie zu stark.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 9 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Body neutral with head turn -->
+        <!-- Head turned slightly to side -->
+        <circle cx="100" cy="42" r="14" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Eye marker showing direction -->
+        <circle cx="107" cy="42" r="1.5" fill="#1f1a14"/>
+        <!-- Slight head tilt -->
+        <line x1="100" y1="56" x2="100" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="75" y1="74" x2="125" y2="74" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="83" y1="130" x2="117" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="75" y1="74" x2="67" y2="128" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="67" y1="128" x2="64" y2="165" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="125" y1="74" x2="133" y2="128" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="133" y1="128" x2="136" y2="165" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="83" y1="130" x2="81" y2="178" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="81" y1="178" x2="82" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="117" y1="130" x2="119" y2="178" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="119" y1="178" x2="118" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="72" y1="220" x2="92" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <line x1="108" y1="220" x2="128" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <!-- Head direction arrow -->
+        <path d="M 115 42 L 132 42" stroke="#b85528" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <defs>
+          <marker id="arrow2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M 0 0 L 8 4 L 0 8 z" fill="#b85528"/>
+          </marker>
+        </defs>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#8a7d68">KOPF · ±3 GRAD YAW</text>
+      </svg>
+      <div class="caption">Kopf macht eine winzige Mikrobewegung — wenige Grad, asynchron zur Gewichtsschwingung.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">09</span>
+        <span class="step-title">Kopf-Mikrobewegung als dritte Schicht</span>
+      </div>
+      <p>Kopf-Controller selektieren. Zwei oder drei Mikro-Keyframes über die ganze Animation: bei Frame 18, 65, 105, 140 (frei wählbar — der Punkt ist, dass sie <em>nicht</em> auf den Gewichts-Ankern liegen). Pro Keyframe maximal 2-4 Grad Yaw oder Pitch. Asynchron zur Hauptschwingung — das macht die Pose unvorhersehbar.</p>
+      <p>Wenn der Kopf zur gleichen Seite wie das Gewicht schaut, sieht es bewusst aus. Wenn er die andere Richtung blickt, sieht es zerstreut aus. Beides funktioniert, je nach gewünschtem Charakter — entscheide dich für eines.</p>
+      <div class="insight">
+        Im klassischen Animator-Slang heißt das <em>leading action</em>: ein Body-Part führt eine Bewegung, andere folgen mit Frame-Versatz. In unserem Idle gibt es zwar keine große Bewegung, aber das Prinzip wirkt trotzdem — der Kopf ist nicht starr aufs Brustkorb-Atmen geklemmt, sondern hat eine eigene kleine Story.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 10 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Timeline -->
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Existing anchors -->
+        <rect x="26" y="93" width="14" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="88" y="93" width="14" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="160" y="93" width="14" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="226" y="93" width="14" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="280" y="93" width="14" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <!-- Mid-frame "tween" pose between two anchors -->
+        <circle cx="124" cy="100" r="6" fill="#f3ecdc" stroke="#284858" stroke-width="2"/>
+        <text x="124" y="83" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#284858">G</text>
+        <text x="124" y="124" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">50</text>
+        <!-- Arrows from G to left anchor -->
+        <path d="M 120 100 L 105 100" stroke="#284858" stroke-width="1.2" marker-end="url(#arrow3)"/>
+        <defs>
+          <marker id="arrow3" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M 0 0 L 8 4 L 0 8 z" fill="#284858"/>
+          </marker>
+        </defs>
+        <text x="160" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#284858">G · ATTRACT TO PREVIOUS</text>
+        <text x="160" y="170" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="11" fill="#5a4d3a">Hold-Frame nach Anker 1 — Gewicht „sitzt" kurz</text>
+      </svg>
+      <div class="caption">Tween Machine zieht den Mid-Frame zum vorigen Anker. Das verlängert visuell den Hold.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">10</span>
+        <span class="step-title">Tween Machine für Hold-Effekt</span>
+      </div>
+      <p>Die Bezier-Interpolation verteilt das Spacing gleichmäßig — der Kontrapost wirkt dadurch wie ein gleichmäßiges Schwanken. Realistischer ist ein <em>Hold-and-Settle</em>: das Gewicht „sitzt" auf einer Seite, schwingt dann zur anderen, sitzt wieder.</p>
+      <p>Auf Frame 50 navigieren (zwischen Anker 1 bei 30 und Durchgang bei 75). Pose mit Pose-Vorgänger weiter angleichen, indem du <kbd>G</kbd> drückst (<em>attract to previous</em>). Cascadeur setzt einen neuen Keyframe, der die Pose vom Anker 1 stärker zieht. Wert per Slider zwischen 30 % und 60 %. Das selbe auf Frame 140 für Anker 3.</p>
+      <div class="shortcut-row">
+        <span>Tween Machine:</span><kbd>G</kbd>
+        <span>(attract previous)</span>
+        <kbd>L</kbd>
+        <span>(attract next)</span>
+      </div>
+      <div class="box box-merk">
+        <div class="box-label">G und L sind deine schnellsten Spacing-Werkzeuge</div>
+        <p>In jeder zukünftigen Brochüre kommen <kbd>G</kbd> und <kbd>L</kbd> wieder. Sie sind das schnellste Mittel, um Anticipation, Hold, Settle, Overshoot oder Leading Action zu basteln — ohne die Anker selbst anfassen zu müssen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 11 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Body — looking at hands -->
+        <circle cx="100" cy="42" r="14" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="100" y1="56" x2="100" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="75" y1="74" x2="125" y2="74" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="83" y1="130" x2="117" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="75" y1="74" x2="67" y2="128" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="67" y1="128" x2="64" y2="165" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="125" y1="74" x2="133" y2="128" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="133" y1="128" x2="136" y2="165" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="83" y1="130" x2="81" y2="178" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="81" y1="178" x2="82" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="117" y1="130" x2="119" y2="178" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="119" y1="178" x2="118" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="72" y1="220" x2="92" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <line x1="108" y1="220" x2="128" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <!-- Hand close-up callouts -->
+        <circle cx="64" cy="165" r="8" fill="none" stroke="#b85528" stroke-width="1.5"/>
+        <circle cx="136" cy="165" r="8" fill="none" stroke="#b85528" stroke-width="1.5"/>
+        <!-- Magnification lines -->
+        <line x1="56" y1="165" x2="40" y2="190" stroke="#b85528" stroke-width="1"/>
+        <line x1="144" y1="165" x2="160" y2="190" stroke="#b85528" stroke-width="1"/>
+        <!-- Detail: relaxed curled fingers -->
+        <path d="M 30 190 q 5 -4 10 0 q 5 4 10 0" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+        <path d="M 150 190 q 5 -4 10 0 q 5 4 10 0" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#8a7d68">FINGER · LEICHT GEKRÜMMT</text>
+      </svg>
+      <div class="caption">Finger leicht gekrümmt statt starr gestreckt. Das ist eine statische Korrektur, kein Frame-by-Frame-Animation.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">11</span>
+        <span class="step-title">Finger entspannen</span>
+      </div>
+      <p>Default-AutoPosing stellt Finger meist gerade — sieht steril aus. In den AutoPosing-Submode für Finger wechseln, dann beide Hand-Controller selektieren und mit <kbd>Shift</kbd>+<kbd>Z</kbd> die KI-gestützte Default-Pose anwenden. Cascadeur baut eine natürliche, leicht gekrümmte Handposition.</p>
+      <p>Wenn das Ergebnis zu cartoonish wirkt: einmal mehr <kbd>Shift</kbd>+<kbd>Z</kbd> — der Generator probiert eine andere Variante. Diese Korrektur wird nur auf Frame 0 gesetzt und propagiert per Bezier durch die ganze Animation, weil sich die Finger im Idle nicht bewegen.</p>
+      <div class="shortcut-row">
+        <span>KI-Default-Pose:</span><kbd>Shift</kbd>+<kbd>Z</kbd>
+      </div>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase D</div>
+        <p>Play. Manny hat jetzt drei sichtbare Schichten: er verlagert sein Gewicht, er atmet leise im Brustkorb, sein Kopf macht winzige eigene Bewegungen. Die Finger sind nicht mehr Schaufenster-Puppe. Wenn du eine der Schichten abdeckst (Kopf zudecken, Brust zudecken), sollte der Rest immer noch funktionieren.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 5 — PHASE E: PHYSICS -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§5</div>
+    <div>
+      <div class="section-tag">Phase E · Physics</div>
+      <h2 class="section-title">AutoPhysics, <em>drei Durchläufe</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">E</div>
+    <div>
+      <h4>Physics</h4>
+      <div class="phase-meta">Physics Corrector · Filter · Secondary Motion · Snap</div>
+      <p>Drei Durchläufe nach festem Pattern: zwei reine Physics-Corrector-Pässe, ein finaler Pass mit Filtern, optional Secondary Motion. Erst dann Snap to Physics. <em>Vier Schritte.</em></p>
+    </div>
+  </div>
+
+  <div class="box box-merk">
+    <div class="box-label">Das 3-Pass-Pattern — gültig für alle Folgeprojekte</div>
+    <p>Dies ist der wichtigste Workflow-Standard der ganzen Reihe. Er wiederholt sich identisch in jedem späteren Projekt — von der Arm-Geste bis zur Kampfsequenz. Nicht überspringen, nicht abkürzen.</p>
+    <p style="margin-top: 0.5rem;"><strong>Pass 1 + 2:</strong> nur Physics Corrector aktiv, sonst alle Filter auf 0. Cascadeur findet die Fulcrum-Punkte und balanciert den CoM.<br>
+    <strong>Pass 3:</strong> zusätzlich Smooth Trajectory, Smooth Rotation, Compensation Motion, Separation of Motion. Das gibt den Mitschwung und die Dämpfung.<br>
+    <strong>Secondary Motion:</strong> separat ganz am Ende, oder gar nicht. Kontext-abhängig — kann lebendig oder cartoonish kippen.</p>
+  </div>
+
+  <!-- STEP 12 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Original body -->
+        <g opacity="1">
+          <circle cx="100" cy="60" r="12" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="72" x2="100" y2="135" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="80" y1="88" x2="120" y2="88" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="85" y1="135" x2="115" y2="135" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="80" y1="88" x2="73" y2="130" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="120" y1="88" x2="127" y2="130" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="85" y1="135" x2="83" y2="175" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="115" y1="135" x2="117" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        </g>
+        <!-- Physics ghost -->
+        <g opacity="0.5">
+          <circle cx="230" cy="62" r="12" fill="none" stroke="#284858" stroke-width="2" stroke-dasharray="2,2"/>
+          <line x1="230" y1="74" x2="230" y2="137" stroke="#284858" stroke-width="2" stroke-dasharray="2,2"/>
+          <line x1="210" y1="90" x2="250" y2="90" stroke="#284858" stroke-width="2" stroke-dasharray="2,2"/>
+          <line x1="215" y1="137" x2="245" y2="137" stroke="#284858" stroke-width="2" stroke-dasharray="2,2"/>
+          <line x1="210" y1="90" x2="203" y2="132" stroke="#284858" stroke-width="2" stroke-dasharray="2,2"/>
+          <line x1="250" y1="90" x2="257" y2="132" stroke="#284858" stroke-width="2" stroke-dasharray="2,2"/>
+          <line x1="215" y1="137" x2="213" y2="177" stroke="#284858" stroke-width="2" stroke-dasharray="2,2"/>
+          <line x1="245" y1="137" x2="247" y2="177" stroke="#284858" stroke-width="2" stroke-dasharray="2,2"/>
+        </g>
+        <text x="100" y="195" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#1f1a14">ORIGINAL</text>
+        <text x="230" y="195" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#284858">PHYSICS-GHOST</text>
+        <!-- Arrow between -->
+        <path d="M 145 110 L 195 110" stroke="#b85528" stroke-width="1.5" marker-end="url(#arrow4)"/>
+        <defs>
+          <marker id="arrow4" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M 0 0 L 8 4 L 0 8 z" fill="#b85528"/>
+          </marker>
+        </defs>
+        <text x="170" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">AP ON</text>
+      </svg>
+      <div class="caption">Physics Assistance an. Geister-Manny daneben zeigt das berechnete Physics-Ergebnis.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">12</span>
+        <span class="step-title">AutoPhysics — Pass 1 (nur Physics Corrector)</span>
+      </div>
+      <p>In den Physics-Tab wechseln. Physics Assistance einschalten — neben dem Original-Manny erscheint ein halbtransparenter Geist, der den berechneten Physics-Zustand zeigt. Vor dem Snap kann man den Geister direkt über das Original legen, um die Abweichung zu sehen.</p>
+      <p>Sicherstellen: <strong>Physics Corrector aktiv</strong>, alle anderen Filter auf 0 (Smooth Trajectory, Smooth Rotation, Compensation Motion, Separation of Motion, Secondary Motion). Ganze Sequenz selektieren. Solve laufen lassen.</p>
+      <p>Timeline-Farbe prüfen: sollte <strong>dunkelgrün</strong> sein (beide Füße Bodenkontakt). Wenn orange — Stolperfalle, siehe unten.</p>
+      <div class="box box-stolper">
+        <div class="box-label">AutoPhysics orange Timeline bei Idle</div>
+        <p>Bei Stand-Posen mit minimal driftenden Füßen erkennt AutoPhysics keine Fulcrum-Punkte und denkt, die Sequenz sei ballistisch — der CoM fällt frei, Manny kippt. <strong>Lösungs-Kaskade:</strong><br>
+        <strong>1.</strong> Sicherstellen, dass die Füße via <kbd>R</kbd> auf jedem Anker fixiert sind.<br>
+        <strong>2.</strong> Fulcrum-Punkte selektieren, im Fulcrum-Panel auf <em>Enforce</em> — Timeline wird gelb.<br>
+        <strong>3.</strong> Falls einzelne Frames sich weigern: <em>Set Priority Frame</em> auf den betroffenen Frames — Cascadeur muss diese Pose erhalten.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 13 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Three pass blocks -->
+        <rect x="20" y="60" width="80" height="80" fill="#f3ecdc" stroke="#1f1a14" stroke-width="2"/>
+        <text x="60" y="85" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#b85528">PASS 1</text>
+        <text x="60" y="105" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#1f1a14">Phys. Corr.</text>
+        <text x="60" y="125" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">nur Basis</text>
+
+        <rect x="120" y="60" width="80" height="80" fill="#f3ecdc" stroke="#1f1a14" stroke-width="2"/>
+        <text x="160" y="85" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#b85528">PASS 2</text>
+        <text x="160" y="105" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#1f1a14">Phys. Corr.</text>
+        <text x="160" y="125" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">verfeinert</text>
+
+        <rect x="220" y="60" width="80" height="80" fill="#b85528" stroke="#1f1a14" stroke-width="2"/>
+        <text x="260" y="85" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#f3ecdc">PASS 3</text>
+        <text x="260" y="103" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#f3ecdc">+ Smooth Traj.</text>
+        <text x="260" y="115" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#f3ecdc">+ Smooth Rot.</text>
+        <text x="260" y="127" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#f3ecdc">+ Comp. Mot.</text>
+
+        <path d="M 100 100 L 120 100" stroke="#1f1a14" stroke-width="1.5" marker-end="url(#arrow5)"/>
+        <path d="M 200 100 L 220 100" stroke="#1f1a14" stroke-width="1.5" marker-end="url(#arrow5)"/>
+        <defs>
+          <marker id="arrow5" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M 0 0 L 8 4 L 0 8 z" fill="#1f1a14"/>
+          </marker>
+        </defs>
+
+        <text x="160" y="175" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="11" fill="#5a4d3a">Pass 1+2 sind kein Tippfehler — die zweite Iteration baut auf der ersten auf.</text>
+      </svg>
+      <div class="caption">Drei-Pass-Pattern. Erst Basis, dann Verfeinerung, dann Filter.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">13</span>
+        <span class="step-title">AutoPhysics — Pass 2 (erneut nur Physics Corrector)</span>
+      </div>
+      <p>Bevor du Pass 3 startest, einmal Snap to Physics drücken — das übernimmt das Pass-1-Ergebnis als neue Basis-Animation. Physics Assistance kurz ausschalten, dann wieder an. Du arbeitest jetzt auf dem von Pass 1 leicht korrigierten Stand.</p>
+      <p>Erneut nur Physics Corrector. Ganze Sequenz selektieren, Solve laufen lassen. Die Veränderung ist kleiner als bei Pass 1 — das ist gut. Cascadeur konvergiert auf eine stabile Physik-Lösung.</p>
+      <p>Wieder Snap to Physics. Jetzt ist die Animation in einem physikalisch sauberen Grundzustand, ohne dass irgendein Filter den Look verändert hätte.</p>
+      <div class="box box-why">
+        <div class="box-label">Warum nicht einfach alle Filter auf einmal</div>
+        <p>Die Filter (Smooth Trajectory etc.) bauen <em>auf</em> der Physics-Basis auf. Wenn die Basis schief ist, korrigieren die Filter Murks. Erst die Basis sauber, dann die Polish-Schicht — das ist die Logik der Drei-Pass-Reihenfolge.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 14 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Slider visualization -->
+        <text x="20" y="35" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">PASS 3 · FILTER-WERTE</text>
+
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <text x="20" y="60">Smooth Trajectory</text>
+          <line x1="170" y1="56" x2="290" y2="56" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="56" x2="210" y2="56" stroke="#b85528" stroke-width="3"/>
+          <circle cx="210" cy="56" r="4" fill="#b85528"/>
+          <text x="295" y="60" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~30</text>
+
+          <text x="20" y="85">Smooth Rotation</text>
+          <line x1="170" y1="81" x2="290" y2="81" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="81" x2="195" y2="81" stroke="#b85528" stroke-width="3"/>
+          <circle cx="195" cy="81" r="4" fill="#b85528"/>
+          <text x="295" y="85" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~15</text>
+
+          <text x="20" y="110">Compensation Motion</text>
+          <line x1="170" y1="106" x2="290" y2="106" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="106" x2="200" y2="106" stroke="#b85528" stroke-width="3"/>
+          <circle cx="200" cy="106" r="4" fill="#b85528"/>
+          <text x="295" y="110" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~20</text>
+
+          <text x="20" y="135">Separation of Motion</text>
+          <line x1="170" y1="131" x2="290" y2="131" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="131" x2="185" y2="131" stroke="#b85528" stroke-width="3"/>
+          <circle cx="185" cy="131" r="4" fill="#b85528"/>
+          <text x="295" y="135" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~5</text>
+
+          <text x="20" y="160">Secondary Motion</text>
+          <line x1="170" y1="156" x2="290" y2="156" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="156" x2="170" y2="156" stroke="#8a7d68" stroke-width="3"/>
+          <circle cx="170" cy="156" r="4" fill="#8a7d68"/>
+          <text x="295" y="160" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">0</text>
+        </g>
+
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Niedrige Werte für Idle. Sek.-Motion separat, später.</text>
+      </svg>
+      <div class="caption">Filter-Werte für Idle bewusst moderat. Hohe Werte machen aus dem Stand eine Tanz-Performance.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">14</span>
+        <span class="step-title">AutoPhysics — Pass 3 (mit Filtern)</span>
+      </div>
+      <p>Jetzt die Filter dazuschalten — aber moderat. Für eine Idle-Pose sind hohe Filter-Werte schädlich (sie würden den Stand in eine animierte Tanz-Performance verwandeln). Richtwerte:</p>
+      <ul style="margin: 0.5rem 0 0.8rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Smooth Trajectory</strong> ~30 — bügelt den Bewegungspfad des CoM</li>
+        <li><strong>Smooth Rotation</strong> ~15 — glättet Rotation der Limbs</li>
+        <li><strong>Compensation Motion</strong> ~20 — gibt Mitschwung in Body-Parts, die nicht direkt animiert sind (Arme, Kopf)</li>
+        <li><strong>Separation of Motion</strong> ~5 — leichte Asynchronie zwischen Body-Parts</li>
+        <li><strong>Secondary Motion</strong> 0 — kommt erst im nächsten Schritt</li>
+      </ul>
+      <p>Ganze Sequenz selektieren, Solve laufen lassen, Physics-Ghost vergleichen. Wenn die Bewegung jetzt seltsam wippt oder zappelt: Filter-Werte runter. Wenn sie hölzern bleibt: leicht hoch.</p>
+      <p>Snap to Physics.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Compensation Motion zu hoch</div>
+        <p>Bei Werten über 50 kompensiert AutoPhysics jede kleine Bewegung mit Gegenbewegung in den nicht-animierten Parts — Arme fangen an zu zappeln, Kopf schwingt mit. Für Idle ist das fast immer zu viel. Bei 100 wird es cartoonish.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 15 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Body with secondary motion arrows on arms -->
+        <circle cx="100" cy="42" r="14" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="100" y1="56" x2="100" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="75" y1="74" x2="125" y2="74" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="83" y1="130" x2="117" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="75" y1="74" x2="67" y2="128" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="67" y1="128" x2="64" y2="165" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="125" y1="74" x2="133" y2="128" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="133" y1="128" x2="136" y2="165" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="83" y1="130" x2="81" y2="178" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="81" y1="178" x2="82" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="117" y1="130" x2="119" y2="178" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="119" y1="178" x2="118" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="72" y1="220" x2="92" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <line x1="108" y1="220" x2="128" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <!-- Secondary motion swing arcs on hands -->
+        <path d="M 56 165 Q 60 170, 64 165" fill="none" stroke="#b85528" stroke-width="1.4"/>
+        <path d="M 64 165 Q 68 170, 72 165" fill="none" stroke="#b85528" stroke-width="1.4"/>
+        <path d="M 128 165 Q 132 170, 136 165" fill="none" stroke="#b85528" stroke-width="1.4"/>
+        <path d="M 136 165 Q 140 170, 144 165" fill="none" stroke="#b85528" stroke-width="1.4"/>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">SECONDARY MOTION · 25–35</text>
+      </svg>
+      <div class="caption">Sehr dezent. Hände und Finger haben minimalen Mitschwung — keine sichtbare Schaukelbewegung.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">15</span>
+        <span class="step-title">Secondary Motion — sehr sparsam</span>
+      </div>
+      <p>Letzter Pass, optional. Secondary Motion gibt freistehenden Body-Parts (Finger, Haare, lockere Kleidung) Mitschwung-Inertia. Für eine ruhige Idle nur 25–35 % — sonst sieht es so aus, als hätte Manny seine Hände in zähem Sirup.</p>
+      <p>Nochmal Solve, vergleichen, Snap to Physics. Falls das Ergebnis zu cartoonish wirkt — Filter wieder auf 0 und ohne Secondary Motion ausliefern. Bei Idle ist <em>weniger</em> die Regel.</p>
+      <p>Physics Assistance ausschalten. Die Animation ist jetzt gebaked (grüne Timeline = Fixed Interpolation).</p>
+      <div class="box box-merk">
+        <div class="box-label">Unbaking — falls du danach noch ändern willst</div>
+        <p>Nach Snap ist die Animation Frame-für-Frame gebaked. Wenn du danach nochmal an einer Pose schrauben willst: manuelles Unbaking auf den betroffenen Keyframes, Interpolation zurück auf Bezier Clamp. <em>Aus Erinnerung, nicht final verifiziert:</em> Unbake-Funktion sitzt im Edit-Menü oder über Right-Click auf Keyframe → Unbake. Vor großen Änderungen lieber Szene als <code>projekt-01-pre-physics.casc</code> sichern.</p>
+      </div>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase E</div>
+        <p>Manny steht physikalisch glaubwürdig. Die Gewichtsverlagerung wird leicht von Mitschwung in Armen und Kopf begleitet. Atmung ist noch zu sehen, aber nicht mehr starr isoliert von der Gewichts-Schicht. Fulcrum-Balken durchgehend dunkelgrün. CoM-Lotlinie nie außerhalb des Fußkontakts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 6 — PHASE F: EXPORT -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§6</div>
+    <div>
+      <div class="section-tag">Phase F · Export</div>
+      <h2 class="section-title">FBX nach <em>UE5 Sequencer</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">F</div>
+    <div>
+      <h4>Export</h4>
+      <div class="phase-meta">FBX · Manny-Skelett · UE5-Sequencer</div>
+      <p>Weil Manny das UE5-Standard-Skelett nutzt, ist das Retargeting in UE5 trivial — kein Cascadeur-Retargeting nötig. FBX exportieren, in UE5 importieren, als Animation Sequence im Sequencer verwenden. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 16 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- File icon -->
+        <rect x="80" y="50" width="80" height="100" rx="4" fill="#f3ecdc" stroke="#1f1a14" stroke-width="2"/>
+        <text x="120" y="80" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" font-weight="600" fill="#b85528">FBX</text>
+        <text x="120" y="100" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">idle.fbx</text>
+        <line x1="90" y1="110" x2="150" y2="110" stroke="#c8b89a" stroke-width="1"/>
+        <text x="120" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">30 fps</text>
+        <text x="120" y="138" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">0–149</text>
+        <!-- Arrow to UE5 -->
+        <path d="M 175 100 L 215 100" stroke="#1f1a14" stroke-width="1.8" marker-end="url(#arrow6)"/>
+        <defs>
+          <marker id="arrow6" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M 0 0 L 8 4 L 0 8 z" fill="#1f1a14"/>
+          </marker>
+        </defs>
+        <!-- UE5 box -->
+        <rect x="220" y="50" width="80" height="100" rx="4" fill="#284858" stroke="#1f1a14" stroke-width="2"/>
+        <text x="260" y="92" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" font-weight="600" fill="#f3ecdc">UE5</text>
+        <text x="260" y="112" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#ede4d0">Sequencer</text>
+        <text x="160" y="175" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="11" fill="#5a4d3a">Selber Skelett, kein Retargeting nötig</text>
+      </svg>
+      <div class="caption">UE5-Manny in Cascadeur → FBX → UE5. Skelett ist identisch, Import trivial.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">16</span>
+        <span class="step-title">FBX exportieren</span>
+      </div>
+      <p>File → Export → FBX. Settings:</p>
+      <ul style="margin: 0.4rem 0 0.6rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Bake animation:</strong> an (sonst gehen Bezier-Tangenten unter Umständen verloren)</li>
+        <li><strong>Frame range:</strong> 0 bis 149</li>
+        <li><strong>Frame rate:</strong> 30 fps</li>
+        <li><strong>Up-Axis:</strong> Z-up (Default — UE5 importiert dann sauber)</li>
+        <li><strong>Skeleton only / with mesh:</strong> ohne Mesh exportieren reicht, da das Mesh in UE5 schon vorhanden ist</li>
+      </ul>
+      <p>Dateiname <code>manny-idle-v01.fbx</code>. <em>Aus Erinnerung, nicht final verifiziert:</em> die exakten Bezeichnungen der FBX-Dialog-Optionen können je nach Cascadeur-Build geringfügig variieren. Wenn ein UE5-Import-Warning bezüglich Bone-Naming kommt — meist ein harmloser Hinweis, dass Cascadeur die Bone-Namen nicht 1:1 spiegelt; mit „Use T0AsRefPose" beim Import lösen.</p>
+    </div>
+  </div>
+
+  <!-- STEP 17 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Sequencer timeline -->
+        <rect x="30" y="60" width="260" height="80" fill="#f3ecdc" stroke="#1f1a14" stroke-width="2"/>
+        <text x="40" y="80" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">SEQUENCER · MANNY</text>
+        <!-- Animation strip -->
+        <rect x="50" y="95" width="220" height="20" fill="#b85528" opacity="0.7" stroke="#b85528" stroke-width="1.5"/>
+        <text x="160" y="109" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="10" fill="#f3ecdc">manny-idle-v01 · 5s · Loop ✓</text>
+        <!-- Frame markers -->
+        <text x="50" y="135" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">0:00</text>
+        <text x="160" y="135" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">2:30</text>
+        <text x="270" y="135" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">5:00</text>
+        <text x="160" y="175" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="11" fill="#5a4d3a">Looped & ready für MetaHuman-Face-Layer</text>
+      </svg>
+      <div class="caption">In UE5: Animation als Sequence in den Sequencer, looped, MetaHuman-Face kann darüber.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">17</span>
+        <span class="step-title">UE5-Import und Validierung</span>
+      </div>
+      <p>In UE5 (5.5+): FBX in den Content-Browser droppen. Im Import-Dialog das <em>UE5-Manny-Skelett</em> als Target wählen — nicht „Create new skeleton". Animation wird als Animation Sequence importiert.</p>
+      <p>Validierung im Persona-Editor: Animation abspielen, prüfen ob die fünf Sekunden laufen, ob der Loop sauber ist (kein Sprung von Frame 149 zurück zu Frame 0), ob die Füße nicht durch den Boden gehen. Falls Foot-Sliding sichtbar: zurück in Cascadeur, AutoPhysics Pass 3 mit höherer Compensation Motion wiederholen — oder direkt in UE5 mit IK Retargeter nachjustieren.</p>
+      <p>Im Sequencer als Loop-Sequence anlegen. Ab jetzt kann MetaHuman-Face-Performance darüber gelegt werden — die Body-Animation aus Projekt 01 wird zur Basis-Schicht für alles Narrative, was später kommt.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase F</div>
+        <p>In UE5 läuft Manny still und atmet. Loop ist nahtlos. Im Sequencer kann eine MetaHuman-Face-Performance über die Body-Animation gelegt werden, ohne dass eine der beiden Schichten die andere stört.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 7 — OUTRO -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§7</div>
+    <div>
+      <div class="section-tag">Ausblick</div>
+      <h2 class="section-title">Was du <em>jetzt kannst</em>.</h2>
+    </div>
+  </div>
+
+  <p>Nach Projekt 01 sitzt das Fundament: <strong>AutoPosing</strong> baut Posen schnell, <strong>Fixation mit R</strong> hält Kontaktpunkte am Boden, <strong>CoM und Fulcrum-Balken</strong> sind die zwei Diagnose-Anzeigen, denen du vertraust, <strong>Bezier-Interpolation</strong> ist das Default-Mittel zwischen Ankern, <strong>AutoPhysics in drei Durchläufen</strong> ist die feste Polish-Reihenfolge.</p>
+
+  <p>Ab Projekt 02 (Arm-Geste) verschiebt sich das Workflow-Rückgrat: <strong>Inbetweening</strong> ersetzt Bezier als Standard-Interpolations-Modus. Die Iterations-Logik wird zentral — drei bis vier Anker, Inbetweening rechnet eine erste Bewegung, dann Charakter-Anker für Anticipation/Hold/Settle, dann Detail-Anker, dann Polish mit Tween Machine, Trajectory Tangents, AutoPhysics. Alle Werkzeuge aus Projekt 01 bleiben gültig, kommen aber in eine andere Reihenfolge.</p>
+
+  <p>Die <strong>FK-Keyframe-Stolperfalle</strong> wird ab Projekt 02 zum Standard-Thema — beim ersten Wechsel auf Inbetweening sieht die Animation oft kaputt aus, weil die Default-IK-Keyframes nicht passen. Lösung steht im Keyframe-Panel links: betroffene Frames selektieren, auf FK setzen.</p>
+
+  <div class="box box-merk">
+    <div class="box-label">Was Projekt 01 nicht macht</div>
+    <p>Keine Lokomotion. Kein Reference-Workflow. Keine Custom Track Hierarchy. Kein Mocap. Keine Constraints. Kein UE5-Retargeting-Trick (weil bei identischem Skelett unnötig). All das kommt in späteren Projekten. Projekt 01 reduziert das Werkzeug-Vokabular auf das, was für eine glaubwürdige Stand-Pose nötig ist.</p>
+  </div>
+
+  <div class="insight">
+    Das Wartezimmer-Schwanken hat in der Forschung einen Namen: <em>postural sway</em>. Gemessen liegt es bei einem entspannt stehenden Erwachsenen bei einer Amplitude von etwa 5–15 mm und einer Frequenz um 0.3–0.5 Hz — der Körper balanciert kontinuierlich um den Schwerpunkt-Lot. In unserem Idle-Cycle haben wir genau das nachgebaut, nur ein wenig vergrößert, damit die Kamera die Bewegung sieht.
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="doc-footer">
+  <div><span class="terracotta">Projekt 01 · v 2.0</span></div>
+  <div>17 Schritte · 6 Phasen</div>
+  <div>Cascadeur · Lernreihe</div>
+</footer>
+
+</article>
+
+</body>
+</html>
