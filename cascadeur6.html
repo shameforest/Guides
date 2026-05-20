@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projekt 06 · Rennen · Cascadeur-Lernreihe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3ecdc;
+    --paper-warm: #ede4d0;
+    --paper-dark: #e2d6b8;
+    --ink: #1f1a14;
+    --ink-soft: #5a4d3a;
+    --ink-faint: #8a7d68;
+    --terracotta: #b85528;
+    --terracotta-deep: #7a3414;
+    --cobalt: #284858;
+    --sage: #8a9878;
+    --warning: #c46b3a;
+    --rule: #c8b89a;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'DM Sans', -apple-system, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--paper);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    -webkit-font-smoothing: antialiased;
+  }
+  .doc { max-width: 1100px; margin: 0 auto; }
+
+  .cover { padding: 3.5rem 5rem 2.5rem; border-bottom: 1px solid var(--rule); position: relative; overflow: hidden; }
+  .cover::before { content: ''; position: absolute; top: -10%; right: -8%; width: 50%; aspect-ratio: 1; background: radial-gradient(circle, rgba(184, 85, 40, 0.08) 0%, transparent 65%); border-radius: 50%; pointer-events: none; }
+  .cover-marker { display: flex; align-items: center; gap: 1.5rem; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 1.5rem; }
+  .cover-marker .ml { width: 60px; height: 1px; background: var(--terracotta); }
+  .cover h1 { font-family: var(--font-display); font-size: clamp(2.6rem, 5vw, 4.2rem); font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 50; line-height: 1.05; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 1.5rem; max-width: 18ch; }
+  .cover h1 em { font-style: italic; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); }
+  .cover .subtitle { font-family: var(--font-display); font-style: italic; font-size: 1.2rem; color: var(--ink-soft); max-width: 58ch; margin-bottom: 2rem; }
+  .cover-meta { display: flex; gap: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); flex-wrap: wrap; }
+  .mb { display: flex; flex-direction: column; gap: 0.2rem; }
+  .mb-label { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); }
+  .mb span:last-child { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: var(--ink); }
+
+  .section { padding: 3rem 5rem; border-bottom: 1px solid var(--rule); }
+  .section-head { display: grid; grid-template-columns: 80px 1fr; gap: 1.5rem; margin-bottom: 1.8rem; align-items: start; }
+  .section-num { font-family: var(--font-display); font-size: 2.8rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 1; }
+  .section-tag { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+  .section-title { font-family: var(--font-display); font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 400; line-height: 1.15; color: var(--ink); letter-spacing: -0.01em; max-width: 26ch; }
+  .section-title em { font-style: italic; font-weight: 300; color: var(--terracotta); font-variation-settings: 'opsz' 144, 'SOFT' 100; }
+
+  .section p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .section p.lead { font-family: var(--font-display); font-style: italic; font-size: 1.18rem; color: var(--ink-soft); margin-bottom: 1.5rem; max-width: 60ch; }
+  .section h3 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 500; margin: 1.6rem 0 0.6rem; color: var(--ink); }
+
+  .phase-banner { display: grid; grid-template-columns: 110px 1fr; gap: 2rem; margin: 2rem 0 2.5rem; padding: 1.4rem 1.8rem; background: linear-gradient(90deg, rgba(184, 85, 40, 0.10), transparent); border-left: 4px solid var(--terracotta); align-items: center; }
+  .phase-letter { font-family: var(--font-display); font-size: 5rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 0.85; text-align: center; }
+  .phase-banner h4 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; color: var(--ink); margin-bottom: 0.3rem; }
+  .phase-banner .phase-meta { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.5rem; }
+  .phase-banner p { font-size: 0.97rem; color: var(--ink); margin-bottom: 0; max-width: 65ch; }
+  .phase-banner em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .phase-banner.ref { background: linear-gradient(90deg, rgba(40, 72, 88, 0.10), transparent); border-left-color: var(--cobalt); }
+  .phase-banner.ref .phase-letter { color: var(--cobalt); }
+
+  .step { display: grid; grid-template-columns: 320px 1fr; gap: 1.8rem; margin: 1.6rem 0; padding: 1.6rem 1.8rem; background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; }
+  .step-diagram { background: #f3ecdc; border: 1px solid #c8b89a; border-radius: 6px; padding: 1rem 0.6rem 0.6rem; align-self: start; }
+  .step-diagram svg { width: 100%; height: auto; display: block; }
+  .step-diagram .caption { margin-top: 0.5rem; text-align: center; font-family: var(--font-display); font-style: italic; font-size: 0.82rem; color: var(--ink-soft); line-height: 1.4; }
+  .step-num-row { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 0.6rem; }
+  .step-num { font-family: var(--font-display); font-size: 1.8rem; font-weight: 300; font-style: italic; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); line-height: 1; }
+  .step-title { font-family: var(--font-display); font-size: 1.18rem; font-weight: 500; color: var(--ink); line-height: 1.25; }
+  .step p { font-size: 0.96rem; margin-bottom: 0.6rem; max-width: none; }
+  .step p:last-child { margin-bottom: 0; }
+  .step em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .shortcut-row { display: flex; flex-wrap: wrap; gap: 0.4rem 0.7rem; align-items: center; margin: 0.5rem 0 0.4rem; font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; color: var(--ink-soft); }
+  kbd { font-family: var(--font-mono); font-size: 0.78rem; background: var(--paper-warm); border: 1px solid var(--rule); border-radius: 3px; padding: 0.05rem 0.4rem; color: var(--ink); box-shadow: 0 1px 0 var(--rule); }
+
+  .box { margin: 1.4rem 0; padding: 1.1rem 1.3rem; border-radius: 0 4px 4px 0; max-width: none; }
+  .step .box { margin: 0.9rem 0 0.4rem; }
+  .box-label { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; margin-bottom: 0.4rem; }
+  .box-label::before { content: ''; width: 14px; height: 1.5px; background: currentColor; }
+  .box p { font-size: 0.93rem; margin-bottom: 0.4rem; }
+  .box p:last-child { margin-bottom: 0; }
+  .box-why { background: rgba(40, 72, 88, 0.10); border-left: 3px solid var(--cobalt); }
+  .box-why .box-label { color: var(--cobalt); }
+  .box-stolper { background: rgba(196, 107, 58, 0.13); border-left: 3px solid var(--warning); }
+  .box-stolper .box-label { color: var(--warning); }
+  .box-merk { background: rgba(184, 85, 40, 0.10); border-left: 3px solid var(--terracotta); }
+  .box-merk .box-label { color: var(--terracotta); }
+  .box-check { background: rgba(138, 152, 120, 0.18); border-left: 3px solid var(--sage); }
+  .box-check .box-label { color: var(--sage); }
+
+  .pose-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7rem; margin: 1.2rem 0; }
+  .pose-grid .step-diagram { padding: 0.7rem 0.4rem 0.5rem; }
+  .pose-grid .caption { font-size: 0.74rem; margin-top: 0.4rem; }
+
+  .insight { margin: 1.4rem 0; padding: 1.1rem 1.3rem; background: var(--paper-warm); border: 1px dashed var(--rule); border-radius: 6px; font-family: var(--font-display); font-style: italic; font-size: 0.96rem; color: var(--ink-soft); max-width: 65ch; }
+  .insight::before { content: 'Randnotiz'; display: block; font-family: var(--font-mono); font-style: normal; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+
+  .doc-footer { padding: 2.5rem 5rem; border-top: 2px solid var(--ink); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); display: flex; justify-content: space-between; }
+  .doc-footer .terracotta { color: var(--terracotta); }
+
+  @media (max-width: 900px) {
+    .cover, .section, .doc-footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .section-head { grid-template-columns: 1fr; gap: 0.5rem; }
+    .step { grid-template-columns: 1fr; gap: 1rem; }
+    .step-diagram { max-width: 280px; margin: 0 auto; }
+    .phase-banner { grid-template-columns: 1fr; gap: 0.5rem; }
+    .phase-letter { text-align: left; font-size: 3.5rem; }
+    .pose-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #1a1612; --paper-warm: #221d17; --paper-dark: #2a241c;
+      --ink: #ebe3d0; --ink-soft: #b8a98a; --ink-faint: #7a6e58;
+      --terracotta: #e8814a; --terracotta-deep: #c25a2a;
+      --cobalt: #6a9aab; --sage: #a8b898; --warning: #e2884d; --rule: #3a3026;
+    }
+    body { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"); }
+    .step-diagram { background: #f3ecdc !important; border-color: #c8b89a !important; }
+    .step-diagram .caption { color: #5a4d3a !important; }
+  }
+</style>
+</head>
+<body>
+
+<article class="doc">
+
+<!-- COVER -->
+<header class="cover">
+  <div class="cover-marker">
+    <span>Cascadeur · Lernreihe</span>
+    <div class="ml"></div>
+    <span>Projekt 06 · v 1.0</span>
+  </div>
+  <h1>Rennen: <em>Flight</em><br>als kurzer<br>Sprung.</h1>
+  <p class="subtitle">Ein Sekunde Run-Cycle, loopfähig. Erstmals ein Flight Frame — beide Füße in der Luft. GR statt FK für die Beine in der Luft. Ballistische AutoPhysics für die Flight-Phase. Trajectory Tangents als zentrales Polish-Werkzeug für Hand- und Fußbögen.</p>
+  <div class="cover-meta">
+    <div class="mb"><span class="mb-label">Charakter</span><span>UE5-Manny</span></div>
+    <div class="mb"><span class="mb-label">Dauer</span><span>1 s · 30 Frames · Cycle</span></div>
+    <div class="mb"><span class="mb-label">Neu</span><span>Flight Frame · GR · Trajectory Tangents</span></div>
+    <div class="mb"><span class="mb-label">Pipeline-Ziel</span><span>UE5 Loop</span></div>
+    <div class="mb"><span class="mb-label">Schritte</span><span>17</span></div>
+  </div>
+</header>
+
+
+<!-- § 1 — WAS DU BAUST -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§1</div>
+    <div>
+      <div class="section-tag">Run-Konzept und Flight-Frame</div>
+      <h2 class="section-title">Vier Posen, <em>ein Flight</em>.</h2>
+    </div>
+  </div>
+
+  <p class="lead">Was Walk fundamental von Run unterscheidet: beim Walk gibt es immer mindestens einen Bodenkontakt, beim Run einen Moment mit beiden Füßen in der Luft. Dieser Flight Frame verändert alles — Pose-Logik, IK-Modus, AutoPhysics-Verhalten.</p>
+
+  <p>Manny rennt auf der Stelle. Ein vollständiger Cycle dauert eine Sekunde (30 Frames bei 30 fps) und enthält zwei Schritte — rechts, dann links. Pro Schritt gibt es vier Pose-Stufen, identisch zu Walk in der Benennung, aber mit verändertem Charakter: <strong>Contact</strong> (Fuß landet auf Ballen, nicht Ferse), <strong>Down</strong> (tiefster Punkt, ein Bein abgesenkt), <strong>Passing</strong> (Standbein gestreckt, anderes Bein durchgezogen), <strong>Up + Flight</strong> (höchster Punkt — beide Füße verlassen den Boden).</p>
+
+  <p>Drei neue Werkzeuge kommen dazu, die für alle ballistischen Bewegungen wiederkehren: <strong>GR (Global Rotation)</strong> als Keyframe-Modus für Glieder in der Luft, <strong>Trajectory Tangents</strong> für Hand- und Fußbögen, <strong>Ballistische AutoPhysics</strong> mit absichtlich orange-er Timeline in den Flight-Frames.</p>
+
+  <div class="box box-why">
+    <div class="box-label">Warum Run nicht Walk-mit-mehr-Speed ist</div>
+    <p>Wenn du Walk-Cycle einfach schneller spielst, wirkt der Charakter wie auf Schienen — die Füße schaben über den Boden ohne Flight. Echtes Rennen ist eine Folge winziger Sprünge: jeder Schritt hat einen kurzen Luftmoment. Diesen Moment musst du in den Anker-Posen explizit bauen. Wenn die Up-Pose noch Bodenkontakt hat, ist die Animation kein Run — sondern ein schneller Walk.</p>
+  </div>
+
+  <h3>Die Vier Run-Posen</h3>
+
+  <div class="pose-grid">
+    <div class="step-diagram">
+      <svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+        <line x1="5" y1="125" x2="95" y2="125" stroke="#1f1a14" stroke-width="1"/>
+        <circle cx="50" cy="22" r="6" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="50" y1="28" x2="50" y2="72" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="50" cy="38" r="2" fill="#1f1a14"/>
+        <line x1="46" y1="72" x2="54" y2="72" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Front leg landing on ball -->
+        <line x1="54" y1="72" x2="62" y2="100" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="62" y1="100" x2="68" y2="125" stroke="#b85528" stroke-width="2"/>
+        <circle cx="68" cy="125" r="2" fill="#b85528"/>
+        <!-- Back leg lifted, bent -->
+        <line x1="46" y1="72" x2="38" y2="95" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="38" y1="95" x2="48" y2="108" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Arms swing strongly -->
+        <line x1="50" y1="38" x2="62" y2="65" stroke="#5a4d3a" stroke-width="1.2"/>
+        <line x1="62" y1="65" x2="58" y2="80" stroke="#5a4d3a" stroke-width="1.2"/>
+        <line x1="50" y1="38" x2="38" y2="65" stroke="#5a4d3a" stroke-width="1.2"/>
+        <line x1="38" y1="65" x2="42" y2="80" stroke="#5a4d3a" stroke-width="1.2"/>
+      </svg>
+      <div class="caption"><strong>Contact</strong> · Ballen-Strike, anderes Bein bereits gebeugt in der Luft</div>
+    </div>
+    <div class="step-diagram">
+      <svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+        <line x1="5" y1="125" x2="95" y2="125" stroke="#1f1a14" stroke-width="1"/>
+        <circle cx="50" cy="28" r="6" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="50" y1="34" x2="50" y2="78" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="50" cy="44" r="2" fill="#1f1a14"/>
+        <line x1="46" y1="78" x2="54" y2="78" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Standing leg compressed, foot flat -->
+        <line x1="54" y1="78" x2="58" y2="106" stroke="#b85528" stroke-width="2"/>
+        <line x1="58" y1="106" x2="62" y2="125" stroke="#b85528" stroke-width="2"/>
+        <!-- Other leg behind, bent -->
+        <line x1="46" y1="78" x2="32" y2="100" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="32" y1="100" x2="42" y2="115" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="60" y1="125" x2="68" y2="125" stroke="#1f1a14" stroke-width="2.5"/>
+        <line x1="50" y1="44" x2="60" y2="72" stroke="#5a4d3a" stroke-width="1.2"/>
+        <line x1="50" y1="44" x2="40" y2="72" stroke="#5a4d3a" stroke-width="1.2"/>
+        <line x1="20" y1="28" x2="25" y2="28" stroke="#8a7d68" stroke-width="0.6" stroke-dasharray="2,2"/>
+        <text x="18" y="28" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="5" fill="#8a7d68">LOW</text>
+      </svg>
+      <div class="caption"><strong>Down</strong> · CoM am tiefsten, Bein komprimiert</div>
+    </div>
+    <div class="step-diagram">
+      <svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+        <line x1="5" y1="125" x2="95" y2="125" stroke="#1f1a14" stroke-width="1"/>
+        <circle cx="50" cy="20" r="6" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="50" y1="26" x2="50" y2="70" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="50" cy="36" r="2" fill="#1f1a14"/>
+        <line x1="46" y1="70" x2="54" y2="70" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Standing leg straight -->
+        <line x1="50" y1="70" x2="50" y2="120" stroke="#b85528" stroke-width="2.4"/>
+        <line x1="46" y1="120" x2="55" y2="120" stroke="#1f1a14" stroke-width="2.5"/>
+        <!-- Swing leg high -->
+        <line x1="50" y1="70" x2="62" y2="90" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="62" y1="90" x2="54" y2="108" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="50" y1="36" x2="50" y2="76" stroke="#5a4d3a" stroke-width="1.2"/>
+      </svg>
+      <div class="caption"><strong>Passing</strong> · Standbein gestreckt</div>
+    </div>
+    <div class="step-diagram">
+      <svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+        <line x1="5" y1="125" x2="95" y2="125" stroke="#1f1a14" stroke-width="1"/>
+        <circle cx="50" cy="14" r="6" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="50" y1="20" x2="50" y2="64" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="50" cy="30" r="2" fill="#1f1a14"/>
+        <line x1="46" y1="64" x2="54" y2="64" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Back leg fully extended pushing -->
+        <line x1="46" y1="64" x2="35" y2="95" stroke="#b85528" stroke-width="2"/>
+        <line x1="35" y1="95" x2="28" y2="115" stroke="#b85528" stroke-width="2"/>
+        <!-- Front leg lifted high, bent -->
+        <line x1="54" y1="64" x2="68" y2="85" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="68" y1="85" x2="58" y2="105" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- BOTH FEET IN AIR -->
+        <line x1="20" y1="14" x2="25" y2="14" stroke="#b85528" stroke-width="0.6" stroke-dasharray="2,2"/>
+        <text x="18" y="14" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="5" fill="#b85528">HI</text>
+        <text x="50" y="135" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="5" fill="#b85528" font-weight="600">FLIGHT</text>
+      </svg>
+      <div class="caption"><strong>Up + Flight</strong> · BEIDE Füße in der Luft</div>
+    </div>
+  </div>
+
+  <div class="insight">
+    Beim Walk hat Manny in jedem Frame mindestens einen Fußkontakt — der Sicherheitsabstand zur Schwerkraft beträgt null. Beim Run gibt es kleine Sprünge zwischen den Schritten — Flight Frames, in denen der ganze Körper sich kurz vom Planeten löst. Eadweard Muybridge hat das 1887 in <em>Animal Locomotion</em> dokumentiert: Mensch beim Rennen, fotografiert mit zwölf hintereinander ausgelösten Kameras. Die Bilder zeigten erstmals, dass beim Rennen tatsächlich beide Füße gleichzeitig in der Luft sind — was vorher umstritten war, weil das menschliche Auge den Moment nicht erfasst. Disney-Animatoren haben das später als Standard übernommen: Run ohne Flight-Pose ist kein Run.
+  </div>
+</section>
+
+
+<!-- § 2 — PHASE A: SETUP -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§2</div>
+    <div>
+      <div class="section-tag">Phase A · Setup</div>
+      <h2 class="section-title">In-Place-Cycle, <em>nicht durch den Raum</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">A</div>
+    <div>
+      <h4>Setup</h4>
+      <div class="phase-meta">Scene · 30-Frame-Cycle · Cycle Interpolation</div>
+      <p>Im Gegensatz zu Walk in Projekt 03 baust du diesmal einen Cycle auf der Stelle — kein Through-Space. UE5 schleift den Cycle später für die Lokomotion durch den Raum. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Manny standing center, ready -->
+        <g>
+          <circle cx="160" cy="55" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="160" y1="66" x2="160" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="160" cy="80" r="2.5" fill="#1f1a14"/>
+          <line x1="152" y1="120" x2="168" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="152" y1="120" x2="153" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="168" y1="120" x2="167" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="145" y1="160" x2="161" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="159" y1="160" x2="175" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+        </g>
+        <!-- Cycle indicator -->
+        <path d="M 80 100 Q 60 100, 60 130 Q 60 160, 80 165" fill="none" stroke="#b85528" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <path d="M 240 100 Q 260 100, 260 130 Q 260 160, 240 165" fill="none" stroke="#b85528" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="80" y="80" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Frame 0</text>
+        <text x="240" y="80" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Frame 30</text>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#b85528">IN-PLACE · CYCLE-LOOP</text>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Frame 30 ≡ Frame 0 · Loop schließt sich</text>
+      </svg>
+      <div class="caption">Cycle-Setup: Run auf der Stelle, Frame 30 identisch zu Frame 0. UE5 ergänzt die Translation per Loop.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">01</span>
+        <span class="step-title">Scene mit Cycle-Setup</span>
+      </div>
+      <p>Manny laden, 30 fps, Timeline 0 bis 30. Manny am Weltursprung platzieren. Profilansicht (Side-View).</p>
+      <p>Wichtig: dies ist eine <strong>In-Place-Animation</strong>. Manny steht zentral und macht seinen Run-Cycle ohne sich durch den Raum zu bewegen. Anders als Walk in Projekt 03 — dort lief Manny tatsächlich 7 Meter. Hier rennt er auf der Stelle, weil ein Cycle der pipeline-relevante Baustein ist: UE5 schleift ihn für die Lokomotion durch den Raum (Distanz wird von Game-Logic oder Sequencer-Track gesteuert).</p>
+      <p>Speichern als <code>projekt-06-run-cycle.casc</code>.</p>
+      <div class="box box-merk">
+        <div class="box-label">Cycle vs Through-Space — die Pipeline-Wahl</div>
+        <p>Für Game-Animationen: In-Place-Cycle. UE5 oder andere Engines liefern die Translation per Movement-Component. Für narrative Sequenzen (Cutscenes): manchmal Through-Space, weil der Animator die volle Kontrolle über Tempo und Distanz behält. Für unsere Reihe ist Run als In-Place-Cycle der richtige Baustein, weil er flexibler in UE5 wiederverwendbar ist.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">TRACK-HIERARCHIE · STANDARDSCHRITT</text>
+        <rect x="40" y="50" width="240" height="120" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="62" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Quick Rigging Tool</text>
+        <line x1="50" y1="70" x2="270" y2="70" stroke="#c8b89a" stroke-width="1"/>
+        <text x="55" y="92" font-family="DM Sans, sans-serif" font-size="11" fill="#1f1a14">→ Generate Rig</text>
+        <text x="55" y="115" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Pelvis</text>
+        <text x="70" y="128" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">└ Torso → Head, Arms</text>
+        <text x="55" y="143" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">L_Leg · R_Leg</text>
+      </svg>
+      <div class="caption">Quick Rigging Tool wie in jedem Projekt seit 02.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">02</span>
+        <span class="step-title">Track-Hierarchie via Quick Rigging Tool</span>
+      </div>
+      <p>In den Rig-Mode wechseln. Quick Rigging Tool, <strong>Generate Rig</strong>. Standardschritt. Track-Struktur kontrollieren — Pelvis → Torso → Head/Arms, Pelvis → Legs.</p>
+      <p>Bei Run ist diese Struktur kritischer als bei Walk, weil das Inbetweening die Beine in einem schnellen Cycle mit Flight-Phasen handhaben muss. Saubere Track-Trennung von Anfang an spart Polish-Aufwand am Ende.</p>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">CYCLE INTERPOLATION · TIMELINE</text>
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Loop indicator arrows -->
+        <path d="M 30 90 Q 30 70, 60 70" fill="none" stroke="#b85528" stroke-width="1.5"/>
+        <path d="M 60 70 L 290 70" stroke="#b85528" stroke-width="1.5"/>
+        <path d="M 290 70 Q 290 90, 260 90" fill="none" stroke="#b85528" stroke-width="1.5"/>
+        <text x="160" y="60" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">CYCLE</text>
+        <!-- Frame markers -->
+        <rect x="26" y="93" width="8" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <text x="30" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">0</text>
+        <rect x="282" y="93" width="8" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <text x="286" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">30</text>
+        <!-- Cycle key middle markers -->
+        <rect x="92" y="93" width="6" height="14" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+        <rect x="155" y="93" width="6" height="14" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+        <rect x="218" y="93" width="6" height="14" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+        <text x="160" y="155" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Cycle-Interpolation aktivieren — Frame 30 spielt zurück zu Frame 0</text>
+        <text x="160" y="175" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">EDIT → SET CYCLE</text>
+      </svg>
+      <div class="caption">Cycle Interpolation aktivieren: Animation loopt automatisch zwischen Frame 0 und 30.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">03</span>
+        <span class="step-title">Cycle-Interpolation aktivieren</span>
+      </div>
+      <p>Cascadeur kann Animationen in einem dedizierten Cycle-Modus abspielen — die Endpose wird mit der Startpose verbunden, die Animation loopt sauber. In den Edit-Menüs oder im Timeline-Settings: <strong>Set Cycle</strong> oder <strong>Cycle Interpolation</strong> aktivieren.</p>
+      <p>Während des Posens spielt Cascadeur die Animation jetzt als Loop ab — du kannst gleich sehen, ob Frame 30 sauber an Frame 0 anschließt. Wenn nicht (z.B. die Arme sind in unterschiedlichen Positionen), ist der Cycle nicht zugespitzt. Das wird in Phase D explizit validiert.</p>
+      <p><em>Aus Erinnerung, nicht final verifiziert:</em> Cycle Interpolation in Cascadeur 2025.3+ ist über die Translation-Only-Option für Loop-Animations verfügbar. Bei Run-Cycle mit Cycle-Interpolation muss zusätzlich Translation-Offset auf null gesetzt sein, weil Manny nicht durch den Raum geht.</p>
+      <div class="box box-merk">
+        <div class="box-label">Frame 30 = Frame 0, nicht 29 oder 31</div>
+        <p>Bei 1-Sekunden-Cycle ist die intuitive Annahme „30 Frames" leicht missverständlich. Frame 0 und Frame 30 sind die gleiche Pose — Frame 30 wird beim Loop von Frame 0 ersetzt. Wenn du Anker auf Frame 30 setzt, müssen sie exakt mit Frame 0 übereinstimmen. Praktisch: Frame 0-Pose kopieren und auf Frame 30 einfügen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 3 — REFERENCE-PHASE -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§3</div>
+    <div>
+      <div class="section-tag">Reference-Phase (vor Phase B)</div>
+      <h2 class="section-title">Prozent-Marker für <em>Run-Mechanik</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner ref">
+    <div class="phase-letter">R</div>
+    <div>
+      <h4>Reference</h4>
+      <div class="phase-meta">Run-Reference · Prozent-Marker · Walk/Jog/Run-Vergleich</div>
+      <p>Wie in Projekt 03 — aber präziser. Bei Run-Cycle ist die Frame-genaue Pose-Position kritisch, weil eine ganze Sekunde nur 30 Frames hat. Reference mit Prozent-Markern. <em>Ein Schritt.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">PROZENT-POSEN PRO LOKOMOTIONS-TYP</text>
+        <!-- Three rows: Walk, Jog, Run -->
+        <g>
+          <text x="20" y="55" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">WALK</text>
+          <line x1="60" y1="55" x2="295" y2="55" stroke="#c8b89a" stroke-width="1"/>
+          <circle cx="78" cy="55" r="3" fill="#284858"/>
+          <circle cx="138" cy="55" r="3" fill="#284858"/>
+          <circle cx="198" cy="55" r="3" fill="#284858"/>
+          <circle cx="258" cy="55" r="3" fill="#284858"/>
+          <text x="78" y="45" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#284858">0%</text>
+          <text x="138" y="45" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#284858">25%</text>
+          <text x="198" y="45" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#284858">50%</text>
+          <text x="258" y="45" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#284858">75%</text>
+        </g>
+        <g>
+          <text x="20" y="105" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">JOG</text>
+          <line x1="60" y1="105" x2="295" y2="105" stroke="#c8b89a" stroke-width="1"/>
+          <circle cx="78" cy="105" r="3" fill="#8a9878"/>
+          <circle cx="138" cy="105" r="3" fill="#8a9878"/>
+          <circle cx="198" cy="105" r="3" fill="#8a9878"/>
+          <circle cx="258" cy="105" r="3" fill="#8a9878"/>
+          <!-- Brief flight markers -->
+          <circle cx="160" cy="100" r="2" fill="#b85528"/>
+          <circle cx="220" cy="100" r="2" fill="#b85528"/>
+          <text x="160" y="93" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#b85528">flight</text>
+        </g>
+        <g>
+          <text x="20" y="155" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">RUN</text>
+          <line x1="60" y1="155" x2="295" y2="155" stroke="#c8b89a" stroke-width="1"/>
+          <circle cx="78" cy="155" r="3" fill="#b85528"/>
+          <circle cx="138" cy="155" r="3" fill="#b85528"/>
+          <circle cx="198" cy="155" r="3" fill="#b85528"/>
+          <circle cx="258" cy="155" r="3" fill="#b85528"/>
+          <!-- Long flight markers -->
+          <rect x="155" y="150" width="20" height="10" fill="none" stroke="#b85528" stroke-width="1" stroke-dasharray="2,1"/>
+          <rect x="215" y="150" width="20" height="10" fill="none" stroke="#b85528" stroke-width="1" stroke-dasharray="2,1"/>
+          <text x="165" y="143" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#b85528">FLIGHT</text>
+        </g>
+        <text x="160" y="195" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Walk: kein Flight · Jog: kurze Flights · Run: längere Flight-Phasen</text>
+      </svg>
+      <div class="caption">Drei Lokomotions-Typen im Vergleich. Flight-Phase wächst von Walk (null) über Jog zu Run.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">04</span>
+        <span class="step-title">Reference suchen und mit Prozent-Markern aufbereiten</span>
+      </div>
+      <p>Run-Reference aus den bekannten Quellen (Motion Actor Inc., Endless Reference). Wichtig: bei Run ist es nützlich, mehrere Lokomotions-Typen nebeneinander zu haben — Walk, Jog, Run, manchmal Sprint. Sie unterscheiden sich nicht nur in Geschwindigkeit, sondern in Mechanik.</p>
+      <p>Reference-Video in After Effects laden, Time Remapping aktivieren. Identifiziere die vier Kern-Posen (Contact, Down, Passing, Up) und markiere die Frames. Dann auf die Cycle-Länge mappen — bei einem 30-Frame-Cycle entspricht jede Pose etwa 7-8 Frames.</p>
+      <p>Bei Run beachten: <strong>Heel-Strike vs Ball-Strike</strong>. Walk landet auf der Ferse, dann rollt der Fuß ab. Run landet auf dem Ballen (oder bei Forefoot-Runnern auf den Zehen), die Ferse berührt den Boden manchmal gar nicht. Das ist ein fundamentaler Unterschied in der Contact-Pose.</p>
+      <div class="box box-merk">
+        <div class="box-label">Reference-Auswahl nach Run-Stil</div>
+        <p>Manny in dieser Brochüre rennt im klassischen mittel-tempo Run-Stil (etwa 12 km/h). Bei Sprint-Reference würden die Posen extremer aussehen — höheres Knie-Lift, längere Flight-Phase, stärkerer Arm-Swing. Falls du Sprint statt Run willst: andere Reference, sonst gleicher Workflow.</p>
+      </div>
+      <div class="insight">
+        Eine durchschnittliche joggende Person hat 2.5 Schritte/Sekunde. Beim Run sind es 3.0. Beim Sprint 4.0-5.0. Bei unserer 30-Frame-Cycle-Animation mit 30 fps machen wir 2 Schritte/Sekunde — das entspricht etwa einem gemäßigten Jog, kein voller Run. Für einen echten Run bei 3.0 Schritten/Sekunde wäre der Cycle 20 Frames lang. Aber 30 Frames ist didaktisch sauberer (mehr Spielraum für die einzelnen Pose-Anker), und für UE5-Loop ist die Frame-Anzahl nachträglich anpassbar.
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 4 — PHASE B: GROBSCHNITT -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§4</div>
+    <div>
+      <div class="section-tag">Phase B · Grobschnitt (Iteration 1)</div>
+      <h2 class="section-title">Vier Anker, <em>dann Mirror</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">B</div>
+    <div>
+      <h4>Grobschnitt</h4>
+      <div class="phase-meta">R-Contact · R-Down · R-Passing · R-Up + Flight · Mirror</div>
+      <p>Vier Anker für den ersten Halbcyclus (Frames 0-15). Dann Mirror für die linke Hälfte (Frames 15-30). Das ist Cycle-Bau-Standard. <em>Vier Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- R-Contact: right foot lands on ball, left foot bent in air -->
+        <g>
+          <circle cx="100" cy="40" r="13" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="53" x2="100" y2="125" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="100" cy="70" r="3" fill="#1f1a14"/>
+          <line x1="92" y1="125" x2="108" y2="125" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Front (right) leg landing on ball -->
+          <line x1="108" y1="125" x2="120" y2="180" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="120" y1="180" x2="130" y2="218" stroke="#b85528" stroke-width="2.4"/>
+          <circle cx="130" cy="220" r="3" fill="#b85528"/>
+          <text x="140" y="223" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">BALL</text>
+          <!-- Back (left) leg lifted high, bent -->
+          <line x1="92" y1="125" x2="75" y2="155" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="75" y1="155" x2="90" y2="180" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Strong arm swing counter -->
+          <line x1="100" y1="70" x2="125" y2="115" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="125" y1="115" x2="115" y2="145" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="70" x2="75" y2="115" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="75" y1="115" x2="85" y2="145" stroke="#1f1a14" stroke-width="2"/>
+        </g>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 0 · R-CONTACT</text>
+      </svg>
+      <div class="caption">Rechter Fuß auf dem Boden mit Ballen-Strike. Linkes Bein gebeugt in der Luft. Arme stark gegenläufig.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">05</span>
+        <span class="step-title">Anker — R-Contact (Frame 0)</span>
+      </div>
+      <p>Frame 0. Erste Contact-Pose: rechter Fuß landet, aber anders als bei Walk — auf dem <strong>Ballen</strong>, nicht der Ferse. Das Bein ist nicht ganz gestreckt (etwa 20° im Knie). Linkes Bein ist in der Luft, deutlich gebeugt (Ferse Richtung Gesäß), Knie nach vorn und hoch.</p>
+      <p>Die Arme schwingen stark gegen die Beine — linker Arm nach vorn (entgegen rechtem Bein), rechter Arm nach hinten. Bei Run sind die Arme dramatischer gebeugt als bei Walk (Ellbogen 90°), die Hände kommen vor das Gesicht und hinter das Gesäß.</p>
+      <p>Kopf leicht nach vorne, Spine minimal vorgelehnt (Run-Stand-Pose ist immer leicht vorgebeugt, das ist Vorwärts-Schwung).</p>
+      <p>Rechten Fuß via <kbd>R</kbd> fixieren (Bodenkontakt). Keyframe setzen. <strong>IK-Modus für rechtes Bein</strong> (Bodenkontakt), <strong>FK oder GR für linkes Bein</strong> (in der Luft) — entschieden in Phase C.</p>
+      <div class="box box-merk">
+        <div class="box-label">Ballen-Strike statt Ferse</div>
+        <p>Beim Run ist Ballen-Strike (oder mid-foot strike) der häufigste Lande-Stil — die Ferse berührt manchmal gar nicht den Boden. Bei Sprint und Forefoot-Runnern ist das absolut so. Für realistischen Run nicht die Walk-Heel-Strike-Pose verwenden — das macht Manny zum Joggen-Anfänger oder zum Marathon-Läufer (Heel-Strike ist bei Long-Distance üblich aus Effizienz-Gründen, aber für visuell starken Run-Cycle ungeeignet).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- R-Down: deepest compression, leg flat, knee very bent -->
+        <g>
+          <circle cx="100" cy="55" r="13" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="68" x2="100" y2="140" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="100" cy="85" r="3" fill="#1f1a14"/>
+          <line x1="92" y1="140" x2="108" y2="140" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Standing leg deeply bent -->
+          <line x1="108" y1="140" x2="118" y2="175" stroke="#b85528" stroke-width="2.4"/>
+          <line x1="118" y1="175" x2="122" y2="218" stroke="#b85528" stroke-width="2.4"/>
+          <line x1="115" y1="220" x2="135" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+          <!-- Other leg bent up at hip -->
+          <line x1="92" y1="140" x2="80" y2="165" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="80" y1="165" x2="92" y2="183" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Arms continuing motion -->
+          <line x1="100" y1="85" x2="125" y2="125" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="125" y1="125" x2="118" y2="155" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="85" x2="75" y2="125" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="75" y1="125" x2="82" y2="155" stroke="#1f1a14" stroke-width="2"/>
+          <!-- CoM lowest marker -->
+          <line x1="25" y1="115" x2="32" y2="115" stroke="#8a7d68" stroke-width="0.6" stroke-dasharray="2,2"/>
+          <text x="22" y="115" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="7" fill="#8a7d68">LOW</text>
+        </g>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 4 · DOWN</text>
+      </svg>
+      <div class="caption">Down-Pose: Standbein deutlich gebeugt (Kompression), CoM am tiefsten Punkt des Cycles.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">06</span>
+        <span class="step-title">Anker — R-Down (Frame 4)</span>
+      </div>
+      <p>Frame 4 — nur vier Frames nach Contact, weil bei Run die Kompression schnell passiert. Das rechte Bein ist jetzt deutlich gebeugt (Knie etwa 45-60°), der Fuß ist flach auf dem Boden, CoM ist am tiefsten Punkt des Cycles.</p>
+      <p>Die Kompression beim Run-Down ist tiefer als beim Walk-Down — bis zu 10 cm CoM-Senkung. Das ist die <em>Energy-Storage-Phase</em>: das Bein wird wie eine Feder gespannt, dann lässt es los und treibt den Körper nach oben (Push für die Flight-Phase).</p>
+      <p>Linkes Bein hat sich weiter nach vorn bewegt — Knie ist jetzt etwa auf Hüft-Höhe, Unterschenkel hängt nach unten. Es ist auf dem Weg zur Passing-Pose. Arme schwingen weiter im Counter-Rhythmus, leicht weniger extreme Auslenkung als bei Contact.</p>
+      <p>Keyframe setzen. Rechtes Bein bleibt IK (Bodenkontakt), linkes Bein FK/GR (Luft).</p>
+    </div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- R-Passing: standing leg straight, other leg passing through -->
+        <g>
+          <circle cx="100" cy="35" r="13" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="48" x2="100" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="100" cy="65" r="3" fill="#1f1a14"/>
+          <line x1="92" y1="120" x2="108" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Standing leg straight -->
+          <line x1="100" y1="120" x2="100" y2="218" stroke="#b85528" stroke-width="2.4"/>
+          <line x1="92" y1="220" x2="108" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+          <!-- Swing leg passing high -->
+          <line x1="92" y1="120" x2="115" y2="145" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="115" y1="145" x2="105" y2="175" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Arms passing neutral -->
+          <line x1="100" y1="65" x2="110" y2="105" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="110" y1="105" x2="100" y2="135" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="65" x2="90" y2="105" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="90" y1="105" x2="100" y2="135" stroke="#1f1a14" stroke-width="2"/>
+        </g>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 8 · PASSING</text>
+      </svg>
+      <div class="caption">Passing-Pose: Standbein gestreckt, Spielbein zieht vorn durch. Arme passieren neutrale Position.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">07</span>
+        <span class="step-title">Anker — R-Passing (Frame 8)</span>
+      </div>
+      <p>Frame 8 — eine knappe Drittel-Cycle-Marke. Standbein (rechtes) ist jetzt komplett gestreckt — die Energy-Storage hat sich entladen, der Körper hat sich nach oben katapultiert. Das andere Bein (linkes) zieht hoch und vorn durch, mit Knie etwa auf Hüft-Höhe.</p>
+      <p>Die Arme passieren ihre neutrale Position — der Schwung-Zyklus ist auch in der Mitte. Linker Arm ist gerade vor dem Körper, rechter gerade hinter.</p>
+      <p>CoM ist deutlich über der Down-Höhe — etwa 5-8 cm hoch im Vergleich zur Down-Pose. Das ist der Anfang der Aufwärts-Phase.</p>
+      <p>Keyframe setzen. Rechtes Bein IK (noch Bodenkontakt), linkes FK/GR (Luft).</p>
+    </div>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- R-Up + FLIGHT: BOTH feet off ground -->
+        <g>
+          <circle cx="100" cy="22" r="13" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="35" x2="100" y2="107" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="100" cy="52" r="3" fill="#1f1a14"/>
+          <line x1="92" y1="107" x2="108" y2="107" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Back (right) leg fully extended, off ground -->
+          <line x1="92" y1="107" x2="80" y2="155" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="80" y1="155" x2="70" y2="195" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Front (left) leg lifted high, bent -->
+          <line x1="108" y1="107" x2="135" y2="135" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="135" y1="135" x2="120" y2="170" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Air gap indicator -->
+          <line x1="60" y1="200" x2="75" y2="200" stroke="#b85528" stroke-width="0.8" stroke-dasharray="2,2"/>
+          <line x1="115" y1="175" x2="130" y2="175" stroke="#b85528" stroke-width="0.8" stroke-dasharray="2,2"/>
+          <!-- Arms swing maximum -->
+          <line x1="100" y1="52" x2="80" y2="98" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="80" y1="98" x2="92" y2="125" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="52" x2="125" y2="98" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="125" y1="98" x2="110" y2="120" stroke="#1f1a14" stroke-width="2"/>
+        </g>
+        <!-- Air indicator -->
+        <text x="100" y="210" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528" font-weight="600">★ FLIGHT ★</text>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 12 · UP + FLIGHT</text>
+      </svg>
+      <div class="caption">UP-Pose und FLIGHT: beide Füße in der Luft. Der einzige Moment im Cycle ohne Bodenkontakt.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">08</span>
+        <span class="step-title">Anker — R-Up + FLIGHT (Frame 12)</span>
+      </div>
+      <p>Frame 12 — der zentrale Moment des Halbcyclus. Manny ist auf dem höchsten Punkt, und <strong>beide Füße sind in der Luft</strong>. Das ist der Flight Frame.</p>
+      <p>Rechtes Bein ist jetzt komplett hinter dem Körper, gestreckt — der Push ist gerade abgeschlossen. Der Fuß ist <em>nicht</em> auf dem Boden, er hat ihn gerade verlassen. Linkes Bein ist hoch nach vorn gezogen, Knie auf Hüft-Höhe oder darüber.</p>
+      <p>Arme sind auf maximaler Auslenkung — linker Arm hinter dem Körper, rechter Arm nach vorne hochgeworfen. Spine leicht nach hinten, Brust geöffnet.</p>
+      <p><strong>Wichtig:</strong> KEIN Fuß ist via <kbd>R</kbd> fixiert — beide sind frei. Cascadeur wird AutoPhysics in dieser Frame als ballistisch behandeln (orange Timeline-Marker = richtig). Keyframe setzen. Beide Beine FK oder GR (beide in der Luft).</p>
+      <div class="box box-stolper">
+        <div class="box-label">Wenn die Up-Pose noch Bodenkontakt hat</div>
+        <p>Häufiger Anfängerfehler: Manny in der Up-Pose hat noch einen Zeh auf dem Boden, „weil ohne Bodenkontakt wirkt es unkontrolliert". Das macht aus Run einen Walk. Der Flight Frame muss <em>tatsächlich</em> in der Luft sein — beide Füße mindestens 5 cm über dem Boden. Sonst kommt die Run-Dynamik nicht durch.</p>
+      </div>
+      <div class="insight">
+        Der Flight Frame ist ein winziger Moment — beim mittleren Run-Tempo dauert er etwa 80-120 Millisekunden, also drei bis vier Frames bei 30 fps. Trotzdem entscheidet er allein über den visuellen Eindruck. Eadweard Muybridge brauchte 1887 zwölf Hochgeschwindigkeits-Kameras hintereinander, um diesen Moment überhaupt zu erfassen — das menschliche Auge sieht ihn nicht direkt. Aber wir spüren ihn: bei einem Run ohne Flight wirkt der Charakter wie auf einem Förderband.
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 5 — PHASE C: INBETWEENING -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§5</div>
+    <div>
+      <div class="section-tag">Phase C · Inbetweening (Iteration 2)</div>
+      <h2 class="section-title">GR für die Luft, <em>IK für den Boden</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">C</div>
+    <div>
+      <h4>Inbetweening</h4>
+      <div class="phase-meta">Track-Separation · GR-Modus · Mirror für zweite Halbe</div>
+      <p>Erstmals GR (Global Rotation) als Keyframe-Modus für Glieder in der Luft. Mirror auf Frames 15-30 für linke Seite. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 9 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">IK / FK / GR · WAHL PRO BEIN-FRAME</text>
+        <!-- Three columns: IK, FK, GR -->
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <rect x="20" y="50" width="90" height="120" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="65" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="600" fill="#b85528">IK</text>
+          <text x="65" y="95" text-anchor="middle" font-style="italic">Bodenkontakt</text>
+          <text x="65" y="113" text-anchor="middle" font-size="9" fill="#5a4d3a">Welt-relativ</text>
+          <text x="65" y="135" text-anchor="middle" font-size="9" fill="#5a4d3a">F0, F4, F8</text>
+          <text x="65" y="155" text-anchor="middle" font-size="9" fill="#8a9878">→ R-Bein</text>
+
+          <rect x="115" y="50" width="90" height="120" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="160" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="600" fill="#284858">FK</text>
+          <text x="160" y="95" text-anchor="middle" font-style="italic">Local Space</text>
+          <text x="160" y="113" text-anchor="middle" font-size="9" fill="#5a4d3a">Parent-relativ</text>
+          <text x="160" y="135" text-anchor="middle" font-size="9" fill="#5a4d3a">möglich</text>
+          <text x="160" y="155" text-anchor="middle" font-size="9" fill="#8a7d68">arcs okay</text>
+
+          <rect x="210" y="50" width="90" height="120" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="255" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="600" fill="#f3ecdc">GR</text>
+          <text x="255" y="95" text-anchor="middle" font-style="italic" fill="#f3ecdc">Global Rotation</text>
+          <text x="255" y="113" text-anchor="middle" font-size="9" fill="#f3ecdc">Mix IK+FK</text>
+          <text x="255" y="135" text-anchor="middle" font-size="9" fill="#f3ecdc">F12 (FLIGHT)</text>
+          <text x="255" y="155" text-anchor="middle" font-size="9" fill="#f3ecdc" font-weight="600">→ Beide Beine</text>
+        </g>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">GR im Flight: bessere Arcs als FK, kein Welt-Anker wie IK</text>
+      </svg>
+      <div class="caption">Keyframe-Modus pro Bein: IK bei Boden, GR in der Luft. FK ist die Mitteloption.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">09</span>
+        <span class="step-title">GR-Modus für Beine in der Luft</span>
+      </div>
+      <p>Erstmals in der Reihe: <strong>GR (Global Rotation)</strong> als Keyframe-Modus. Aus der Workflow-Referenz: GR ist eine Mischung aus IK und FK — die Glieder rotieren im Weltraum, aber ohne die starre Welt-Anchorung von IK. Das Ergebnis sind sauberere Arcs für Glieder in der Luft.</p>
+      <p>Praktisch für Run-Cycle:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>R-Bein-Keyframes</strong>: Frame 0 (Contact) IK, Frame 4 (Down) IK, Frame 8 (Passing) IK, Frame 12 (Flight) <strong>GR</strong></li>
+        <li><strong>L-Bein-Keyframes</strong>: Frame 0 (Luft) <strong>GR</strong>, Frame 4 (Luft) <strong>GR</strong>, Frame 8 (Luft) <strong>GR</strong>, Frame 12 (Flight) <strong>GR</strong></li>
+      </ul>
+      <p>Im Keyframe-Panel: Bein-Keyframes selektieren und auf GR setzen (drittes Option neben IK und FK).</p>
+      <p>Warum nicht FK? FK rotiert relativ zu Parents — bei einem Bein, das sich gerade von vorne nach hinten schwingt, ergibt das manchmal seltsame Pendel-Bewegungen, weil die Parent-Pelvis sich auch bewegt. GR gibt stabilere Rotations-Pfade, wenn die Glieder frei in der Luft sind.</p>
+      <div class="box box-merk">
+        <div class="box-label">GR als Standardmodus für ballistische Bewegungen</div>
+        <p>Bei jeder Animation mit Glieder-in-der-Luft-Phasen: GR statt FK probieren. Run, Sprung, Akrobatik, Fallen — überall, wo Hände oder Füße eine Periode lang nicht den Boden berühren, ist GR die saubere Wahl.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 10 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">MIRROR · ERSTE HÄLFTE AUF ZWEITE</text>
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- First half anchors -->
+        <rect x="26" y="93" width="8" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <rect x="65" y="93" width="8" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <rect x="98" y="93" width="8" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <rect x="130" y="93" width="8" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <text x="30" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">R-C</text>
+        <text x="69" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">R-D</text>
+        <text x="102" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">R-P</text>
+        <text x="134" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">R-U</text>
+        <!-- Mirror arrow -->
+        <path d="M 145 100 L 165 100" stroke="#284858" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="155" y="92" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="0.1em" fill="#284858">MIRROR</text>
+        <!-- Second half (mirrored) -->
+        <rect x="172" y="93" width="8" height="14" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1"/>
+        <rect x="205" y="93" width="8" height="14" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1"/>
+        <rect x="238" y="93" width="8" height="14" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1"/>
+        <rect x="272" y="93" width="8" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <text x="176" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">L-C</text>
+        <text x="209" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">L-D</text>
+        <text x="242" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">L-P</text>
+        <text x="276" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">F30=F0</text>
+        <text x="30" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">0</text>
+        <text x="135" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">12</text>
+        <text x="280" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">30</text>
+        <text x="160" y="160" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Frames 0-12 als Vorlage, gespiegelt auf 15-27</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Frame 30 = Kopie von Frame 0 für Cycle-Schluss</text>
+      </svg>
+      <div class="caption">Mirror-Workflow: erste Cycle-Hälfte gespiegelt auf zweite Hälfte. Frame 30 = Frame 0.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">10</span>
+        <span class="step-title">Mirror auf zweite Halbe und Cycle schließen</span>
+      </div>
+      <p>Wie in Projekt 03 für Walk. Die R-Posen aus Frames 0, 4, 8, 12 spiegeln auf Frames 15, 19, 23, 27 als L-Posen. Für jeden Anker:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Auf Source-Frame navigieren (z.B. Frame 0)</li>
+        <li>Alle Controller selektieren, Copy Frame (<kbd>Ctrl</kbd>+<kbd>C</kbd>)</li>
+        <li>Auf Target-Frame navigieren (z.B. Frame 15)</li>
+        <li>Mirror-Tool → X-Plane → Mirror on Frame</li>
+      </ol>
+      <p>Für Frame 30 — der den Cycle schließt: einfach die Frame-0-Pose ohne Mirror kopieren. Frame 30 muss identisch zu Frame 0 sein, sonst springt der Loop beim Übergang.</p>
+      <p>Bei Run ist Mirror besonders wichtig, weil die Symmetrie der Beine exakt sein muss — eine Asymmetrie zwischen linker und rechter Schrittlänge fällt sofort auf, schon weil das Auge sie als Hinken interpretiert.</p>
+      <div class="shortcut-row">
+        <span>Copy Frame:</span><kbd>Ctrl</kbd>+<kbd>C</kbd>
+        <span>Schneller:</span><kbd>Shift</kbd>+<kbd>Middle-Click</kbd>+<kbd>Drag</kbd>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 11 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">COM-TRAJEKTORIE · SINUS MIT SPRÜNGEN</text>
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Y axis for CoM height -->
+        <!-- Sinusoidal pattern with flight peaks -->
+        <path d="M 30 105 Q 50 95, 70 130 Q 90 145, 110 130 Q 130 95, 150 75 Q 170 95, 190 130 Q 210 145, 230 130 Q 250 95, 270 75 L 285 105" fill="none" stroke="#b85528" stroke-width="2"/>
+        <!-- Markers -->
+        <circle cx="30" cy="105" r="3" fill="#b85528"/>
+        <circle cx="70" cy="130" r="3" fill="#b85528"/>
+        <circle cx="110" cy="130" r="3" fill="#b85528"/>
+        <circle cx="150" cy="75" r="4" fill="#b85528"/>
+        <circle cx="190" cy="130" r="3" fill="#b85528"/>
+        <circle cx="230" cy="130" r="3" fill="#b85528"/>
+        <circle cx="270" cy="75" r="4" fill="#b85528"/>
+        <text x="30" y="98" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#b85528">C</text>
+        <text x="70" y="142" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#b85528">D</text>
+        <text x="110" y="142" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#b85528">P</text>
+        <text x="150" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#b85528" font-weight="600">F12 FLIGHT</text>
+        <text x="270" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#b85528" font-weight="600">F27 FLIGHT</text>
+        <!-- High/low markers -->
+        <line x1="312" y1="75" x2="320" y2="75" stroke="#5a4d3a" stroke-width="0.6"/>
+        <text x="318" y="73" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">HIGH</text>
+        <line x1="312" y1="130" x2="320" y2="130" stroke="#5a4d3a" stroke-width="0.6"/>
+        <text x="318" y="135" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">LOW</text>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Höhen-Differenz größer als bei Walk · Flight-Peaks markant</text>
+      </svg>
+      <div class="caption">CoM-Sinus mit Flight-Peaks. Höhen-Variation deutlich größer als bei Walk.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">11</span>
+        <span class="step-title">Track-Separation und erste Generation</span>
+      </div>
+      <p>Standard-Pattern: im Outliner Pelvis und Bein-Tracks auf <strong>Inbetweening</strong>, Rest auf <strong>Bezier</strong>. FK-Setting für Pelvis-Keyframes (damit Inbetweening die Beine relativ zum Pelvis rechnet).</p>
+      <p>Play. Run-Cycle wird gerendert. Wichtig zu prüfen: CoM-Trajectory (<kbd>\</kbd>). Sie sollte eine deutlich höhere Amplitude als bei Walk haben — bei Run schwingt der CoM 10-15 cm hoch und runter pro Schritt, mit deutlichen Spitzen bei den Flight-Frames (12 und 27).</p>
+      <p>Falls die CoM-Trajectory flach ist: die Up-Posen (Frame 12, 27) heben Manny nicht hoch genug an. CoM-Controller direkt heben, Inbetweening rechnet sofort neu.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase C</div>
+        <p>Run-Cycle ist sichtbar: Bein abwechselnd am Boden und in der Luft, deutliche Flight-Frames bei 12 und 27, CoM oszilliert mit hoher Amplitude, Arme schwingen mit großer Auslenkung gegen die Beine. Im Cycle-Modus loopt die Animation flüssig (Frame 30 schließt an Frame 0 an). Bei Slow Motion sind die Pose-Übergänge plausibel.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 6 — PHASE D: VERFEINERUNG -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§6</div>
+    <div>
+      <div class="section-tag">Phase D · Verfeinerung (Iteration 3)</div>
+      <h2 class="section-title">Trajectory Tangents <em>als zentrales Werkzeug</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">D</div>
+    <div>
+      <h4>Verfeinerung</h4>
+      <div class="phase-meta">Trajectory Tangents · Hand-Bögen · Loop-Validation · Custom Tracks</div>
+      <p>Hand- und Fuß-Bögen mit Trajectory Tangents polishen. Loop validieren. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 12 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">TRAJECTORY TANGENTS · HAND-BOGEN</text>
+        <!-- Body silhouette -->
+        <g opacity="0.3">
+          <circle cx="160" cy="75" r="11" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="160" y1="86" x2="160" y2="150" stroke="#1f1a14" stroke-width="1.5"/>
+        </g>
+        <!-- Hand arc trajectory -->
+        <path d="M 90 90 Q 130 60, 160 65 Q 190 70, 230 100 Q 250 130, 240 160 Q 200 175, 160 165 Q 120 155, 90 130 Q 80 110, 90 90" fill="none" stroke="#b85528" stroke-width="1.8"/>
+        <!-- Tangent handles at key frames -->
+        <circle cx="160" cy="65" r="4" fill="#b85528"/>
+        <line x1="160" y1="65" x2="185" y2="60" stroke="#b85528" stroke-width="1.2" stroke-dasharray="2,1"/>
+        <circle cx="185" cy="60" r="2" fill="#b85528"/>
+        <line x1="160" y1="65" x2="135" y2="70" stroke="#b85528" stroke-width="1.2" stroke-dasharray="2,1"/>
+        <circle cx="135" cy="70" r="2" fill="#b85528"/>
+        <circle cx="230" cy="100" r="4" fill="#b85528"/>
+        <line x1="230" y1="100" x2="250" y2="85" stroke="#b85528" stroke-width="1.2" stroke-dasharray="2,1"/>
+        <circle cx="250" cy="85" r="2" fill="#b85528"/>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Tangenten-Handles editieren — Bogen wird runder und voller</text>
+      </svg>
+      <div class="caption">Hand-Bahn mit Tangenten-Handles. Direkte Bogen-Manipulation im Viewport.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">12</span>
+        <span class="step-title">Trajectory Tangents für Hand-Bögen</span>
+      </div>
+      <p>Erstmals in der Reihe wird Trajectory Tangents zum zentralen Polish-Werkzeug. Bei Run sind die Hand-Bögen sehr dynamisch — die Hände schwingen in großen Bögen von hinter dem Gesäß bis vor das Gesicht.</p>
+      <p>Vorgehen: Hand-Controller selektieren. <strong>Relative Trajectory aktivieren</strong> mit Pelvis als Pivot (sonst läuft die Trajectory mit dem nicht-bewegten Manny am Welt-Ursprung, was wenig nützt). <strong>Edit Mode</strong> auf der Trajectory, dann <strong>Tangents-Button</strong> drücken.</p>
+      <p>Wichtig: Trajectory Tangents funktionieren <em>nur in IK-Mode</em>. Für diesen Polish-Schritt: Arm-Keyframes temporär auf IK setzen, Tangenten editieren, dann zurück auf FK.</p>
+      <p>An den Tangenten ziehen — der Hand-Bogen wird runder und voller. Bei Run sollte der Bogen oben (Hand vor Gesicht) etwa 30 cm vor dem Spine sein, unten (Hand hinter Gesäß) etwa 20 cm hinter dem Spine. Die Bahn ist nicht symmetrisch — der Push hinter dem Körper ist explosiver, der Schwung vorne sanfter.</p>
+      <p>Gleicher Polish für die Fuß-Bögen — Fuß-Controller im IK-Mode, Trajectory mit Pelvis als Pivot, Tangenten editieren.</p>
+      <div class="shortcut-row">
+        <span>Persistente Trajectory:</span><kbd>\</kbd>
+        <span>Edit Mode:</span><span>Trajectory-Button</span>
+      </div>
+      <div class="box box-stolper">
+        <div class="box-label">Tangenten nicht verfügbar</div>
+        <p>Wenn die Tangenten-Handles nicht erscheinen: (a) Controller ist nicht in IK-Mode (FK/GR zeigen keine Tangenten), (b) Trajectory ist nicht relativ (auf Pelvis pivot setzen), (c) Rig ist zu alt (Quick Rigging Tool aufrufen, Generate Rig). Die meisten Tangenten-Probleme lösen sich mit Rig-Regenerierung.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 13 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">LOOP-VALIDATION · FRAME 30 → 0</text>
+        <!-- Side-by-side comparison: end frame and start frame -->
+        <g opacity="0.6">
+          <text x="80" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">FRAME 30</text>
+          <circle cx="80" cy="75" r="9" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="80" y1="84" x2="80" y2="125" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="73" y1="125" x2="87" y2="125" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="87" y1="125" x2="95" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="73" y1="125" x2="65" y2="155" stroke="#1f1a14" stroke-width="1.5"/>
+        </g>
+        <g>
+          <text x="220" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">FRAME 0</text>
+          <circle cx="220" cy="75" r="9" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="220" y1="84" x2="220" y2="125" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="213" y1="125" x2="227" y2="125" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="227" y1="125" x2="235" y2="170" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="213" y1="125" x2="205" y2="155" stroke="#1f1a14" stroke-width="2"/>
+        </g>
+        <text x="150" y="170" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#8a9878" font-weight="600">≡</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Beide Posen müssen identisch sein — sonst Loop-Sprung</text>
+      </svg>
+      <div class="caption">Loop-Validation: Frame 30 und Frame 0 nebeneinander vergleichen. Identische Pose, identische Position.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">13</span>
+        <span class="step-title">Loop-Validation und Cycle-Schluss</span>
+      </div>
+      <p>Im Cycle-Modus testet sich der Loop automatisch. Aber: ist Frame 30 wirklich identisch zu Frame 0? Bei Inbetweening-Generierung können sich kleine Abweichungen einschleichen — die Pelvis-Position vielleicht 2 cm anders, ein Arm-Winkel um 3°.</p>
+      <p>Vorgehen: zu Frame 30 navigieren. Pose-Snapshot machen (z.B. mental einprägen oder Screenshot). Zu Frame 0 navigieren. Vergleichen.</p>
+      <p>Falls Abweichungen: einfachste Lösung — Frame 0 explizit auf Frame 30 kopieren (oder umgekehrt), Inbetweening rechnet neu. Falls weiterhin Loop-Sprung: einen extra Anker auf Frame 29 oder 1 setzen, der den Übergang glättet.</p>
+      <p>Im Cycle-Modus mehrfach durchlaufen lassen — der Loop-Sprung wird sichtbar als kleines Zucken in der Animation, meist im Pelvis oder einem Arm.</p>
+      <div class="box box-merk">
+        <div class="box-label">Cycle vs Through-Space-Loop in UE5</div>
+        <p>Wenn der Cycle in Cascadeur sauber loopt aber in UE5 nicht: das liegt meist an der UE5-Animation-Sequence-Settings. <em>Enable Looping</em> aktivieren, <em>Root Motion Lock</em> ggf. anpassen. Falls Manny in UE5 ruckelt am Loop-Übergang: Animation-Sequence in UE5 mit Loop-Modus „Default" (statt „Single Frame") spielen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 14 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">CUSTOM TRACK HIERARCHY · ARME-ISOLIERT</text>
+        <g font-family="DM Sans, sans-serif" font-size="11" fill="#1f1a14">
+          <rect x="60" y="50" width="200" height="22" fill="#ede4d0" stroke="#c46b3a" stroke-width="1.5"/>
+          <circle cx="75" cy="61" r="5" fill="#f3ecdc" stroke="#c46b3a" stroke-width="1.5"/>
+          <text x="90" y="65">Head</text>
+          <text x="240" y="65" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">hidden</text>
+
+          <rect x="60" y="78" width="200" height="22" fill="#ede4d0" stroke="#c46b3a" stroke-width="1.5"/>
+          <circle cx="75" cy="89" r="5" fill="#f3ecdc" stroke="#c46b3a" stroke-width="1.5"/>
+          <text x="90" y="93">Torso</text>
+          <text x="240" y="93" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">hidden</text>
+
+          <rect x="60" y="106" width="200" height="22" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <circle cx="75" cy="117" r="5" fill="#8a9878"/>
+          <text x="90" y="121">Arms</text>
+          <text x="240" y="121" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">visible · isoliert</text>
+
+          <rect x="60" y="134" width="200" height="22" fill="#ede4d0" stroke="#c46b3a" stroke-width="1.5"/>
+          <circle cx="75" cy="145" r="5" fill="#f3ecdc" stroke="#c46b3a" stroke-width="1.5"/>
+          <text x="90" y="149">Pelvis · Legs</text>
+          <text x="240" y="149" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">hidden</text>
+        </g>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Beim Hand-Bogen-Polish nur die Arme sichtbar — Beine ablenken nicht</text>
+      </svg>
+      <div class="caption">Custom Track Hierarchy für isolierten Hand-Polish. Alle anderen Body-Parts ausblenden.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">14</span>
+        <span class="step-title">Custom Track Hierarchy für Detail-Polish</span>
+      </div>
+      <p>Wie in Projekt 03 eingeführt — Custom Track Hierarchy für Polish-Phasen. Bei Run ist sie besonders nützlich beim Hand-Bogen-Polish: alle anderen Body-Parts ausblenden, nur die Arme sehen.</p>
+      <p>Vorgehen: Point Controller Mode, im Outliner neue Track-Gruppen anlegen (Head, Torso, Arms, Pelvis-Legs). Beim Polishing der Hand-Trajektorie alle außer Arms ausblenden — das fokussiert den Blick auf die Bogenform ohne Ablenkung durch das schnell zappelnde Beinwerk.</p>
+      <p>Bei Run ist Custom Track Hierarchy auch nützlich, um den Cycle-Loop zu testen: nur das Pelvis sichtbar machen, sehen, ob Pelvis-Höhe und Pelvis-Translation sauber loopen.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase D</div>
+        <p>Hand- und Fußbögen sind voll, runde Arcs — keine zickzack Bewegungen. Loop schließt sich nahtlos. Manny rennt im Cycle ohne Sprünge oder Zucken. Custom Track Hierarchy ist im Outliner als organisierte Struktur sichtbar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 7 — PHASE E: PHYSICS -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§7</div>
+    <div>
+      <div class="section-tag">Phase E · Physics (ballistisch)</div>
+      <h2 class="section-title">Orange Timeline <em>ist hier richtig</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">E</div>
+    <div>
+      <h4>Physics</h4>
+      <div class="phase-meta">Ballistic AutoPhysics · Flight-Phase · 3-Pass</div>
+      <p>AutoPhysics behandelt die Flight-Frames als ballistisch — orange Timeline. Das ist absichtlich. Filter wie bei Walk, aber mit Berücksichtigung der Sprung-Phasen. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 15 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">AUTOPHYSICS-TIMELINE · BALLISTIC SEGMENTS</text>
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Yellow segments (one foot ground) -->
+        <rect x="30" y="93" width="35" height="14" fill="#e4b860" stroke="#1f1a14" stroke-width="0.8"/>
+        <rect x="78" y="93" width="35" height="14" fill="#e4b860" stroke="#1f1a14" stroke-width="0.8"/>
+        <!-- Orange segments (BALLISTIC - both feet up) -->
+        <rect x="113" y="93" width="22" height="14" fill="#c46b3a" stroke="#1f1a14" stroke-width="0.8"/>
+        <text x="124" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#c46b3a" font-weight="600">FLIGHT</text>
+        <rect x="135" y="93" width="35" height="14" fill="#e4b860" stroke="#1f1a14" stroke-width="0.8"/>
+        <rect x="183" y="93" width="35" height="14" fill="#e4b860" stroke="#1f1a14" stroke-width="0.8"/>
+        <rect x="218" y="93" width="22" height="14" fill="#c46b3a" stroke="#1f1a14" stroke-width="0.8"/>
+        <text x="229" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#c46b3a" font-weight="600">FLIGHT</text>
+        <rect x="240" y="93" width="48" height="14" fill="#e4b860" stroke="#1f1a14" stroke-width="0.8"/>
+        <!-- Legend -->
+        <rect x="40" y="135" width="14" height="10" fill="#e4b860" stroke="#1f1a14" stroke-width="0.6"/>
+        <text x="60" y="143" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">YELLOW = ein Fuß am Boden</text>
+        <rect x="40" y="152" width="14" height="10" fill="#c46b3a" stroke="#1f1a14" stroke-width="0.6"/>
+        <text x="60" y="160" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">ORANGE = ballistisch (richtig bei Flight!)</text>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Bei Run ist orange-Segmente kein Bug, sondern Feature</text>
+      </svg>
+      <div class="caption">AutoPhysics-Timeline bei Run: gelb/orange-Wechsel ist korrekt. Orange = Flight = ballistisch.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">15</span>
+        <span class="step-title">Ballistische AutoPhysics-Pässe</span>
+      </div>
+      <p>Physics Assistance an. Bei Run wird die Timeline ein typisches Muster zeigen: Gelb-Segmente (ein Fuß am Boden, Standard Fulcrum), unterbrochen von Orange-Segmenten (beide Füße in der Luft, ballistisch). Bei Walk in Projekt 03 war Orange ein Fehler — bei Run ist es das richtige Verhalten.</p>
+      <p>Pass 1 + 2 wie üblich nur Physics Corrector. Ganze Sequenz selektieren, Solve, Snap, wiederholen. Cascadeur respektiert die Flight-Phasen — der CoM folgt in den Orange-Segmenten einer Parabel (ballistischer Bogen), in den Gelb-Segmenten wird er über den Fulcrum-Punkt geführt.</p>
+      <p>Pass 3 mit Filtern für Run:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Smooth Trajectory</strong> ~35 — glättet CoM-Sinus, lässt aber die Flight-Spitzen erhalten</li>
+        <li><strong>Smooth Rotation</strong> ~25 — Pelvis-Rotation und Schulter-Rotation glätten</li>
+        <li><strong>Compensation Motion</strong> ~30 — Body schwingt sichtbar mit den Beinen</li>
+        <li><strong>Separation of Motion</strong> ~12 — Body-Parts entkoppeln leicht</li>
+        <li><strong>Secondary Motion</strong> ~20 — Mitschwung in Händen und Fingern, leichte Drag im Haar (falls vorhanden)</li>
+      </ul>
+      <p>Snap to Physics. Physics aus.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Orange-Timeline NICHT korrigieren wollen</div>
+        <p>Häufiger Reflex bei Stolperfallen-Verständnis aus Projekt 03/04: orange Timeline = Set Priority Frame + Enforce Fulcrum. Bei Run ist das falsch. Wenn du die Flight-Phase zwangsweise zu Bodenkontakt erklärst, ergibt sich ein gleitender Pseudo-Run. Orange in Flight-Phasen ist beabsichtigt — Cascadeur soll Manny dort als ballistischen Körper behandeln.</p>
+      </div>
+      <div class="insight">
+        Roger Bannister durchbrach 1954 die 4-Minuten-Meile mit 100 Schritten pro Minute beim Anfang und 180 pro Minute beim Sprint-Finale. Das entspricht 3.0 Schritte/Sekunde — genau die Cadence-Rate für klassischen Run. Bei Sprint sind es 4-5 Schritte/Sekunde, also pro Schritt nur 200-250 ms. Davon ist etwa ein Drittel Flight (60-80 ms). Die menschliche Wahrnehmung kann diese Zeiten nicht direkt erfassen — wir sehen den Run als kontinuierliche Bewegung. Aber Animation, die diese Mechanik <em>ignoriert</em>, wirkt fundamental falsch.
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 8 — PHASE F: EXPORT -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§8</div>
+    <div>
+      <div class="section-tag">Phase F · Export</div>
+      <h2 class="section-title">Loop-FBX für <em>UE5</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">F</div>
+    <div>
+      <h4>Export</h4>
+      <div class="phase-meta">Loop-FBX · UE5 Animation Sequence · Loop-Settings</div>
+      <p>FBX mit aktiven Loop-Settings. In UE5 die Animation Sequence auf Looping setzen. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 16 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="80" y="50" width="160" height="100" rx="6" fill="#f3ecdc" stroke="#1f1a14" stroke-width="2"/>
+        <text x="160" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#b85528">FBX EXPORT</text>
+        <line x1="100" y1="88" x2="220" y2="88" stroke="#c8b89a" stroke-width="1"/>
+        <text x="100" y="105" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Bake animation</text>
+        <text x="220" y="105" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">✓</text>
+        <text x="100" y="122" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Frame range</text>
+        <text x="220" y="122" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">0–29</text>
+        <text x="100" y="139" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Root translation</text>
+        <text x="220" y="139" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">OFF · in-place</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Frame 0–29 (nicht 0–30) damit Loop in UE5 sauber schließt</text>
+      </svg>
+      <div class="caption">FBX-Export für Loop-Cycle: 30 Frames als 0-29, Root Translation aus.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">16</span>
+        <span class="step-title">FBX-Loop-Export</span>
+      </div>
+      <p>File → Export → FBX. Wichtige Settings für Loop-Cycle:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Frame range</strong>: 0 bis 29 (nicht 0 bis 30). Frame 30 wäre Duplikat von Frame 0 und würde in UE5 zum Sprung führen</li>
+        <li><strong>Bake animation</strong>: ON</li>
+        <li><strong>Root Translation</strong>: OFF (oder „Bake to root" nicht aktivieren) — Manny rennt auf der Stelle, keine Welt-Translation exportieren</li>
+        <li><strong>Skeleton only</strong>: ON</li>
+      </ul>
+      <p>Dateiname <code>manny-run-cycle-v01.fbx</code>.</p>
+    </div>
+  </div>
+
+  <!-- STEP 17 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="50" width="280" height="110" fill="none" stroke="#284858" stroke-width="1.5"/>
+        <text x="160" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#284858">UE5 · ANIMATION SEQUENCE</text>
+        <line x1="40" y1="82" x2="280" y2="82" stroke="#284858" stroke-width="0.6"/>
+        <text x="40" y="100" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Looping</text>
+        <text x="280" y="100" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">✓</text>
+        <text x="40" y="117" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Loop Type</text>
+        <text x="280" y="117" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Default</text>
+        <text x="40" y="134" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Enable Root Motion</text>
+        <text x="280" y="134" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">OFF</text>
+        <text x="40" y="151" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Length</text>
+        <text x="280" y="151" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">1.00 s</text>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">In-Place-Cycle · UE5 Movement Component liefert die Welt-Translation</text>
+      </svg>
+      <div class="caption">UE5 Animation Sequence: Looping ON, Root Motion OFF (Translation kommt vom Gameplay).</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">17</span>
+        <span class="step-title">UE5-Import und Looping aktivieren</span>
+      </div>
+      <p>FBX in UE5 importieren mit Manny-Skelett als Target. Animation Sequence wird angelegt.</p>
+      <p>Im Persona-Editor die Animation öffnen. In den Animation Sequence Properties:</p>
+      <ul style="margin: 0.4rem 0 0.6rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Enable Looping</strong> ON</li>
+        <li><strong>Enable Root Motion</strong> OFF (anders als in Projekt 03 Walk!)</li>
+      </ul>
+      <p>Im Sequencer oder Animation Blueprint kann diese Animation als Loop-Cycle abgespielt werden. Bei Game-Verwendung: ein Movement-Component (Character-Movement, Pawn-Movement) liefert die tatsächliche Translation durch den Raum — die Animation läuft als visueller Cycle synchron dazu.</p>
+      <div class="box box-merk">
+        <div class="box-label">Run-Cycle als Game-Animation-Baustein</div>
+        <p>Run-Cycle ist der häufigste Animation-Baustein in 3D-Games. Spieler-Charaktere, NPCs, Monster — alle haben mindestens einen Run-Cycle. Dieser Brochüre-Cycle ist generisch (Manny im Stand-Stil), kann aber als Vorlage für stilisierte Varianten verwendet werden — Sprint, Limp, Hunched-Run, Ninja-Run. Alle haben die gleiche Workflow-Logik (4 Posen + Mirror + Cycle), nur andere Pose-Charaktere.</p>
+      </div>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase F</div>
+        <p>In UE5: Animation läuft als nahtloser Loop. Bei Game-Test mit Movement-Component bewegt sich Manny durch den Raum, während der Run-Cycle visuell synchron läuft. Kein Loop-Sprung am Frame 29/0-Übergang. Flight-Phasen sind sichtbar — beide Füße verlassen kurz den Boden, dann landet das andere.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 9 — OUTRO -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§9</div>
+    <div>
+      <div class="section-tag">Ausblick</div>
+      <h2 class="section-title">Was du <em>jetzt zusätzlich</em> hast.</h2>
+    </div>
+  </div>
+
+  <p>Mit Projekt 06 ist das ballistische Vokabular im Werkzeugkasten: <strong>Flight Frame</strong> als bewusst gebaute Luft-Phase, <strong>GR (Global Rotation)</strong> als sauberer Keyframe-Modus für Glieder in der Luft, <strong>ballistische AutoPhysics</strong> mit orange Timeline als richtigen Zustand, <strong>Trajectory Tangents</strong> als primäres Polish-Werkzeug für Hand- und Fußbögen. Cycle-Interpolation und Loop-Validation gehören jetzt zum Standard-Repertoire.</p>
+
+  <p>Projekt 07 (Sprung über Hindernis) ist die nächste Stufe der ballistischen Bewegung. Anders als Run-Cycle ist Sprung eine einmalige Aktion mit deutlich längerer Flight-Phase (typisch 0.4-0.6 Sekunden, also 12-18 Frames). AutoPhysics als zentraler Verfeinerungspass — CoM-Bahn als sauberer parabolischer Bogen. GR für Beine und Arme in der Luft. Collision Penetration Cleaning für Hindernis-Berührung.</p>
+
+  <p>Bei Projekt 11+ (Kombinations-Szenen) kommen die Lokomotions-Bausteine zusammen: Walk → Stop → Run → Jump → Roll → Stand. UE5 State-Machine schaltet zwischen den Cycles und einmaligen Aktionen. Die Building-Block-Disziplin wird zur Pipeline-Disziplin.</p>
+
+  <div class="box box-merk">
+    <div class="box-label">Was Projekt 06 nicht macht</div>
+    <p>Kein Sprint (anderer Run-Stil, andere Cadence). Kein Stop-and-Start (Anhalten aus dem Run, Anfahren aus dem Stand). Kein Turn-Run (Richtungswechsel während des Rennens). Kein Slow-Run (Jogging). Kein Tired-Run (Erschöpfung). Alle das sind Pose-Modulationen oder zusätzliche Übergangs-Animationen — die Run-Cycle-Logik selbst bleibt diese.</p>
+  </div>
+
+  <div class="insight">
+    Geparden, die schnellsten Säugetiere der Welt, haben einen Run-Cycle mit zwei verschiedenen Flight-Phasen pro Cycle — einer „extended flight" (Beine gestreckt, weit auseinander) und einer „gathered flight" (Beine eng am Körper). Beim Menschen gibt es nur eine Flight-Phase pro Schritt, weil unsere Wirbelsäule nicht stark genug flektiert für den Gathered-Flight. Aber das Prinzip ist universal: schnelle Lokomotion ist eine Folge kurzer Sprünge. Was du in dieser Brochüre gelernt hast, gilt für jeden Vierbeiner, jedes Insekt, jeden fliehenden Charakter. Run ist die Bewegung der Lebewesen, die das Stehenbleiben nicht mehr aushalten.
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="doc-footer">
+  <div><span class="terracotta">Projekt 06 · v 1.0</span></div>
+  <div>17 Schritte · 6 Phasen + Reference</div>
+  <div>Cascadeur · Lernreihe</div>
+</footer>
+
+</article>
+
+</body>
+</html>
