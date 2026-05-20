@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projekt 09 · Mocap-Cleanup mit QuickMagic · Cascadeur-Lernreihe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3ecdc; --paper-warm: #ede4d0; --paper-dark: #e2d6b8;
+    --ink: #1f1a14; --ink-soft: #5a4d3a; --ink-faint: #8a7d68;
+    --terracotta: #b85528; --terracotta-deep: #7a3414;
+    --cobalt: #284858; --sage: #8a9878; --warning: #c46b3a; --rule: #c8b89a;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'DM Sans', -apple-system, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+    color: var(--ink); background: var(--paper);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    -webkit-font-smoothing: antialiased;
+  }
+  .doc { max-width: 1100px; margin: 0 auto; }
+
+  .cover { padding: 3.5rem 5rem 2.5rem; border-bottom: 1px solid var(--rule); position: relative; overflow: hidden; }
+  .cover::before { content: ''; position: absolute; top: -10%; right: -8%; width: 50%; aspect-ratio: 1; background: radial-gradient(circle, rgba(184, 85, 40, 0.08) 0%, transparent 65%); border-radius: 50%; pointer-events: none; }
+  .cover-marker { display: flex; align-items: center; gap: 1.5rem; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 1.5rem; }
+  .cover-marker .ml { width: 60px; height: 1px; background: var(--terracotta); }
+  .cover h1 { font-family: var(--font-display); font-size: clamp(2.6rem, 5vw, 4.2rem); font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 50; line-height: 1.05; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 1.5rem; max-width: 18ch; }
+  .cover h1 em { font-style: italic; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); }
+  .cover .subtitle { font-family: var(--font-display); font-style: italic; font-size: 1.2rem; color: var(--ink-soft); max-width: 58ch; margin-bottom: 2rem; }
+  .cover-meta { display: flex; gap: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); flex-wrap: wrap; }
+  .mb { display: flex; flex-direction: column; gap: 0.2rem; }
+  .mb-label { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); }
+  .mb span:last-child { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: var(--ink); }
+
+  .section { padding: 3rem 5rem; border-bottom: 1px solid var(--rule); }
+  .section-head { display: grid; grid-template-columns: 80px 1fr; gap: 1.5rem; margin-bottom: 1.8rem; align-items: start; }
+  .section-num { font-family: var(--font-display); font-size: 2.8rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 1; }
+  .section-tag { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+  .section-title { font-family: var(--font-display); font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 400; line-height: 1.15; color: var(--ink); letter-spacing: -0.01em; max-width: 26ch; }
+  .section-title em { font-style: italic; font-weight: 300; color: var(--terracotta); font-variation-settings: 'opsz' 144, 'SOFT' 100; }
+
+  .section p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .section p.lead { font-family: var(--font-display); font-style: italic; font-size: 1.18rem; color: var(--ink-soft); margin-bottom: 1.5rem; max-width: 60ch; }
+  .section h3 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 500; margin: 1.6rem 0 0.6rem; color: var(--ink); }
+
+  .phase-banner { display: grid; grid-template-columns: 110px 1fr; gap: 2rem; margin: 2rem 0 2.5rem; padding: 1.4rem 1.8rem; background: linear-gradient(90deg, rgba(184, 85, 40, 0.10), transparent); border-left: 4px solid var(--terracotta); align-items: center; }
+  .phase-letter { font-family: var(--font-display); font-size: 5rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 0.85; text-align: center; }
+  .phase-banner h4 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; color: var(--ink); margin-bottom: 0.3rem; }
+  .phase-banner .phase-meta { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.5rem; }
+  .phase-banner p { font-size: 0.97rem; color: var(--ink); margin-bottom: 0; max-width: 65ch; }
+  .phase-banner em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .phase-banner.diag { background: linear-gradient(90deg, rgba(40, 72, 88, 0.10), transparent); border-left-color: var(--cobalt); }
+  .phase-banner.diag .phase-letter { color: var(--cobalt); }
+
+  .step { display: grid; grid-template-columns: 320px 1fr; gap: 1.8rem; margin: 1.6rem 0; padding: 1.6rem 1.8rem; background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; }
+  .step-diagram { background: #f3ecdc; border: 1px solid #c8b89a; border-radius: 6px; padding: 1rem 0.6rem 0.6rem; align-self: start; }
+  .step-diagram svg { width: 100%; height: auto; display: block; }
+  .step-diagram .caption { margin-top: 0.5rem; text-align: center; font-family: var(--font-display); font-style: italic; font-size: 0.82rem; color: var(--ink-soft); line-height: 1.4; }
+  .step-num-row { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 0.6rem; }
+  .step-num { font-family: var(--font-display); font-size: 1.8rem; font-weight: 300; font-style: italic; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); line-height: 1; }
+  .step-title { font-family: var(--font-display); font-size: 1.18rem; font-weight: 500; color: var(--ink); line-height: 1.25; }
+  .step p { font-size: 0.96rem; margin-bottom: 0.6rem; max-width: none; }
+  .step p:last-child { margin-bottom: 0; }
+  .step em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .shortcut-row { display: flex; flex-wrap: wrap; gap: 0.4rem 0.7rem; align-items: center; margin: 0.5rem 0 0.4rem; font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; color: var(--ink-soft); }
+  kbd { font-family: var(--font-mono); font-size: 0.78rem; background: var(--paper-warm); border: 1px solid var(--rule); border-radius: 3px; padding: 0.05rem 0.4rem; color: var(--ink); box-shadow: 0 1px 0 var(--rule); }
+
+  .box { margin: 1.4rem 0; padding: 1.1rem 1.3rem; border-radius: 0 4px 4px 0; max-width: none; }
+  .step .box { margin: 0.9rem 0 0.4rem; }
+  .box-label { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; margin-bottom: 0.4rem; }
+  .box-label::before { content: ''; width: 14px; height: 1.5px; background: currentColor; }
+  .box p { font-size: 0.93rem; margin-bottom: 0.4rem; }
+  .box p:last-child { margin-bottom: 0; }
+  .box-why { background: rgba(40, 72, 88, 0.10); border-left: 3px solid var(--cobalt); }
+  .box-why .box-label { color: var(--cobalt); }
+  .box-stolper { background: rgba(196, 107, 58, 0.13); border-left: 3px solid var(--warning); }
+  .box-stolper .box-label { color: var(--warning); }
+  .box-merk { background: rgba(184, 85, 40, 0.10); border-left: 3px solid var(--terracotta); }
+  .box-merk .box-label { color: var(--terracotta); }
+  .box-check { background: rgba(138, 152, 120, 0.18); border-left: 3px solid var(--sage); }
+  .box-check .box-label { color: var(--sage); }
+
+  .insight { margin: 1.4rem 0; padding: 1.1rem 1.3rem; background: var(--paper-warm); border: 1px dashed var(--rule); border-radius: 6px; font-family: var(--font-display); font-style: italic; font-size: 0.96rem; color: var(--ink-soft); max-width: 65ch; }
+  .insight::before { content: 'Randnotiz'; display: block; font-family: var(--font-mono); font-style: normal; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+
+  .doc-footer { padding: 2.5rem 5rem; border-top: 2px solid var(--ink); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); display: flex; justify-content: space-between; }
+  .doc-footer .terracotta { color: var(--terracotta); }
+
+  @media (max-width: 900px) {
+    .cover, .section, .doc-footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .section-head { grid-template-columns: 1fr; gap: 0.5rem; }
+    .step { grid-template-columns: 1fr; gap: 1rem; }
+    .step-diagram { max-width: 280px; margin: 0 auto; }
+    .phase-banner { grid-template-columns: 1fr; gap: 0.5rem; }
+    .phase-letter { text-align: left; font-size: 3.5rem; }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #1a1612; --paper-warm: #221d17; --paper-dark: #2a241c;
+      --ink: #ebe3d0; --ink-soft: #b8a98a; --ink-faint: #7a6e58;
+      --terracotta: #e8814a; --terracotta-deep: #c25a2a;
+      --cobalt: #6a9aab; --sage: #a8b898; --warning: #e2884d; --rule: #3a3026;
+    }
+    body { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"); }
+    .step-diagram { background: #f3ecdc !important; border-color: #c8b89a !important; }
+    .step-diagram .caption { color: #5a4d3a !important; }
+  }
+</style>
+</head>
+<body>
+
+<article class="doc">
+
+<!-- COVER -->
+<header class="cover">
+  <div class="cover-marker">
+    <span>Cascadeur · Lernreihe · Track 3</span>
+    <div class="ml"></div>
+    <span>Projekt 09 · v 1.0</span>
+  </div>
+  <h1>Mocap-Cleanup <em>mit</em><br>QuickMagic:<br>vom Video zur Animation.</h1>
+  <p class="subtitle">Erste Brochüre mit umgekehrter Workflow-Logik. Die Animation existiert bereits — aus QuickMagic generiert, mit allen typischen Mocap-Problemen. Die Werkzeuge aus 01-08 werden zu Cleanup-Werkzeugen. Shift+Z als Mass-Pose-Fix, Fulcrum Motion Cleaning als zentraler Polish-Pass.</p>
+  <div class="cover-meta">
+    <div class="mb"><span class="mb-label">Quelle</span><span>QuickMagic Video-Mocap</span></div>
+    <div class="mb"><span class="mb-label">Dauer</span><span>5-10 s · variabel</span></div>
+    <div class="mb"><span class="mb-label">Charakter</span><span>UE5-Manny-Avatar</span></div>
+    <div class="mb"><span class="mb-label">Neu</span><span>Shift+Z Mass-Fix · Unbaking</span></div>
+    <div class="mb"><span class="mb-label">Pipeline-Ziel</span><span>UE5 mit IK-Retargeter</span></div>
+    <div class="mb"><span class="mb-label">Schritte</span><span>17</span></div>
+  </div>
+</header>
+
+
+<!-- § 1 — WAS DU BAUST -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§1</div>
+    <div>
+      <div class="section-tag">Cleanup-Konzept und Workflow-Inversion</div>
+      <h2 class="section-title">Nicht <em>bauen</em>, sondern reparieren.</h2>
+    </div>
+  </div>
+
+  <p class="lead">Alle bisherigen Projekte folgten dem gleichen Pattern: Setup → Grobschnitt → Inbetweening → Verfeinerung → Physics → Export. Bei Mocap-Cleanup ist das anders. Die Animation existiert schon. Was du machst, ist sie reparieren.</p>
+
+  <p>Workflow-Inversion: statt Anker-Posen zu setzen und Inbetweening dazwischen rechnen zu lassen, hast du eine vollständige Animation mit Keyframes auf jedem Frame — das ist die Mocap-Realität. Diese Keyframes haben Probleme: die Hände sind schwach erkannt (Quick Magic kann Finger schwer aus Video extrahieren), Foot-Sliding tritt auf (Bodenkontakt-Erkennung ist nicht perfekt), Limb-Twists und Body-Rotation-Artefakte sind häufig.</p>
+
+  <p>Drei neue Werkzeug-Anwendungen kommen ins Vokabular: <strong>Shift+Z als Mass-Pose-Fix</strong> — der AI-Assistent fixt Hand-Posen über die ganze Sequenz auf einmal. <strong>Unbaking</strong> — Mocap-dichte Keyframes werden auf sparsere Anker reduziert für nachträgliche Bearbeitung. <strong>Selektives Re-Inbetweening</strong> — problematische Sektionen werden lokal überschrieben.</p>
+
+  <div class="box box-why">
+    <div class="box-label">Warum Mocap-Cleanup ein eigenes Lehrstück ist</div>
+    <p>Bei traditioneller Animation produzierst du genau das, was du willst. Bei Mocap produziert die Maschine 80% richtig, 20% falsch — und du musst entscheiden, welches die 20% sind und wie du sie reparierst, ohne die 80% richtig kaputtzumachen. Das ist eine andere Disziplin. Die Werkzeuge sind die gleichen wie in 01-08, aber sie werden anders eingesetzt — defensiv statt konstruktiv.</p>
+  </div>
+
+  <div class="insight">
+    Disney hat in den 1930ern „Rotoscoping" eingeführt — Tracing über echte Live-Action-Aufnahmen Frame für Frame. Snow White (1937) wurde zum Großteil rotoscopiert. Heute heißt das Mocap, und die Werkzeuge sind digital, aber das Grundproblem ist identisch: wie übersetzt man die feinen Variationen einer realen Bewegung in einen Animations-fähigen Datensatz, ohne die Lebendigkeit zu verlieren? Quick Magic ist die 2025er-Antwort: ein Web-Tool, das aus jedem YouTube-Video eine Mocap-Datei macht. Vor zehn Jahren hätte dieser Workflow $5000 Hardware und einen Mocap-Anzug gekostet. Heute kostet er ein paar Dollar in „V-Coins". Das ist die Demokratisierung der Animation.
+  </div>
+</section>
+
+
+<!-- § 2 — PHASE A: QUICKMAGIC-SETUP -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§2</div>
+    <div>
+      <div class="section-tag">Phase A · QuickMagic-Setup</div>
+      <h2 class="section-title">Video, <em>V-Coins</em>, Import.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">A</div>
+    <div>
+      <h4>QuickMagic-Setup</h4>
+      <div class="phase-meta">Video-Vorbereitung · Avatar-Wahl · Generation · Import</div>
+      <p>Video in After Effects vorbereiten, in QuickMagic hochladen, Avatar als UE5 5.6 wählen, generieren, herunterladen, in Cascadeur droppen. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">VIDEO-VORBEREITUNG · AFTER EFFECTS</text>
+        <rect x="50" y="50" width="220" height="110" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="60" y1="68" x2="260" y2="68" stroke="#c8b89a" stroke-width="1"/>
+        <text x="160" y="62" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Video-Specs</text>
+        <text x="65" y="86" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Format</text>
+        <text x="255" y="86" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">MP4 · H.264</text>
+        <text x="65" y="104" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Länge</text>
+        <text x="255" y="104" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">5-10 Sek</text>
+        <text x="65" y="122" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Background</text>
+        <text x="255" y="122" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">NICHT weiß</text>
+        <text x="65" y="140" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Kamera-Winkel</text>
+        <text x="255" y="140" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">beliebig</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">1 V-Coin pro Sekunde — kurze Clips sparen</text>
+      </svg>
+      <div class="caption">Video-Specs für QuickMagic: MP4 H.264, kurze Clips, kein weißer Background.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">01</span>
+        <span class="step-title">Video in After Effects vorbereiten</span>
+      </div>
+      <p>Reference-Quelle (YouTube via 4K Downloader, eigene Aufnahme oder Stock-Footage) in After Effects laden. Den relevanten Teil ausschneiden — bei QuickMagic kostet jede Sekunde 1 V-Coin, lange Clips sind teuer.</p>
+      <p>Export-Settings:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Format</strong>: MP4 mit H.264-Codec (QuickMagic-empfohlen für beste Erkennung)</li>
+        <li><strong>Länge</strong>: 5-10 Sekunden für die meisten Anwendungen. Längere Sequenzen werden teurer und schwerer zu cleanen</li>
+        <li><strong>Background</strong>: nicht weiß. Weiße Hintergründe verwirren die Pose-Erkennung. Bei eigenen Aufnahmen vor neutralem grauen oder dunklen Hintergrund filmen</li>
+        <li><strong>Kamera-Winkel</strong>: beliebig — QuickMagic handhabt Front-, Seite-, Schräg-Aufnahmen. Aber: starke Body-Rotation (Charakter dreht sich vor der Kamera) ist schwierig zu erkennen</li>
+      </ul>
+      <p>Bei Sport-Aufnahmen (Cartwheel, Backflip): vermeiden, dass der Hintergrund weiß ist — sonst kann QuickMagic den Charakter verlieren. Bei Solo-Aufnahmen: nur eine Person im Frame.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Body-Rotation als Schwachstelle</div>
+        <p>QuickMagic kann starke vertikale oder horizontale Rotation schwer erkennen. Cartwheel und Backflip funktionieren oft mäßig, weil der Körper sich um sich selbst dreht. Bei diesen Bewegungen das 2D-Refinement-Tool von QuickMagic nutzen (kostet extra) oder lieber den Cleanup in Cascadeur intensiver planen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">QUICKMAGIC · UPLOAD UND GENERATION</text>
+        <rect x="50" y="50" width="220" height="110" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">imocap.quickmagic.ai</text>
+        <line x1="60" y1="76" x2="260" y2="76" stroke="#c8b89a" stroke-width="1"/>
+        <text x="65" y="92" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Avatar</text>
+        <text x="255" y="92" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Unreal 5.6</text>
+        <text x="65" y="108" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Body</text>
+        <text x="255" y="108" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Full Body</text>
+        <text x="65" y="124" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Original Pose</text>
+        <text x="255" y="124" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Yes</text>
+        <text x="65" y="140" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Frame Rate</text>
+        <text x="255" y="140" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">30 fps</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Generation: 5-10 Minuten · Output: FBX + Textur (ZIP)</text>
+      </svg>
+      <div class="caption">QuickMagic Settings für UE5-Pipeline. Unreal 5.6 Avatar, Full Body, 30 fps.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">02</span>
+        <span class="step-title">QuickMagic Upload und Avatar-Wahl</span>
+      </div>
+      <p>Auf <code>quickmagic.ai/imocap</code> einloggen (Premium-Subscription für die Reihe). Video hochladen. Im Setup-Dialog die Avatar-Optionen — wichtig:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Avatar</strong>: <em>Unreal 5.6</em> — kompatibel mit dem UE5-Manny-Skelett, der primäre Charakter dieser Reihe. Andere Optionen wären Mixamo, Daz, etc. — bei UE5-Pipeline immer Unreal 5.6 wählen</li>
+        <li><strong>Body-Mode</strong>: Full Body (nicht Upper Body)</li>
+        <li><strong>Original Pose</strong>: Ja — die Pose-Daten bleiben so wie im Video, ohne Normalisierung</li>
+        <li><strong>Frame Rate</strong>: 30 fps — passt zu Cascadeur-Default</li>
+      </ul>
+      <p>Generieren. V-Coins werden abgebucht. Generation dauert 5-10 Minuten (regulär) oder schneller (Pro-Subscription mit High-Priority). Output: ein ZIP mit dem FBX (Animation) und einer Textur.</p>
+      <div class="box box-merk">
+        <div class="box-label">2D-Refinement-Tool als Premium-Add-On</div>
+        <p>QuickMagic bietet ein 2D-Refinement-Tool, mit dem du die Pose-Detection im Video manuell korrigieren kannst — Bones an die richtigen Positionen ziehen pro Frame. Bei problematischen Aufnahmen (Body-Rotation, schwache Beleuchtung) kann das vor der Generation viel Cleanup-Zeit sparen. Kostet aber extra in QuickMagic Pro.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">IMPORT IN CASCADEUR · DRAG & DROP</text>
+        <!-- File icon -->
+        <g>
+          <rect x="60" y="55" width="50" height="60" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="85" y="80" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">FBX</text>
+          <text x="85" y="98" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">unzip</text>
+        </g>
+        <!-- Arrow -->
+        <path d="M 115 85 L 145 85" stroke="#1f1a14" stroke-width="1.5" marker-end="url(#arrimp)"/>
+        <defs>
+          <marker id="arrimp" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M 0 0 L 8 4 L 0 8 z" fill="#1f1a14"/>
+          </marker>
+        </defs>
+        <!-- Cascadeur scene -->
+        <rect x="150" y="55" width="120" height="100" fill="#284858" opacity="0.1" stroke="#284858" stroke-width="1.5"/>
+        <text x="210" y="75" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#284858">CASCADEUR</text>
+        <text x="210" y="92" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#1f1a14">Drop animation</text>
+        <text x="210" y="108" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#1f1a14">in scene</text>
+        <text x="210" y="128" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">→ Mocap geladen</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">FBX einfach ins Cascadeur-Fenster ziehen</text>
+      </svg>
+      <div class="caption">Drag-and-Drop: ZIP entpacken, FBX direkt in die Cascadeur-Scene ziehen.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">03</span>
+        <span class="step-title">FBX in Cascadeur importieren</span>
+      </div>
+      <p>ZIP entpacken. Im Ordner liegt eine <code>.fbx</code>-Datei mit der Animation und Bone-Daten, plus eine Textur (kann ignoriert werden für reine Animation).</p>
+      <p>Cascadeur starten, neue Scene. Die FBX einfach <strong>per Drag-and-Drop</strong> ins Cascadeur-Fenster ziehen — keine Import-Dialog-Schleife nötig. Cascadeur lädt die Animation automatisch.</p>
+      <p>Was du jetzt siehst: ein Character (Mannequin-ähnlich, basierend auf dem Unreal-5.6-Avatar) mit voller Animation auf der Timeline. Jeder Frame ist ein Keyframe — Mocap ist dicht. Die Animation läuft, aber sieht „roh" aus — keine Polish, kein cleaning.</p>
+      <p>Speichern als <code>projekt-09-mocap.casc</code>.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Kein Quick Rigging Tool nötig</div>
+        <p>Bei den vorigen Projekten war Quick Rigging Tool ein Standardschritt nach jedem Setup. Bei Mocap-Import nicht — das FBX bringt sein eigenes Rig mit. Cascadeur erkennt das Unreal-5.6-Skelett automatisch und ordnet die Controller zu. Falls Cascadeur das nicht macht: dann <em>doch</em> ins Rig-Mode und das Skelett-Template manuell zuordnen. Bei Standard-UE5-Avatar passiert das aber nicht.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 3 — PHASE B: DIAGNOSE -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§3</div>
+    <div>
+      <div class="section-tag">Phase B · Diagnose</div>
+      <h2 class="section-title">Was ist <em>falsch</em>?</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner diag">
+    <div class="phase-letter">B</div>
+    <div>
+      <h4>Diagnose</h4>
+      <div class="phase-meta">Typische Mocap-Probleme · Custom Track Hierarchy</div>
+      <p>Bevor du cleanst, identifiziere die Probleme. Bei QuickMagic-Output gibt es ein typisches Pattern. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">TYPISCHE QUICKMAGIC-PROBLEME</text>
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <rect x="30" y="50" width="270" height="20" fill="#ede4d0" stroke="#c46b3a" stroke-width="1.5"/>
+          <text x="40" y="64" fill="#c46b3a" font-weight="600">Hände</text>
+          <text x="290" y="64" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">fast immer schwach</text>
+
+          <rect x="30" y="74" width="270" height="20" fill="#ede4d0" stroke="#c46b3a" stroke-width="1.5"/>
+          <text x="40" y="88" fill="#c46b3a" font-weight="600">Finger</text>
+          <text x="290" y="88" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">meist gar nicht erkannt</text>
+
+          <rect x="30" y="98" width="270" height="20" fill="#ede4d0" stroke="#e4b860" stroke-width="1.5"/>
+          <text x="40" y="112" fill="#5a4d3a">Foot-Sliding</text>
+          <text x="290" y="112" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">moderat häufig</text>
+
+          <rect x="30" y="122" width="270" height="20" fill="#ede4d0" stroke="#e4b860" stroke-width="1.5"/>
+          <text x="40" y="136" fill="#5a4d3a">Body-Rotation-Artefakte</text>
+          <text x="290" y="136" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">bei Drehungen</text>
+
+          <rect x="30" y="146" width="270" height="20" fill="#ede4d0" stroke="#8a9878" stroke-width="1.5"/>
+          <text x="40" y="160" fill="#5a4d3a">Body-Trajectory · Timing</text>
+          <text x="290" y="160" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">meist gut</text>
+        </g>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Rote Zonen → Pflicht-Cleanup. Gelb → Stichproben. Grün → meist okay.</text>
+      </svg>
+      <div class="caption">QuickMagic-Schwachstellen-Liste: Hände rot, Body grün. Pflicht-Cleanup-Reihenfolge.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">04</span>
+        <span class="step-title">Typische Mocap-Probleme identifizieren</span>
+      </div>
+      <p>Bei jedem QuickMagic-Output gibt es ein typisches Schwachstellen-Pattern. Bevor du anfängst zu cleanen, schau die Animation einmal komplett durch und identifiziere die Problemzonen:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Hände</strong>: fast immer schwach. Hand-Posen sehen unnatürlich oder gar nicht zur Aktion passend aus</li>
+        <li><strong>Finger</strong>: meist gar nicht erkannt — entweder alle Finger gespreizt oder alle gerade. Echte Finger-Posen fehlen</li>
+        <li><strong>Foot-Sliding</strong>: kommt vor, besonders bei Lokomotion. Füße drift bei Bodenkontakt</li>
+        <li><strong>Body-Rotation</strong>: Artefakte bei starken Drehungen — der Charakter „knickt" plötzlich, dann zurück</li>
+        <li><strong>Body-Trajectory und Timing</strong>: in der Regel gut. Die ganzkörperliche Bewegung ist meistens das, was QuickMagic am besten kann</li>
+      </ul>
+      <p>Diese Diagnose definiert die Reihenfolge des Cleanup: zuerst Hände (Pflicht), dann Foot-Sliding (Pflicht), dann Rotation-Artefakte (case-by-case), dann Polish.</p>
+      <div class="insight">
+        Mocap-Cleanup ist nach Schätzungen der Industrie 50-80% der gesamten Mocap-Pipeline-Zeit — die Aufnahme selbst dauert oft Stunden, das Cleaning der Tage. Bei QuickMagic ist die Aufnahme-Phase auf Minuten reduziert (Video uploaden), aber die Cleanup-Phase bleibt vergleichbar. Was du sparst, ist Studio-Mietkosten und Mocap-Anzug-Aufwand. Was du nicht sparst: die handwerkliche Cleanup-Arbeit. Quick Magic verkauft sich als „Animation in Minuten" — das stimmt für die Generation, aber nicht für die fertige Animation.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">CUSTOM TRACKS FÜR MOCAP-CLEANUP</text>
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <rect x="40" y="50" width="240" height="18" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="50" y="63">Hips · Pelvis</text>
+          <text x="270" y="63" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Group</text>
+          
+          <rect x="40" y="70" width="240" height="18" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="50" y="83">Torso · Spine · Head</text>
+          <text x="270" y="83" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Group</text>
+          
+          <rect x="40" y="90" width="240" height="18" fill="#b85528" opacity="0.4" stroke="#b85528" stroke-width="1.5"/>
+          <text x="50" y="103" font-weight="600">L_Arm · R_Arm · Hands</text>
+          <text x="270" y="103" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Cleanup-Pflicht</text>
+          
+          <rect x="40" y="110" width="240" height="18" fill="#e4b860" opacity="0.4" stroke="#c46b3a" stroke-width="1.5"/>
+          <text x="50" y="123">L_Leg · R_Leg · Feet</text>
+          <text x="270" y="123" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">Fulcrum-Cleanup</text>
+          
+          <rect x="40" y="130" width="240" height="18" fill="#b85528" opacity="0.4" stroke="#b85528" stroke-width="1.5"/>
+          <text x="50" y="143" font-weight="600">L_Hand_Fingers · R_Hand_Fingers</text>
+          <text x="270" y="143" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Mass-Fix</text>
+        </g>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Track-Gruppen erlauben body-part-isoliertes Cleanup</text>
+      </svg>
+      <div class="caption">Custom Track Hierarchy für Cleanup-Workflow. Cleanup-Zonen klar getrennt.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">05</span>
+        <span class="step-title">Custom Track Hierarchy für Cleanup</span>
+      </div>
+      <p>Wie in Projekt 08: Custom Track Hierarchy als strukturelle Setup-Entscheidung. Bei Mocap-Cleanup ist sie unverzichtbar, weil du oft an einer Body-Part-Gruppe arbeiten willst, ohne von anderen abgelenkt zu werden.</p>
+      <p>Track-Gruppen anlegen:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Hips · Pelvis</strong> — die Trajectory-Basis</li>
+        <li><strong>Torso · Spine · Head</strong> — meist okay, Stichprobe</li>
+        <li><strong>L_Arm · R_Arm · Hands</strong> — Cleanup-Pflicht-Zone</li>
+        <li><strong>L_Leg · R_Leg · Feet</strong> — Fulcrum-Cleanup-Zone</li>
+        <li><strong>L_Hand_Fingers · R_Hand_Fingers</strong> — Mass-Fix-Zone (Shift+Z)</li>
+      </ul>
+      <p>Im Point Controller Mode anlegen, Add-Object-to-Track-Button für die Zuordnungen.</p>
+      <p>Praktisch: bei der Fulcrum-Cleanup-Phase blendest du Hände und Arme aus, fokussierst nur auf Beine. Bei der Hand-Cleanup-Phase umgekehrt — Beine ausblenden, nur Arme/Hände sichtbar.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 4 — PHASE C: GROBREINIGUNG -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§4</div>
+    <div>
+      <div class="section-tag">Phase C · Grobreinigung</div>
+      <h2 class="section-title">Shift+Z als <em>Mass-Pose-Fix</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">C</div>
+    <div>
+      <h4>Grobreinigung</h4>
+      <div class="phase-meta">Hand-Reset · Finger-Default · Fulcrum Cleaning · Animation-Trim</div>
+      <p>Die schnellen Fixes zuerst. Shift+Z für Hände über die ganze Sequenz, Finger-AutoPosing-Default, Fulcrum Motion Cleaning. <em>Fünf Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">SHIFT+Z · ÜBER GANZE SEQUENZ</text>
+        <!-- Timeline with frames -->
+        <line x1="20" y1="100" x2="300" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Mass selection indicator -->
+        <rect x="20" y="93" width="280" height="14" fill="#b85528" opacity="0.4" stroke="#b85528" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="160" y="120" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">INTERVAL EDIT · STEP MODE · FIX PIVOT</text>
+        <!-- Steps -->
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <text x="30" y="145">1.</text>
+          <text x="45" y="145">Hand-Controller selektieren (Doppel-Click)</text>
+          <text x="30" y="160">2.</text>
+          <text x="45" y="160">Interval Edit · Step Mode · Fix Pivot</text>
+          <text x="30" y="175">3.</text>
+          <text x="45" y="175"><tspan font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Shift+Z</tspan> · KI fixt alle Frames</text>
+        </g>
+      </svg>
+      <div class="caption">Mass-Pose-Fix: Shift+Z über die ganze Sequenz mit Interval Edit Mode aktiviert.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">06</span>
+        <span class="step-title">Hand-Mass-Fix mit Shift+Z</span>
+      </div>
+      <p>Erstes Cleanup-Werkzeug, aus dem Speed-Workflow-Tutorial belegt. Bei Mocap-Hand-Posen-Problemen: <kbd>Shift</kbd>+<kbd>Z</kbd> aktiviert das AutoPosing-AI und gibt eine plausible Hand-Pose. Aber: standardmäßig nur für den aktuellen Frame.</p>
+      <p>Trick für ganze Sequenz:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>In AutoPosing-Mode wechseln. Eine Hand-Pose (alle drei Hand-Controller per Doppel-Click) selektieren</li>
+        <li>Interval Edit Mode aktivieren — alle Controller werden rot</li>
+        <li><strong>Fix Pivot Mode</strong> aktivieren — Controller werden blau</li>
+        <li>Beliebigen anderen Frame in der Animation auswählen, alle blauen Controller selektieren, <kbd>Shift</kbd>+<kbd>Z</kbd> — die grünen Punkte werden blau, das ist die Fixierung über die ganze Sequenz</li>
+        <li>Jetzt die Hand-Pose über den ganzen Range erneut selektieren, <kbd>Shift</kbd>+<kbd>Z</kbd> — Cascadeur berechnet eine plausible Hand-Pose pro Frame</li>
+      </ol>
+      <p>Effekt: in 30 Sekunden Arbeit sind die Hände in der ganzen Animation auf plausibel-natürliche Posen gesetzt. Das ist die wichtigste Mocap-Beschleunigung im ganzen Toolset.</p>
+      <p>Wiederholen für die andere Hand.</p>
+      <div class="shortcut-row">
+        <span>AI-Pose:</span><kbd>Shift</kbd>+<kbd>Z</kbd>
+        <span>Interval Edit Mode:</span><span>Button</span>
+        <span>Fix Pivot Mode:</span><span>Button</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FINGER-AUTOPOSING · SHIFT+Z DEFAULT</text>
+        <rect x="80" y="55" width="160" height="100" rx="6" fill="#f3ecdc" stroke="#1f1a14" stroke-width="2"/>
+        <text x="160" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#b85528">FINGER-AUTOPOSING</text>
+        <line x1="100" y1="86" x2="220" y2="86" stroke="#c8b89a" stroke-width="1"/>
+        <text x="160" y="105" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Aktivieren</text>
+        <text x="160" y="120" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#1f1a14">Index/Pinky Master selektieren</text>
+        <text x="160" y="140" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b85528" font-weight="600">Shift + Z</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Default-Pose · Finger entspannt geöffnet</text>
+      </svg>
+      <div class="caption">Finger-AutoPosing-Default. Shift+Z mit aktivierten Finger-Mastern.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">07</span>
+        <span class="step-title">Finger-Default-Pose über die ganze Sequenz</span>
+      </div>
+      <p>QuickMagic erkennt Finger meist gar nicht. Die Finger-Posen sind also fast immer falsch (alle gestreckt oder alle gespreizt). Schneller Fix: Finger-AutoPosing-Default über die ganze Animation.</p>
+      <p>Vorgehen:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>In AutoPosing-Mode. Finger-AutoPosing Sub-Toggle aktivieren (aus Projekt 08)</li>
+        <li>Index- und Pinky-Master-Controller einer Hand selektieren (Doppel-Click reicht meist nicht für Finger — manuell auswählen)</li>
+        <li>Interval Edit Mode + Fix Pivot Mode aktivieren (wie in Schritt 06)</li>
+        <li><kbd>Shift</kbd>+<kbd>Z</kbd> über die ganze Animation — Finger werden auf entspannte Default-Pose gesetzt</li>
+      </ol>
+      <p>Das ist nicht die finale Finger-Pose — bei spezifischen Gesten (Faust beim Schlagen, Index beim Zeigen) brauchst du individuelle Pose-Anker. Aber als Baseline ist die Default-Pose besser als die fehlerhafte QuickMagic-Erkennung.</p>
+      <p>Für individuelle Gesten in der Animation: an den Schlüsselframes manuell die Finger-Pose setzen wie in Projekt 08.</p>
+      <div class="box box-merk">
+        <div class="box-label">Mocap ohne Finger ist Standard</div>
+        <p>Mocap-Suits (Move AI, Xsens, Rokoko) haben oft separate Finger-Tracker oder gar keine Finger-Daten. Bei Video-Mocap wie QuickMagic ist Fingererkennung physikalisch schwer — Finger sind zu klein im Frame und überlappen sich oft. Pipeline-Reality: bei jedem Mocap-Workflow plant man Finger-Polish als separaten Schritt ein. QuickMagic ist da nicht schlechter als andere, aber auch nicht besser.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FULCRUM MOTION CLEANING</text>
+        <!-- Before -->
+        <line x1="20" y1="100" x2="150" y2="100" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="85" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="0.1em" fill="#c46b3a">VOR</text>
+        <g>
+          <line x1="35" y1="100" x2="50" y2="100" stroke="#1f1a14" stroke-width="2.5"/>
+          <line x1="58" y1="98" x2="73" y2="98" stroke="#c46b3a" stroke-width="2.5"/>
+          <line x1="80" y1="103" x2="95" y2="103" stroke="#c46b3a" stroke-width="2.5"/>
+          <line x1="103" y1="100" x2="118" y2="100" stroke="#1f1a14" stroke-width="2.5"/>
+          <line x1="125" y1="98" x2="140" y2="98" stroke="#c46b3a" stroke-width="2.5"/>
+        </g>
+        <text x="85" y="125" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#c46b3a">Foot-Sliding sichtbar</text>
+        <!-- Arrow -->
+        <path d="M 155 100 L 175 100" stroke="#1f1a14" stroke-width="1.5" marker-end="url(#arrfm)"/>
+        <defs>
+          <marker id="arrfm" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M 0 0 L 8 4 L 0 8 z" fill="#1f1a14"/>
+          </marker>
+        </defs>
+        <text x="165" y="92" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">Align Feet</text>
+        <!-- After -->
+        <line x1="180" y1="100" x2="300" y2="100" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="240" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="0.1em" fill="#8a9878">NACH</text>
+        <g>
+          <line x1="195" y1="100" x2="210" y2="100" stroke="#1f1a14" stroke-width="2.5"/>
+          <line x1="218" y1="100" x2="233" y2="100" stroke="#8a9878" stroke-width="2.5"/>
+          <line x1="240" y1="100" x2="255" y2="100" stroke="#8a9878" stroke-width="2.5"/>
+          <line x1="263" y1="100" x2="278" y2="100" stroke="#1f1a14" stroke-width="2.5"/>
+          <line x1="285" y1="100" x2="300" y2="100" stroke="#8a9878" stroke-width="2.5"/>
+        </g>
+        <text x="240" y="125" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#8a9878">stabil ausgerichtet</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Bekannt aus Projekt 03 (Walk) — hier zentrales Mocap-Werkzeug</text>
+      </svg>
+      <div class="caption">Fulcrum Motion Cleaning: Foot-Sliding vor und nach. Frame-Range selektieren, Align Feet.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">08</span>
+        <span class="step-title">Fulcrum Motion Cleaning für Foot-Sliding</span>
+      </div>
+      <p>Bekannt aus Projekt 03 (Walk). Bei Mocap ist es das zentrale Werkzeug für die Lower-Body-Reinigung. Cascadeur erkennt automatisch, wo die Füße eigentlich am Boden sein sollten, und korrigiert minimal-Drift.</p>
+      <p>Vorgehen:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Frame-Range selektieren (am besten die ganze Animation für den ersten Pass)</li>
+        <li><strong>Align Feet</strong>-Button drücken (im Cleanup-Tab)</li>
+        <li>Sliding-Probleme verschwinden automatisch</li>
+      </ol>
+      <p>Falls bei langen Animationen (>200 Frames) das Ergebnis nicht ideal ist: in kleineren Segmenten arbeiten. 50-100 Frames pro Pass, dann das Ergebnis prüfen, dann nächstes Segment.</p>
+      <p>Das Tool verarbeitet Sprünge und Schritte korrekt — es klebt nicht stur ans Boden-Level, sondern erkennt, wann der Charakter den Boden verlässt (z.B. bei Sprüngen) und respektiert das.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Bei sehr langen Animationen segmentweise</div>
+        <p>Fulcrum Motion Cleaning auf eine 500-Frame-Animation auf einmal angewendet kann unscharfe Ergebnisse geben. Die berechnete „durchschnittliche Foot-Position" wird zu generisch. Lösung: in Abschnitten arbeiten — z.B. erst die Walk-Sektion (Frames 0-150), dann die Stand-Sektion (150-250), dann die Run-Sektion (250-500). Pro Segment passt Cascadeur seine Foot-Erkennung an.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 9 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">LIMB-TWISTS · TYPISCHES PROBLEM</text>
+        <!-- Arm with twist -->
+        <g>
+          <text x="80" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="0.1em" fill="#c46b3a">VOR</text>
+          <circle cx="80" cy="75" r="6" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <!-- Twisted arm with bend -->
+          <line x1="80" y1="81" x2="60" y2="110" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Elbow bone with wrong rotation -->
+          <line x1="60" y1="110" x2="95" y2="135" stroke="#c46b3a" stroke-width="2.5"/>
+          <line x1="95" y1="135" x2="105" y2="155" stroke="#c46b3a" stroke-width="2"/>
+          <text x="100" y="170" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#c46b3a">Twist im Ellbogen</text>
+        </g>
+        <!-- Arrow -->
+        <path d="M 140 105 L 165 105" stroke="#1f1a14" stroke-width="1.5" marker-end="url(#arrlt)"/>
+        <defs>
+          <marker id="arrlt" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M 0 0 L 8 4 L 0 8 z" fill="#1f1a14"/>
+          </marker>
+        </defs>
+        <!-- After -->
+        <g>
+          <text x="240" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="0.1em" fill="#8a9878">NACH</text>
+          <circle cx="240" cy="75" r="6" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="240" y1="81" x2="225" y2="115" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="225" y1="115" x2="240" y2="145" stroke="#8a9878" stroke-width="2.5"/>
+          <line x1="240" y1="145" x2="248" y2="165" stroke="#8a9878" stroke-width="2"/>
+          <text x="240" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#8a9878">natürliche Pose</text>
+        </g>
+      </svg>
+      <div class="caption">Limb-Twist-Korrektur: Ellbogen-Rotation manuell setzen oder Re-Inbetweening.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">09</span>
+        <span class="step-title">Limb-Twists und Body-Rotation-Artefakte</span>
+      </div>
+      <p>Limb-Twists sind ein häufiges Mocap-Problem: ein Bone (typisch Ellbogen oder Knie) rotiert um seine eigene Achse anders als anatomisch korrekt. Aus dem Frame heraus sieht das verschraubt aus.</p>
+      <p>Diagnose: Slow Motion (Time Factor 0.3) und problematische Frames identifizieren. Meist sind 5-10 Frames betroffen, dann normalisiert sich die Pose wieder von selbst.</p>
+      <p>Zwei Lösungswege:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Manueller Fix</strong>: betroffenen Bone selektieren, im Rotation-Tool den Twist korrigieren. Zeitaufwand: pro Twist 1-2 Minuten</li>
+        <li><strong>Selektives Re-Inbetweening</strong>: die problematische Sektion (z.B. Frames 80-95) selektieren und neu mit Inbetweening generieren lassen. Cascadeur interpoliert zwischen den Endpunkt-Frames neu, übersieht Twist-Artefakte dazwischen. Wird in Phase D detailliert</li>
+      </ul>
+      <p>Body-Rotation-Artefakte (Charakter „springt" plötzlich um) sind ähnlich zu behandeln. Bei sehr starken Artefakten — z.B. ein Sprung um 180° in einem Frame — meist nicht reparierbar, der Clip muss bei QuickMagic neu generiert werden (idealerweise mit besserem Source-Video).</p>
+    </div>
+  </div>
+
+  <!-- STEP 10 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">ANIMATION-TRIM · UNGEWÜNSCHTE FRAMES WEG</text>
+        <line x1="20" y1="100" x2="300" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Before / after segments -->
+        <rect x="20" y="93" width="40" height="14" fill="#c46b3a" opacity="0.5" stroke="#c46b3a" stroke-width="1"/>
+        <rect x="60" y="93" width="200" height="14" fill="#8a9878" opacity="0.6" stroke="#8a9878" stroke-width="1"/>
+        <rect x="260" y="93" width="40" height="14" fill="#c46b3a" opacity="0.5" stroke="#c46b3a" stroke-width="1"/>
+        <text x="40" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#c46b3a">leer</text>
+        <text x="160" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">USABLE</text>
+        <text x="280" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#c46b3a">leer</text>
+        <!-- Alt+F deletion arrow -->
+        <text x="160" y="155" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Alt+F löscht selektierte Keyframes</text>
+        <text x="160" y="175" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">MIDDLE-CLICK+DRAG SHIFTET BEREICH</text>
+      </svg>
+      <div class="caption">Animation-Trim: vorne und hinten leere Frames entfernen, Animation-Start zu Frame 0 verschieben.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">10</span>
+        <span class="step-title">Animation auf den Usable Range trimmen</span>
+      </div>
+      <p>QuickMagic-Output enthält oft Start- und End-Frames, in denen der Charakter noch nicht in Position ist oder schon stopt — also Leerräume vor und nach der Action.</p>
+      <p>Vorgehen aus dem Mocap-Cleanup-Tutorial:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Auf der Timeline navigieren, identifizieren wo die echte Bewegung beginnt (z.B. Frame 99)</li>
+        <li>Frames vor diesem Punkt selektieren (Frame 0 bis 98)</li>
+        <li><kbd>Alt</kbd>+<kbd>F</kbd> drücken — löscht die selektierten Keyframes</li>
+        <li>Verbleibende Animation per Middle-Click-Drag zum Frame-0-Anfang verschieben</li>
+        <li>Auf der Time-Range das Ende clampen (Right-Click auf Time-Slider, „Set End Frame")</li>
+      </ol>
+      <p>Resultat: eine saubere Animation, die auf Frame 0 mit der ersten echten Bewegung beginnt und bei der letzten echten Bewegung endet.</p>
+      <div class="shortcut-row">
+        <span>Keyframes löschen:</span><kbd>Alt</kbd>+<kbd>F</kbd>
+        <span>Frames verschieben:</span><kbd>Middle-Click</kbd>+<kbd>Drag</kbd>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 5 — PHASE D: DETAIL-CLEANUP -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§5</div>
+    <div>
+      <div class="section-tag">Phase D · Detail-Cleanup</div>
+      <h2 class="section-title">Selektives <em>Re-Inbetweening</em>, Unbaking.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">D</div>
+    <div>
+      <h4>Detail-Cleanup</h4>
+      <div class="phase-meta">Re-Inbetweening · Interval Edit · Unbaking</div>
+      <p>Punktuelle Reparaturen an problematischen Sektionen. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 11 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">SELEKTIVES RE-INBETWEENING</text>
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Mostly bezier track -->
+        <rect x="30" y="93" width="70" height="14" fill="#284858" opacity="0.4" stroke="#284858" stroke-width="0.8"/>
+        <text x="65" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#284858">Bezier</text>
+        <!-- Re-inbetweening section -->
+        <rect x="100" y="93" width="60" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="130" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528" font-weight="600">RE-INBETWEEN</text>
+        <!-- Continue bezier -->
+        <rect x="160" y="93" width="130" height="14" fill="#284858" opacity="0.4" stroke="#284858" stroke-width="0.8"/>
+        <text x="225" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#284858">Bezier</text>
+        <text x="160" y="150" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Nur die problematische Sektion wird neu generiert</text>
+        <text x="160" y="170" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">— die saubere Mocap außenrum bleibt</text>
+      </svg>
+      <div class="caption">Selektives Re-Inbetweening: nur die problematische Sektion bekommt Inbetweening, der Rest bleibt Bezier.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">11</span>
+        <span class="step-title">Selektives Re-Inbetweening für problematische Sektionen</span>
+      </div>
+      <p>Bei einer Mocap-Animation mit einem Twist-Problem zwischen Frame 80-100 (zum Beispiel): den Frame-Range selektieren, dann die Interpolation für dieses Intervall von Bezier (Mocap-Standard) auf <strong>Inbetweening</strong> wechseln.</p>
+      <p>Effekt: Cascadeur löscht die dichten Keyframes im Bereich und generiert die Pose-Übergänge neu via Inbetweening. Die Anker-Frames an den Rändern des Bereichs (Frame 80 und 100) werden als Pose-Vorgaben verwendet.</p>
+      <p>Limitation: Inbetweening braucht eine Mindestdistanz, um vernünftig zu generieren. Bei sehr kurzen Intervallen (weniger als 10-15 Frames) sind die Ergebnisse schwach — dann besser bei Bezier bleiben und manuell korrigieren.</p>
+      <p>Wenn Re-Inbetweening selbst problematisch ist (Cascadeur generiert was Unsinniges): zusätzlich einen manuellen Pose-Anker mitten in der Sektion setzen, um Inbetweening zu führen.</p>
+      <div class="box box-merk">
+        <div class="box-label">Inbetweening als Resmoothing-Tool</div>
+        <p>Bei traditioneller Animation (Projekte 01-08) war Inbetweening das zentrale Werkzeug zur Generation. Bei Mocap-Cleanup wird es zum Reparatur-Werkzeug — gezielt punktuell angewendet auf Problemzonen. Dasselbe Tool, andere Funktion. Das ist ein guter Hinweis auf die Universalität der Cascadeur-Tools: sie sind nicht workflow-spezifisch, sondern allgemein anwendbar.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 12 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">INTERVAL EDIT · DREI MODI</text>
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <rect x="30" y="50" width="80" height="80" rx="4" fill="#ede4d0" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="70" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#b85528">STEP</text>
+          <text x="70" y="86" text-anchor="middle" font-size="9">alle Frames</text>
+          <text x="70" y="100" text-anchor="middle" font-size="9">gleichmäßig</text>
+          <text x="70" y="118" text-anchor="middle" font-style="italic" font-size="8" fill="#5a4d3a">z.B. ganze Anim</text>
+          <text x="70" y="128" text-anchor="middle" font-style="italic" font-size="8" fill="#5a4d3a">verschieben</text>
+
+          <rect x="120" y="50" width="80" height="80" rx="4" fill="#ede4d0" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="160" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#b85528">LINEAR</text>
+          <text x="160" y="86" text-anchor="middle" font-size="9">max im Frame</text>
+          <text x="160" y="100" text-anchor="middle" font-size="9">linear abnehmend</text>
+          <text x="160" y="118" text-anchor="middle" font-style="italic" font-size="8" fill="#5a4d3a">z.B. lokaler Fix</text>
+          <text x="160" y="128" text-anchor="middle" font-style="italic" font-size="8" fill="#5a4d3a">mit Ausklang</text>
+
+          <rect x="210" y="50" width="80" height="80" rx="4" fill="#ede4d0" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="250" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="#b85528">BEZIER</text>
+          <text x="250" y="86" text-anchor="middle" font-size="9">wie Linear</text>
+          <text x="250" y="100" text-anchor="middle" font-size="9">weiche Kurve</text>
+          <text x="250" y="118" text-anchor="middle" font-style="italic" font-size="8" fill="#5a4d3a">z.B. Loop</text>
+          <text x="250" y="128" text-anchor="middle" font-style="italic" font-size="8" fill="#5a4d3a">Übergänge</text>
+        </g>
+        <text x="160" y="170" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Plus Pivot-Modi · Fixed vs Moving</text>
+      </svg>
+      <div class="caption">Interval Edit Mode-Modi: Step für ganze Animation, Linear/Bezier für lokale Korrekturen.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">12</span>
+        <span class="step-title">Interval Edit Mode für Pose-Korrekturen</span>
+      </div>
+      <p>Bekannt aus den Cleanup-Tutorials. Erlaubt Frame-Range-weite Pose-Änderungen mit drei Modi:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Step</strong>: alle Frames im Intervall werden gleichmäßig verändert. Nutzung: ganze Animation seitlich verschieben, oder Pelvis-Höhe global anpassen</li>
+        <li><strong>Linear</strong>: maximaler Effekt im aktuellen Frame, lineare Abnahme zu den Enden. Nutzung: lokaler Fix mit sanftem Ausklang</li>
+        <li><strong>Bezier</strong>: wie Linear, aber mit weicher Kurve. Nutzung: Loop-Übergänge glätten</li>
+      </ul>
+      <p>Zusätzlich Pivot-Modi:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Fixed Pivot</strong>: aktueller Frame ist Drehpunkt. Bei Rotation rotiert die ganze Bewegungsbahn um diesen Frame — bei Mocap meist problematisch, weil die Trajectory dadurch in benachbarten Frames verschoben wird</li>
+        <li><strong>Moving Pivot</strong>: jeder Frame rotiert um sich selbst. Trajectory bleibt erhalten — die richtige Wahl für Mocap-Korrekturen, bei denen die Body-Bahn intakt bleiben soll</li>
+      </ul>
+      <div class="box box-stolper">
+        <div class="box-label">Fix Interpolation on Change Interval</div>
+        <p>Eine Option ist standardmäßig aktiviert: <em>Fix Interpolation on Change Interval</em>. Wenn Frames in einem Intervall geändert werden, werden sie automatisch zu Fixed Interpolation (grüne Timeline). Das ist oft ungewollt — die Interpolation wird gebakt. Lösung: Option in den Settings deaktivieren. Bei versehentlichem Baken: Frames selektieren, Interpolation zurück auf Bezier setzen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 13 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">UNBAKING · KEYFRAME-REDUKTION</text>
+        <!-- Before timeline with many keyframes -->
+        <text x="80" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="0.1em" fill="#c46b3a">VOR · ALLE FRAMES</text>
+        <line x1="30" y1="75" x2="135" y2="75" stroke="#1f1a14" stroke-width="2"/>
+        <g fill="#b85528">
+          <rect x="30" y="70" width="3" height="10"/>
+          <rect x="38" y="70" width="3" height="10"/>
+          <rect x="46" y="70" width="3" height="10"/>
+          <rect x="54" y="70" width="3" height="10"/>
+          <rect x="62" y="70" width="3" height="10"/>
+          <rect x="70" y="70" width="3" height="10"/>
+          <rect x="78" y="70" width="3" height="10"/>
+          <rect x="86" y="70" width="3" height="10"/>
+          <rect x="94" y="70" width="3" height="10"/>
+          <rect x="102" y="70" width="3" height="10"/>
+          <rect x="110" y="70" width="3" height="10"/>
+          <rect x="118" y="70" width="3" height="10"/>
+          <rect x="126" y="70" width="3" height="10"/>
+        </g>
+        <!-- Arrow -->
+        <path d="M 145 75 L 170 75" stroke="#1f1a14" stroke-width="1.5" marker-end="url(#arrub)"/>
+        <defs>
+          <marker id="arrub" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M 0 0 L 8 4 L 0 8 z" fill="#1f1a14"/>
+          </marker>
+        </defs>
+        <text x="160" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">Unbake</text>
+        <!-- After timeline with fewer keyframes -->
+        <text x="240" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="0.1em" fill="#8a9878">NACH · ANKER</text>
+        <line x1="180" y1="75" x2="290" y2="75" stroke="#1f1a14" stroke-width="2"/>
+        <g fill="#8a9878">
+          <rect x="180" y="68" width="4" height="14"/>
+          <rect x="210" y="68" width="4" height="14"/>
+          <rect x="245" y="68" width="4" height="14"/>
+          <rect x="286" y="68" width="4" height="14"/>
+        </g>
+        <!-- Settings -->
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <text x="40" y="120">Pose-Difference</text>
+          <text x="280" y="120" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~0.5 cm (niedrig)</text>
+          <text x="40" y="138">AutoPosing Lock</text>
+          <text x="280" y="138" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~3° (mittel)</text>
+        </g>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Settings: niedrig = nah am Original, viele Keys. Hoch = grober, wenige.</text>
+      </svg>
+      <div class="caption">Unbaking: dichte Mocap-Keyframes werden auf wenige Anker-Frames reduziert.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">13</span>
+        <span class="step-title">Unbaking — Keyframe-Reduktion</span>
+      </div>
+      <p>Mocap kommt mit einem Keyframe auf jedem Frame — das ist die „dichte" Mocap-Struktur. Für nachträgliche Bearbeitung ist das unhandlich; bei dem Versuch, einen Frame zu ändern, hat man Hunderte von Nachbar-Keyframes, die im Weg sind.</p>
+      <p>Unbaking löscht überflüssige Keyframes und ersetzt sie durch Interpolation, mit dem Ziel die Animation möglichst nah am Original zu halten bei minimaler Keyframe-Zahl.</p>
+      <p>Vorgehen:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Frame-Range selektieren (kann die ganze Animation sein oder ein Sub-Bereich)</li>
+        <li><strong>Unbaking</strong>-Button drücken</li>
+        <li>Settings im Panel:
+          <ul>
+            <li><strong>Pose-Difference</strong>: niedrig (z.B. 0.5 cm) = nah am Original, viele Keys behalten. Hoch (z.B. 3 cm) = grobere Approximation, wenige Keys</li>
+            <li><strong>AutoPosing-Lock</strong>: niedrig = mehr AutoPosing-Points werden aktiviert für präzise Pose-Erhaltung. Hoch = AI darf mehr abweichen</li>
+          </ul>
+        </li>
+      </ol>
+      <p>Für Mocap-Cleanup-Workflow: erst Phase B/C cleanen, dann am Ende von Phase D unbaken — die fertige Animation hat dann nur noch die nötigen Anker-Keyframes und ist gut für UE5-Export.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase D</div>
+        <p>Animation ist gecleant: Hände plausibel, Finger sinnvoll, Foot-Sliding weg, Twist-Artefakte korrigiert. Unbaked Version hat etwa 30-50 Keyframes pro Track statt 300+ — viel handhabbarer für UE5-Import oder weitere Iterationen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 6 — PHASE E: PHYSICS -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§6</div>
+    <div>
+      <div class="section-tag">Phase E · Physics (zurückhaltend)</div>
+      <h2 class="section-title">AutoPhysics <em>light</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">E</div>
+    <div>
+      <h4>Physics</h4>
+      <div class="phase-meta">AutoPhysics zurückhaltend · Secondary Motion</div>
+      <p>Bei Mocap ist Physics schon eingebaut — die echte Aufnahme war ja schon physikalisch korrekt. AutoPhysics nur sanft anwenden. <em>Ein Schritt.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 14 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="20" y="35" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">AUTOPHYSICS · LIGHT FÜR MOCAP</text>
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <text x="20" y="60">Physics Character</text>
+          <line x1="170" y1="56" x2="290" y2="56" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="56" x2="290" y2="56" stroke="#b85528" stroke-width="3"/>
+          <circle cx="290" cy="56" r="4" fill="#b85528"/>
+          <text x="295" y="60" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">100</text>
+
+          <text x="20" y="85">Smooth Trajectory</text>
+          <line x1="170" y1="81" x2="290" y2="81" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="81" x2="185" y2="81" stroke="#b85528" stroke-width="3"/>
+          <circle cx="185" cy="81" r="4" fill="#b85528"/>
+          <text x="295" y="85" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~10</text>
+
+          <text x="20" y="110" fill="#c46b3a">Compensation Motion</text>
+          <line x1="170" y1="106" x2="290" y2="106" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="106" x2="175" y2="106" stroke="#c46b3a" stroke-width="3"/>
+          <circle cx="175" cy="106" r="4" fill="#c46b3a"/>
+          <text x="295" y="110" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">~5 oder 0</text>
+
+          <text x="20" y="135">Secondary Motion</text>
+          <line x1="170" y1="131" x2="290" y2="131" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="131" x2="205" y2="131" stroke="#b85528" stroke-width="3"/>
+          <circle cx="205" cy="131" r="4" fill="#b85528"/>
+          <text x="295" y="135" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~25</text>
+        </g>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Niedrige Werte · Mocap hat Physics schon eingebaut</text>
+      </svg>
+      <div class="caption">AutoPhysics-Werte für Mocap-Cleanup: deutlich niedriger als bei traditioneller Animation.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">14</span>
+        <span class="step-title">AutoPhysics zurückhaltend anwenden</span>
+      </div>
+      <p>Bei Mocap-Material ist die Bewegung schon physikalisch korrekt — es war ja eine echte aufgenommene Person. AutoPhysics ist daher anders zu dosieren als bei traditioneller Animation:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Pass 1 + 2</strong> (Physics Corrector) — meist nicht nötig. Kann übersprungen werden. Falls nach dem Cleanup einzelne Frames physikalisch inkonsistent wirken: Pass 1 anwenden, sonst weglassen</li>
+        <li><strong>Pass 3 mit minimalen Filtern</strong>:
+          <ul>
+            <li><strong>Smooth Trajectory</strong> ~10 (niedrig — Mocap-Bewegung ist schon flüssig)</li>
+            <li><strong>Smooth Rotation</strong> 0-5 (kaum nötig)</li>
+            <li><strong>Compensation Motion</strong> 0-5 (sehr niedrig — Mocap hat schon natürliche Body-Reaktionen)</li>
+            <li><strong>Secondary Motion</strong> ~25 (etwas, um Polish hinzuzufügen — Hände schwingen leicht aus, Spine atmet)</li>
+          </ul>
+        </li>
+      </ul>
+      <p>Übertriebene AutoPhysics auf Mocap erzeugt unerwünschte Glättung und der Charakter wird „weicher" als das Original — die scharfen, idiosynkratischen Bewegungs-Details der aufgenommenen Person gehen verloren.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Mocap niemals voll-AutoPhysics</div>
+        <p>Wenn du AutoPhysics auf Mocap mit den Werten aus Projekt 06 oder 07 (Compensation 30+, Smooth Rotation 25+) anwendest, ruinierst du die Mocap-Charakteristik. Das ganze Pose-Vokabular der originalen Aufnahme wird auf einen generischen physikalischen Durchschnitt geglättet. Cascadeur's AutoPhysics ist für Hand-animierte Sequenzen gebaut, bei denen die Animation noch nicht physikalisch ist. Mocap ist es schon.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 7 — PHASE F: EXPORT + RETARGETING -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§7</div>
+    <div>
+      <div class="section-tag">Phase F · Export + UE5-Retargeting</div>
+      <h2 class="section-title">FBX und <em>IK Retargeter</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">F</div>
+    <div>
+      <h4>Export + Retargeting</h4>
+      <div class="phase-meta">FBX · UE5-IK-Retargeter · Manny-Skeleton</div>
+      <p>FBX exportieren, in UE5 importieren, dann mit UE5's IK Retargeter auf den UE5-Manny mappen — lieber als Cascadeur's Retargeting. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 15 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="80" y="50" width="160" height="110" rx="6" fill="#f3ecdc" stroke="#1f1a14" stroke-width="2"/>
+        <text x="160" y="76" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#b85528">FBX EXPORT</text>
+        <line x1="100" y1="86" x2="220" y2="86" stroke="#c8b89a" stroke-width="1"/>
+        <text x="100" y="105" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">FbxUpAxis</text>
+        <text x="220" y="105" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Z (UE5)</text>
+        <text x="100" y="122" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Bake animation</text>
+        <text x="220" y="122" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">✓</text>
+        <text x="100" y="139" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Type FbxAscii</text>
+        <text x="220" y="139" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">OFF</text>
+        <text x="100" y="156" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Root translation</text>
+        <text x="220" y="156" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">INCLUDE</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">FbxUpAxis Z, binäres FBX, Root Motion mit</text>
+      </svg>
+      <div class="caption">FBX-Export für UE5 mit korrekten Pipeline-Settings.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">15</span>
+        <span class="step-title">FBX-Export für UE5</span>
+      </div>
+      <p>File → Export → FBX. Für UE5-Pipeline die kritischen Settings:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>FbxUpAxis = Z</strong> (für UE5 obligatorisch)</li>
+        <li><strong>TypeFbxAscii = OFF</strong> — binäres FBX (kleinere Dateigröße, bessere UE5-Kompatibilität)</li>
+        <li><strong>Bake animation</strong>: ON, 30 fps</li>
+        <li><strong>Root translation</strong>: INCLUDE, wenn die Animation Lokomotion enthält (Charakter bewegt sich durch den Raum). OFF, wenn In-Place</li>
+        <li><strong>No Blend Shapes</strong>, wenn nicht benötigt (kleinere Dateigröße)</li>
+      </ul>
+      <p>Dateiname <code>mocap-cleaned-v01.fbx</code>.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Namens-Konflikte beim Export</div>
+        <p>Bei mehreren Objekten gleichen Namens in einer Scene (z.B. zwei „Mannequin"-Charaktere) gibt es FBX-Export-Fehler. Vor Export sicherstellen, dass alle Objekt-Namen eindeutig sind. Bei dieser Brochüre meist kein Problem (nur ein Mocap-Charakter), aber bei Kombinations-Szenen relevant.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 16 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#284858">UE5 · IK RETARGETER</text>
+        <rect x="50" y="50" width="220" height="110" fill="#284858" opacity="0.1" stroke="#284858" stroke-width="1.5"/>
+        <!-- Source skeleton -->
+        <g>
+          <text x="100" y="73" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#284858">Source</text>
+          <circle cx="100" cy="95" r="6" fill="none" stroke="#284858" stroke-width="1.5"/>
+          <line x1="100" y1="101" x2="100" y2="125" stroke="#284858" stroke-width="1.5"/>
+          <text x="100" y="145" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#284858">QuickMagic-FBX</text>
+        </g>
+        <!-- Arrow -->
+        <path d="M 130 110 L 190 110" stroke="#1f1a14" stroke-width="1.5" marker-end="url(#arrrt)"/>
+        <defs>
+          <marker id="arrrt" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M 0 0 L 8 4 L 0 8 z" fill="#1f1a14"/>
+          </marker>
+        </defs>
+        <text x="160" y="103" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">Retarget</text>
+        <!-- Target skeleton -->
+        <g>
+          <text x="220" y="73" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">Target</text>
+          <circle cx="220" cy="95" r="6" fill="none" stroke="#b85528" stroke-width="1.5"/>
+          <line x1="220" y1="101" x2="220" y2="125" stroke="#b85528" stroke-width="1.5"/>
+          <text x="220" y="145" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#b85528">UE5-Manny</text>
+        </g>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">UE5's nativer Retargeter · besser als Cascadeur-Retargeting</text>
+      </svg>
+      <div class="caption">UE5-IK-Retargeter: Source-Skelett (QuickMagic) auf Target-Skelett (UE5-Manny).</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">16</span>
+        <span class="step-title">UE5-IK-Retargeter statt Cascadeur-Retargeting</span>
+      </div>
+      <p>Die Cascadeur-Output ist ein UE5-5.6-Avatar-Skelett. Der UE5-Manny ist ein leicht anderes Skelett (Bone-Namen, Bone-Längen, Bone-Hierarchie variieren). Daher: Retargeting nötig.</p>
+      <p>Pipeline-Wahl: <strong>UE5's IK Retargeter</strong> ist deutlich besser als Cascadeur's eingebautes Retargeting (das nur in der Pro-Version verfügbar ist). Für UE5-Workflow ist UE5's Retargeter der Standard:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>FBX in UE5 importieren — Animation Sequence wird auf dem QuickMagic-Source-Skelett angelegt</li>
+        <li>Im Content Browser: Animations → Retarget Animations</li>
+        <li>Source-Skeleton: das QuickMagic-Skelett. Target-Skeleton: SK_Mannequin (UE5-Manny)</li>
+        <li>Bone-Mapping: in den meisten Fällen automatisch erkannt. Bei Abweichungen manuell mappen (Pelvis → Pelvis, Spine_01 → Spine_01, etc.)</li>
+        <li>Retarget — neue Animation Sequence wird auf dem UE5-Manny-Skelett angelegt</li>
+      </ol>
+      <div class="box box-merk">
+        <div class="box-label">Cascadeur-Retargeting nur als Backup</div>
+        <p>Falls UE5-Retargeting Probleme macht (typisch bei custom Charakteren oder seltsamen Bone-Strukturen): in Cascadeur Pro hat man Retargeting-Tools. Aber das ist ein Fallback. Für UE5-Pipeline immer zuerst UE5's IK Retargeter ausprobieren. Bei dieser Brochüre und mit UE5-5.6-Avatar als Source: UE5-Retargeting funktioniert direkt.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 17 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="50" width="280" height="110" fill="none" stroke="#284858" stroke-width="1.5"/>
+        <text x="160" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#284858">UE5 · SEQUENCER · ANIMATION BLUEPRINT</text>
+        <line x1="40" y1="82" x2="280" y2="82" stroke="#284858" stroke-width="0.6"/>
+        <rect x="40" y="92" width="240" height="18" fill="#b85528" opacity="0.5"/>
+        <text x="50" y="105" font-family="JetBrains Mono, monospace" font-size="9" fill="#f3ecdc">Manny + retargeted Mocap-Animation</text>
+        <rect x="40" y="114" width="240" height="18" fill="#8a9878" opacity="0.5"/>
+        <text x="50" y="127" font-family="JetBrains Mono, monospace" font-size="9" fill="#1f1a14">Optional · MetaHuman Face</text>
+        <rect x="40" y="136" width="240" height="18" fill="#284858" opacity="0.5"/>
+        <text x="50" y="149" font-family="JetBrains Mono, monospace" font-size="9" fill="#f3ecdc">Optional · Audio</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Mocap als Building Block · kombinierbar mit anderen Tracks</text>
+      </svg>
+      <div class="caption">UE5-Sequencer mit Mocap-Animation. Optional kombinierbar mit MetaHuman-Face und Audio.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">17</span>
+        <span class="step-title">UE5-Integration und Sequencer-Setup</span>
+      </div>
+      <p>Die retargetete Animation Sequence steht jetzt auf dem UE5-Manny-Skelett. Im Sequencer oder Animation Blueprint kann sie verwendet werden wie jede andere UE5-Animation.</p>
+      <p>Sequencer-Setup:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Manny in die Level platzieren</li>
+        <li>Animation Sequence dem Charakter zuweisen</li>
+        <li>Falls Root Motion: Enable Root Motion ON, Root Motion Lock auf „From Root Bone"</li>
+        <li>Optional: MetaHuman-Face-Layer dazu (siehe Projekt 08)</li>
+        <li>Optional: Audio-Track für Voice oder Foley</li>
+      </ul>
+      <p>Bei der Reihe können diese Mocap-Animationen wie die handgemachten aus 01-08 als Building Blocks in narrativen Sequenzen verwendet werden. Beispiel: eine Sport-Animation aus Mocap (Schussbewegung) kann mit einer Hand-Geste aus Projekt 08 (Punkt machen) und einem Walk aus Projekt 03 kombiniert werden.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase F</div>
+        <p>In UE5: Manny zeigt die gecleante Mocap-Animation. Hände sind plausibel, Finger machen sinnvolle Posen, keine Foot-Sliding-Artefakte, keine Twist-Glitches. Animation ist visuell professionell — der Zuschauer würde nicht erkennen, dass sie ursprünglich aus einem YouTube-Video erzeugt wurde. Building Block ist ready für narrative Verwendung.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 8 — OUTRO -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§8</div>
+    <div>
+      <div class="section-tag">Ausblick</div>
+      <h2 class="section-title">Was du <em>jetzt zusätzlich</em> hast.</h2>
+    </div>
+  </div>
+
+  <p>Mit Projekt 09 ist der Mocap-Cleanup-Workflow im Werkzeugkasten: <strong>QuickMagic-Pipeline</strong> für Video-zu-Animation, <strong>Shift+Z als Mass-Pose-Fix</strong> über ganze Sequenzen, <strong>Fulcrum Motion Cleaning als zentrales Lower-Body-Werkzeug</strong>, <strong>selektives Re-Inbetweening</strong> für problematische Sektionen, <strong>Unbaking</strong> für Keyframe-Reduktion, <strong>UE5-IK-Retargeter</strong> als bevorzugter Retargeting-Pfad. Track 3 ist halb durch.</p>
+
+  <p>Projekt 10 (Custom-Charakter aus Blender) wechselt den Fokus auf die Skelett-Seite der Pipeline. Auto-Rig Pro in Blender, Game Rig Tools für UE5-kompatible Skelette, Import in Cascadeur mit Quick Rigging Tool, Animation aus 01-08 oder 09 auf den Custom-Charakter übertragen. Damit ist die volle Pipeline abgedeckt — von der Charakter-Erstellung bis zur finalen UE5-Animation.</p>
+
+  <p>Projekt 11+ (Kombinations-Szenen) macht aus den einzelnen Bausteinen erste narrative Sequenzen. Ein Charakter geht in einen Raum (Walk aus 03), bleibt stehen (Idle aus 01), sieht etwas (Gestik aus 08), setzt sich (Sit aus 04), spricht (MetaHuman + Body aus 08), steht auf (Stand-Up aus 05), läuft raus (Run aus 06). Die Brochüren-Reihe wandelt sich vom Lernen zur Komposition.</p>
+
+  <div class="box box-merk">
+    <div class="box-label">Was Projekt 09 nicht macht</div>
+    <p>Kein eigenes Mocap-Studio mit Suit (Move AI, Xsens, Rokoko). Keine Multi-Person-Aufnahmen (QuickMagic kann ein zentrales Subject pro Video). Kein Facial Mocap (das ist FaceIt + MetaHuman). Kein Refine-Tool-Use (QuickMagic Pro). All das sind Erweiterungen — der Kern-Workflow bleibt: Video aufnehmen oder finden, generieren, in Cascadeur cleanen, in UE5 retargeten.</p>
+  </div>
+
+  <div class="insight">
+    Es gibt einen wichtigen Pipeline-Unterschied zwischen Mocap und Hand-Animation: Mocap reproduziert eine reale Bewegung möglichst exakt, Hand-Animation interpretiert oder übersteigert sie. Disney's Snow White war rotoscopiert für realistische Bewegung — und Animatoren beschwerten sich, dass die Aufnahmen „zu echt, zu wenig magisch" waren. Sie haben dann mehr Exaggeration in die Rotoscope-Frames eingearbeitet. Bei jeder Mocap-Pipeline gilt: nach dem Cleanup kommt oft noch ein Exaggeration-Pass — Bewegungen werden 10-30% übertrieben, weil reale Bewegung am Bildschirm verflacht wirkt. Diese Übersteigerung ist bei dieser Brochüre nicht thematisiert; sie wäre ein zusätzlicher Polish-Pass in Phase D bei höherem Production-Niveau.
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="doc-footer">
+  <div><span class="terracotta">Projekt 09 · v 1.0</span></div>
+  <div>17 Schritte · 6 Phasen</div>
+  <div>Cascadeur · Lernreihe · Track 3</div>
+</footer>
+
+</article>
+
+</body>
+</html>

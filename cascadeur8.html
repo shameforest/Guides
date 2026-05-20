@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projekt 08 · Gestikulieren beim Sprechen · Cascadeur-Lernreihe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3ecdc; --paper-warm: #ede4d0; --paper-dark: #e2d6b8;
+    --ink: #1f1a14; --ink-soft: #5a4d3a; --ink-faint: #8a7d68;
+    --terracotta: #b85528; --terracotta-deep: #7a3414;
+    --cobalt: #284858; --sage: #8a9878; --warning: #c46b3a; --rule: #c8b89a;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'DM Sans', -apple-system, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+    color: var(--ink); background: var(--paper);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    -webkit-font-smoothing: antialiased;
+  }
+  .doc { max-width: 1100px; margin: 0 auto; }
+
+  .cover { padding: 3.5rem 5rem 2.5rem; border-bottom: 1px solid var(--rule); position: relative; overflow: hidden; }
+  .cover::before { content: ''; position: absolute; top: -10%; right: -8%; width: 50%; aspect-ratio: 1; background: radial-gradient(circle, rgba(184, 85, 40, 0.08) 0%, transparent 65%); border-radius: 50%; pointer-events: none; }
+  .cover-marker { display: flex; align-items: center; gap: 1.5rem; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 1.5rem; }
+  .cover-marker .ml { width: 60px; height: 1px; background: var(--terracotta); }
+  .cover h1 { font-family: var(--font-display); font-size: clamp(2.6rem, 5vw, 4.2rem); font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 50; line-height: 1.05; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 1.5rem; max-width: 18ch; }
+  .cover h1 em { font-style: italic; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); }
+  .cover .subtitle { font-family: var(--font-display); font-style: italic; font-size: 1.2rem; color: var(--ink-soft); max-width: 58ch; margin-bottom: 2rem; }
+  .cover-meta { display: flex; gap: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); flex-wrap: wrap; }
+  .mb { display: flex; flex-direction: column; gap: 0.2rem; }
+  .mb-label { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); }
+  .mb span:last-child { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: var(--ink); }
+
+  .section { padding: 3rem 5rem; border-bottom: 1px solid var(--rule); }
+  .section-head { display: grid; grid-template-columns: 80px 1fr; gap: 1.5rem; margin-bottom: 1.8rem; align-items: start; }
+  .section-num { font-family: var(--font-display); font-size: 2.8rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 1; }
+  .section-tag { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+  .section-title { font-family: var(--font-display); font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 400; line-height: 1.15; color: var(--ink); letter-spacing: -0.01em; max-width: 26ch; }
+  .section-title em { font-style: italic; font-weight: 300; color: var(--terracotta); font-variation-settings: 'opsz' 144, 'SOFT' 100; }
+
+  .section p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .section p.lead { font-family: var(--font-display); font-style: italic; font-size: 1.18rem; color: var(--ink-soft); margin-bottom: 1.5rem; max-width: 60ch; }
+  .section h3 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 500; margin: 1.6rem 0 0.6rem; color: var(--ink); }
+
+  .phase-banner { display: grid; grid-template-columns: 110px 1fr; gap: 2rem; margin: 2rem 0 2.5rem; padding: 1.4rem 1.8rem; background: linear-gradient(90deg, rgba(184, 85, 40, 0.10), transparent); border-left: 4px solid var(--terracotta); align-items: center; }
+  .phase-letter { font-family: var(--font-display); font-size: 5rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 0.85; text-align: center; }
+  .phase-banner h4 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; color: var(--ink); margin-bottom: 0.3rem; }
+  .phase-banner .phase-meta { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.5rem; }
+  .phase-banner p { font-size: 0.97rem; color: var(--ink); margin-bottom: 0; max-width: 65ch; }
+  .phase-banner em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+
+  .step { display: grid; grid-template-columns: 320px 1fr; gap: 1.8rem; margin: 1.6rem 0; padding: 1.6rem 1.8rem; background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; }
+  .step-diagram { background: #f3ecdc; border: 1px solid #c8b89a; border-radius: 6px; padding: 1rem 0.6rem 0.6rem; align-self: start; }
+  .step-diagram svg { width: 100%; height: auto; display: block; }
+  .step-diagram .caption { margin-top: 0.5rem; text-align: center; font-family: var(--font-display); font-style: italic; font-size: 0.82rem; color: var(--ink-soft); line-height: 1.4; }
+  .step-num-row { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 0.6rem; }
+  .step-num { font-family: var(--font-display); font-size: 1.8rem; font-weight: 300; font-style: italic; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); line-height: 1; }
+  .step-title { font-family: var(--font-display); font-size: 1.18rem; font-weight: 500; color: var(--ink); line-height: 1.25; }
+  .step p { font-size: 0.96rem; margin-bottom: 0.6rem; max-width: none; }
+  .step p:last-child { margin-bottom: 0; }
+  .step em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .shortcut-row { display: flex; flex-wrap: wrap; gap: 0.4rem 0.7rem; align-items: center; margin: 0.5rem 0 0.4rem; font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; color: var(--ink-soft); }
+  kbd { font-family: var(--font-mono); font-size: 0.78rem; background: var(--paper-warm); border: 1px solid var(--rule); border-radius: 3px; padding: 0.05rem 0.4rem; color: var(--ink); box-shadow: 0 1px 0 var(--rule); }
+
+  .box { margin: 1.4rem 0; padding: 1.1rem 1.3rem; border-radius: 0 4px 4px 0; max-width: none; }
+  .step .box { margin: 0.9rem 0 0.4rem; }
+  .box-label { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; margin-bottom: 0.4rem; }
+  .box-label::before { content: ''; width: 14px; height: 1.5px; background: currentColor; }
+  .box p { font-size: 0.93rem; margin-bottom: 0.4rem; }
+  .box p:last-child { margin-bottom: 0; }
+  .box-why { background: rgba(40, 72, 88, 0.10); border-left: 3px solid var(--cobalt); }
+  .box-why .box-label { color: var(--cobalt); }
+  .box-stolper { background: rgba(196, 107, 58, 0.13); border-left: 3px solid var(--warning); }
+  .box-stolper .box-label { color: var(--warning); }
+  .box-merk { background: rgba(184, 85, 40, 0.10); border-left: 3px solid var(--terracotta); }
+  .box-merk .box-label { color: var(--terracotta); }
+  .box-check { background: rgba(138, 152, 120, 0.18); border-left: 3px solid var(--sage); }
+  .box-check .box-label { color: var(--sage); }
+
+  .insight { margin: 1.4rem 0; padding: 1.1rem 1.3rem; background: var(--paper-warm); border: 1px dashed var(--rule); border-radius: 6px; font-family: var(--font-display); font-style: italic; font-size: 0.96rem; color: var(--ink-soft); max-width: 65ch; }
+  .insight::before { content: 'Randnotiz'; display: block; font-family: var(--font-mono); font-style: normal; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+
+  .doc-footer { padding: 2.5rem 5rem; border-top: 2px solid var(--ink); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); display: flex; justify-content: space-between; }
+  .doc-footer .terracotta { color: var(--terracotta); }
+
+  @media (max-width: 900px) {
+    .cover, .section, .doc-footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .section-head { grid-template-columns: 1fr; gap: 0.5rem; }
+    .step { grid-template-columns: 1fr; gap: 1rem; }
+    .step-diagram { max-width: 280px; margin: 0 auto; }
+    .phase-banner { grid-template-columns: 1fr; gap: 0.5rem; }
+    .phase-letter { text-align: left; font-size: 3.5rem; }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #1a1612; --paper-warm: #221d17; --paper-dark: #2a241c;
+      --ink: #ebe3d0; --ink-soft: #b8a98a; --ink-faint: #7a6e58;
+      --terracotta: #e8814a; --terracotta-deep: #c25a2a;
+      --cobalt: #6a9aab; --sage: #a8b898; --warning: #e2884d; --rule: #3a3026;
+    }
+    body { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"); }
+    .step-diagram { background: #f3ecdc !important; border-color: #c8b89a !important; }
+    .step-diagram .caption { color: #5a4d3a !important; }
+  }
+</style>
+</head>
+<body>
+
+<article class="doc">
+
+<!-- COVER -->
+<header class="cover">
+  <div class="cover-marker">
+    <span>Cascadeur · Lernreihe</span>
+    <div class="ml"></div>
+    <span>Projekt 08 · v 1.0</span>
+  </div>
+  <h1>Gestikulieren <em>beim</em><br>Sprechen:<br>Hände als Gehirn.</h1>
+  <p class="subtitle">Zehn Sekunden. Drei Gesten in Folge mit Rest-Pose-Übergängen. Beine bleiben statisch, Upper-Body trägt die Bewegung. Finger-AutoPosing als zentrales neues Werkzeug. Brücke zum MetaHuman-Facial-Workflow.</p>
+  <div class="cover-meta">
+    <div class="mb"><span class="mb-label">Charakter</span><span>UE5-Manny</span></div>
+    <div class="mb"><span class="mb-label">Dauer</span><span>10 s · 300 Frames</span></div>
+    <div class="mb"><span class="mb-label">Gesten</span><span>3 + Rest-Posen</span></div>
+    <div class="mb"><span class="mb-label">Neu</span><span>Finger-AutoPosing · Rest-Patterns</span></div>
+    <div class="mb"><span class="mb-label">Pipeline-Ziel</span><span>UE5 + MetaHuman</span></div>
+    <div class="mb"><span class="mb-label">Schritte</span><span>17</span></div>
+  </div>
+</header>
+
+
+<!-- § 1 — WAS DU BAUST -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§1</div>
+    <div>
+      <div class="section-tag">Gestik-Konzept und Body-Splitting</div>
+      <h2 class="section-title">Der Oberkörper <em>erzählt</em>.</h2>
+    </div>
+  </div>
+
+  <p class="lead">Alle bisherigen Animationen haben den ganzen Körper bewegt. Bei dieser bleibt der untere Körper statisch — die ganze narrative Energie ist in Spine, Schultern, Armen und Händen. Das ist die Standard-Geometrie für Dialog-Szenen.</p>
+
+  <p>Manny steht stabil, die Füße planten am Boden — sie ändern ihre Position in zehn Sekunden nicht. Der Oberkörper macht drei zusammenhängende Gesten mit Rest-Pose-Übergängen dazwischen. Geste 1 (offene Hand-Geste, „lass mich erklären"), Rest, Geste 2 (Index-Punkt, „der wichtigste Punkt ist"), Rest, Geste 3 (geballte Faust mit Aufwärtsbewegung, „das müssen wir tun"), finale Rest-Pose.</p>
+
+  <p>Drei neue Werkzeuge kommen ins Vokabular: <strong>Finger-AutoPosing</strong> als KI-System für Hand-Posen mit Index- und Pinky-Master-Controllern. <strong>Rest-Pose-Patterns</strong> aus der klassischen Bildhauerei (1-2-1 und 1-3) für natürliche Hand-Posen. <strong>Upper-Body-Inbetweening</strong> mit selektiver Track-Aktivierung — Beine bleiben explizit aus dem Inbetweening-Pool.</p>
+
+  <div class="box box-why">
+    <div class="box-label">Warum nur Upper-Body</div>
+    <p>Bei Dialog-Szenen würde Lower-Body-Animation ablenken vom Sprecher. Aufmerksamkeits-Studien zeigen: Zuschauer fokussieren auf das Gesicht und die Hände. Wenn die Beine sich auch noch bewegen, zerrt das die Aufmerksamkeit. Stabile Beine sind ein Kommunikations-Trick — sie machen den Sprecher autoritativ und verständlich. Politiker, Pastoren und TED-Vortragende stehen ruhig — die Bewegung kommt aus dem Oberkörper.</p>
+  </div>
+
+  <div class="insight">
+    Immanuel Kant hat die Hände als „den sichtbaren Teil des Gehirns" beschrieben. Nietzsche schrieb, dass die Menschheit eher Gestik als Vernunft folgt. Quentin Tarantino bestand darauf, dass eine falsche Hand-Geste eine Szene ruinieren kann — er soll an Pulp Fiction Wochen damit verbracht haben, einer einzigen Hand-Bewegung das richtige Timing zu geben. Das ist nicht Schauspiel-Kosmetik. Hände sind die einzigen Körperteile, die das menschliche Auge bei Konversation gleich nach dem Gesicht ansieht — bei längeren Reden mehr als das Gesicht. Wer Hände falsch animiert, ruiniert die ganze Szene. Wer sie überzeugend animiert, kann das Gesicht fast vernachlässigen.
+  </div>
+</section>
+
+
+<!-- § 2 — PHASE A: SETUP -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§2</div>
+    <div>
+      <div class="section-tag">Phase A · Setup</div>
+      <h2 class="section-title">Stabile Beine, <em>aktiver Spine</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">A</div>
+    <div>
+      <h4>Setup</h4>
+      <div class="phase-meta">Scene · 10 Sekunden · Stabile Stand-Pose · Custom Track für Body-Split</div>
+      <p>Manny in ruhiger Stand-Pose, beide Füße fixiert. Track-Hierarchie mit klarer Lower/Upper-Body-Trennung. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Stable stand pose -->
+        <g>
+          <circle cx="100" cy="42" r="12" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="54" x2="100" y2="125" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="100" cy="72" r="2.8" fill="#1f1a14"/>
+          <line x1="92" y1="125" x2="108" y2="125" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Arms relaxed at sides -->
+          <line x1="100" y1="72" x2="108" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="108" y1="118" x2="110" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="72" x2="92" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="92" y1="118" x2="90" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Stable legs -->
+          <line x1="92" y1="125" x2="92" y2="220" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="108" y1="125" x2="108" y2="220" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="85" y1="220" x2="100" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="100" y1="220" x2="115" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+        </g>
+        <!-- R fixation markers -->
+        <text x="92" y="235" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528" font-weight="600">R</text>
+        <text x="108" y="235" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528" font-weight="600">R</text>
+        <!-- Upper body box indicator -->
+        <rect x="65" y="35" width="70" height="100" fill="none" stroke="#b85528" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="100" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">UPPER · AKTIV</text>
+        <text x="142" y="180" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="0.1em" fill="#5a4d3a">LOWER ·</text>
+        <text x="142" y="192" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="0.1em" fill="#5a4d3a">STATISCH</text>
+      </svg>
+      <div class="caption">Manny in Sprech-Stand-Pose. Beine fixiert, Oberkörper bereit für Gestik.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">01</span>
+        <span class="step-title">Scene mit langer Timeline und stabiler Startpose</span>
+      </div>
+      <p>Manny laden, 30 fps, Timeline 0 bis 300. Profilansicht oder Frontansicht (für Gestik ist Front oft besser, weil Hand-Posen vorwärts gerichtet sind). Manny am Weltursprung in ruhiger Stand-Pose.</p>
+      <p>Wichtig: <strong>beide Füße via <kbd>R</kbd> fixieren</strong> und einen Keyframe auf Frame 0 setzen. Da die Beine über die ganzen 10 Sekunden statisch bleiben sollen, sind nur diese zwei Keyframes nötig: Frame 0 und Frame 300 (identisch). Cascadeur interpoliert dazwischen, die Füße bleiben fix.</p>
+      <p>Speichern als <code>projekt-08-gestikulieren.casc</code>.</p>
+      <div class="box box-merk">
+        <div class="box-label">Sprech-Stand-Pose vs Idle-Stand-Pose</div>
+        <p>Anders als bei Projekt 01 (Idle-Pose) ist die Sprech-Stand-Pose etwas anders gewichtet. Gewicht etwa gleichmäßig auf beiden Beinen statt einseitig (Stabilität für Gestik). Brust leicht geöffnet (Authoritäts-Indikator). Schultern entspannt, nicht hochgezogen. Hände am Körper, aber bereit für Bewegung — leicht von der Hosennaht weg.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">CUSTOM TRACK · BODY-SPLIT</text>
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <!-- Upper body group -->
+          <rect x="40" y="50" width="240" height="60" fill="#ede4d0" stroke="#b85528" stroke-width="1.5"/>
+          <text x="50" y="65" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">UPPER_BODY · aktiv</text>
+          <text x="55" y="82" font-family="Fraunces, serif" font-style="italic" font-size="10">Pelvis (rotation only)</text>
+          <text x="55" y="96" font-family="Fraunces, serif" font-style="italic" font-size="10">Torso · Head · L_Arm · R_Arm</text>
+          
+          <!-- Lower body group -->
+          <rect x="40" y="115" width="240" height="35" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="50" y="130" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">LOWER_BODY · statisch</text>
+          <text x="55" y="146" font-family="Fraunces, serif" font-style="italic" font-size="10">L_Leg · R_Leg</text>
+        </g>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Lower-Body-Gruppe wird beim Inbetweening explizit ausgeschlossen</text>
+      </svg>
+      <div class="caption">Custom Track Hierarchy mit klarem Upper/Lower-Split. Lower bleibt bei Inbetweening außen vor.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">02</span>
+        <span class="step-title">Custom Track Hierarchy mit Body-Split</span>
+      </div>
+      <p>Erstmals seit Projekt 03 wird Custom Track Hierarchy nicht als Polish-Werkzeug verwendet, sondern als <em>strukturelle Setup-Entscheidung</em>. Zwei Track-Gruppen anlegen:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>UPPER_BODY</strong>: Torso, Head, L_Arm, R_Arm. Pelvis-Rotation ist auch hier (Pelvis dreht beim Gestikulieren mit, aber nicht Pelvis-Translation)</li>
+        <li><strong>LOWER_BODY</strong>: L_Leg, R_Leg. Diese Gruppe bleibt im Inbetweening-Pool deaktiviert</li>
+      </ul>
+      <p>Quick Rigging Tool → Generate Rig zuerst (Standard). Dann in den Outliner gehen, neue Track-Gruppen anlegen und die Controller-Punkte zuordnen. Beim Inbetweening (Phase C) wird die LOWER_BODY-Gruppe auf Bezier gelassen, nur UPPER_BODY bekommt Inbetweening.</p>
+      <p>Tipp: für Pelvis-Behandlung — die Position muss statisch bleiben (Manny verschiebt sich nicht), aber die Rotation kann minimal mit dem Spine mitgehen. Pelvis-Position Keyframes auf Frame 0 und 300 setzen, dann fixieren.</p>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">GESTEN-TIMING · 10 SEKUNDEN</text>
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Gesture 1 -->
+        <rect x="42" y="93" width="48" height="14" fill="#b85528" opacity="0.7"/>
+        <text x="66" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">G1</text>
+        <!-- Rest -->
+        <rect x="90" y="93" width="32" height="14" fill="#8a9878" opacity="0.4"/>
+        <!-- Gesture 2 -->
+        <rect x="122" y="93" width="40" height="14" fill="#b85528" opacity="0.7"/>
+        <text x="142" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">G2</text>
+        <!-- Rest -->
+        <rect x="162" y="93" width="38" height="14" fill="#8a9878" opacity="0.4"/>
+        <!-- Gesture 3 -->
+        <rect x="200" y="93" width="40" height="14" fill="#b85528" opacity="0.7"/>
+        <text x="220" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">G3</text>
+        <!-- Final rest -->
+        <rect x="240" y="93" width="48" height="14" fill="#8a9878" opacity="0.4"/>
+        <!-- Frame markers -->
+        <text x="42" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">30</text>
+        <text x="90" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">75</text>
+        <text x="122" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">110</text>
+        <text x="160" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">145</text>
+        <text x="200" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">185</text>
+        <text x="240" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">225</text>
+        <text x="288" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">270</text>
+        <text x="160" y="155" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Drei Gesten · drei Rest-Phasen · ungleichmäßiges Timing</text>
+        <text x="160" y="175" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Geste = Anker-Peak · Rest = Erholungs-Phase dazwischen</text>
+      </svg>
+      <div class="caption">Drei Gesten in unregelmäßigem Timing. Rest-Phasen unterschiedlich lang.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">03</span>
+        <span class="step-title">Gesten-Timing planen</span>
+      </div>
+      <p>Bei 300 Frames werden drei Gesten mit Rest-Phasen verteilt. Die wichtige didaktische Entscheidung: das Timing ist <strong>unregelmäßig</strong>. Echte Sprech-Gestik kommt nicht im Metronom-Takt — Gesten brechen unerwartet aus, die Pausen zwischen ihnen sind variabel.</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Frames 0-30</strong>: Start-Stand-Phase, kein Hand-Movement (1 Sekunde Atmen vor der ersten Geste)</li>
+        <li><strong>Frames 30-75</strong>: Geste 1 — offene Hand-Geste, beidhändig</li>
+        <li><strong>Frames 75-110</strong>: Rest 1 — Hände sinken, lockern</li>
+        <li><strong>Frames 110-145</strong>: Geste 2 — rechter Index-Finger gestreckt, Punkt machen</li>
+        <li><strong>Frames 145-185</strong>: Rest 2</li>
+        <li><strong>Frames 185-225</strong>: Geste 3 — Faust mit Aufwärtsbewegung</li>
+        <li><strong>Frames 225-300</strong>: Final-Rest — Hände sinken komplett, neutral</li>
+      </ul>
+      <div class="insight">
+        Spreche-Gestik folgt einem Muster, das Linguisten <em>„speech-co-occurring gesture"</em> nennen — Hand-Bewegungen sind nicht zufällig, sondern markieren bedeutungs-relevante Wörter im Satz. „Das müssen wir <em>tun</em>" — der Hand-Peak fällt auf das Verb. „Der <em>wichtigste</em> Punkt ist" — die Geste landet auf dem Adjektiv. Bei unserer Animation sollten die Gesten-Peaks (Frame 60, 130, 210) auf imaginäre Schlüssel-Wörter fallen. Bei MetaHuman-Bridge in Phase F wird das Voice-Track entsprechend abgestimmt.
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 3 — PHASE B: GROBSCHNITT -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§3</div>
+    <div>
+      <div class="section-tag">Phase B · Grobschnitt (Iteration 1)</div>
+      <h2 class="section-title">Drei Gesten als <em>Anker-Peaks</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">B</div>
+    <div>
+      <h4>Grobschnitt</h4>
+      <div class="phase-meta">Geste 1 (offen) · Geste 2 (Index) · Geste 3 (Faust)</div>
+      <p>Pro Geste ein Peak-Anker. Rest-Phasen werden in Phase D mit dedizierten Rest-Posen ausgefüllt. <em>Fünf Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Open hand gesture: both hands out and up -->
+        <g>
+          <circle cx="100" cy="42" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="53" x2="100" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="100" cy="70" r="2.5" fill="#1f1a14"/>
+          <line x1="92" y1="120" x2="108" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Both arms out, palms open -->
+          <line x1="100" y1="70" x2="135" y2="85" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="135" y1="85" x2="160" y2="95" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Open palm -->
+          <line x1="160" y1="92" x2="170" y2="88" stroke="#b85528" stroke-width="1.5"/>
+          <line x1="160" y1="94" x2="170" y2="94" stroke="#b85528" stroke-width="1.5"/>
+          <line x1="160" y1="96" x2="170" y2="100" stroke="#b85528" stroke-width="1.5"/>
+          
+          <line x1="100" y1="70" x2="65" y2="85" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="65" y1="85" x2="40" y2="95" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="40" y1="92" x2="30" y2="88" stroke="#b85528" stroke-width="1.5"/>
+          <line x1="40" y1="94" x2="30" y2="94" stroke="#b85528" stroke-width="1.5"/>
+          <line x1="40" y1="96" x2="30" y2="100" stroke="#b85528" stroke-width="1.5"/>
+          <!-- Legs static -->
+          <line x1="92" y1="120" x2="92" y2="220" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="108" y1="120" x2="108" y2="220" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="85" y1="220" x2="100" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="100" y1="220" x2="115" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+        </g>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 50 · GESTE 1 · OFFEN</text>
+      </svg>
+      <div class="caption">Geste 1: beidhändig offen nach außen, Handflächen sichtbar. „Lass mich erklären"-Pose.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">04</span>
+        <span class="step-title">Anker — Geste 1 Peak (Frame 50)</span>
+      </div>
+      <p>Frame 50, in der Mitte der Geste-1-Phase. Beide Arme nach außen und leicht oben — Handflächen nach vorn geöffnet, Finger leicht gespreizt. Das ist die universelle „lass mich erklären"-Geste, bei Politikern und Lehrern Standard.</p>
+      <p>Schultern leicht nach hinten (Brust geöffnet, autoritative Pose). Spine minimal nach hinten gewölbt. Kopf neutral oder leicht angehoben.</p>
+      <p>Pelvis-Position unverändert (steht!), Pelvis-Rotation kann minimal um die Y-Achse gehen wenn nötig (max 5°). Bein-Keyframes bleiben unangetastet.</p>
+      <p>Keyframe setzen. Arme im FK-Mode, alles übrige im Standard.</p>
+      <div class="box box-merk">
+        <div class="box-label">Symmetrie vs Asymmetrie</div>
+        <p>Geste 1 ist hier weitgehend symmetrisch (beide Arme machen dasselbe). Das wirkt formal und kontrolliert — passt zu „lass mich erklären". Für einen lockereren Charakter könnte die Geste asymmetrisch sein (eine Hand höher als die andere, ein Arm gestreckter als der andere). Asymmetrie wirkt natürlicher, Symmetrie wirkt überlegter. Bei dieser Brochüre bleiben wir bei Symmetrie als didaktischer Standard.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Rest pose: hands lowered, relaxed -->
+        <g>
+          <circle cx="100" cy="42" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="53" x2="100" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="100" cy="70" r="2.5" fill="#1f1a14"/>
+          <line x1="92" y1="120" x2="108" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Arms dropped but not fully at sides — natural rest -->
+          <line x1="100" y1="70" x2="110" y2="115" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="110" y1="115" x2="115" y2="155" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="70" x2="90" y2="115" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="90" y1="115" x2="85" y2="155" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Hands relaxed -->
+          <line x1="115" y1="155" x2="120" y2="162" stroke="#8a7d68" stroke-width="1.2"/>
+          <line x1="85" y1="155" x2="80" y2="162" stroke="#8a7d68" stroke-width="1.2"/>
+          <line x1="92" y1="120" x2="92" y2="220" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="108" y1="120" x2="108" y2="220" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="85" y1="220" x2="100" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="100" y1="220" x2="115" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+        </g>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 95 · REST · ZWISCHEN G1 + G2</text>
+      </svg>
+      <div class="caption">Rest-Pose: Hände sinken locker am Körper. Schultern entspannt. Bereit für nächste Geste.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">05</span>
+        <span class="step-title">Anker — Rest-Pose 1 (Frame 95)</span>
+      </div>
+      <p>Frame 95, etwa Mitte zwischen Geste 1 und Geste 2. Die Rest-Pose ist <em>nicht</em> identisch zur Start-Stand-Pose von Frame 0. Sie ist eine „Zwischen"-Pose: Arme gesenkt, aber nicht völlig am Körper. Hände hängen leicht entspannt, nicht steif. Schultern auf normaler Höhe, Spine vertikal.</p>
+      <p>Wichtig: <strong>Rest-Posen sind eigene Anker, nicht weggelassen</strong>. Ohne explizite Rest-Posen würde Inbetweening von Geste 1 zu Geste 2 direkt interpolieren — das ergibt eine ständige Bewegung ohne natürliche Atempausen. Rest-Anker bremsen die Animation und geben den Gesten Bedeutung.</p>
+      <p>Keyframe setzen. Hand-Pose ist hier <em>nicht final</em> — die wird in Phase D mit Finger-AutoPosing detailliert.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Rest-Posen nicht weglassen</div>
+        <p>Häufiger Anfänger-Fehler: nur die Gesten-Peaks setzen, Inbetweening dazwischen rechnen lassen. Ergebnis: Hände schweben durchgehend vom Körper weg, die Animation wirkt unruhig und unfokussiert. Mit Rest-Posen alle 30-50 Frames bekommt die Animation Rhythmus.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Index finger pointing gesture -->
+        <g>
+          <circle cx="100" cy="42" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="53" x2="100" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="100" cy="70" r="2.5" fill="#1f1a14"/>
+          <line x1="92" y1="120" x2="108" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Right arm raised, index pointing -->
+          <line x1="100" y1="70" x2="130" y2="65" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="130" y1="65" x2="160" y2="55" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Pointing finger detail -->
+          <line x1="160" y1="55" x2="172" y2="48" stroke="#b85528" stroke-width="2"/>
+          <text x="170" y="40" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">INDEX</text>
+          <!-- Left arm relaxed -->
+          <line x1="100" y1="70" x2="90" y2="115" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="90" y1="115" x2="85" y2="155" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Legs static -->
+          <line x1="92" y1="120" x2="92" y2="220" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="108" y1="120" x2="108" y2="220" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="85" y1="220" x2="100" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="100" y1="220" x2="115" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+        </g>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 130 · GESTE 2 · INDEX</text>
+      </svg>
+      <div class="caption">Geste 2: rechter Arm angehoben, Index-Finger ausgestreckt. „Der wichtigste Punkt".</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">06</span>
+        <span class="step-title">Anker — Geste 2 Peak (Frame 130)</span>
+      </div>
+      <p>Frame 130. Asymmetrische Geste: nur rechter Arm aktiv. Rechter Arm nach oben und vorn, Hand auf etwa Augenhöhe oder leicht darüber. Index-Finger gestreckt, die anderen Finger gebeugt — die klassische „Punkt-machen"-Pose.</p>
+      <p>Linker Arm bleibt entspannt am Körper, leicht angewinkelt. Das ist eine Asymmetrie, die natürlich wirkt — die nicht-dominante Hand „pausiert".</p>
+      <p>Schulter rechts leicht angehoben, Spine minimal zur rechten Seite geneigt. Kopf in Richtung der Geste — Manny schaut zu seinem Index-Finger oder darüber hinaus (als ob er etwas Imaginäres zeigt).</p>
+      <p>Keyframe setzen. Die Index-Finger-Pose wird in Phase D mit Finger-AutoPosing detailliert.</p>
+      <div class="insight">
+        Der Index-Finger ist evolutionär jung als ausgesonderter Kommunikations-Finger. Schimpansen und Bonobos zeigen nicht mit dem Index-Finger — ihre Zeige-Gestik ist mit der ganzen Hand. Menschen-Kinder lernen das Zeigen mit dem Index ab etwa 12 Monaten, und es ist eine der ersten symbolischen Gesten überhaupt. „Da!" — bevor das Kind sprechen kann, kann es schon zeigen. Was du in Manny baust, ist eine der primärsten menschlichen Kommunikations-Posen, die existiert.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Rest pose 2 -->
+        <g opacity="0.85">
+          <circle cx="100" cy="42" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="53" x2="100" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="100" cy="70" r="2.5" fill="#1f1a14"/>
+          <line x1="92" y1="120" x2="108" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Arms relaxed, slightly forward -->
+          <line x1="100" y1="70" x2="112" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="112" y1="118" x2="118" y2="155" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="70" x2="88" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="88" y1="118" x2="82" y2="155" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="92" y1="120" x2="92" y2="220" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="108" y1="120" x2="108" y2="220" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="85" y1="220" x2="100" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="100" y1="220" x2="115" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+        </g>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 165 · REST · ZWISCHEN G2 + G3</text>
+      </svg>
+      <div class="caption">Rest-Pose 2: ähnlich zu Rest 1, aber Hände leicht weiter vorn. Anticipation für nächste Geste.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">07</span>
+        <span class="step-title">Anker — Rest-Pose 2 (Frame 165)</span>
+      </div>
+      <p>Frame 165. Zweite Rest-Pose. Ähnlich zu Rest-Pose 1, aber mit subtilen Unterschieden — die Hände sind etwas weiter vor dem Körper, fast als Vorbereitung für die nächste Geste (Anticipation).</p>
+      <p>Realistisch: bei zusammenhängender Gestikulation sind Rest-Posen <em>nicht identisch</em>. Jede Rest-Pose hat eine leichte Anticipation für die kommende Geste eingebaut. Das gibt der Animation einen Fluss — ein Sprecher relaxiert nicht komplett zwischen Gesten, er hält eine kleine Bereitschaft.</p>
+      <p>Keyframe setzen.</p>
+      <div class="box box-merk">
+        <div class="box-label">Rest-Posen mit Variation</div>
+        <p>Drei Rest-Posen in einer Animation sollten alle <em>leicht verschieden</em> sein. Identische Rest-Posen wirken roboterhaft. Variation: Hand-Position 5 cm Unterschied, Schulter-Höhe um 1 cm versetzt, Kopf-Winkel um 2° anders. Mikro-Variationen, die zusammen den Eindruck einer lebendigen Person erzeugen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Fist gesture with emphasis -->
+        <g>
+          <circle cx="100" cy="42" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="53" x2="102" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="100" cy="70" r="2.5" fill="#1f1a14"/>
+          <line x1="94" y1="120" x2="110" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Right arm raised with fist, slight forward emphasis -->
+          <line x1="100" y1="70" x2="125" y2="60" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="125" y1="60" x2="145" y2="50" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Fist -->
+          <circle cx="148" cy="48" r="6" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="158" y="40" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">FAUST</text>
+          <!-- Left arm semi-active -->
+          <line x1="100" y1="70" x2="85" y2="105" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="85" y1="105" x2="78" y2="135" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Hint of left fist -->
+          <circle cx="76" cy="140" r="4" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <!-- Legs static -->
+          <line x1="94" y1="120" x2="92" y2="220" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="110" y1="120" x2="108" y2="220" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="85" y1="220" x2="100" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="100" y1="220" x2="115" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+        </g>
+        <!-- Upward emphasis arrow -->
+        <path d="M 160 50 L 165 35" stroke="#b85528" stroke-width="1.2"/>
+        <path d="M 163 37 L 165 32 L 167 37 z" fill="#b85528"/>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 205 · GESTE 3 · FAUST</text>
+      </svg>
+      <div class="caption">Geste 3: rechte Faust nach oben-vorn als Emphase. Linke Hand semi-aktiv. „Das müssen wir tun".</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">08</span>
+        <span class="step-title">Anker — Geste 3 Peak (Frame 205)</span>
+      </div>
+      <p>Frame 205. Stärkste Geste der drei: rechte Faust auf Schulter-Höhe oder etwas darüber, leicht vorn. Aufwärts-Aufwärts-Bewegung impliziert. Linke Hand ist <em>nicht</em> komplett pausierend wie bei Geste 2 — sie ist halb geöffnet auf Hüfthöhe, als kleine Echo-Bewegung zur dominanten Hand.</p>
+      <p>Spine deutlich aufgerichtet, Brust geöffnet, Schultern minimal nach hinten. Kopf leicht angehoben — eine selbstbewusste Pose. Das ist die intensivste Geste der drei.</p>
+      <p>Pelvis-Rotation kann hier minimal mitgehen (3-5° um Y-Achse), um den Schub der dominanten Hand zu verstärken. Bein-Position bleibt unverändert (die Füße sind fixiert!).</p>
+      <p>Keyframe setzen.</p>
+      <div class="box box-merk">
+        <div class="box-label">Eskalations-Pattern bei Gesten-Sequenzen</div>
+        <p>Drei Gesten in Folge funktionieren am besten in einem Eskalations-Muster: Geste 1 moderat (offen), Geste 2 fokussierter (Index-Punkt), Geste 3 emphatisch (Faust). Das ist klassisches Drei-Akt-Aufbauen — Setup, Komplikation, Klimax. Bei jeder Gesten-Animation: prüfen, ob die letzte Geste tatsächlich die kräftigste ist. Wenn nicht, reordnen.</p>
+      </div>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase B</div>
+        <p>Fünf Anker stehen: Geste 1 (50), Rest 1 (95), Geste 2 (130), Rest 2 (165), Geste 3 (205). Plus Start (0) und End-Rest (300). Bezier-Interpolation zwischen Ankern zeigt schon erkennbare Gestik. Beine bleiben statisch. Pelvis kaum bewegt. Manny gestikuliert.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 4 — PHASE C: INBETWEENING -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§4</div>
+    <div>
+      <div class="section-tag">Phase C · Inbetweening (Iteration 2)</div>
+      <h2 class="section-title">Upper-Body via Inbetweening, <em>Lower bleibt Bezier</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">C</div>
+    <div>
+      <h4>Inbetweening</h4>
+      <div class="phase-meta">Selektive Aktivierung · Beine ausgeschlossen · Pelvis-Position fix</div>
+      <p>Inbetweening nur für UPPER_BODY-Tracks. Beine und Pelvis-Translation explizit auf klassische Interpolation. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 9 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">SELEKTIVE TRACK-INTERPOLATION</text>
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <rect x="40" y="40" width="240" height="20" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="50" y="54" fill="#f3ecdc">Head</text>
+          <text x="270" y="54" text-anchor="end" fill="#f3ecdc">Inbetweening</text>
+
+          <rect x="40" y="62" width="240" height="20" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="50" y="76" fill="#f3ecdc">Torso · Spine</text>
+          <text x="270" y="76" text-anchor="end" fill="#f3ecdc">Inbetweening</text>
+
+          <rect x="40" y="84" width="240" height="20" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="50" y="98" fill="#f3ecdc">L_Arm · R_Arm</text>
+          <text x="270" y="98" text-anchor="end" fill="#f3ecdc">Inbetweening</text>
+
+          <rect x="40" y="106" width="240" height="20" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="50" y="120">Pelvis (rotation only)</text>
+          <text x="270" y="120" text-anchor="end" fill="#284858">Bezier</text>
+
+          <rect x="40" y="128" width="240" height="20" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="50" y="142">L_Leg · R_Leg</text>
+          <text x="270" y="142" text-anchor="end" fill="#284858">Bezier · statisch</text>
+        </g>
+        <text x="160" y="175" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Inbetweening nur für Head, Torso, Arme</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">— invertiert zu Walk/Run, wo Beine im Inbetweening waren</text>
+      </svg>
+      <div class="caption">Track-Konfiguration invertiert zu Lokomotion: Inbetweening oben, Bezier unten.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">09</span>
+        <span class="step-title">Track-Separation invertiert</span>
+      </div>
+      <p>Wichtige Inversion zu allen vorigen Projekten: bei Walk, Run, Jump war Inbetweening auf <strong>Pelvis und Beinen</strong>. Hier ist es umgekehrt — Inbetweening auf <strong>Head, Torso, Armen</strong>, Pelvis und Beine auf Bezier.</p>
+      <p>Im Outliner:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Head, Torso/Spine, L_Arm, R_Arm</strong>: Inbetweening</li>
+        <li><strong>Pelvis</strong>: Bezier (Position statisch, Rotation kann mit gehen)</li>
+        <li><strong>L_Leg, R_Leg</strong>: Bezier, kompletter Stillstand</li>
+      </ul>
+      <p>FK-Setting für Upper-Body-Keyframes wie üblich (Pelvis-Anker FK, damit Inbetweening relativ zum stabilen Pelvis rechnet). Arm-Keyframes auf FK (Hand-Position relativ zum Schulter).</p>
+      <p>Das ist die Standard-Konfiguration für Dialog-Animation und sollte als Pattern im Werkzeugkasten verbleiben.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Wenn Beine doch mitziehen</div>
+        <p>Falls beim Inbetweening die Beine trotz Bezier-Setting minimal mitgehen: Pelvis-Position-Keyframes prüfen. Falls Pelvis-Position nicht auf FK ist und sich bewegt, ziehen die Beine als Children automatisch mit (IK-Constraint). Lösung: Pelvis-Position als separates Anker-Set auf den Keyframes 0 und 300 fixieren, Position-Interpolation auf Linear setzen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 10 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">HAND-TRAJEKTORIE · BEIDE HÄNDE</text>
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1"/>
+        <!-- Body silhouette -->
+        <g opacity="0.3">
+          <circle cx="160" cy="60" r="10" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="160" y1="70" x2="160" y2="135" stroke="#1f1a14" stroke-width="1.5"/>
+        </g>
+        <!-- Right hand trajectory -->
+        <path d="M 175 145 Q 200 110, 220 95 Q 230 110, 215 140 Q 230 100, 245 75 Q 240 50, 250 55 Q 235 90, 220 140 Q 180 145, 165 150" fill="none" stroke="#b85528" stroke-width="1.8"/>
+        <!-- Left hand trajectory -->
+        <path d="M 145 145 Q 120 110, 100 95 Q 110 130, 130 150 Q 95 135, 75 130 Q 110 150, 145 155" fill="none" stroke="#284858" stroke-width="1.5" stroke-dasharray="2,1"/>
+        <!-- Markers -->
+        <circle cx="220" cy="95" r="3" fill="#b85528"/>
+        <text x="230" y="92" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">G1</text>
+        <circle cx="250" cy="55" r="3" fill="#b85528"/>
+        <text x="260" y="55" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">G2</text>
+        <circle cx="245" cy="75" r="3" fill="#b85528"/>
+        <text x="255" y="75" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">G3</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Komplexe Pfade · jede Hand-Trajektorie unterschiedlich</text>
+      </svg>
+      <div class="caption">Hand-Bahnen über die ganze Animation. Rechte Hand stärker bewegt, linke begleitet.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">10</span>
+        <span class="step-title">Erste Generation und Hand-Trajektorie prüfen</span>
+      </div>
+      <p>Play. Inbetweening rechnet — Manny wechselt zwischen den drei Gesten und Rest-Posen, Beine bleiben absolut stabil. Schon mit dieser ersten Generation ist eine Sprech-Animation erkennbar.</p>
+      <p>Hand-Trajectories einschalten (Hand-Controller selektieren, <kbd>\</kbd>). Mit <strong>Relative Trajectory</strong> mit Pelvis als Pivot: jede Hand zeigt einen eigenen Pfad. Bei Sprech-Gestik sind diese Pfade komplexer als bei Lokomotion — keine einfache Sinus-Welle, sondern ein verzweigtes Muster mit drei Peaks.</p>
+      <p>Was du sehen willst: jede Hand-Trajektorie als zusammenhängender Pfad ohne Knicke. Falls Knicke: meist eine Pose zwischen den Ankern, wo Inbetweening eine plausible aber nicht harmonische Zwischen-Pose gewählt hat. Anpassung erfolgt in Phase D.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase C</div>
+        <p>Manny gestikuliert sichtbar. Drei Gesten klar erkennbar als Peaks in der Animation. Rest-Phasen dazwischen mit reduzierter Hand-Bewegung. Beine absolut statisch (kein einziger Frame zappelt). Pelvis-Position unverändert. Aber: Finger-Posen sind noch generisch (alle Finger entspannt) — das wird in Phase D detailliert.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 5 — PHASE D: VERFEINERUNG -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§5</div>
+    <div>
+      <div class="section-tag">Phase D · Verfeinerung (Iteration 3)</div>
+      <h2 class="section-title">Finger-AutoPosing, <em>Rest-Pose-Patterns</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">D</div>
+    <div>
+      <h4>Verfeinerung</h4>
+      <div class="phase-meta">Finger-AutoPosing · Rest-Pose-Patterns · Trajectory Polish</div>
+      <p>Finger-AutoPosing pro Geste anwenden. Rest-Pose-Patterns (1-2-1 und 1-3) für natürliche Hände. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 11 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FINGER-AUTOPOSING · CONTROLLER-HIERARCHIE</text>
+        <!-- Hand schematic with controllers -->
+        <g>
+          <!-- Palm -->
+          <rect x="120" y="100" width="80" height="50" rx="8" fill="#ede4d0" stroke="#1f1a14" stroke-width="1.5"/>
+          <!-- Fingers -->
+          <rect x="125" y="70" width="14" height="30" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+          <text x="132" y="63" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528" font-weight="600">INDEX</text>
+          <text x="132" y="56" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#b85528">MASTER 100%</text>
+          
+          <rect x="143" y="70" width="14" height="30" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+          <text x="150" y="63" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#5a4d3a">Mid</text>
+          
+          <rect x="161" y="70" width="14" height="30" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+          <text x="168" y="63" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#5a4d3a">Ring</text>
+          
+          <rect x="179" y="70" width="14" height="30" fill="#c46b3a" stroke="#1f1a14" stroke-width="1"/>
+          <text x="186" y="63" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#c46b3a" font-weight="600">PINKY</text>
+          <text x="186" y="56" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#c46b3a">Mid 25%, Ring 50%</text>
+          
+          <rect x="200" y="120" width="20" height="14" fill="#284858" opacity="0.7" stroke="#1f1a14" stroke-width="1"/>
+          <text x="210" y="142" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#284858">THUMB</text>
+          <text x="210" y="156" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#284858">solo</text>
+        </g>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Index = alle fünf · Pinky = Mid+Ring · Thumb = solo</text>
+      </svg>
+      <div class="caption">Finger-AutoPosing-Master-Hierarchie. Index ist Master für alle, Pinky für Mid+Ring, Thumb solo.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">11</span>
+        <span class="step-title">Finger-AutoPosing aktivieren</span>
+      </div>
+      <p>In AutoPosing-Mode (Standard für die Animation). Finger-AutoPosing als Sub-Toggle aktivieren — separater Button im AutoPosing-Panel.</p>
+      <p>Wichtig: die Finger-AutoPosing-Hierarchie funktioniert anders als das Haupt-AutoPosing. Drei Master-Controller pro Hand:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Index-Finger</strong>: Master für alle fünf Finger. Wenn du Index beugst, beugen sich alle Finger</li>
+        <li><strong>Pinky</strong>: Master für Pinky, Ring (50%) und Middle (25%). Wenn du Pinky beugst, beugen sich Ring und Middle anteilig</li>
+        <li><strong>Thumb</strong>: kontrolliert nur den Daumen. Solo-Controller</li>
+      </ul>
+      <p>Hotkey <kbd>Shift</kbd>+<kbd>Z</kbd> bringt alle Finger zurück zur Default-Pose (entspannt geöffnet). Hotkey <kbd>T</kbd> zentriert die Kamera auf den aktiven Controller — sehr nützlich bei der detaillierten Finger-Arbeit.</p>
+      <p>Limitation: AutoPosing kann Finger nicht stark nach hinten beugen (Hyperextension). Für solche Posen — bei dieser Brochüre wahrscheinlich nicht nötig — auf Box Controller wechseln.</p>
+      <div class="shortcut-row">
+        <span>Default-Pose:</span><kbd>Shift</kbd>+<kbd>Z</kbd>
+        <span>Camera-Center auf Controller:</span><kbd>T</kbd>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 12 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FINGER-POSEN PRO GESTE</text>
+        <!-- Three hand schemes -->
+        <g>
+          <text x="70" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">G1 · OFFEN</text>
+          <rect x="55" y="65" width="30" height="40" rx="4" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+          <line x1="57" y1="65" x2="57" y2="50" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="63" y1="65" x2="63" y2="48" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="69" y1="65" x2="69" y2="48" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="75" y1="65" x2="75" y2="50" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="83" y1="85" x2="93" y2="78" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="70" y="125" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">alle offen</text>
+        </g>
+        <g>
+          <text x="160" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">G2 · INDEX</text>
+          <rect x="145" y="65" width="30" height="40" rx="4" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+          <line x1="147" y1="65" x2="147" y2="40" stroke="#b85528" stroke-width="2"/>
+          <line x1="153" y1="65" x2="158" y2="75" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="159" y1="65" x2="164" y2="75" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="165" y1="65" x2="170" y2="75" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="173" y1="85" x2="180" y2="80" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="160" y="125" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Index gestreckt</text>
+        </g>
+        <g>
+          <text x="250" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">G3 · FAUST</text>
+          <rect x="235" y="65" width="30" height="40" rx="4" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+          <line x1="237" y1="65" x2="240" y2="78" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="243" y1="65" x2="246" y2="78" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="249" y1="65" x2="252" y2="78" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="255" y1="65" x2="258" y2="78" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="263" y1="85" x2="268" y2="80" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="250" y="125" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">alle gebeugt</text>
+        </g>
+        <text x="160" y="170" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Drei Hand-Posen mit Finger-AutoPosing in 5 Minuten gesetzt</text>
+      </svg>
+      <div class="caption">Drei Hand-Posen pro Geste: offen, Index gestreckt, Faust. Mit Index- und Pinky-Master schnell gesetzt.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">12</span>
+        <span class="step-title">Finger-Posen pro Geste setzen</span>
+      </div>
+      <p>Für jede Geste eine spezifische Finger-Pose:</p>
+      <p><strong>Geste 1 (Frame 50) — Offene Hand</strong>: alle Finger leicht gespreizt, gestreckt. Index-Master leicht zurückbeugen, alle Finger folgen. Thumb separat leicht abducted. Beide Hände identisch.</p>
+      <p><strong>Geste 2 (Frame 130) — Index-Punkt</strong>: rechte Hand. Index-Master selektieren und stark gestreckt halten. Pinky-Master beugen — Pinky, Ring, Middle ziehen sich automatisch gebeugt. Thumb leicht angewinkelt am Index. Linke Hand bleibt in Rest-Pose (siehe Schritt 13).</p>
+      <p><strong>Geste 3 (Frame 205) — Faust</strong>: rechte Hand. Index-Master beugen → alle vier Finger schließen sich gleichzeitig. Thumb separat über die Finger legen (klassische Faust-Pose, nicht Daumen innen — der ist beim Schlagen verletzbar). Linke Hand semi-geöffnet als kleine Echo-Faust.</p>
+      <p>Pro Hand-Pose etwa 30 Sekunden Arbeit mit AutoPosing — das ist die Magie der Master-Controller-Hierarchie.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Daumen-Position bei Faust</div>
+        <p>Klassischer Animator-Fehler: bei einer Faust den Daumen <em>in</em> die Faust legen statt darüber. Anatomisch falsch und schmerzhaft (beim echten Schlag bricht der Daumen). Korrekt: Daumen liegt über Index- und Mid-Finger-Knöchel, von außen. AutoPosing kann das nicht automatisch — Thumb-Controller manuell positionieren.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 13 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">REST-POSE-PATTERNS · BILDHAUEREI</text>
+        <!-- 1-2-1 Pattern -->
+        <g>
+          <text x="100" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">PATTERN 1-2-1</text>
+          <rect x="80" y="65" width="40" height="50" rx="5" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+          <!-- Index separate -->
+          <line x1="83" y1="65" x2="83" y2="50" stroke="#b85528" stroke-width="2"/>
+          <!-- Middle + Ring together -->
+          <line x1="93" y1="65" x2="95" y2="48" stroke="#1f1a14" stroke-width="1.8"/>
+          <line x1="99" y1="65" x2="101" y2="48" stroke="#1f1a14" stroke-width="1.8"/>
+          <!-- Pinky separate -->
+          <line x1="112" y1="65" x2="112" y2="52" stroke="#b85528" stroke-width="2"/>
+          <line x1="118" y1="92" x2="125" y2="88" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="100" y="135" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Index getrennt</text>
+          <text x="100" y="148" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Mid + Ring zusammen</text>
+          <text x="100" y="161" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Pinky getrennt</text>
+        </g>
+        <!-- 1-3 Pattern -->
+        <g>
+          <text x="220" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">PATTERN 1-3</text>
+          <rect x="200" y="65" width="40" height="50" rx="5" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+          <!-- Index slightly separate -->
+          <line x1="203" y1="65" x2="203" y2="50" stroke="#b85528" stroke-width="2"/>
+          <!-- Mid + Ring + Pinky together -->
+          <line x1="213" y1="65" x2="215" y2="48" stroke="#1f1a14" stroke-width="1.8"/>
+          <line x1="221" y1="65" x2="223" y2="50" stroke="#1f1a14" stroke-width="1.8"/>
+          <line x1="229" y1="65" x2="231" y2="52" stroke="#1f1a14" stroke-width="1.8"/>
+          <line x1="238" y1="92" x2="245" y2="88" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="220" y="135" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Index getrennt</text>
+          <text x="220" y="148" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Mid + Ring + Pinky</text>
+          <text x="220" y="161" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">zusammen</text>
+        </g>
+        <text x="160" y="187" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Michelangelo, Caravaggio · nie alle gleich gespreizt</text>
+      </svg>
+      <div class="caption">Zwei klassische Rest-Pose-Patterns aus der Bildhauerei: 1-2-1 und 1-3.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">13</span>
+        <span class="step-title">Rest-Pose-Patterns für die Rest-Phasen</span>
+      </div>
+      <p>Bei den drei Rest-Posen (Frame 0/95/165/300) und der pausenden linken Hand bei Geste 2 (Frame 130) braucht es eine natürliche Hand-Pose. Hier kommt das Wissen aus der klassischen Bildhauerei zum Tragen.</p>
+      <p>Zwei Patterns, die in Michelangelo-, Caravaggio- und Bernini-Skulpturen immer wiederkehren:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>1-2-1 Pattern</strong>: Index leicht separiert, Middle + Ring zusammen, Pinky separiert. Die häufigste Hand-Rest-Pose in der Renaissance-Skulptur</li>
+        <li><strong>1-3 Pattern</strong>: Index leicht separiert, Middle + Ring + Pinky zusammen als Gruppe. Spätere Barock-Variante</li>
+      </ul>
+      <p>Beide Patterns vermeiden den Anfänger-Fehler „alle Finger gleichmäßig gespreizt" — eine Pose, die in der Natur nicht vorkommt und sofort als unnatürlich erkannt wird.</p>
+      <p>Praktisch: für die Rest-Posen Index-Master leicht abducted setzen (1-2-1 oder 1-3), Pinky-Master leicht beugen — gibt automatisch eine 1-2-1-Verteilung. Variieren zwischen den drei Rest-Posen, damit nicht alle gleich aussehen.</p>
+      <div class="insight">
+        Es gibt einen Grund, warum Hand-Posen in Skulptur und Malerei so studiert sind: sie sind die anspruchsvollsten anatomischen Strukturen, die der Mensch reproduziert. 27 Knochen, 29 Gelenke, hunderte Sehnen — alles in den 18 cm einer durchschnittlichen Erwachsenenhand. Wer Hände korrekt darstellt, beherrscht das Handwerk; wer sie verbergen muss (Renaissance: hinter dem Rücken oder im Gewand), ist Lehrling. Manny in deiner Brochüre hat 18 Finger-Controller pro Hand, plus drei Master — weniger Komplexität als die echte Anatomie, aber genug Vokabular für überzeugende Sprech-Gestik.
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 6 — PHASE E: PHYSICS -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§6</div>
+    <div>
+      <div class="section-tag">Phase E · Physics</div>
+      <h2 class="section-title">AutoPhysics <em>nur Upper-Body</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">E</div>
+    <div>
+      <h4>Physics</h4>
+      <div class="phase-meta">Lower-Body-Lock · Compensation Motion · Secondary für Upper-Body</div>
+      <p>Beine via Set Priority Frame schützen. AutoPhysics auf Upper-Body angewendet. Compensation Motion für realistischen Body-Mitschwung. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 14 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">SET PRIORITY ALLE BEIN-KEYFRAMES</text>
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Many priority markers (because beine sind über die ganze animation prioritized) -->
+        <g>
+          <rect x="30" y="92" width="6" height="16" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <polygon points="30,92 36,92 36,86 41,89 36,92" fill="#b85528"/>
+          <rect x="60" y="92" width="6" height="16" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <polygon points="60,92 66,92 66,86 71,89 66,92" fill="#b85528"/>
+          <rect x="100" y="92" width="6" height="16" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <polygon points="100,92 106,92 106,86 111,89 106,92" fill="#b85528"/>
+          <rect x="150" y="92" width="6" height="16" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <polygon points="150,92 156,92 156,86 161,89 156,92" fill="#b85528"/>
+          <rect x="200" y="92" width="6" height="16" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <polygon points="200,92 206,92 206,86 211,89 206,92" fill="#b85528"/>
+          <rect x="250" y="92" width="6" height="16" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <polygon points="250,92 256,92 256,86 261,89 256,92" fill="#b85528"/>
+          <rect x="284" y="92" width="6" height="16" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <polygon points="284,92 290,92 290,86 295,89 290,92" fill="#b85528"/>
+        </g>
+        <text x="160" y="130" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">ALLE BEIN-KEYFRAMES = PRIORITY</text>
+        <text x="160" y="160" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Schutz gegen ungewollte Bein-Bewegung durch AutoPhysics</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">— AutoPhysics darf Body-Compensation Pelvis-Rotation auslösen, aber keine Bein-Translation</text>
+      </svg>
+      <div class="caption">Set Priority Frame auf jedem Bein-Keyframe. AutoPhysics darf Beine nicht verändern.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">14</span>
+        <span class="step-title">Beine via Priority schützen</span>
+      </div>
+      <p>Bei dieser Animation ist der untere Körper das stabile Element. AutoPhysics würde versucht sein, die Compensation Motion auf die Beine zu übertragen — die Beine würden mitschwingen, was die ganze Sprech-Stand-Pose ruiniert.</p>
+      <p>Lösung: alle Bein-Keyframes als Priority markieren. Sie sind sowieso nur an Frame 0 und 300 (oder ein paar mehr falls explizit gesetzt), also wenig Arbeit. Im Physics-Tab: Bein-Keyframes selektieren, Set Priority Frame aktivieren.</p>
+      <p>Dadurch wird AutoPhysics auf die Beine keine Compensation-Anpassungen anwenden. Pelvis-Rotation darf sich aber bewegen — das ist die natürliche Reaktion auf Arm-Geste.</p>
+      <div class="box box-merk">
+        <div class="box-label">Pelvis-Rotation als gewollte Compensation</div>
+        <p>Bei jeder kräftigen Arm-Geste rotiert das Pelvis minimal mit — das ist physikalisch korrekt (Newton's drittes Gesetz: Reaktion auf die Arm-Bewegung). Wenn AutoPhysics das aufnimmt und die Pelvis-Rotation um 1-2° hinzufügt, ist das gewollt. Was nicht gewollt ist: dass dabei auch die Beine sich bewegen. Set Priority Frame auf Bein-Keyframes erlaubt Pelvis-Rotation und sperrt Bein-Translation.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 15 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="20" y="35" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">AUTOPHYSICS · UPPER-BODY-FOKUSSIERT</text>
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <text x="20" y="60">Physics Character</text>
+          <line x1="170" y1="56" x2="290" y2="56" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="56" x2="290" y2="56" stroke="#b85528" stroke-width="3"/>
+          <circle cx="290" cy="56" r="4" fill="#b85528"/>
+          <text x="295" y="60" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">100</text>
+
+          <text x="20" y="85">Smooth Trajectory</text>
+          <line x1="170" y1="81" x2="290" y2="81" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="81" x2="195" y2="81" stroke="#b85528" stroke-width="3"/>
+          <circle cx="195" cy="81" r="4" fill="#b85528"/>
+          <text x="295" y="85" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~15</text>
+
+          <text x="20" y="110">Smooth Rotation</text>
+          <line x1="170" y1="106" x2="290" y2="106" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="106" x2="225" y2="106" stroke="#b85528" stroke-width="3"/>
+          <circle cx="225" cy="106" r="4" fill="#b85528"/>
+          <text x="295" y="110" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~40</text>
+
+          <text x="20" y="135">Compensation Motion</text>
+          <line x1="170" y1="131" x2="290" y2="131" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="131" x2="230" y2="131" stroke="#b85528" stroke-width="3"/>
+          <circle cx="230" cy="131" r="4" fill="#b85528"/>
+          <text x="295" y="135" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~45</text>
+
+          <text x="20" y="160">Secondary Motion</text>
+          <line x1="170" y1="156" x2="290" y2="156" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="156" x2="240" y2="156" stroke="#b85528" stroke-width="3"/>
+          <circle cx="240" cy="156" r="4" fill="#b85528"/>
+          <text x="295" y="160" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~50</text>
+        </g>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Hohe Compensation + Secondary — Body soll lebendig wirken</text>
+      </svg>
+      <div class="caption">Filter-Werte für Sprech-Animation. Hohe Compensation und Secondary, niedriges Smoothing.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">15</span>
+        <span class="step-title">AutoPhysics 3-Pass mit Upper-Body-Filter</span>
+      </div>
+      <p>Physics Assistance an. Pass 1 + 2 nur Physics Corrector. Pass 3 mit Filtern, hier mit dezidierten Werten für Sprech-Animation:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Physics Character</strong> 100</li>
+        <li><strong>Smooth Trajectory</strong> ~15 — sehr niedrig. Hand-Bewegungen sollen Akzent haben, nicht weich gleiten</li>
+        <li><strong>Smooth Rotation</strong> ~40 — Pelvis-Rotation glätten</li>
+        <li><strong>Compensation Motion</strong> ~45 — hoch! Body soll auf die Arm-Bewegungen reagieren mit Mitschwung</li>
+        <li><strong>Separation of Motion</strong> ~15</li>
+        <li><strong>Secondary Motion</strong> ~50 — sehr hoch. Hände und Finger sollen ausschwingen, Schultern atmen mit</li>
+      </ul>
+      <p>Ganze Sequenz, Solve, Snap to Physics. Physics aus.</p>
+      <p>Effekt: die Animation gewinnt deutlich an Lebendigkeit. Der Body schwingt minimal mit jeder Arm-Geste, die Schultern atmen, die Finger haben kleine Nachschwung-Bewegungen nach jeder Hand-Pose.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase E</div>
+        <p>Drei Gesten klar sichtbar, jede mit eigenem Charakter. Rest-Phasen mit subtle Variation, nicht statisch. Beine bleiben absolut bewegungslos (Priority schützt). Pelvis rotiert minimal mit jeder Geste. Body schwingt sichtbar mit den Arm-Bewegungen (Compensation Motion). Manny gestikuliert <em>überzeugend</em> — nicht roboterhaft, sondern wie ein Mensch.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 7 — PHASE F: EXPORT + METAHUMAN -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§7</div>
+    <div>
+      <div class="section-tag">Phase F · Export + MetaHuman-Bridge</div>
+      <h2 class="section-title">Body-Animation <em>trifft Face</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">F</div>
+    <div>
+      <h4>Export</h4>
+      <div class="phase-meta">FBX · UE5 Animation Sequence · MetaHuman-Face-Layer</div>
+      <p>Gestik aus Cascadeur, Gesicht aus MetaHuman, gemeinsam im UE5 Sequencer. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 16 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="80" y="50" width="160" height="100" rx="6" fill="#f3ecdc" stroke="#1f1a14" stroke-width="2"/>
+        <text x="160" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#b85528">FBX EXPORT</text>
+        <line x1="100" y1="88" x2="220" y2="88" stroke="#c8b89a" stroke-width="1"/>
+        <text x="100" y="105" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Bake animation</text>
+        <text x="220" y="105" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">✓</text>
+        <text x="100" y="122" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Frame range</text>
+        <text x="220" y="122" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">0–300</text>
+        <text x="100" y="139" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Root translation</text>
+        <text x="220" y="139" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">OFF · statisch</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">10 Sekunden Body-Animation · keine Translation</text>
+      </svg>
+      <div class="caption">FBX wie üblich. Root Translation OFF (Manny bewegt sich nicht durch den Raum).</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">16</span>
+        <span class="step-title">FBX-Export der Body-Animation</span>
+      </div>
+      <p>File → Export → FBX. Settings:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Frame range: 0 bis 300</li>
+        <li>Bake animation: ON, 30 fps</li>
+        <li><strong>Root translation: OFF</strong> — Manny steht auf der Stelle, keine räumliche Verschiebung</li>
+        <li>Skeleton only: ON</li>
+        <li>Finger-Bones: müssen mit exportiert werden (im FBX-Bone-Filter prüfen, dass alle Finger-Joints aktiv sind)</li>
+      </ul>
+      <p>Dateiname <code>manny-gestik-v01.fbx</code>.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Finger-Bones beim Export</div>
+        <p>Standard-FBX-Export kann manchmal die Finger-Joints auslassen (entweder Bone-Limit überschritten oder Filter aktiv). Im Export-Dialog die Bone-Liste durchgehen und sicherstellen, dass alle Finger-Joints (typisch 15 pro Hand bei Manny-Rig) im Export sind. Wenn nicht: Bone-Filter aufheben oder „Export all bones" aktivieren.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 17 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="50" width="280" height="110" fill="none" stroke="#284858" stroke-width="1.5"/>
+        <text x="160" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#284858">UE5 · SEQUENCER · MULTI-LAYER</text>
+        <line x1="40" y1="82" x2="280" y2="82" stroke="#284858" stroke-width="0.6"/>
+        <!-- Body layer -->
+        <rect x="40" y="92" width="240" height="18" fill="#b85528" opacity="0.5"/>
+        <text x="50" y="105" font-family="JetBrains Mono, monospace" font-size="9" fill="#f3ecdc">Manny-Body · gestik.fbx</text>
+        <!-- MetaHuman face layer -->
+        <rect x="40" y="114" width="240" height="18" fill="#8a9878" opacity="0.5"/>
+        <text x="50" y="127" font-family="JetBrains Mono, monospace" font-size="9" fill="#1f1a14">MetaHuman-Face · talk.csv (FaceIt)</text>
+        <!-- Audio layer -->
+        <rect x="40" y="136" width="240" height="18" fill="#284858" opacity="0.5"/>
+        <text x="50" y="149" font-family="JetBrains Mono, monospace" font-size="9" fill="#f3ecdc">Audio · voice.wav</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Drei Layer im Sequencer · gemeinsame Timeline</text>
+      </svg>
+      <div class="caption">UE5-Sequencer: Body-Animation, MetaHuman-Face und Voice-Audio als drei separate Tracks.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">17</span>
+        <span class="step-title">UE5-Import und MetaHuman-Bridge</span>
+      </div>
+      <p>FBX in UE5 importieren mit Manny-Skelett als Target. Animation Sequence wird angelegt — 10 Sekunden lang, 300 Frames bei 30 fps.</p>
+      <p>Im Level oder Sequencer einen MetaHuman-Charakter laden (typisch ist eine MetaHuman-Identität auf das Manny-Skelett gemappt — ein etablierter UE5-Workflow). Der MetaHuman bringt sein eigenes Face-Skelett mit.</p>
+      <p>Drei Tracks im Sequencer kombinieren:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Body-Track</strong>: die Cascadeur-Animation. Steuert Spine, Schultern, Arme, Hände, Finger</li>
+        <li><strong>MetaHuman-Face-Track</strong>: Facial-Performance — typisch erzeugt mit FaceIt aus einem aufgenommenen Voice-Take, oder mit Audio2Face-AI</li>
+        <li><strong>Audio-Track</strong>: die Voice-Aufnahme. Lippen-Sync und Body-Gestik werden zur Audio synchronisiert</li>
+      </ul>
+      <p>Wichtig: Body- und Face-Animation müssen <em>zeitlich abgestimmt</em> sein. Gesten-Peaks (Frame 50, 130, 205) sollten auf bedeutungstragende Wörter im Voice-Track fallen. Falls beide unabhängig entstanden sind: in Sequencer die Body-Animation zeitlich verschieben, bis Peaks und Worte zusammenfallen.</p>
+      <div class="box box-merk">
+        <div class="box-label">Body-Gestik-First vs Voice-First-Workflow</div>
+        <p>Zwei Pipelines möglich. <strong>Voice-First</strong>: Audio existiert, Body-Animation wird passend dazu gebaut. Vorteil: Audio ist fest, Body-Gestik kann an Schlüssel-Wörtern ausgerichtet werden. <strong>Body-First</strong>: Body-Animation existiert, Voice wird passend dazu eingesprochen oder generiert. Vorteil: animator-getriebener Workflow, Voice-Talent passt sich an. Bei dieser Brochüre haben wir Body-First gemacht — die Voice-Aufnahme passt sich später an die Gesten-Timing an.</p>
+      </div>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase F</div>
+        <p>In UE5: Manny gestikuliert über 10 Sekunden mit klaren Gesten und ruhigen Phasen dazwischen. Beine absolut stabil. Wenn MetaHuman-Face-Layer dazukommt: das Gesicht synchronisiert mit den Gesten — Mund-Bewegungen passen zu hörbarem Voice-Track, Augen-Blicke folgen den Hand-Bewegungen. Eine komplette Sprech-Animation, ready für Cutscenes oder narrative Sequenzen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 8 — OUTRO -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§8</div>
+    <div>
+      <div class="section-tag">Ausblick</div>
+      <h2 class="section-title">Was du <em>jetzt zusätzlich</em> hast.</h2>
+    </div>
+  </div>
+
+  <p>Mit Projekt 08 ist das Upper-Body-Vokabular im Werkzeugkasten: <strong>Custom Track Hierarchy als strukturelle Setup-Entscheidung</strong> (nicht nur Polish), <strong>Body-Splitting mit selektiver Inbetweening-Aktivierung</strong>, <strong>Finger-AutoPosing mit Master-Controller-Hierarchie</strong>, <strong>Rest-Pose-Patterns aus klassischer Bildhauerei</strong>. Damit ist die einzeln animierte Bewegungs-Bibliothek der Reihe komplett — von ganzkörperlicher Lokomotion (01-07) bis zur Upper-Body-Dialog-Animation (08).</p>
+
+  <p>Track 3 der Reihe öffnet sich mit Projekt 09 (Mocap-Cleanup mit QuickMagic). Anders als die bisherigen Projekte: die Animation existiert bereits — Mocap-Daten aus QuickMagic mit allen typischen Problemen (Foot-Sliding, Hand-Penetration, fehlende Finger-Animation). Die Werkzeuge aus 01-08 werden zu <em>Cleanup-Werkzeugen</em>: Fulcrum Motion Cleaning für Foot-Sliding, Inbetweening als Resmoothing-Pass für problematische Sektionen, Finger-AutoPosing als Fix-It-All für die typisch fehlenden Mocap-Finger.</p>
+
+  <p>Projekt 10 (Custom-Charakter aus Blender mit Auto-Rig Pro) und 11+ (Kombinations-Szenen) schließen die Reihe ab. Was du in 01-08 gelernt hast, ist dann nicht mehr „lerne Cascadeur" sondern „nutze Cascadeur in deiner Pipeline".</p>
+
+  <div class="box box-merk">
+    <div class="box-label">Was Projekt 08 nicht macht</div>
+    <p>Kein Sprechen mit Mund (das ist MetaHuman-Layer in UE5). Keine Augen-Bewegung, keine Mimik. Keine Schritte oder Gewichts-Verlagerung (Beine bleiben statisch). Kein „Charakter-Voice" — Manny gestikuliert generisch, nicht in einem bestimmten Stil (Lehrer vs Politiker vs Vortragender). Alles das sind Pose-Modulationen, die du auf der bestehenden Animation aufbauen kannst — die Workflow-Logik bleibt identisch.</p>
+  </div>
+
+  <div class="insight">
+    Eine TV-Studie aus den 1980ern hat Politiker während Pressekonferenzen analysiert und festgestellt: jeder Politiker hat ein <em>charakteristisches Gesten-Repertoire</em> mit etwa 5-12 wiederkehrenden Gesten, die er unbewusst zyklisch wiederholt. Reagan hatte den „chopping Hand" — eine vertikal hackende Bewegung für Emphase. Bill Clinton's „Thumb on Fist" mit dem rechten Index — ein bewusst entwickeltes Aggressions-vermeidendes Pattern. Wenn du Manny einen Charakter geben willst, gibst du ihm sein eigenes 5-12-Gesten-Repertoire. In dieser Brochüre haben wir mit drei generischen angefangen — die Erweiterung zum Charakter-spezifischen Set ist eine Pose-Erweiterung, keine Workflow-Änderung.
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="doc-footer">
+  <div><span class="terracotta">Projekt 08 · v 1.0</span></div>
+  <div>17 Schritte · 6 Phasen</div>
+  <div>Cascadeur · Lernreihe</div>
+</footer>
+
+</article>
+
+</body>
+</html>
