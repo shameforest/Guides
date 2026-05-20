@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projekt 02 · Arm-Geste · Cascadeur-Lernreihe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3ecdc;
+    --paper-warm: #ede4d0;
+    --paper-dark: #e2d6b8;
+    --ink: #1f1a14;
+    --ink-soft: #5a4d3a;
+    --ink-faint: #8a7d68;
+    --terracotta: #b85528;
+    --terracotta-deep: #7a3414;
+    --cobalt: #284858;
+    --sage: #8a9878;
+    --warning: #c46b3a;
+    --rule: #c8b89a;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'DM Sans', -apple-system, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--paper);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    -webkit-font-smoothing: antialiased;
+  }
+  .doc { max-width: 1100px; margin: 0 auto; }
+
+  /* Cover */
+  .cover {
+    padding: 3.5rem 5rem 2.5rem;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -10%; right: -8%;
+    width: 50%; aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(184, 85, 40, 0.08) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .cover-marker {
+    display: flex; align-items: center; gap: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 1.5rem;
+  }
+  .cover-marker .ml { width: 60px; height: 1px; background: var(--terracotta); }
+  .cover h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.6rem, 5vw, 4.2rem);
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 50;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+    max-width: 18ch;
+  }
+  .cover h1 em {
+    font-style: italic;
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    color: var(--terracotta);
+  }
+  .cover .subtitle {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.2rem;
+    color: var(--ink-soft);
+    max-width: 58ch;
+    margin-bottom: 2rem;
+  }
+  .cover-meta {
+    display: flex; gap: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    flex-wrap: wrap;
+  }
+  .mb { display: flex; flex-direction: column; gap: 0.2rem; }
+  .mb-label {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .mb span:last-child {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--ink);
+  }
+
+  /* Sections */
+  .section {
+    padding: 3rem 5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .section-head {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.8rem;
+    align-items: start;
+  }
+  .section-num {
+    font-family: var(--font-display);
+    font-size: 2.8rem;
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    font-style: italic;
+    color: var(--terracotta);
+    line-height: 1;
+  }
+  .section-tag {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 0.4rem;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 3vw, 2.4rem);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    max-width: 26ch;
+  }
+  .section-title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--terracotta);
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  }
+
+  .section p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .section p.lead {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.18rem;
+    color: var(--ink-soft);
+    margin-bottom: 1.5rem;
+    max-width: 60ch;
+  }
+  .section h3 {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 1.6rem 0 0.6rem;
+    color: var(--ink);
+  }
+
+  /* Phase banner */
+  .phase-banner {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 2rem;
+    margin: 2rem 0 2.5rem;
+    padding: 1.4rem 1.8rem;
+    background: linear-gradient(90deg, rgba(184, 85, 40, 0.10), transparent);
+    border-left: 4px solid var(--terracotta);
+    align-items: center;
+  }
+  .phase-letter {
+    font-family: var(--font-display);
+    font-size: 5rem;
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    font-style: italic;
+    color: var(--terracotta);
+    line-height: 0.85;
+    text-align: center;
+  }
+  .phase-banner h4 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+  }
+  .phase-banner .phase-meta {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.5rem;
+  }
+  .phase-banner p {
+    font-size: 0.97rem;
+    color: var(--ink);
+    margin-bottom: 0;
+    max-width: 65ch;
+  }
+  .phase-banner em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  /* Step card */
+  .step {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 1.8rem;
+    margin: 1.6rem 0;
+    padding: 1.6rem 1.8rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+  }
+  .step-diagram {
+    background: #f3ecdc;
+    border: 1px solid #c8b89a;
+    border-radius: 6px;
+    padding: 1rem 0.6rem 0.6rem;
+    align-self: start;
+  }
+  .step-diagram svg { width: 100%; height: auto; display: block; }
+  .step-diagram .caption {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .step-num-row {
+    display: flex; align-items: baseline; gap: 0.8rem;
+    margin-bottom: 0.6rem;
+  }
+  .step-num {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 300;
+    font-style: italic;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    color: var(--terracotta);
+    line-height: 1;
+  }
+  .step-title {
+    font-family: var(--font-display);
+    font-size: 1.18rem;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .step p { font-size: 0.96rem; margin-bottom: 0.6rem; max-width: none; }
+  .step p:last-child { margin-bottom: 0; }
+  .step em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+  .shortcut-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.7rem;
+    align-items: center;
+    margin: 0.5rem 0 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+  kbd {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0.05rem 0.4rem;
+    color: var(--ink);
+    box-shadow: 0 1px 0 var(--rule);
+  }
+
+  /* Boxes */
+  .box {
+    margin: 1.4rem 0;
+    padding: 1.1rem 1.3rem;
+    border-radius: 0 4px 4px 0;
+    max-width: none;
+  }
+  .step .box { margin: 0.9rem 0 0.4rem; }
+  .box-label {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .box-label::before { content: ''; width: 14px; height: 1.5px; background: currentColor; }
+  .box p { font-size: 0.93rem; margin-bottom: 0.4rem; }
+  .box p:last-child { margin-bottom: 0; }
+  .box-why { background: rgba(40, 72, 88, 0.10); border-left: 3px solid var(--cobalt); }
+  .box-why .box-label { color: var(--cobalt); }
+  .box-stolper { background: rgba(196, 107, 58, 0.13); border-left: 3px solid var(--warning); }
+  .box-stolper .box-label { color: var(--warning); }
+  .box-merk { background: rgba(184, 85, 40, 0.10); border-left: 3px solid var(--terracotta); }
+  .box-merk .box-label { color: var(--terracotta); }
+  .box-check { background: rgba(138, 152, 120, 0.18); border-left: 3px solid var(--sage); }
+  .box-check .box-label { color: var(--sage); }
+
+  /* Iteration pipeline (for §1) */
+  .iter-pipe {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .iter-card {
+    padding: 1rem 1.1rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+  }
+  .iter-card .iter-tag {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 0.3rem;
+  }
+  .iter-card h5 {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+    color: var(--ink);
+  }
+  .iter-card p {
+    font-size: 0.86rem;
+    line-height: 1.45;
+    margin-bottom: 0;
+    color: var(--ink-soft);
+  }
+
+  /* Insight rail */
+  .insight {
+    margin: 1.4rem 0;
+    padding: 1.1rem 1.3rem;
+    background: var(--paper-warm);
+    border: 1px dashed var(--rule);
+    border-radius: 6px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.96rem;
+    color: var(--ink-soft);
+    max-width: 65ch;
+  }
+  .insight::before {
+    content: 'Randnotiz';
+    display: block;
+    font-family: var(--font-mono);
+    font-style: normal;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 0.4rem;
+  }
+
+  /* Footer */
+  .doc-footer {
+    padding: 2.5rem 5rem;
+    border-top: 2px solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex; justify-content: space-between;
+  }
+  .doc-footer .terracotta { color: var(--terracotta); }
+
+  @media (max-width: 900px) {
+    .cover, .section, .doc-footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .section-head { grid-template-columns: 1fr; gap: 0.5rem; }
+    .step { grid-template-columns: 1fr; gap: 1rem; }
+    .step-diagram { max-width: 280px; margin: 0 auto; }
+    .phase-banner { grid-template-columns: 1fr; gap: 0.5rem; }
+    .phase-letter { text-align: left; font-size: 3.5rem; }
+    .iter-pipe { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #1a1612;
+      --paper-warm: #221d17;
+      --paper-dark: #2a241c;
+      --ink: #ebe3d0;
+      --ink-soft: #b8a98a;
+      --ink-faint: #7a6e58;
+      --terracotta: #e8814a;
+      --terracotta-deep: #c25a2a;
+      --cobalt: #6a9aab;
+      --sage: #a8b898;
+      --warning: #e2884d;
+      --rule: #3a3026;
+    }
+    body {
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    }
+    .step-diagram { background: #f3ecdc !important; border-color: #c8b89a !important; }
+    .step-diagram .caption { color: #5a4d3a !important; }
+  }
+</style>
+</head>
+<body>
+
+<article class="doc">
+
+<!-- COVER -->
+<header class="cover">
+  <div class="cover-marker">
+    <span>Cascadeur · Lernreihe</span>
+    <div class="ml"></div>
+    <span>Projekt 02 · v 1.0</span>
+  </div>
+  <h1>Arm-Geste:<br>der erste<br><em>Inbetweening-<br>Lauf</em>.</h1>
+  <p class="subtitle">Vier Sekunden, ein Arm hebt sich, hält, fällt zurück. Klein genug, damit das volle Inbetweening-Iterations-Pattern sichtbar wird ohne dass Komplexität es überlagert.</p>
+  <div class="cover-meta">
+    <div class="mb"><span class="mb-label">Charakter</span><span>UE5-Manny</span></div>
+    <div class="mb"><span class="mb-label">Dauer</span><span>4 s · 120 Frames</span></div>
+    <div class="mb"><span class="mb-label">Kern-Werkzeug</span><span>Inbetweening · Iterativ</span></div>
+    <div class="mb"><span class="mb-label">Pipeline-Ziel</span><span>UE5 Sequencer</span></div>
+    <div class="mb"><span class="mb-label">Schritte</span><span>17</span></div>
+  </div>
+</header>
+
+
+<!-- § 1 — WAS DU BAUST -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§1</div>
+    <div>
+      <div class="section-tag">Was Inbetweening macht und warum hier</div>
+      <h2 class="section-title">Drei Anker, der Rest <em>wird gerechnet</em>.</h2>
+    </div>
+  </div>
+
+  <p class="lead">Inbetweening ist ein Interpolations-Typ neben Bezier und Linear — kein eigener Modus, kein Modal-Dialog. Du setzt Anker, das Diffusion-Modell baut die humanoide Zwischenbewegung in Echtzeit.</p>
+
+  <p>Manny steht aufrecht. Sein rechter Arm hebt sich aus der Ruhepose seitlich am Körper zur Schulterhöhe, hält dort kurz, fällt zurück. Zwischen den Ankern macht Inbetweening den Bogen der Hand, lässt die Schulter mit-rotieren, gibt dem Torso minimale Reaktion. Du erkennst dabei das ganze Pattern, das in jedem späteren Projekt wiederkehrt — bis zur Kampfsequenz.</p>
+
+  <div class="box box-why">
+    <div class="box-label">Was Inbetweening tatsächlich tut</div>
+    <p>Inbetweening interpoliert nicht linear oder kurvig zwischen zwei Posen wie Bezier — es generiert plausible <em>humanoide</em> Zwischenbewegungen. Das Diffusion-Modell weiß, wie ein Arm typischerweise einen Bogen macht, wie die Schulter dabei mitarbeitet, wo die Hand zwischendurch sein muss. Diese physiologische Vorinformation ist der Wert; bei reiner Bezier-Interpolation müsstest du jeden Zwischen-Frame selbst setzen, um das gleiche Ergebnis zu bekommen.</p>
+  </div>
+
+  <h3>Das Vier-Iterations-Pattern</h3>
+  <p>Inbetweening läuft nie einmal durch — es ist eine Schleife. Vier Iterationen, in jedem späteren Projekt das selbe Schema.</p>
+
+  <div class="iter-pipe">
+    <div class="iter-card">
+      <div class="iter-tag">Iter. 1</div>
+      <h5>Grobschnitt</h5>
+      <p>Drei Anker. Start, Top, Ende. Inbetweening rechnet eine erste Bewegung.</p>
+    </div>
+    <div class="iter-card">
+      <div class="iter-tag">Iter. 2</div>
+      <h5>Charakter</h5>
+      <p>Anticipation, Hold, Settle als zusätzliche Anker. Persönlichkeit der Bewegung.</p>
+    </div>
+    <div class="iter-card">
+      <div class="iter-tag">Iter. 3</div>
+      <h5>Detail</h5>
+      <p>Tween Machine fürs Spacing, Trajectory Tangents für den Hand-Bogen.</p>
+    </div>
+    <div class="iter-card">
+      <div class="iter-tag">Iter. 4</div>
+      <h5>Physics</h5>
+      <p>AutoPhysics in drei Durchläufen, optional Secondary Motion.</p>
+    </div>
+  </div>
+
+  <div class="insight">
+    Bei Disney waren Inbetweener jahrzehntelang die Junior-Animatoren, deren Job es war, die Frames zwischen den Anker-Posen der Senior-Animatoren zu zeichnen. Tausende Frames per Hand. Cascadeurs Inbetweening ersetzt nicht die Posen — die setzt du immer noch selbst, das ist der kreative Anteil. Es ersetzt die Knochenarbeit des Dazwischen-Zeichnens, die früher ganze Karrieren verschlungen hat.
+  </div>
+</section>
+
+
+<!-- § 2 — PHASE A: SETUP -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§2</div>
+    <div>
+      <div class="section-tag">Phase A · Setup</div>
+      <h2 class="section-title">Manny, Tracks, <em>Startpose</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">A</div>
+    <div>
+      <h4>Setup</h4>
+      <div class="phase-meta">Scene · Quick Rigging Tool · Frame 0</div>
+      <p>Manny laden, Track-Hierarchie für das neue Inbetweening generieren, neutrale Startpose auf Frame 0. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <!-- Ground -->
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Profile stick figure -->
+        <!-- Head -->
+        <circle cx="100" cy="42" r="13" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Spine -->
+        <line x1="100" y1="55" x2="100" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Shoulder (profile: single point) -->
+        <circle cx="100" cy="72" r="3" fill="#1f1a14"/>
+        <!-- Hip -->
+        <line x1="92" y1="130" x2="108" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Arm relaxed at side -->
+        <line x1="100" y1="72" x2="103" y2="125" stroke="#1f1a14" stroke-width="2.2"/>
+        <line x1="103" y1="125" x2="105" y2="165" stroke="#1f1a14" stroke-width="2.2"/>
+        <!-- Hand -->
+        <circle cx="105" cy="168" r="3" fill="#1f1a14"/>
+        <!-- Legs slightly bent -->
+        <line x1="92" y1="130" x2="93" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="93" y1="175" x2="95" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="108" y1="130" x2="107" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="107" y1="175" x2="105" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="85" y1="220" x2="115" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <!-- Frame label -->
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#8a7d68">PROFIL · FRAME 0</text>
+        <!-- View indicator -->
+        <text x="180" y="240" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="7" fill="#8a7d68">SEITE</text>
+      </svg>
+      <div class="caption">Profil-Ansicht. Arm-Bewegungen vor dem Körper sind im Profil am besten lesbar.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">01</span>
+        <span class="step-title">Scene laden, Profilansicht aufsetzen</span>
+      </div>
+      <p>Cascadeur starten, Manny aus der Sample-Szene laden (oder FBX-Import + Rig-Generierung wie in Projekt 01). Scene-Settings: 30 fps, Timeline 0 bis 120 (= 4 Sekunden).</p>
+      <p>Viewport auf <strong>Seitenansicht</strong> umschalten (Numpad-3 in Standard-Belegung, oder im Cam-Picker). Eine Arm-Geste vor dem Körper ist im Profil maximal lesbar — die Hand-Bewegung verläuft genau in der Bildebene, der Bogen ist eine einzige Linie statt einer 3D-Projektion. Frontal käme das Profil dieser Bewegung als Verkürzung an.</p>
+      <p>Speichern als <code>projekt-02-arm-geste.casc</code>.</p>
+      <div class="shortcut-row">
+        <span>Side-View:</span><kbd>Numpad 3</kbd>
+        <span>Top:</span><kbd>Numpad 7</kbd>
+        <span>Front:</span><kbd>Numpad 1</kbd>
+      </div>
+      <div class="insight">
+        Norman McLaren, Pionier der Animation am National Film Board of Canada: <em>„Animation is not the art of drawings that move but the art of movements that are drawn."</em> In dieser Brochüre <em>zeichnet</em> Inbetweening die Bewegung — du gibst die Anker, das Modell zeichnet das Dazwischen. Aber die Bewegung selbst — der Charakter der Geste — ist deine Entscheidung.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Old track structure (left) -->
+        <rect x="20" y="40" width="120" height="130" fill="#f3ecdc" stroke="#8a7d68" stroke-width="1.5" stroke-dasharray="3,3"/>
+        <text x="80" y="58" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#8a7d68">VOR 2025.3</text>
+        <line x1="28" y1="75" x2="135" y2="75" stroke="#8a7d68" stroke-width="0.7"/>
+        <text x="32" y="88" font-family="DM Sans, sans-serif" font-size="9" fill="#5a4d3a">Body</text>
+        <text x="32" y="103" font-family="DM Sans, sans-serif" font-size="9" fill="#5a4d3a">Arms</text>
+        <text x="32" y="118" font-family="DM Sans, sans-serif" font-size="9" fill="#5a4d3a">Legs</text>
+        <text x="32" y="133" font-family="DM Sans, sans-serif" font-size="9" fill="#5a4d3a">Fingers</text>
+        <text x="80" y="160" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#8a7d68">flach</text>
+
+        <!-- Arrow -->
+        <path d="M 150 100 L 170 100" stroke="#b85528" stroke-width="1.5" marker-end="url(#arrowt)"/>
+        <defs>
+          <marker id="arrowt" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M 0 0 L 8 4 L 0 8 z" fill="#b85528"/>
+          </marker>
+        </defs>
+
+        <!-- New track structure (right) -->
+        <rect x="180" y="40" width="120" height="130" fill="#f3ecdc" stroke="#b85528" stroke-width="2"/>
+        <text x="240" y="58" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">2025.3+</text>
+        <line x1="188" y1="75" x2="295" y2="75" stroke="#c8b89a" stroke-width="0.7"/>
+        <text x="192" y="88" font-family="DM Sans, sans-serif" font-size="9" fill="#1f1a14">Pelvis</text>
+        <text x="192" y="103" font-family="DM Sans, sans-serif" font-size="9" fill="#1f1a14">  L Torso</text>
+        <text x="192" y="118" font-family="DM Sans, sans-serif" font-size="9" fill="#1f1a14">    L Head</text>
+        <text x="192" y="133" font-family="DM Sans, sans-serif" font-size="9" fill="#1f1a14">    L L_Arm · R_Arm</text>
+        <text x="192" y="148" font-family="DM Sans, sans-serif" font-size="9" fill="#1f1a14">  L L_Leg · R_Leg</text>
+        <text x="240" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#b85528">hierarchisch · Inbetweening-tauglich</text>
+      </svg>
+      <div class="caption">Cascadeur 2025.3 hat eine neue Track-Hierarchie. Quick Rigging Tool regeneriert das Rig.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">02</span>
+        <span class="step-title">Track-Hierarchie via Quick Rigging Tool aktualisieren</span>
+      </div>
+      <p>Ab Cascadeur 2025.3 verwendet Inbetweening eine neue Track-Struktur mit besserer Body-Part-Separation. Wenn das Rig aus einer älteren Version stammt oder die Track-Struktur flach ist, läuft Inbetweening nicht voll. Lösung: in den Rig-Mode wechseln, <em>Quick Rigging Tool</em> aufrufen, <strong>Generate Rig</strong> drücken.</p>
+      <p>Beim UE5-Manny aus der Sample-Szene ist das meist schon korrekt aufgesetzt — trotzdem einmal kontrollieren: im Outliner sollten die Tracks hierarchisch sortiert sein (Pelvis → Torso → Arms/Head, Pelvis → Legs).</p>
+      <div class="box box-merk">
+        <div class="box-label">Track-Hierarchie aktualisieren — Standardthema</div>
+        <p>Dieser Schritt taucht in jedem Projekt ab 02 in dieser Form auf. Wenn Inbetweening nicht so funktioniert wie erwartet (Animation bewegt sich kaum, falsche Body-Parts reagieren), ist veraltete Track-Struktur fast immer die Ursache.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Stable stand with arm down -->
+        <circle cx="100" cy="42" r="13" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="100" y1="55" x2="100" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <circle cx="100" cy="72" r="3" fill="#1f1a14"/>
+        <line x1="92" y1="130" x2="108" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Right arm at side (animated arm — slight terracotta) -->
+        <line x1="100" y1="72" x2="103" y2="125" stroke="#b85528" stroke-width="2.4"/>
+        <line x1="103" y1="125" x2="105" y2="165" stroke="#b85528" stroke-width="2.4"/>
+        <circle cx="105" cy="168" r="3.5" fill="#b85528"/>
+        <text x="120" y="170" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">START</text>
+        <!-- Legs -->
+        <line x1="92" y1="130" x2="93" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="93" y1="175" x2="95" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="108" y1="130" x2="107" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="107" y1="175" x2="105" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="85" y1="220" x2="115" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <!-- R-pins on feet -->
+        <text x="93" y="234" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528" font-weight="600">R</text>
+        <text x="107" y="234" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528" font-weight="600">R</text>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#8a7d68">FRAME 0 · ARM UNTEN</text>
+      </svg>
+      <div class="caption">Stabile Stand-Pose. Rechter Arm (Terracotta) ist der animierte. Füße via R fixiert.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">03</span>
+        <span class="step-title">Frame 0 — neutrale Startpose mit Arm unten</span>
+      </div>
+      <p>In AutoPosing-Mode wechseln. Stabile Stand-Pose: Beine schulterbreit, Knie ganz leicht gelöst, Schultern entspannt, beide Arme seitlich am Körper. Identifiziere den <strong>rechten Arm</strong> als den animierten — der linke bleibt die ganze Animation über stabil.</p>
+      <p>Beide Füße via <kbd>R</kbd> fixieren. Kopf gerade, Blick geradeaus. Spine neutral, kein Kontrapost — anders als Projekt 01 brauchst du hier eine ruhige Basis, damit die Arm-Geste isoliert sichtbar wird.</p>
+      <p>Keyframe setzen. Standard ist IK. Du wirst diese Keyframes gleich im nächsten Phasen-Block auf FK umstellen — das ist die zentrale Stolperfalle und bekommt einen eigenen Schritt.</p>
+      <div class="shortcut-row">
+        <span>Fixation:</span><kbd>R</kbd>
+        <span>Kamera-Center:</span><kbd>T</kbd>
+        <span>alle Controller:</span><kbd>Ctrl</kbd>+<kbd>A</kbd>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 3 — PHASE B: GROBSCHNITT -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§3</div>
+    <div>
+      <div class="section-tag">Phase B · Grobschnitt (Iteration 1)</div>
+      <h2 class="section-title">Drei Anker, <em>minimal</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">B</div>
+    <div>
+      <h4>Grobschnitt</h4>
+      <div class="phase-meta">Anker-Posen · Iteration 1 · Bewusst minimal</div>
+      <p>Drei Anker: Start, Top, Return. Mehr nicht. Es ist verlockend, jetzt schon Anticipation und Settle zu setzen — nicht tun. Erst Inbetweening laufen lassen, dann anschauen, dann Charakter-Anker. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="100" cy="42" r="13" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="100" y1="55" x2="100" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <circle cx="100" cy="72" r="3" fill="#1f1a14"/>
+        <line x1="92" y1="130" x2="108" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Right arm raised horizontally forward -->
+        <line x1="100" y1="72" x2="135" y2="68" stroke="#b85528" stroke-width="2.4"/>
+        <line x1="135" y1="68" x2="170" y2="70" stroke="#b85528" stroke-width="2.4"/>
+        <circle cx="173" cy="71" r="3.5" fill="#b85528"/>
+        <text x="148" y="55" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">SCHULTERHÖHE</text>
+        <!-- Legs -->
+        <line x1="92" y1="130" x2="93" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="93" y1="175" x2="95" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="108" y1="130" x2="107" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="107" y1="175" x2="105" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="85" y1="220" x2="115" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 40 · TOP-POSE</text>
+        <!-- Reference line for shoulder height -->
+        <line x1="40" y1="72" x2="80" y2="72" stroke="#8a7d68" stroke-width="0.6" stroke-dasharray="2,2"/>
+      </svg>
+      <div class="caption">Arm horizontal nach vorn, exakt auf Schulterhöhe. Rest des Körpers unverändert.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">04</span>
+        <span class="step-title">Anker 1 — Top-Pose (Frame 40)</span>
+      </div>
+      <p>Auf Frame 40. Den rechten Hand-Controller selektieren und nach vorn auf Schulterhöhe ziehen — Arm horizontal, leicht gebeugt am Ellbogen (nicht durchgestreckt, das wirkt steif). AutoPosing löst Schulter und Ellbogen automatisch.</p>
+      <p>Wichtig: <em>nur</em> den Arm bewegen. Pelvis, andere Schulter, Beine, Kopf bleiben unangetastet — der AutoPosing-Solver behält sie, weil du sie nicht aktivierst (sie bleiben grün, nicht blau).</p>
+      <p>Keyframe setzen. Die Hand sollte auf etwa Schulterhöhe sein — kurzes Sichtprüfen mit dem Auge reicht, falls du es exakt willst: Trajectory-Display einschalten (siehe Schritt 12), dann ist die Höhenposition als Punkt im Viewport sichtbar.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Arm voll durchgestreckt = später kein Mitschwung</div>
+        <p>Wenn der Ellbogen auf 180° gestreckt ist, hat AutoPhysics später keinen Spielraum für Mitschwung und Settle. Ein paar Grad Beugung — wirkt entspannter und gibt Polish-Reserven.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="100" cy="42" r="13" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="100" y1="55" x2="100" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <circle cx="100" cy="72" r="3" fill="#1f1a14"/>
+        <line x1="92" y1="130" x2="108" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Arm holding — virtually identical to top -->
+        <line x1="100" y1="72" x2="135" y2="69" stroke="#b85528" stroke-width="2.4"/>
+        <line x1="135" y1="69" x2="170" y2="72" stroke="#b85528" stroke-width="2.4"/>
+        <circle cx="173" cy="73" r="3.5" fill="#b85528"/>
+        <text x="148" y="55" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">HOLD</text>
+        <line x1="92" y1="130" x2="93" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="93" y1="175" x2="95" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="108" y1="130" x2="107" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="107" y1="175" x2="105" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="85" y1="220" x2="115" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 60 · HOLD</text>
+      </svg>
+      <div class="caption">Hold-Anker: fast identische Pose, minimal verschoben. Sagt Cascadeur „hier passiert wenig".</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">05</span>
+        <span class="step-title">Anker 2 — Hold (Frame 60)</span>
+      </div>
+      <p>Auf Frame 60, also 20 Frames nach dem Top. Pose vom Top-Anker kopieren — <kbd>Shift</kbd>+<kbd>Mittelklick</kbd>+<kbd>Drag</kbd> von Frame 40 auf Frame 60. Dann die Pose minimal abändern — Hand wenige Pixel anders. Nicht null Bewegung, nicht große Bewegung.</p>
+      <p>Warum überhaupt einen Hold-Anker: ohne ihn würde Inbetweening zwischen Top (Frame 40) und Return (Frame 90) eine durchgehende Bewegung rechnen — die Hand würde nie wirklich „halten". Mit dem Hold-Anker sagst du: hier muss die Position kurz erhalten bleiben.</p>
+      <div class="insight">
+        Disneys neuntes Animations-Prinzip: <em>Timing</em>. Frank Thomas und Ollie Johnston, die das Vokabular festgelegt haben, hielten den Hold für eines der schwierigsten Mittel der Animation — er erfordert die meiste Disziplin, weil er aussieht wie nichts. Eine Geste ohne Hold ist nur ein Schwenk; eine Geste mit Hold ist eine Aussage.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="100" cy="42" r="13" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="100" y1="55" x2="100" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <circle cx="100" cy="72" r="3" fill="#1f1a14"/>
+        <line x1="92" y1="130" x2="108" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Arm back at side -->
+        <line x1="100" y1="72" x2="103" y2="125" stroke="#b85528" stroke-width="2.4"/>
+        <line x1="103" y1="125" x2="105" y2="165" stroke="#b85528" stroke-width="2.4"/>
+        <circle cx="105" cy="168" r="3.5" fill="#b85528"/>
+        <text x="120" y="170" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">RETURN</text>
+        <line x1="92" y1="130" x2="93" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="93" y1="175" x2="95" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="108" y1="130" x2="107" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="107" y1="175" x2="105" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="85" y1="220" x2="115" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 100 · RETURN</text>
+      </svg>
+      <div class="caption">Arm wieder unten. Pose identisch zu Frame 0 — Loop-fähige Geste.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">06</span>
+        <span class="step-title">Anker 3 — Return (Frame 100)</span>
+      </div>
+      <p>Auf Frame 100. Die Pose von Frame 0 kopieren (Arm unten, Stand-Pose) und als Keyframe setzen. Damit ist der Bewegungs-Bogen geschlossen — Manny ist am Ende der Animation wieder in der Ausgangsposition.</p>
+      <p>Optional auch Frame 119 als finalen Keyframe duplizieren, damit zwischen Frame 100 und 119 nichts mehr passiert und die Animation sauber endet. Bei einem späteren Loop wäre Frame 119 identisch zu Frame 0.</p>
+      <p>Du hast jetzt drei (bzw. vier) Anker: <strong>0 (Start) → 40 (Top) → 60 (Hold) → 100 (Return)</strong>. Inbetweening kann ab hier laufen.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 4 — PHASE C: INBETWEENING -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§4</div>
+    <div>
+      <div class="section-tag">Phase C · Inbetweening</div>
+      <h2 class="section-title">Der erste <em>Generations-Lauf</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">C</div>
+    <div>
+      <h4>Inbetweening</h4>
+      <div class="phase-meta">Interpolation umschalten · FK-Setting · Generieren</div>
+      <p>Interpolations-Typ aller Intervalle auf Inbetweening. Keyframes auf FK setzen — das ist die zentrale Stolperfalle. Erste Generation laufen lassen und beobachten. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Timeline with interpolation menu -->
+        <rect x="20" y="40" width="280" height="32" fill="#ede4d0" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="32" y="61" font-family="JetBrains Mono, monospace" font-size="11" fill="#1f1a14">Interpolation:</text>
+        <!-- Tabs -->
+        <rect x="120" y="44" width="34" height="24" fill="#f3ecdc" stroke="#8a7d68" stroke-width="0.8"/>
+        <text x="137" y="61" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Bez</text>
+        <rect x="158" y="44" width="34" height="24" fill="#f3ecdc" stroke="#8a7d68" stroke-width="0.8"/>
+        <text x="175" y="61" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Lin</text>
+        <rect x="196" y="44" width="34" height="24" fill="#f3ecdc" stroke="#8a7d68" stroke-width="0.8"/>
+        <text x="213" y="61" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Step</text>
+        <rect x="234" y="44" width="50" height="24" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="259" y="61" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#f3ecdc">Inbetw.</text>
+        <!-- Timeline -->
+        <line x1="30" y1="120" x2="290" y2="120" stroke="#1f1a14" stroke-width="2"/>
+        <rect x="26" y="113" width="12" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="118" y="113" width="12" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="162" y="113" width="12" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="240" y="113" width="12" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <!-- Interval color -->
+        <rect x="38" y="115" width="80" height="10" fill="#b85528" opacity="0.25"/>
+        <rect x="130" y="115" width="32" height="10" fill="#b85528" opacity="0.25"/>
+        <rect x="174" y="115" width="66" height="10" fill="#b85528" opacity="0.25"/>
+        <text x="33" y="148" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">0</text>
+        <text x="124" y="148" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">40</text>
+        <text x="168" y="148" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">60</text>
+        <text x="246" y="148" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">100</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Alle Intervalle auf Inbetweening · gefärbte Bereiche</text>
+      </svg>
+      <div class="caption">Inbetweening sitzt im Interpolations-Menü oben — neben Bezier, Linear, Step.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">07</span>
+        <span class="step-title">Interpolations-Typ auf Inbetweening</span>
+      </div>
+      <p>In der Interpolations-Leiste oberhalb der Timeline gibt es ab Cascadeur 2025.3 den Eintrag <strong>Inbetweening</strong> — neben Bezier, Bezier Clamped, Linear, Step, Fixed. Ganze Timeline selektieren (oder alle drei Intervalle: 0→40, 40→60, 60→100), dann Inbetweening anklicken.</p>
+      <p>Die Intervalle bekommen eine neue Farbcodierung. Cascadeur startet den Generations-Lauf — auf modernen GPUs wenige Sekunden bis ein paar Sekunden, je nach Länge.</p>
+      <p><em>Aus Erinnerung, nicht final verifiziert:</em> ob es einen Hotkey für Inbetweening-Interpolation gibt (Bezier ist <kbd>Alt</kbd>+<kbd>B</kbd>), ist mir aus den Transkripten nicht eindeutig — der Menü-Klick funktioniert in jedem Fall.</p>
+      <div class="shortcut-row">
+        <span>Bezier:</span><kbd>Alt</kbd>+<kbd>B</kbd>
+        <span>(Inbetweening per Menü-Klick)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 8 — die Stolperfalle als eigener Schritt -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Before: broken pose -->
+        <g>
+          <text x="80" y="30" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#c46b3a">VOR FK · KAPUTT</text>
+          <circle cx="80" cy="55" r="9" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="80" y1="64" x2="98" y2="120" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="80" y1="80" x2="55" y2="105" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="80" y1="80" x2="118" y2="65" stroke="#c46b3a" stroke-width="1.8"/>
+          <line x1="98" y1="120" x2="65" y2="155" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="98" y1="120" x2="108" y2="155" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="80" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#c46b3a">Posen im Weltraum</text>
+        </g>
+        <!-- Arrow -->
+        <path d="M 145 100 L 170 100" stroke="#1f1a14" stroke-width="1.5" marker-end="url(#arrowfk)"/>
+        <defs>
+          <marker id="arrowfk" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M 0 0 L 8 4 L 0 8 z" fill="#1f1a14"/>
+          </marker>
+        </defs>
+        <text x="158" y="92" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="0.1em" fill="#1f1a14">FK</text>
+        <!-- After: normalized -->
+        <g>
+          <text x="240" y="30" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#8a9878">NACH FK · NORMAL</text>
+          <circle cx="240" cy="50" r="9" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="240" y1="59" x2="240" y2="120" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="232" y1="75" x2="248" y2="75" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="248" y1="75" x2="270" y2="73" stroke="#b85528" stroke-width="1.8"/>
+          <line x1="270" y1="73" x2="292" y2="76" stroke="#b85528" stroke-width="1.8"/>
+          <line x1="232" y1="75" x2="222" y2="125" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="240" y1="120" x2="232" y2="155" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="240" y1="120" x2="248" y2="155" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="240" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#8a9878">Posen am Körper</text>
+        </g>
+      </svg>
+      <div class="caption">FK-Umschaltung im Keyframe-Panel: aus „im Weltraum hängend" wird „relativ zum Körper".</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">08</span>
+        <span class="step-title">Keyframes auf FK setzen — die Stolperfalle</span>
+      </div>
+      <p>Wahrscheinlich sieht die Animation jetzt schon kaputt aus — Manny wandert seltsam im Raum, der Arm zappelt, die Pose löst sich auf. Das ist normal und liegt nicht an Inbetweening selbst.</p>
+      <p>Grund: Keyframes sind per Default <strong>IK</strong> (Welt-relativ). Inbetweening löst die Posen aber besser auf, wenn sie <strong>FK</strong> (Körper-relativ) sind. Bei IK-Keyframes versucht Cascadeur, die Posen am gleichen Punkt im Weltraum zu erhalten — sobald sich der Charakter durch Inbetweening minimal bewegt, fliegen die Posen davon.</p>
+      <p>Lösung: alle drei Keyframes (Frame 0, 40, 60, 100) selektieren. Im <strong>Keyframe-Panel links</strong> auf den FK-Schalter klicken. Die Frames bekommen den FK-Marker in der Timeline. Die Animation normalisiert sich.</p>
+      <div class="box box-stolper">
+        <div class="box-label">FK-Keyframe-Stolperfalle — der Standardfall</div>
+        <p>Diese Box wird in jeder Brochüre ab Projekt 02 in dieser Form wiederkehren. Beim ersten Wechsel auf Inbetweening sieht die Animation oft kaputt aus. Die Lösung steht im Keyframe-Panel links — betroffene Frames selektieren, auf FK setzen. Wenn die Animation immer noch nicht stimmt: das ist meist nicht FK, sondern eine andere Ursache (Pose-Konflikt, zu kurze Intervalle).</p>
+      </div>
+      <div class="insight">
+        IK vs FK ist eine alte Debatte. Senior-Animatoren bei Pixar und ILM streiten seit Jahrzehnten darüber, wann welcher Modus richtig ist. Faustregel die in der Cascadeur-Community konvergiert: <em>bei Bodenkontakt IK, in der Luft FK, bei Inbetweening FK</em>. In dieser Brochüre stehen die Füße — also Beine sollten eigentlich IK bleiben. Aber bei einer reinen Arm-Geste, wo der Körper im Raum völlig ruhig steht, fallen die Hierarchie-Themen weg, und FK für alle Keyframes funktioniert.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 9 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Trajectory arc of hand through inbetweening result -->
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">HAND-TRAJEKTORIE · ERSTER LAUF</text>
+        <!-- Body silhouette (simplified) -->
+        <g opacity="0.3">
+          <circle cx="100" cy="60" r="9" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="100" y1="69" x2="100" y2="135" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="92" y1="135" x2="108" y2="135" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="92" y1="135" x2="93" y2="180" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="108" y1="135" x2="107" y2="180" stroke="#1f1a14" stroke-width="1.5"/>
+        </g>
+        <!-- Trajectory -->
+        <path d="M 105 165 Q 130 130, 180 95 Q 220 80, 240 78 Q 220 95, 180 130 Q 130 165, 105 165" fill="none" stroke="#b85528" stroke-width="1.6"/>
+        <!-- Keyframe markers on trajectory -->
+        <circle cx="105" cy="165" r="4.5" fill="#b85528"/>
+        <circle cx="240" cy="78" r="4.5" fill="#b85528"/>
+        <circle cx="232" cy="83" r="4.5" fill="#b85528"/>
+        <!-- Smaller in-between dots -->
+        <circle cx="135" cy="135" r="2.2" fill="#b85528" opacity="0.6"/>
+        <circle cx="170" cy="105" r="2.2" fill="#b85528" opacity="0.6"/>
+        <circle cx="205" cy="85" r="2.2" fill="#b85528" opacity="0.6"/>
+        <circle cx="200" cy="100" r="2.2" fill="#b85528" opacity="0.6"/>
+        <circle cx="150" cy="145" r="2.2" fill="#b85528" opacity="0.6"/>
+        <!-- Label key positions -->
+        <text x="95" y="180" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">0 / 100</text>
+        <text x="245" y="74" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">40</text>
+        <text x="240" y="93" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">60</text>
+      </svg>
+      <div class="caption">Hand-Trajektorie: ein Bogen von Frame 0 zum Top, kurzer Hold, Rückweg. Erster Lauf — meist schon brauchbar.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">09</span>
+        <span class="step-title">Erste Generation beobachten</span>
+      </div>
+      <p>Play drücken (<kbd>Space</kbd>). Manny hebt den Arm, hält kurz, lässt ihn fallen. Schon der erste Lauf sollte plausibel aussehen — die Hand-Trajektorie ist ein sauberer Bogen, die Schulter rotiert leicht mit, der Torso reagiert minimal.</p>
+      <p>Trajectory einschalten für den Hand-Controller: Punkt selektieren, dann <kbd>\</kbd> drücken für <em>Set Trajectory Interval</em> — der Bogen bleibt persistent sichtbar, auch wenn du andere Controller anklickst. Das hilft beim Diagnostizieren in den nächsten Phasen.</p>
+      <p>Was du <em>nicht</em> erwartest: dass es schon perfekt ist. Inbetweening Iteration 1 ist immer der Grobschnitt. Persönlichkeit, Anticipation, Settle kommen erst.</p>
+      <div class="shortcut-row">
+        <span>Play:</span><kbd>Space</kbd>
+        <span>Trajectory persistent:</span><kbd>\</kbd>
+        <span>Ghost Mode:</span><kbd>S</kbd>
+      </div>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase C</div>
+        <p>Der Arm bewegt sich auf einem Bogen (nicht in einer Geraden). Top-Position wird kurz gehalten. Restkörper steht ruhig, minimal mitreagierend. Keine FK-Bugs (kein Zappeln, kein wandernder Manny). Hand-Trajektorie als Linie im Viewport sichtbar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 5 — PHASE D: VERFEINERUNG -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§5</div>
+    <div>
+      <div class="section-tag">Phase D · Verfeinerung (Iteration 2-3)</div>
+      <h2 class="section-title">Charakter durch <em>zwei zusätzliche Anker</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">D</div>
+    <div>
+      <h4>Verfeinerung</h4>
+      <div class="phase-meta">Anticipation · Settle · Tween Machine · Trajectory Tangents</div>
+      <p>Aus der Grobbewegung wird eine Geste mit Persönlichkeit. Anticipation-Anker vor dem Top, Settle-Anker nach dem Return. Tween Machine fürs Hold-Spacing, Trajectory Tangents korrigieren den Hand-Bogen falls nötig. <em>Vier Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 10 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="100" cy="42" r="13" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="100" y1="55" x2="100" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <circle cx="100" cy="72" r="3" fill="#1f1a14"/>
+        <line x1="92" y1="130" x2="108" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Arm slightly behind — anticipation -->
+        <line x1="100" y1="72" x2="88" y2="130" stroke="#b85528" stroke-width="2.4"/>
+        <line x1="88" y1="130" x2="80" y2="170" stroke="#b85528" stroke-width="2.4"/>
+        <circle cx="78" cy="173" r="3.5" fill="#b85528"/>
+        <text x="38" y="180" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">ANTIC.</text>
+        <!-- Backward arrow -->
+        <path d="M 105 168 Q 95 175, 80 173" fill="none" stroke="#b85528" stroke-width="1" stroke-dasharray="2,2"/>
+        <line x1="92" y1="130" x2="93" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="93" y1="175" x2="95" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="108" y1="130" x2="107" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="107" y1="175" x2="105" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="85" y1="220" x2="115" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 18 · ANTICIPATION</text>
+      </svg>
+      <div class="caption">Anticipation-Anker. Arm geht kurz nach hinten bevor er nach vorn schwingt — Gegenbewegung.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">10</span>
+        <span class="step-title">Anticipation-Anker (Frame 18)</span>
+      </div>
+      <p>Auf Frame 18 navigieren. Hand-Controller selektieren und leicht nach hinten ziehen — der Arm soll kurz <em>weg</em> von der Top-Position gehen, bevor er hin schwingt. Die Hand fällt minimal hinter den Körper, etwa 5-10 cm Versatz, leichte Schulter-Rück-Rotation.</p>
+      <p>Keyframe setzen. Sofort auf FK umschalten (gleich beim Setzen — sonst bricht Inbetweening wieder).</p>
+      <p>Inbetweening rechnet sofort neu — du siehst die Geste jetzt mit kurzer Gegenbewegung. Das ist der Unterschied zwischen mechanischer Bewegung und Geste mit Charakter.</p>
+      <div class="box box-merk">
+        <div class="box-label">Anticipation als Mini-Investition</div>
+        <p>Drei Frames zusätzlicher Anker, ein paar Millimeter Hand-Versatz — und die Geste hat plötzlich Intention. Ohne Anticipation wirkt jede Bewegung wie zufällig; mit Anticipation wirkt sie wie absichtlich. In jedem späteren Projekt wird dies wiederkehren.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 11 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="100" cy="42" r="13" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="100" y1="55" x2="100" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <circle cx="100" cy="72" r="3" fill="#1f1a14"/>
+        <line x1="92" y1="130" x2="108" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Arm just past start position, slight overshoot back -->
+        <line x1="100" y1="72" x2="105" y2="130" stroke="#b85528" stroke-width="2.4"/>
+        <line x1="105" y1="130" x2="115" y2="170" stroke="#b85528" stroke-width="2.4"/>
+        <circle cx="117" cy="173" r="3.5" fill="#b85528"/>
+        <text x="135" y="178" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">SETTLE</text>
+        <!-- Settle arrow -->
+        <path d="M 105 168 Q 112 175, 117 173" fill="none" stroke="#b85528" stroke-width="1" stroke-dasharray="2,2"/>
+        <line x1="92" y1="130" x2="93" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="93" y1="175" x2="95" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="108" y1="130" x2="107" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="107" y1="175" x2="105" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="85" y1="220" x2="115" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 108 · SETTLE</text>
+      </svg>
+      <div class="caption">Settle-Anker. Arm schwingt minimal über die Ruheposition hinaus — Inertia-Mitschwung.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">11</span>
+        <span class="step-title">Settle-Anker (Frame 108)</span>
+      </div>
+      <p>Auf Frame 108 (kurz nach dem Return). Hand minimal weiter nach vorn ziehen als die Ruhe-Position — der Arm schwingt kurz über sein Ziel hinaus, weil Inertia. Keyframe, FK.</p>
+      <p>Inbetweening generiert jetzt ein letztes Mini-Mitschwingen, bevor der Arm endgültig steht. Diese drei Frames zwischen Frame 100 (Return) und Frame 108 (Settle) und Frame 119 (Endzustand) machen den Unterschied zwischen einer Geste, die abrupt endet, und einer, die ausklingt.</p>
+      <p>Falls AutoPhysics in Phase E dies sowieso erzeugt: trotzdem hier von Hand setzen. AutoPhysics-Mitschwung ist breit und global; ein gesetzter Settle-Anker ist gezielt und liest sich besser.</p>
+      <div class="insight">
+        Settle und Anticipation sind zwei der zwölf Disney-Prinzipien — Frank Thomas und Ollie Johnston formulierten sie 1981 in <em>The Illusion of Life</em>. Was damals Hand-Knochenarbeit war (jedes Settle-Frame gezeichnet), ist heute ein Anker für Inbetweening. Die Prinzipien sind dieselben geblieben; nur der Aufwand pro Frame ist drastisch gesunken.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 12 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Hand trajectory with tangent handles -->
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">TRAJECTORY · TANGENTS</text>
+        <!-- Body silhouette -->
+        <g opacity="0.3">
+          <circle cx="80" cy="65" r="9" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="80" y1="74" x2="80" y2="140" stroke="#1f1a14" stroke-width="1.5"/>
+        </g>
+        <!-- Trajectory -->
+        <path d="M 85 165 Q 100 160, 130 130 Q 170 100, 210 85 Q 240 75, 260 75" fill="none" stroke="#b85528" stroke-width="1.8"/>
+        <!-- Keyframe at top with tangent -->
+        <circle cx="260" cy="75" r="6" fill="#b85528"/>
+        <!-- Tangent handles -->
+        <line x1="225" y1="78" x2="295" y2="73" stroke="#284858" stroke-width="1.4"/>
+        <circle cx="225" cy="78" r="4" fill="#f3ecdc" stroke="#284858" stroke-width="1.4"/>
+        <circle cx="295" cy="73" r="4" fill="#f3ecdc" stroke="#284858" stroke-width="1.4"/>
+        <!-- Other keyframes plain -->
+        <circle cx="85" cy="165" r="5" fill="#b85528"/>
+        <text x="225" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#284858">Handle in</text>
+        <text x="295" y="65" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#284858">Handle out</text>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Nur in IK-Mode. FK zeigt keine Tangenten.</text>
+      </svg>
+      <div class="caption">Trajectory Tangents am Top-Anker. Direkter Eingriff in den Hand-Bogen ohne Pose-Änderung.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">12</span>
+        <span class="step-title">Trajectory Tangents für den Hand-Bogen</span>
+      </div>
+      <p>Falls der Bogen der Hand zwischen den Ankern nicht passt — vielleicht ist die Hand zu früh oben, oder der Rückweg zu gerade — Trajectory Tangents geben dir direkten Eingriff im Viewport.</p>
+      <p>Hand-Controller selektieren. Edit-Mode auf der Trajectory + Tangents-Button. Am Top-Keyframe erscheinen zwei Handles (in/out). Ziehen → der Bogen biegt sich entsprechend.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Tangents brauchen IK-Mode</div>
+        <p>Trajectory Tangents funktionieren nur für IK-Keyframes. Du hast in Schritt 8 alles auf FK gesetzt — für die Tangents-Bearbeitung musst du den Top-Anker temporär auf IK zurückschalten. Nach dem Tangenten-Edit: zurück auf FK, sonst bricht Inbetweening wieder. Mühsam, aber das ist der aktuelle Zustand des Werkzeugs.</p>
+      </div>
+      <p>Bei einer simplen Arm-Geste sind Tangenten-Korrekturen oft nicht nötig — das Inbetweening-Modell trifft den Bogen meist gut. Falls doch: nur am Top-Anker korrigieren, die anderen behält Inbetweening selbst im Griff.</p>
+    </div>
+  </div>
+
+  <!-- STEP 13 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <rect x="26" y="93" width="12" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="68" y="93" width="12" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="118" y="93" width="12" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="160" y="93" width="12" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <!-- New tween frame between hold (60) and return (100) -->
+        <circle cx="195" cy="100" r="6" fill="#f3ecdc" stroke="#284858" stroke-width="2"/>
+        <text x="195" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#284858">G→</text>
+        <rect x="234" y="93" width="12" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="264" y="93" width="12" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <!-- Frame labels -->
+        <text x="32" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">0</text>
+        <text x="74" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">18</text>
+        <text x="124" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">40</text>
+        <text x="166" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">60</text>
+        <text x="195" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#284858">75</text>
+        <text x="240" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">100</text>
+        <text x="270" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">108</text>
+        <text x="160" y="170" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">G-Tween nach Hold: zieht Pose Richtung Hold-Anker. Hold „klebt" länger.</text>
+      </svg>
+      <div class="caption">Tween Machine setzt einen Hold-erweiternden Frame nach dem Hold-Anker.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">13</span>
+        <span class="step-title">Tween Machine — Hold verlängern</span>
+      </div>
+      <p>Wenn die Top-Pose zu kurz gehalten wird, kannst du den Hold mit Tween Machine verlängern, ohne einen weiteren expliziten Anker zu setzen.</p>
+      <p>Auf Frame 75 navigieren (zwischen Hold-Anker bei 60 und Return bei 100). Die animierten Body-Parts selektieren — Hand, Unterarm, Schulter. <kbd>G</kbd> drücken — Cascadeur erzeugt einen Tween-Frame, der die aktuelle Position Richtung Hold-Anker zieht. Slider zwischen 30 % und 60 % je nach gewünschter Hold-Länge.</p>
+      <p>Das Ergebnis: Top-Position wird visuell länger gehalten, der Rückweg verkürzt sich entsprechend. Das macht die Geste „absichtlicher" — sie ruht erst, dann fällt sie.</p>
+      <div class="shortcut-row">
+        <span>Attract previous:</span><kbd>G</kbd>
+        <span>Attract next:</span><kbd>L</kbd>
+      </div>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase D</div>
+        <p>Manny hebt den Arm mit einer kleinen Gegenbewegung (Anticipation), hält die Position erkennbar (Hold), lässt fallen, der Arm schwingt minimal über die Endposition hinaus (Settle). Die ganze Geste dauert die vollen vier Sekunden und liest sich wie eine bewusste Bewegung — kein mechanisches Hochfahren.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 6 — PHASE E: PHYSICS -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§6</div>
+    <div>
+      <div class="section-tag">Phase E · Physics</div>
+      <h2 class="section-title">AutoPhysics, <em>drei Durchläufe</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">E</div>
+    <div>
+      <h4>Physics</h4>
+      <div class="phase-meta">Physics Corrector · Filter · Secondary Motion</div>
+      <p>Das identische 3-Pass-Pattern wie in Projekt 01. Zwei reine Physics-Corrector-Pässe, ein finaler Pass mit Filtern, optional Secondary Motion am Schluss. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <div class="box box-merk">
+    <div class="box-label">3-Pass-AutoPhysics — Standard für jede Brochüre</div>
+    <p><strong>Pass 1 + 2:</strong> nur Physics Corrector aktiv. Cascadeur findet Fulcrum-Punkte und balanciert den CoM. <strong>Pass 3:</strong> zusätzlich Smooth Trajectory, Smooth Rotation, Compensation Motion, Separation of Motion. <strong>Secondary Motion:</strong> separat ganz am Ende, oder gar nicht. — Identisch zu Projekt 01.</p>
+  </div>
+
+  <!-- STEP 14 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">PASS 1 + 2 · NUR PHYSICS CORRECTOR</text>
+        <!-- Two body silhouettes side by side: original (ink) and ghost (cobalt dashed) -->
+        <g>
+          <circle cx="120" cy="80" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="120" y1="91" x2="120" y2="150" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="120" y1="103" x2="150" y2="100" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="150" y1="100" x2="178" y2="102" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="112" y1="150" x2="113" y2="180" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="128" y1="150" x2="127" y2="180" stroke="#1f1a14" stroke-width="2"/>
+        </g>
+        <g opacity="0.6">
+          <circle cx="220" cy="82" r="11" fill="none" stroke="#284858" stroke-width="2" stroke-dasharray="2,2"/>
+          <line x1="220" y1="93" x2="220" y2="152" stroke="#284858" stroke-width="2" stroke-dasharray="2,2"/>
+          <line x1="220" y1="105" x2="248" y2="103" stroke="#284858" stroke-width="2" stroke-dasharray="2,2"/>
+          <line x1="248" y1="103" x2="276" y2="106" stroke="#284858" stroke-width="2" stroke-dasharray="2,2"/>
+          <line x1="212" y1="152" x2="213" y2="182" stroke="#284858" stroke-width="2" stroke-dasharray="2,2"/>
+          <line x1="228" y1="152" x2="227" y2="182" stroke="#284858" stroke-width="2" stroke-dasharray="2,2"/>
+        </g>
+        <text x="120" y="195" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#1f1a14">ORIGINAL</text>
+        <text x="220" y="195" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#284858">PHYSICS-GHOST</text>
+      </svg>
+      <div class="caption">Physics-Ghost neben dem Original. Bei einer Arm-Geste sind die Unterschiede klein — gut.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">14</span>
+        <span class="step-title">AutoPhysics Pass 1 + 2 (nur Physics Corrector)</span>
+      </div>
+      <p>In den Physics-Tab. Physics Assistance an — Physics-Ghost erscheint neben Manny. Sicherstellen: <strong>Physics Corrector aktiv</strong>, alle anderen Filter auf 0.</p>
+      <p>Ganze Sequenz selektieren, Solve laufen lassen. Timeline-Farbe prüfen — sollte <strong>dunkelgrün</strong> sein (beide Füße permanent Bodenkontakt). Falls orange: Stolperfalle aus Projekt 01, mit Enforce Fulcrum lösen.</p>
+      <p>Snap to Physics. Physics Assistance kurz aus, dann wieder an. Erneut Solve — Pass 2. Snap to Physics.</p>
+      <p>Bei einer Arm-Geste mit ruhigem Body sind beide Passes meist sehr klein in ihrer Wirkung — das ist erwartet. Der Bewegungs-Charakter steckt im Arm, nicht in der CoM-Verlagerung.</p>
+    </div>
+  </div>
+
+  <!-- STEP 15 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="20" y="35" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">PASS 3 · ARM-GESTE</text>
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <text x="20" y="60">Smooth Trajectory</text>
+          <line x1="170" y1="56" x2="290" y2="56" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="56" x2="215" y2="56" stroke="#b85528" stroke-width="3"/>
+          <circle cx="215" cy="56" r="4" fill="#b85528"/>
+          <text x="295" y="60" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~35</text>
+
+          <text x="20" y="85">Smooth Rotation</text>
+          <line x1="170" y1="81" x2="290" y2="81" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="81" x2="200" y2="81" stroke="#b85528" stroke-width="3"/>
+          <circle cx="200" cy="81" r="4" fill="#b85528"/>
+          <text x="295" y="85" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~20</text>
+
+          <text x="20" y="110">Compensation Motion</text>
+          <line x1="170" y1="106" x2="290" y2="106" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="106" x2="195" y2="106" stroke="#b85528" stroke-width="3"/>
+          <circle cx="195" cy="106" r="4" fill="#b85528"/>
+          <text x="295" y="110" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~15</text>
+
+          <text x="20" y="135">Separation of Motion</text>
+          <line x1="170" y1="131" x2="290" y2="131" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="131" x2="180" y2="131" stroke="#b85528" stroke-width="3"/>
+          <circle cx="180" cy="131" r="4" fill="#b85528"/>
+          <text x="295" y="135" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~3</text>
+
+          <text x="20" y="160">Secondary Motion</text>
+          <line x1="170" y1="156" x2="290" y2="156" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="156" x2="200" y2="156" stroke="#b85528" stroke-width="3"/>
+          <circle cx="200" cy="156" r="4" fill="#b85528"/>
+          <text x="295" y="160" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~20</text>
+        </g>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Compensation niedrig — wir wollen, dass der Arm führt, nicht der Body.</text>
+      </svg>
+      <div class="caption">Filter-Werte für Arm-Geste. Compensation niedrig, weil der Body ruhig bleiben soll.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">15</span>
+        <span class="step-title">AutoPhysics Pass 3 (mit Filtern)</span>
+      </div>
+      <p>Filter dazuschalten. Richtwerte für diese Arm-Geste:</p>
+      <ul style="margin: 0.5rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Smooth Trajectory</strong> ~35 — glättet die Hand-Bahn</li>
+        <li><strong>Smooth Rotation</strong> ~20 — glättet die Schulter-Rotation</li>
+        <li><strong>Compensation Motion</strong> ~15 — <em>bewusst niedrig</em>, weil wir nicht wollen, dass der ganze Body als Reaktion mitschwingt</li>
+        <li><strong>Separation of Motion</strong> ~3 — minimal</li>
+        <li><strong>Secondary Motion</strong> ~20 — leichter Mitschwung in Fingern und der freien Hand</li>
+      </ul>
+      <p>Ganze Sequenz, Solve, Vergleich mit dem Ghost, Snap to Physics.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Compensation Motion bei Arm-Geste niedrig halten</div>
+        <p>Hohe Compensation Motion bei einer isolierten Arm-Geste macht den ganzen Body zappelig — der Torso reagiert zu stark auf den Arm, die andere Schulter schwingt, die Hüfte kippt. Wenn das Ergebnis nach Pass 3 unruhig wirkt: Compensation Motion ist die erste Stellschraube nach unten.</p>
+      </div>
+      <p>Physics Assistance ausschalten. Animation ist jetzt gebaked (grüne Timeline = Fixed). Falls du danach nochmal an einer Pose schrauben willst: Unbaking, dann Interpolation der betroffenen Frames zurück auf Inbetweening.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase E</div>
+        <p>Manny hebt den Arm mit subtiler Schulter-Mit-Rotation, die Hand-Bahn ist sauber gebogen, am Top setzt der Hold ein, beim Return gibt es minimalen Inertia-Mitschwung. Der Rest des Körpers bleibt ruhig — keine zappelnden Knie, keine wackelnde freie Schulter. Bei der Top-Pose kannst du sehen, wo Inbetweening Vorbeugung erzeugt hat (leichte Spine-Vorwärtsneigung als Reaktion auf den ausgestreckten Arm).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 7 — PHASE F: EXPORT -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§7</div>
+    <div>
+      <div class="section-tag">Phase F · Export</div>
+      <h2 class="section-title">FBX nach <em>UE5</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">F</div>
+    <div>
+      <h4>Export</h4>
+      <div class="phase-meta">FBX · UE5 · Additive-Layer-Kandidat</div>
+      <p>Standard-FBX-Export wie in Projekt 01. Aber: diese Animation eignet sich besonders gut als <em>Additive Animation</em> in UE5 — sie kann über andere Body-Animationen gelegt werden, ohne sie zu überschreiben. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 16 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="80" y="50" width="80" height="100" rx="4" fill="#f3ecdc" stroke="#1f1a14" stroke-width="2"/>
+        <text x="120" y="80" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" font-weight="600" fill="#b85528">FBX</text>
+        <text x="120" y="100" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">arm-geste.fbx</text>
+        <line x1="90" y1="110" x2="150" y2="110" stroke="#c8b89a" stroke-width="1"/>
+        <text x="120" y="124" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">30 fps</text>
+        <text x="120" y="137" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">0–119</text>
+        <path d="M 175 100 L 215 100" stroke="#1f1a14" stroke-width="1.8" marker-end="url(#arrowex)"/>
+        <defs>
+          <marker id="arrowex" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M 0 0 L 8 4 L 0 8 z" fill="#1f1a14"/>
+          </marker>
+        </defs>
+        <rect x="220" y="50" width="80" height="100" rx="4" fill="#284858" stroke="#1f1a14" stroke-width="2"/>
+        <text x="260" y="92" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" font-weight="600" fill="#f3ecdc">UE5</text>
+        <text x="260" y="112" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#ede4d0">Additive</text>
+        <text x="260" y="124" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#ede4d0">Layer</text>
+        <text x="160" y="175" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="11" fill="#5a4d3a">Additiv über Idle/Walk legbar</text>
+      </svg>
+      <div class="caption">Arm-Geste als Additive Animation: lässt sich über andere Body-Animationen schichten.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">16</span>
+        <span class="step-title">FBX exportieren</span>
+      </div>
+      <p>File → Export → FBX. Settings wie in Projekt 01: Bake animation an, Frame Range 0-119, 30 fps, Z-up, Skeleton only. Dateiname <code>manny-arm-geste-v01.fbx</code>.</p>
+      <p>Im UE5-Import-Dialog: Manny-Skelett als Target wählen, <em>Animation Length</em> auf „Exported Time" oder „Set Range" mit 0-119.</p>
+    </div>
+  </div>
+
+  <!-- STEP 17 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Layer stack -->
+        <rect x="40" y="60" width="240" height="22" fill="#284858" opacity="0.4" stroke="#284858" stroke-width="1.5"/>
+        <text x="50" y="76" font-family="JetBrains Mono, monospace" font-size="9" fill="#1f1a14">BASE · Idle (Projekt 01)</text>
+
+        <rect x="40" y="88" width="240" height="22" fill="#b85528" opacity="0.5" stroke="#b85528" stroke-width="1.5"/>
+        <text x="50" y="104" font-family="JetBrains Mono, monospace" font-size="9" fill="#f3ecdc">ADDITIVE · Arm-Geste (Projekt 02)</text>
+
+        <rect x="40" y="116" width="240" height="22" fill="#8a9878" opacity="0.4" stroke="#8a9878" stroke-width="1.5"/>
+        <text x="50" y="132" font-family="JetBrains Mono, monospace" font-size="9" fill="#1f1a14">FACE · MetaHuman Performance</text>
+
+        <text x="160" y="170" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="11" fill="#5a4d3a">Drei Schichten im Sequencer · alle parallel</text>
+      </svg>
+      <div class="caption">Im UE5-Sequencer: Idle als Basis, Arm-Geste additive darüber, MetaHuman-Face on top.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">17</span>
+        <span class="step-title">UE5-Import und Additive-Setup</span>
+      </div>
+      <p>Animation in UE5 importieren wie in Projekt 01. <em>Aus Erinnerung, nicht final verifiziert:</em> In den Animation Sequence Properties auf <strong>Additive Anim Type</strong> umschalten — typischerweise <em>Mesh Space</em>. Als <em>Base Pose</em> die erste Frame der Animation wählen (oder eine separate Reference-Pose).</p>
+      <p>Im Sequencer: Idle-Animation (aus Projekt 01) als Base-Layer einfügen, dann den Arm-Geste-Clip als Additive-Layer obendrauf. Die Geste wird über die Idle gespielt — Manny atmet weiter, verlagert weiter sein Gewicht, und der Arm hebt sich währenddessen.</p>
+      <p>MetaHuman-Face-Performance kommt als dritte Schicht. Drei Schichten parallel, ohne dass eine die andere überschreibt — das ist der Sinn der Schichten-Architektur.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase F</div>
+        <p>In UE5: Manny idle't im Hintergrund, hebt während des Idles den Arm, lässt ihn wieder fallen, idle't weiter. Keine Pose-Konflikte zwischen den Layern. Wenn ein Konflikt sichtbar wird (z.B. Idle bewegt linken Arm, Arm-Geste-Layer hat ihn geankert): Additive Anim Type prüfen, vielleicht Per-Bone-Mask hinzufügen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 8 — OUTRO -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§8</div>
+    <div>
+      <div class="section-tag">Ausblick</div>
+      <h2 class="section-title">Was du jetzt <em>im Werkzeugkasten</em> hast.</h2>
+    </div>
+  </div>
+
+  <p>Mit Projekt 02 ist das Inbetweening-Pattern etabliert. <strong>Inbetweening als Interpolations-Typ</strong>, <strong>FK-Keyframe-Setting</strong> als Standardthema, <strong>vier Iterationen</strong> als didaktisches Pattern (Grobschnitt → Charakter → Detail → Physics), <strong>Anticipation/Hold/Settle</strong> als Charakter-Anker, <strong>Tween Machine mit G/L</strong> als Spacing-Werkzeug, <strong>Trajectory Tangents</strong> für Bogen-Korrekturen. Alles, was in Projekt 03 (Walk) und allen späteren Projekten wiederkehrt.</p>
+
+  <p>Ab Projekt 03 wird die Komplexität stufenweise erhöht: Lokomotion bringt einen sich bewegenden Charakter ins Spiel (kompliziert IK vs FK), Reference-Workflow kommt dazu, Custom Track Hierarchy wird als Polish-Werkzeug eingeführt. Das Pattern aber bleibt — vier Iterationen, drei AutoPhysics-Pässe, dieselben Stolperfallen.</p>
+
+  <p>Bei Mocap-Projekten (Projekt 09) startet der Workflow nicht bei Phase B, sondern direkt bei D — die Animation existiert schon, wird aber durch <em>selektives Re-Inbetweening</em> auf problematischen Sektionen gecleant. Inbetweening ist dort kein Generations-Werkzeug mehr, sondern ein Resmoothing-Werkzeug.</p>
+
+  <div class="box box-merk">
+    <div class="box-label">Was Projekt 02 nicht macht</div>
+    <p>Keine Lokomotion. Kein sich bewegender Charakter. Keine Constraints. Keine Custom Track Hierarchy (Body-Part-Separation per Track-Interpolation — kommt ab Projekt 03). Kein Reference-Workflow. Die Brochüre reduziert das Inbetweening-Pattern auf das Minimum, damit das Pattern selbst sichtbar wird, nicht die Anwendung.</p>
+  </div>
+
+  <div class="insight">
+    Es gibt einen Begriff in der klassischen Animation: <em>weight</em>. Nicht physikalisches Gewicht, sondern visuelles Gewicht — wie schwer eine Bewegung sich anfühlt. Ein Arm, der ohne Anticipation hochschnellt und ohne Settle abrupt steht, fühlt sich gewichtslos an, fast cartoon. Ein Arm mit Anticipation, Hold und Settle fühlt sich an wie ein Arm aus Fleisch, mit Muskeln, mit Trägheit. Das ist der Unterschied, den du in Schritt 10 und 11 gebaut hast — drei Frames pro Anker, und Manny hat plötzlich Masse.
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="doc-footer">
+  <div><span class="terracotta">Projekt 02 · v 1.0</span></div>
+  <div>17 Schritte · 6 Phasen</div>
+  <div>Cascadeur · Lernreihe</div>
+</footer>
+
+</article>
+
+</body>
+</html>
