@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projekt 07 · Sprung über Hindernis · Cascadeur-Lernreihe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3ecdc; --paper-warm: #ede4d0; --paper-dark: #e2d6b8;
+    --ink: #1f1a14; --ink-soft: #5a4d3a; --ink-faint: #8a7d68;
+    --terracotta: #b85528; --terracotta-deep: #7a3414;
+    --cobalt: #284858; --sage: #8a9878; --warning: #c46b3a; --rule: #c8b89a;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'DM Sans', -apple-system, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+    color: var(--ink); background: var(--paper);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    -webkit-font-smoothing: antialiased;
+  }
+  .doc { max-width: 1100px; margin: 0 auto; }
+
+  .cover { padding: 3.5rem 5rem 2.5rem; border-bottom: 1px solid var(--rule); position: relative; overflow: hidden; }
+  .cover::before { content: ''; position: absolute; top: -10%; right: -8%; width: 50%; aspect-ratio: 1; background: radial-gradient(circle, rgba(184, 85, 40, 0.08) 0%, transparent 65%); border-radius: 50%; pointer-events: none; }
+  .cover-marker { display: flex; align-items: center; gap: 1.5rem; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 1.5rem; }
+  .cover-marker .ml { width: 60px; height: 1px; background: var(--terracotta); }
+  .cover h1 { font-family: var(--font-display); font-size: clamp(2.6rem, 5vw, 4.2rem); font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 50; line-height: 1.05; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 1.5rem; max-width: 18ch; }
+  .cover h1 em { font-style: italic; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); }
+  .cover .subtitle { font-family: var(--font-display); font-style: italic; font-size: 1.2rem; color: var(--ink-soft); max-width: 58ch; margin-bottom: 2rem; }
+  .cover-meta { display: flex; gap: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); flex-wrap: wrap; }
+  .mb { display: flex; flex-direction: column; gap: 0.2rem; }
+  .mb-label { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); }
+  .mb span:last-child { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: var(--ink); }
+
+  .section { padding: 3rem 5rem; border-bottom: 1px solid var(--rule); }
+  .section-head { display: grid; grid-template-columns: 80px 1fr; gap: 1.5rem; margin-bottom: 1.8rem; align-items: start; }
+  .section-num { font-family: var(--font-display); font-size: 2.8rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 1; }
+  .section-tag { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+  .section-title { font-family: var(--font-display); font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 400; line-height: 1.15; color: var(--ink); letter-spacing: -0.01em; max-width: 26ch; }
+  .section-title em { font-style: italic; font-weight: 300; color: var(--terracotta); font-variation-settings: 'opsz' 144, 'SOFT' 100; }
+
+  .section p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .section p.lead { font-family: var(--font-display); font-style: italic; font-size: 1.18rem; color: var(--ink-soft); margin-bottom: 1.5rem; max-width: 60ch; }
+  .section h3 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 500; margin: 1.6rem 0 0.6rem; color: var(--ink); }
+
+  .phase-banner { display: grid; grid-template-columns: 110px 1fr; gap: 2rem; margin: 2rem 0 2.5rem; padding: 1.4rem 1.8rem; background: linear-gradient(90deg, rgba(184, 85, 40, 0.10), transparent); border-left: 4px solid var(--terracotta); align-items: center; }
+  .phase-letter { font-family: var(--font-display); font-size: 5rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 0.85; text-align: center; }
+  .phase-banner h4 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; color: var(--ink); margin-bottom: 0.3rem; }
+  .phase-banner .phase-meta { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.5rem; }
+  .phase-banner p { font-size: 0.97rem; color: var(--ink); margin-bottom: 0; max-width: 65ch; }
+  .phase-banner em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .phase-banner.ref { background: linear-gradient(90deg, rgba(40, 72, 88, 0.10), transparent); border-left-color: var(--cobalt); }
+  .phase-banner.ref .phase-letter { color: var(--cobalt); }
+
+  .step { display: grid; grid-template-columns: 320px 1fr; gap: 1.8rem; margin: 1.6rem 0; padding: 1.6rem 1.8rem; background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; }
+  .step-diagram { background: #f3ecdc; border: 1px solid #c8b89a; border-radius: 6px; padding: 1rem 0.6rem 0.6rem; align-self: start; }
+  .step-diagram svg { width: 100%; height: auto; display: block; }
+  .step-diagram .caption { margin-top: 0.5rem; text-align: center; font-family: var(--font-display); font-style: italic; font-size: 0.82rem; color: var(--ink-soft); line-height: 1.4; }
+  .step-num-row { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 0.6rem; }
+  .step-num { font-family: var(--font-display); font-size: 1.8rem; font-weight: 300; font-style: italic; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); line-height: 1; }
+  .step-title { font-family: var(--font-display); font-size: 1.18rem; font-weight: 500; color: var(--ink); line-height: 1.25; }
+  .step p { font-size: 0.96rem; margin-bottom: 0.6rem; max-width: none; }
+  .step p:last-child { margin-bottom: 0; }
+  .step em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .shortcut-row { display: flex; flex-wrap: wrap; gap: 0.4rem 0.7rem; align-items: center; margin: 0.5rem 0 0.4rem; font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; color: var(--ink-soft); }
+  kbd { font-family: var(--font-mono); font-size: 0.78rem; background: var(--paper-warm); border: 1px solid var(--rule); border-radius: 3px; padding: 0.05rem 0.4rem; color: var(--ink); box-shadow: 0 1px 0 var(--rule); }
+
+  .box { margin: 1.4rem 0; padding: 1.1rem 1.3rem; border-radius: 0 4px 4px 0; max-width: none; }
+  .step .box { margin: 0.9rem 0 0.4rem; }
+  .box-label { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; margin-bottom: 0.4rem; }
+  .box-label::before { content: ''; width: 14px; height: 1.5px; background: currentColor; }
+  .box p { font-size: 0.93rem; margin-bottom: 0.4rem; }
+  .box p:last-child { margin-bottom: 0; }
+  .box-why { background: rgba(40, 72, 88, 0.10); border-left: 3px solid var(--cobalt); }
+  .box-why .box-label { color: var(--cobalt); }
+  .box-stolper { background: rgba(196, 107, 58, 0.13); border-left: 3px solid var(--warning); }
+  .box-stolper .box-label { color: var(--warning); }
+  .box-merk { background: rgba(184, 85, 40, 0.10); border-left: 3px solid var(--terracotta); }
+  .box-merk .box-label { color: var(--terracotta); }
+  .box-check { background: rgba(138, 152, 120, 0.18); border-left: 3px solid var(--sage); }
+  .box-check .box-label { color: var(--sage); }
+
+  .insight { margin: 1.4rem 0; padding: 1.1rem 1.3rem; background: var(--paper-warm); border: 1px dashed var(--rule); border-radius: 6px; font-family: var(--font-display); font-style: italic; font-size: 0.96rem; color: var(--ink-soft); max-width: 65ch; }
+  .insight::before { content: 'Randnotiz'; display: block; font-family: var(--font-mono); font-style: normal; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+
+  .doc-footer { padding: 2.5rem 5rem; border-top: 2px solid var(--ink); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); display: flex; justify-content: space-between; }
+  .doc-footer .terracotta { color: var(--terracotta); }
+
+  @media (max-width: 900px) {
+    .cover, .section, .doc-footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .section-head { grid-template-columns: 1fr; gap: 0.5rem; }
+    .step { grid-template-columns: 1fr; gap: 1rem; }
+    .step-diagram { max-width: 280px; margin: 0 auto; }
+    .phase-banner { grid-template-columns: 1fr; gap: 0.5rem; }
+    .phase-letter { text-align: left; font-size: 3.5rem; }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #1a1612; --paper-warm: #221d17; --paper-dark: #2a241c;
+      --ink: #ebe3d0; --ink-soft: #b8a98a; --ink-faint: #7a6e58;
+      --terracotta: #e8814a; --terracotta-deep: #c25a2a;
+      --cobalt: #6a9aab; --sage: #a8b898; --warning: #e2884d; --rule: #3a3026;
+    }
+    body { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"); }
+    .step-diagram { background: #f3ecdc !important; border-color: #c8b89a !important; }
+    .step-diagram .caption { color: #5a4d3a !important; }
+  }
+</style>
+</head>
+<body>
+
+<article class="doc">
+
+<!-- COVER -->
+<header class="cover">
+  <div class="cover-marker">
+    <span>Cascadeur · Lernreihe</span>
+    <div class="ml"></div>
+    <span>Projekt 07 · v 1.0</span>
+  </div>
+  <h1>Sprung über <em>Hindernis</em>: die<br>Parabel<br>als Anker.</h1>
+  <p class="subtitle">Fünf Sekunden mit langer ballistischer Phase. AutoPhysics als zentraler Verfeinerungspass — der CoM folgt einer sauberen Parabel. Ballistics-Tool für Path-Visualization. Erstmals Collision Penetration Cleaning gegen Boden-Clipping.</p>
+  <div class="cover-meta">
+    <div class="mb"><span class="mb-label">Charakter</span><span>UE5-Manny</span></div>
+    <div class="mb"><span class="mb-label">Dauer</span><span>5 s · 150 Frames</span></div>
+    <div class="mb"><span class="mb-label">Flight</span><span>~35 Frames · 1.2 s</span></div>
+    <div class="mb"><span class="mb-label">Neu</span><span>Ballistics-Tool · Collision Cleaning</span></div>
+    <div class="mb"><span class="mb-label">Pipeline-Ziel</span><span>UE5 Sequencer</span></div>
+    <div class="mb"><span class="mb-label">Schritte</span><span>17</span></div>
+  </div>
+</header>
+
+
+<!-- § 1 — WAS DU BAUST -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§1</div>
+    <div>
+      <div class="section-tag">Sprung-Konzept und Phasen-Topologie</div>
+      <h2 class="section-title">Anlauf, <em>Parabel</em>, Landung.</h2>
+    </div>
+  </div>
+
+  <p class="lead">Beim Run war Flight ein winziger Moment zwischen den Schritten. Bei Sprung ist Flight die zentrale Phase — über eine ganze Sekunde keine Bodenkontakt, die Schwerkraft als alleiniger Bewegungsfaktor.</p>
+
+  <p>Manny rennt los, springt über ein Hindernis, landet auf der anderen Seite, läuft weiter oder kommt zum Stand. Fünf Sekunden in fünf physikalischen Phasen: <strong>Anlauf</strong> (Frames 0-45), <strong>Take-Off</strong> (45-55), <strong>Flight</strong> (55-90), <strong>Landing</strong> (90-100), <strong>Auslauf</strong> (100-150). Während des Flight folgt der CoM einer sauberen Parabel — physikalisch exakt vorhersagbar, weil keine Muskelarbeit den Bogen verändern kann. Was Manny in der Luft mit den Gliedern macht, hat <em>keinen</em> Einfluss auf den CoM-Pfad.</p>
+
+  <p>Drei neue Werkzeuge kommen dazu: das <strong>Ballistics-Tool</strong> visualisiert die ideale Parabel und prüft die Animation gegen sie. <strong>Collision Penetration Cleaning</strong> (neu in 2026.1) korrigiert Boden-Clipping bei Take-Off und Landing. Set Priority Frames werden gleich an mehreren Stellen gesetzt — Take-Off und Landing sind beide kritische Geometrien.</p>
+
+  <div class="box box-why">
+    <div class="box-label">Warum die Parabel unverhandelbar ist</div>
+    <p>Während der Flight-Phase wirkt nur die Schwerkraft auf den Charakter. CoM-Pfad ist eine Parabel — vollständig bestimmt durch Lift-Off-Geschwindigkeit und -Winkel. Animator-Entscheidungen über Arm-Position oder Bein-Lage in der Luft ändern <em>nichts</em> am CoM-Pfad. Wenn deine Animation den CoM in der Luft seitlich knickt oder die Höhe verändert, ist sie physikalisch falsch — der Zuschauer wird das spüren, auch wenn er es nicht benennen kann.</p>
+  </div>
+
+  <div class="insight">
+    Bob Beamon sprang 1968 in Mexico City 8.90 Meter weit — Olympia-Standweitsprung-Rekord, der 23 Jahre hielt. Sein CoM-Pfad war eine Parabel mit ca. 1.2 Sekunden Flight-Time. Beamon hätte in dieser Sekunde alle Hände und Beine schütteln können — die Weite wäre identisch geblieben. Das ist die fundamentale Asymmetrie der ballistischen Bewegung: was vor dem Take-Off passiert, entscheidet alles. Was während des Flight passiert, ist visueller Stil, nicht Physik.
+  </div>
+</section>
+
+
+<!-- § 2 — PHASE A: SETUP -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§2</div>
+    <div>
+      <div class="section-tag">Phase A · Setup</div>
+      <h2 class="section-title">Manny, <em>Hindernis-Mesh</em>, Anlaufstrecke.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">A</div>
+    <div>
+      <h4>Setup</h4>
+      <div class="phase-meta">Scene · Hindernis-Box · Distanz-Planung · Track-Hierarchie</div>
+      <p>Manny am Start. Hindernis als einfache Box-Mesh, ca. 80 cm hoch, 60 cm breit. Anlaufstrecke 2-3 Meter. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Manny standing left -->
+        <g>
+          <circle cx="50" cy="68" r="10" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="50" y1="78" x2="50" y2="125" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="45" y1="125" x2="55" y2="125" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="45" y1="125" x2="45" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="55" y1="125" x2="55" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        </g>
+        <!-- Hindernis -->
+        <g>
+          <rect x="180" y="110" width="50" height="50" fill="#ede4d0" stroke="#b85528" stroke-width="2"/>
+          <text x="205" y="138" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="11" fill="#b85528">Hindernis</text>
+        </g>
+        <!-- Distance markers -->
+        <line x1="60" y1="175" x2="178" y2="175" stroke="#8a7d68" stroke-width="0.8" stroke-dasharray="3,2"/>
+        <text x="120" y="188" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">~2.5 m Anlauf</text>
+        <line x1="235" y1="110" x2="248" y2="110" stroke="#8a7d68" stroke-width="0.8"/>
+        <line x1="240" y1="110" x2="240" y2="160" stroke="#8a7d68" stroke-width="0.8" stroke-dasharray="3,2"/>
+        <text x="252" y="135" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">80 cm</text>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#8a7d68">SCENE · ANLAUF + HINDERNIS</text>
+      </svg>
+      <div class="caption">Manny links, Hindernis rechts. Anlaufstrecke ca. 2.5 m, Hindernis 80 cm hoch.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">01</span>
+        <span class="step-title">Scene mit Hindernis-Box</span>
+      </div>
+      <p>Manny laden, 30 fps, Timeline 0 bis 150. Profilansicht. Manny am Weltursprung in stehender Pose.</p>
+      <p>Hindernis-Box in die Scene: 60 cm breit (X), 80 cm hoch (Z), 40 cm tief (Y). Platziert ca. 3 Meter vor Manny in X-Richtung — das ergibt 2.5 m Anlauf vor dem Take-Off.</p>
+      <p>Wie in Projekt 04 mit dem Stuhl: ein einfacher Würfel reicht als Proxy. Das detaillierte Hindernis-Asset (eine Kiste, eine Mauer, ein Geländer) wird in UE5 beim Sequencer platziert.</p>
+      <p>Speichern als <code>projekt-07-sprung.casc</code>.</p>
+      <div class="box box-merk">
+        <div class="box-label">Hindernis-Höhe als Sprung-Charakter-Modifikator</div>
+        <p>Ein 80-cm-Hindernis ist ein Tisch oder ein hohes Geländer — anspruchsvoller Hürdensprung, der eine deutliche Flight-Phase verlangt. 40 cm wäre eine niedrige Bank — kleiner Hop ohne dramatischen Flight. 120 cm wäre fast brusthoch — Manny müsste einen Wand-Vault machen, sich mit den Armen abstützen. Für unsere Brochüre bleibt es bei 80 cm — ausgeprägter Flight ohne Hand-Stütze.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">PHASEN-TIMING · 5 SEKUNDEN</text>
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Anlauf -->
+        <rect x="30" y="93" width="80" height="14" fill="#284858" opacity="0.5" stroke="#1f1a14" stroke-width="0.8"/>
+        <text x="70" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#284858">ANLAUF</text>
+        <!-- Take-off -->
+        <rect x="110" y="93" width="18" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="0.8"/>
+        <text x="119" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">T-O</text>
+        <!-- Flight - the big one -->
+        <rect x="128" y="93" width="65" height="14" fill="#c46b3a" stroke="#1f1a14" stroke-width="0.8"/>
+        <text x="160" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a" font-weight="600">FLIGHT</text>
+        <!-- Landing -->
+        <rect x="193" y="93" width="18" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="0.8"/>
+        <text x="202" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">LDG</text>
+        <!-- Auslauf -->
+        <rect x="211" y="93" width="79" height="14" fill="#8a9878" opacity="0.5" stroke="#1f1a14" stroke-width="0.8"/>
+        <text x="250" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a9878">AUSLAUF</text>
+        <!-- Frame labels -->
+        <text x="30" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">0</text>
+        <text x="110" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">45</text>
+        <text x="128" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">55</text>
+        <text x="193" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">90</text>
+        <text x="211" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">100</text>
+        <text x="290" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">150</text>
+        <text x="160" y="155" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Flight: 35 Frames · der zentrale physikalische Block</text>
+        <text x="160" y="175" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">— Take-Off und Landing als kritische Übergänge</text>
+      </svg>
+      <div class="caption">Phasen-Topologie: Anlauf (1.5s) → Take-Off → Flight (1.2s) → Landing → Auslauf (1.7s).</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">02</span>
+        <span class="step-title">Phasen-Timing planen</span>
+      </div>
+      <p>Bei 5 Sekunden / 150 Frames ist die Phasen-Aufteilung:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Frames 0-45</strong> (1.5 s): Anlauf — 3 Run-Schritte als Vorbereitung</li>
+        <li><strong>Frames 45-55</strong>: Take-Off — letzter Fuß-Kontakt, Bein drückt voll ab</li>
+        <li><strong>Frames 55-90</strong> (1.17 s): Flight — beide Füße in der Luft, Parabel-Pfad</li>
+        <li><strong>Frames 90-100</strong>: Landing — Lande-Fuß-Kontakt, Kompression</li>
+        <li><strong>Frames 100-150</strong> (1.67 s): Auslauf — Recovery, weitere Schritte oder Stand</li>
+      </ul>
+      <p>Anlauf und Auslauf sind nicht der Fokus dieser Brochüre — der Sprung ist es. Anlauf kann mit einer einfachen Run-In-Animation gemacht werden, vielleicht aus Projekt 06 als Building Block. Auslauf endet in einem ruhigen Stand.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Flight-Dauer realistisch halten</div>
+        <p>Bei 80 cm Hindernis-Höhe ist eine realistische Flight-Time etwa 0.8-1.0 Sekunden (Take-Off-Geschwindigkeit 4-5 m/s, Lift-Off-Winkel 45°). Wir bauen 1.17 Sekunden (35 Frames), was leicht über-realistisch ist — gibt der Animation visuell mehr Air-Time. Bei zu langer Flight (über 2 Sekunden) wirkt der Sprung übermenschlich. Unter 0.5 Sekunden wirkt er wie ein Hopser.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">STANDARDSCHRITT · TRACK-HIERARCHIE</text>
+        <rect x="40" y="50" width="240" height="120" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Quick Rigging Tool → Generate Rig</text>
+        <line x1="50" y1="78" x2="270" y2="78" stroke="#c8b89a" stroke-width="1"/>
+        <text x="55" y="100" font-family="Fraunces, serif" font-style="italic" font-size="11" fill="#1f1a14">Pelvis</text>
+        <text x="70" y="118" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">└ Torso → Head, Arms</text>
+        <text x="55" y="138" font-family="Fraunces, serif" font-style="italic" font-size="11" fill="#1f1a14">L_Leg · R_Leg</text>
+        <text x="55" y="156" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">+ Startpose Frame 0 (Stand)</text>
+      </svg>
+      <div class="caption">Track-Hierarchie wie immer. Startpose Frame 0 als ruhige Stand-Pose vor dem Anlauf.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">03</span>
+        <span class="step-title">Track-Hierarchie und Startpose</span>
+      </div>
+      <p>Quick Rigging Tool, Generate Rig. Standardschritt.</p>
+      <p>Auf Frame 0: stabile Stand-Pose, Blickrichtung zum Hindernis, Hände leicht angewinkelt (Bereitschaft). Manny weiß, was er gleich tun wird. Beide Füße via <kbd>R</kbd> fixiert, Keyframe setzen.</p>
+      <p>Optional: aus Projekt 06 die Run-Cycle-Animation als Basis für den Anlauf laden — Frame 0 starten mit der Stand-Pose, dann ab Frame 5 in einen Run-Cycle übergehen. Bei dieser Brochüre vereinfachen wir das: Frame 0 Stand, Frame 45 letzter Anlauf-Schritt (Inbetweening generiert den Run-In zwischen den beiden).</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 3 — REFERENCE -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§3</div>
+    <div>
+      <div class="section-tag">Reference-Phase</div>
+      <h2 class="section-title">Jump-Reference <em>mit Phasen-Markern</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner ref">
+    <div class="phase-letter">R</div>
+    <div>
+      <h4>Reference</h4>
+      <div class="phase-meta">Hurdle · Vault · Parkour · Phasen-Identifikation</div>
+      <p>Sprung-Reference suchen. Bei Sprung-Animationen ist die Identifikation der Phasen-Übergänge (Take-Off, Apex, Landing) das wichtigste. <em>Ein Schritt.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#284858">JUMP-PHASEN IN REFERENCE</text>
+        <!-- Parabolic CoM trajectory -->
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1"/>
+        <path d="M 50 145 L 90 140 L 110 130 L 130 110 Q 160 70, 190 70 Q 220 70, 240 95 L 260 130 L 290 140" fill="none" stroke="#b85528" stroke-width="2"/>
+        <!-- Phase markers on path -->
+        <circle cx="90" cy="140" r="4" fill="#b85528"/>
+        <text x="90" y="160" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">T-O</text>
+        <circle cx="160" cy="70" r="5" fill="#b85528"/>
+        <text x="160" y="58" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">APEX</text>
+        <circle cx="240" cy="95" r="4" fill="#b85528"/>
+        <text x="240" y="115" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">LDG</text>
+        <!-- Obstacle -->
+        <rect x="150" y="135" width="25" height="35" fill="#ede4d0" stroke="#1f1a14" stroke-width="1.5" opacity="0.5"/>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">In Reference: T-O, Apex, Landing frame-genau identifizieren</text>
+      </svg>
+      <div class="caption">Sprung-Reference mit drei Markern: Take-Off, Apex, Landing.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">04</span>
+        <span class="step-title">Reference identifizieren und Marker setzen</span>
+      </div>
+      <p>Sprung-Reference aus den vertrauten Quellen (Motion Actor Inc, Bob Reese Parkour). Die Bewegungsbibliothek umfasst:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Hurdle Jump</strong> — klassischer Leichtathletik-Sprung, ein Bein voraus über die Hürde</li>
+        <li><strong>Tuck Jump</strong> — Knie an die Brust gezogen, beide Beine gleichzeitig hoch</li>
+        <li><strong>Vault</strong> — mit Hand-Stütze über das Hindernis (Parkour-Standard)</li>
+        <li><strong>Long Jump</strong> — Weitsprung-Stil, weniger Höhe, mehr Weite</li>
+      </ul>
+      <p>Für unsere Brochüre: Hurdle-Jump-Stil (ohne Handstütze). Vault wäre eine Erweiterung mit Constraints (Hand am Hindernis), Hurdle ist die saubere ballistische Variante.</p>
+      <p>In After Effects oder direktem Video-Viewer die <strong>Take-Off-Frame</strong>, <strong>Apex-Frame</strong> und <strong>Landing-Frame</strong> identifizieren. Diese drei Punkte sind die Kern-Anker der Animation. Bei Reference-Time-Remapping: Flight-Phase eher leicht strecken — bei Animation darf die Flight-Time länger aussehen als in der Realität, das ist Standard-Exaggeration.</p>
+      <div class="insight">
+        Parkour (Le Parcours) entstand in den 1990ern in französischen Pariser Vororten als Disziplin der schnellen Hindernisüberwindung im urbanen Raum. Yamakasi-Gründer David Belle wollte „seine Stadt bewohnbar machen, indem er ihre Hindernisse zu seinem Spielfeld macht". Das hat ein neues Vokabular von Sprung-Animationen geprägt — Wall-Run, Cat-Leap, Kong-Vault. Game-Engines wie Mirror's Edge oder Assassin's Creed haben dieses Vokabular standardisiert. Für unsere Brochüre bleibt es bei einem klassischen Hurdle-Sprung — als Basis-Building-Block, der später zu Parkour-Varianten erweitert werden kann.
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 4 — PHASE B: GROBSCHNITT -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§4</div>
+    <div>
+      <div class="section-tag">Phase B · Grobschnitt (Iteration 1)</div>
+      <h2 class="section-title">Take-Off, Apex, <em>Landing</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">B</div>
+    <div>
+      <h4>Grobschnitt</h4>
+      <div class="phase-meta">Vier Anker · Take-Off · Apex · Landing · End-Stand</div>
+      <p>Vier Anker definieren den Sprung. Anlauf-Lücke (Frame 0 zu 45) füllt Inbetweening. <em>Vier Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Take-off pose: one leg extended pushing, other knee high -->
+        <g>
+          <circle cx="80" cy="35" r="13" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="80" y1="48" x2="85" y2="115" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="82" cy="68" r="3" fill="#1f1a14"/>
+          <line x1="78" y1="115" x2="92" y2="115" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Push leg fully extended -->
+          <line x1="78" y1="115" x2="65" y2="160" stroke="#b85528" stroke-width="2.4"/>
+          <line x1="65" y1="160" x2="58" y2="218" stroke="#b85528" stroke-width="2.4"/>
+          <circle cx="58" cy="220" r="3" fill="#b85528"/>
+          <text x="40" y="223" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">PUSH</text>
+          <!-- Front leg knee high -->
+          <line x1="92" y1="115" x2="115" y2="140" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="115" y1="140" x2="105" y2="175" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Arms swinging up and forward -->
+          <line x1="82" y1="68" x2="105" y2="100" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="105" y1="100" x2="125" y2="105" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="82" y1="68" x2="65" y2="105" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="65" y1="105" x2="78" y2="130" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Arrow up showing momentum -->
+          <line x1="130" y1="50" x2="130" y2="25" stroke="#b85528" stroke-width="1.5"/>
+          <path d="M 128 27 L 130 22 L 132 27 z" fill="#b85528"/>
+        </g>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 50 · TAKE-OFF</text>
+      </svg>
+      <div class="caption">Take-Off: Push-Bein voll gestreckt am Boden, anderes Knie hoch, Arme nach oben schwingen.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">05</span>
+        <span class="step-title">Anker — Take-Off (Frame 50)</span>
+      </div>
+      <p>Frame 50. Take-Off-Pose: Push-Bein (sagen wir links) ist komplett gestreckt am Boden, der Fuß noch in Kontakt aber im letzten Push-Moment. Das andere Bein (rechts) ist hoch nach vorne gezogen, Knie über Hüft-Höhe, Unterschenkel hängt.</p>
+      <p>Die Arme schwingen <em>nach oben und vorne</em> — komplett anders als bei Run, wo sie gegenläufig zu den Beinen schwingen. Beim Take-Off ist Arm-Schwung ein wichtiger Impuls-Booster (etwa 10% der Sprung-Höhe kommen aus dem Arm-Schwung). Linker Arm nach vorne hochgeworfen, rechter ebenso — fast symmetrisch oben.</p>
+      <p>Spine deutlich gestreckt, fast leicht nach hinten gewölbt. Brust geöffnet. Kopf in Sprung-Richtung.</p>
+      <p>Linken Fuß via <kbd>R</kbd> fixieren (letzter Bodenkontakt). Keyframe setzen. Linkes Bein IK, rechtes Bein FK/GR.</p>
+      <div class="box box-merk">
+        <div class="box-label">Push-Bein als Energie-Konverter</div>
+        <p>Im Take-Off-Frame ist das Push-Bein wie eine Feder, die sich gerade entspannt hat — alle gespeicherte Energie wandelt sich in Aufwärts- und Vorwärts-Impuls um. Wenn dein Take-Off-Bein leicht gebeugt ist statt komplett gestreckt, hat Manny die Energie nicht vollständig konvertiert — der Sprung wird schwach. Voll-Streckung ist die richtige Pose.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Apex pose: highest point, tucked or extended -->
+        <g>
+          <circle cx="100" cy="65" r="13" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="78" x2="100" y2="145" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="100" cy="95" r="3" fill="#1f1a14"/>
+          <line x1="92" y1="145" x2="108" y2="145" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Both legs lifted, bent (tucked) -->
+          <line x1="92" y1="145" x2="80" y2="175" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="80" y1="175" x2="92" y2="195" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="108" y1="145" x2="125" y2="170" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="125" y1="170" x2="115" y2="195" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Arms slightly down -->
+          <line x1="100" y1="95" x2="120" y2="130" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="120" y1="130" x2="130" y2="155" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="95" x2="80" y2="130" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="80" y1="130" x2="70" y2="155" stroke="#1f1a14" stroke-width="2"/>
+        </g>
+        <!-- Obstacle below -->
+        <g opacity="0.5">
+          <rect x="85" y="200" width="30" height="20" fill="#ede4d0" stroke="#b85528" stroke-width="1.5"/>
+        </g>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 72 · APEX</text>
+      </svg>
+      <div class="caption">Apex: höchster Punkt, Knie angezogen (tuck), Manny gleitet über das Hindernis.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">06</span>
+        <span class="step-title">Anker — Apex (Frame 72)</span>
+      </div>
+      <p>Frame 72 — etwa in der Mitte der Flight-Phase. Der höchste Punkt der CoM-Parabel.</p>
+      <p>Tuck-Pose: beide Knie angezogen, Beine gebeugt unter dem Körper. Das gibt zwei Vorteile: erstens werden die Beine kompakt, sodass sie nicht am Hindernis hängenbleiben. Zweitens dreht die Trägheits-Verteilung den Körper geringfügig in eine kontrollierbare Lage.</p>
+      <p>Spine leicht vorgebeugt (Tuck-Position), Kopf etwas vorgenommen, schaut Richtung Landing. Arme sind jetzt unten, leicht ausgestreckt — Balance-Funktion.</p>
+      <p>Keyframe setzen. Beide Beine <strong>GR</strong> (in der Luft), beide Arme <strong>GR</strong>.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Apex-Pose ohne Tuck</div>
+        <p>Ein Apex mit gestreckten Beinen wirkt wie Schwimmen — Manny schwebt durch den Raum statt zu springen. Tuck (Knie an Brust) ist die Standard-Apex-Pose bei Hurdle-Sprüngen, weil sie kompakt und kontrolliert wirkt. Ohne Tuck ist die Animation visuell schwach, auch wenn die Physik korrekt ist.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Landing contact -->
+        <g>
+          <circle cx="100" cy="50" r="13" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="63" x2="105" y2="130" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="102" cy="82" r="3" fill="#1f1a14"/>
+          <line x1="95" y1="130" x2="115" y2="130" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Landing leg deeply bent absorbing impact -->
+          <line x1="115" y1="130" x2="125" y2="175" stroke="#b85528" stroke-width="2.4"/>
+          <line x1="125" y1="175" x2="125" y2="218" stroke="#b85528" stroke-width="2.4"/>
+          <line x1="117" y1="220" x2="135" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+          <circle cx="126" cy="220" r="3" fill="#b85528"/>
+          <text x="140" y="225" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">IMPACT</text>
+          <!-- Trail leg bent behind -->
+          <line x1="95" y1="130" x2="80" y2="170" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="80" y1="170" x2="90" y2="195" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Arms forward/down for balance -->
+          <line x1="102" y1="82" x2="125" y2="115" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="125" y1="115" x2="135" y2="140" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="102" y1="82" x2="80" y2="115" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="80" y1="115" x2="75" y2="140" stroke="#1f1a14" stroke-width="2"/>
+        </g>
+        <!-- Impact lines -->
+        <path d="M 110 230 L 115 235" stroke="#c46b3a" stroke-width="1.2"/>
+        <path d="M 140 230 L 145 235" stroke="#c46b3a" stroke-width="1.2"/>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 92 · LANDING</text>
+      </svg>
+      <div class="caption">Landing: Lande-Fuß gerade landet, Knie absorbiert Impact mit tiefer Beuge.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">07</span>
+        <span class="step-title">Anker — Landing-Contact (Frame 92)</span>
+      </div>
+      <p>Frame 92 — 2 Frames in die Landing-Phase. Der vordere Fuß (rechts) berührt gerade den Boden, das Bein ist deutlich gebeugt um den Impact zu absorbieren. Das andere Bein (links) ist hinten in der Luft, leicht gebeugt — wird gleich nachziehen.</p>
+      <p>Spine vorgebeugt (Schock-Absorption-Pose). Arme nach vorne und leicht unten als Balance. Kopf neutral oder leicht vorne.</p>
+      <p>Wichtig: dies ist der erste Frame nach dem Flight mit Bodenkontakt. CoM ist gerade am unteren Ende der Parabel angekommen. <strong>Set Priority Frame</strong> wird in Phase E auf genau diesen Frame gesetzt.</p>
+      <p>Rechten Fuß via <kbd>R</kbd> fixieren. Keyframe setzen. Rechtes Bein wieder <strong>IK</strong> (Bodenkontakt!), linkes Bein noch <strong>GR</strong> (Luft).</p>
+      <div class="box box-merk">
+        <div class="box-label">Landing als Energy-Absorption</div>
+        <p>Beim Aufkommen muss das Bein die ballistische Energie absorbieren — alle kinetische Energie wird in Muskelarbeit gewandelt. Der Knie-Beuge-Winkel beim Impact ist der wichtigste Faktor: bei 100° (sehr gebeugt) wird der Impact weich absorbiert, bei 160° (fast gestreckt) ist der Impact hart und visuell hörbar. Für Manny in dieser Brochüre nehmen wir 120° — saubere, kontrollierte Landung.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- End stand pose -->
+        <g>
+          <circle cx="100" cy="42" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="53" x2="100" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="100" cy="70" r="2.5" fill="#1f1a14"/>
+          <line x1="92" y1="120" x2="108" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="70" x2="105" y2="115" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="105" y1="115" x2="106" y2="145" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="70" x2="95" y2="115" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="95" y1="115" x2="94" y2="145" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="92" y1="120" x2="92" y2="220" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="108" y1="120" x2="108" y2="220" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="85" y1="220" x2="100" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="100" y1="220" x2="115" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+        </g>
+        <!-- Position: now on the other side of obstacle -->
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 140 · END-STAND</text>
+      </svg>
+      <div class="caption">End-Stand: nach dem Auslauf ruhige Standpose. Manny ist 2-3 m hinter dem Hindernis.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">08</span>
+        <span class="step-title">Anker — End-Stand (Frame 140)</span>
+      </div>
+      <p>Frame 140 — kurz vor dem Animationsende. Manny ist zur Ruhe gekommen, steht stabil auf der anderen Seite des Hindernisses. Position: etwa 2-3 m hinter dem Take-Off-Punkt, also 1-2 m hinter dem Hindernis.</p>
+      <p>Pose: ruhige Standpose, beide Füße nebeneinander, Arme entspannt am Körper. Vergleichbar zur Stand-Pose aus Projekt 01 oder Projekt 05 End-Stand.</p>
+      <p>Keyframe setzen. Beide Beine IK (Bodenkontakt), beide Füße fixieren mit <kbd>R</kbd>.</p>
+      <p>Frame 150 als Final-Frame: identisch zu Frame 140 oder mit minimaler Moving-Hold-Variation (Atmung, Kopf-Mikrobewegung).</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase B</div>
+        <p>Vier Anker stehen: 50 (Take-Off), 72 (Apex), 92 (Landing), 140 (End-Stand). Plus Frame 0 (Start-Stand). Lücken zwischen den Ankern sind beträchtlich — besonders 0→50 (Anlauf, 50 Frames) und 100→140 (Auslauf, 40 Frames). Inbetweening generiert die Übergänge.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 5 — PHASE C: INBETWEENING -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§5</div>
+    <div>
+      <div class="section-tag">Phase C · Inbetweening (Iteration 2)</div>
+      <h2 class="section-title">GR für die Luft, <em>IK für den Boden</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">C</div>
+    <div>
+      <h4>Inbetweening</h4>
+      <div class="phase-meta">Track-Separation · IK/GR-Wechsel · erste Generation</div>
+      <p>Genau wie in Projekt 06 — GR für Glieder in der Luft. Aber hier sind die Phasen länger und der Wechsel klarer. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 9 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">KEYFRAME-MODUS PRO PHASE</text>
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Phase regions -->
+        <rect x="30" y="93" width="80" height="14" fill="#284858" opacity="0.4"/>
+        <rect x="110" y="93" width="18" height="14" fill="#b85528" opacity="0.6"/>
+        <rect x="128" y="93" width="65" height="14" fill="#c46b3a" opacity="0.7"/>
+        <rect x="193" y="93" width="18" height="14" fill="#b85528" opacity="0.6"/>
+        <rect x="211" y="93" width="79" height="14" fill="#8a9878" opacity="0.4"/>
+        <!-- Mode labels -->
+        <text x="70" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">IK</text>
+        <text x="119" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">IK</text>
+        <text x="160" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#1f1a14" font-weight="600">GR</text>
+        <text x="202" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">IK</text>
+        <text x="250" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">IK</text>
+        <!-- Frame labels -->
+        <text x="30" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">0</text>
+        <text x="115" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">50</text>
+        <text x="160" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#c46b3a" font-weight="600">FLIGHT</text>
+        <text x="205" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">92</text>
+        <text x="285" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">150</text>
+        <text x="160" y="160" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Bodenkontakt = IK · Luft = GR</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Pelvis durchgehend FK</text>
+      </svg>
+      <div class="caption">IK in Anlauf/Take-Off/Landing/Auslauf, GR in der Flight-Phase. Pelvis durchgehend FK.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">09</span>
+        <span class="step-title">Track-Separation und Mode-Wechsel</span>
+      </div>
+      <p>Wie in Projekt 06: Pelvis und Bein-Tracks auf <strong>Inbetweening</strong>, Rest auf <strong>Bezier</strong>. Pelvis-Keyframes auf FK.</p>
+      <p>Mode-Wahl pro Bein-Keyframe:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Frame 0</strong> (Start-Stand): beide Beine IK</li>
+        <li><strong>Frame 50</strong> (Take-Off): Push-Bein IK (letzter Kontakt), anderes Bein GR (in der Luft)</li>
+        <li><strong>Frame 72</strong> (Apex): beide Beine GR</li>
+        <li><strong>Frame 92</strong> (Landing): Lande-Bein IK, anderes Bein GR</li>
+        <li><strong>Frame 140</strong> (End-Stand): beide Beine IK</li>
+      </ul>
+      <p>Arme können durchgehend FK bleiben — die Arm-Bögen sind dramatisch (Take-Off vs Apex vs Landing), aber FK reicht für diese Bewegungen aus. GR ist primär für die Beine in der Luft wichtig.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Bein-Mode-Wechsel in einem einzigen Frame</div>
+        <p>Beim Frame 50 (Take-Off) ist das Push-Bein noch am Boden — IK. Beim Frame 51 ist es in der Luft — sollte GR sein. Wenn beide Frames IK sind, „klebt" das Bein für 1-2 Frames am Boden, dann reißt es weg — Drift-Effekt. Lösung: explizit einen Lift-Off-Frame setzen (Frame 51 oder 52 wo das Bein gerade frei ist) und ihn auf GR setzen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 10 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">COM-PARABEL · ERSTE INBETWEENING-VERSION</text>
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1"/>
+        <!-- Imperfect parabola from Inbetweening -->
+        <path d="M 30 145 L 80 140 Q 110 110, 130 95 Q 160 70, 190 75 Q 220 90, 240 115 L 280 140" fill="none" stroke="#b85528" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <!-- Ideal parabola dashed -->
+        <path d="M 110 110 Q 160 60, 210 110" fill="none" stroke="#284858" stroke-width="1.5"/>
+        <!-- Key markers -->
+        <circle cx="110" cy="110" r="4" fill="#b85528"/>
+        <text x="110" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">T-O F50</text>
+        <circle cx="160" cy="70" r="4" fill="#b85528"/>
+        <text x="160" y="58" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">APEX F72</text>
+        <circle cx="210" cy="110" r="4" fill="#b85528"/>
+        <text x="210" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">LDG F92</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Inbetweening-Bogen vs ideale Parabel — Abweichungen sind okay</text>
+      </svg>
+      <div class="caption">Erste Generation: Inbetweening folgt grob der Parabel, ist aber nicht perfekt. Phase E (AutoPhysics) macht es exakt.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">10</span>
+        <span class="step-title">Erste Generation — CoM-Pfad prüfen</span>
+      </div>
+      <p>Play. Inbetweening rechnet — Anlauf-Run im 0-50-Bereich (sollte aus den Frame-0- und Frame-50-Posen die Run-Bewegung interpolieren), dann der ballistische Flug, dann Recovery.</p>
+      <p>CoM-Trajectory einschalten (<kbd>\</kbd>). Im Flight-Bereich (Frame 55-90) sollte der CoM einer Parabel folgen. In der ersten Generation tut er das oft <em>nicht perfekt</em> — Inbetweening ist plausibel-physikalisch, aber nicht exakt-physikalisch. Das ist okay; Phase E korrigiert das.</p>
+      <p>Was du sehen willst: ungefährer Parabel-Verlauf, keine Knicke, Apex auf etwa der erwarteten Höhe. Falls der Pfad seitlich knickt oder durch den Boden geht: Anker-Posen prüfen — meist ist eine Hüft-Höhe in einem Frame falsch.</p>
+      <div class="shortcut-row">
+        <span>CoM-Trajectory:</span><kbd>\</kbd>
+        <span>Slow Motion:</span><span>Time Factor 0.3</span>
+      </div>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase C</div>
+        <p>Manny rennt los, springt, landet, läuft aus. Take-Off-Push ist sichtbar, Apex hat Tuck-Pose, Landing absorbiert sichtbar mit Knie-Beuge. CoM-Pfad ist ungefähr parabolisch in der Flight-Phase. Noch nicht physikalisch exakt — Bezier-Inbetweening kann die Parabel nur annähern. Phase E (AutoPhysics) macht die Korrektur.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 6 — PHASE D: VERFEINERUNG -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§6</div>
+    <div>
+      <div class="section-tag">Phase D · Verfeinerung (Iteration 3)</div>
+      <h2 class="section-title">Ballistics-Tool und <em>Collision Cleaning</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">D</div>
+    <div>
+      <h4>Verfeinerung</h4>
+      <div class="phase-meta">Ballistics-Tool · Path-Visualization · Collision Penetration Cleaning</div>
+      <p>Ballistics-Object für die Flight-Phase. Collision Penetration Cleaning gegen Boden-Clipping. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 11 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">BALLISTICS-OBJECT · ADD-BUTTON</text>
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1"/>
+        <!-- Perfect parabola from Ballistics tool -->
+        <path d="M 110 110 Q 160 55, 210 110" fill="none" stroke="#b85528" stroke-width="2.5"/>
+        <!-- Tangent indicators -->
+        <line x1="110" y1="110" x2="130" y2="95" stroke="#b85528" stroke-width="1" stroke-dasharray="2,1"/>
+        <line x1="210" y1="110" x2="190" y2="95" stroke="#b85528" stroke-width="1" stroke-dasharray="2,1"/>
+        <!-- Phase markers -->
+        <circle cx="110" cy="110" r="5" fill="#b85528"/>
+        <circle cx="160" cy="55" r="6" fill="#b85528"/>
+        <circle cx="210" cy="110" r="5" fill="#b85528"/>
+        <!-- Gray line above timeline showing flight duration -->
+        <line x1="110" y1="135" x2="210" y2="135" stroke="#8a7d68" stroke-width="3"/>
+        <text x="160" y="148" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7d68">Flight Time</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Ballistics-Object zeigt die ideale Parabel — und die nötige Flight-Time</text>
+      </svg>
+      <div class="caption">Ballistics-Tool zeichnet die physikalisch korrekte Parabel zwischen Take-Off und Landing.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">11</span>
+        <span class="step-title">Ballistics-Object für die Flight-Phase</span>
+      </div>
+      <p>Neues Werkzeug für ballistische Animationen. Im Physics-Tab den Frame-Bereich der Flight-Phase selektieren (Frame 50 bis 92), dann <strong>Add Ballistics</strong>-Button drücken.</p>
+      <p>Was passiert: Cascadeur fügt ein Ballistics-Object zur Scene hinzu (sichtbar im Outliner). Es zeichnet die <em>physikalisch korrekte Parabel</em> zwischen Take-Off-Frame und Landing-Frame — die idealisierte Bahn, die ein freier Körper unter Schwerkraft fliegen würde. Über der Timeline erscheint eine graue Linie, die die <em>nötige Flight-Time</em> für diese Parabel anzeigt.</p>
+      <p>Drei mögliche Reaktionen:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Wenn die graue Linie kürzer als deine Flight-Phase ist: Manny ist zu lange in der Luft, der Sprung ist „übermenschlich". Animation strecken oder Anker anpassen</li>
+        <li>Wenn länger: zu kurz in der Luft, Sprung ist „roboterhaft". Anker-Posen anpassen für mehr Höhe oder Flight strecken</li>
+        <li>Wenn passend: Animation kann gegen die Parabel gesnapped werden (Snap-Button im Ballistics-Menü). CoM folgt jetzt exakt der Parabel</li>
+      </ul>
+      <p>Snap to Ballistics: CoM wird auf die ideale Parabel gesnapped, alle Frames in der Flight-Phase werden angepasst.</p>
+      <div class="box box-merk">
+        <div class="box-label">Ballistics-Object löschen nach Snap</div>
+        <p>Nach erfolgreichem Snap kann das Ballistics-Object gelöscht werden — es ist nur ein temporäres Werkzeug zur Path-Visualization und Snap-Operation. Im Outliner selektieren, Delete. Die Animation bleibt mit der gesnappten Parabel-CoM-Bahn.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 12 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">COLLISION PENETRATION CLEANING</text>
+        <!-- Before / after -->
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Before: foot clips through ground -->
+        <text x="80" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#c46b3a">VOR · CLIPPING</text>
+        <g>
+          <circle cx="80" cy="80" r="9" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="80" y1="89" x2="80" y2="120" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="73" y1="120" x2="87" y2="120" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="80" y1="120" x2="78" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+          <!-- Foot below ground -->
+          <line x1="73" y1="170" x2="83" y2="170" stroke="#c46b3a" stroke-width="2.5"/>
+          <text x="105" y="173" font-family="JetBrains Mono, monospace" font-size="7" fill="#c46b3a">Fuß unter Boden</text>
+        </g>
+        <!-- Arrow -->
+        <path d="M 145 100 L 170 100" stroke="#1f1a14" stroke-width="1" marker-end="url(#arrcollision)"/>
+        <defs>
+          <marker id="arrcollision" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M 0 0 L 8 4 L 0 8 z" fill="#1f1a14"/>
+          </marker>
+        </defs>
+        <!-- After: foot at ground level -->
+        <text x="225" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#8a9878">NACH · CLEAN</text>
+        <g>
+          <circle cx="225" cy="78" r="9" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="225" y1="87" x2="225" y2="118" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="218" y1="118" x2="232" y2="118" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="225" y1="118" x2="223" y2="155" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="218" y1="160" x2="228" y2="160" stroke="#8a9878" stroke-width="2.5"/>
+          <text x="250" y="163" font-family="JetBrains Mono, monospace" font-size="7" fill="#8a9878">korrekt</text>
+        </g>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Cascadeur 2026.1 — neue Funktion für Penetration-Cleanup</text>
+      </svg>
+      <div class="caption">Collision Penetration Cleaning: Fuß unter dem Boden wird automatisch nach oben verschoben.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">12</span>
+        <span class="step-title">Collision Penetration Cleaning gegen Boden-Clipping</span>
+      </div>
+      <p>Neu in Cascadeur 2026.1. Bei Sprung-Animationen ist Boden-Clipping ein häufiges Problem — beim Take-Off kann ein Fuß durch den Boden tauchen, bei Landing kann ein Zeh oder Fuß-Teil unter dem Bodenlevel landen.</p>
+      <p>Vorgehen: in den Scene Settings den Tab <strong>Collision Penetration Cleaning</strong> finden. Den Frame-Bereich selektieren, in dem Clipping auftritt (z.B. Frames 48-52 für Take-Off, oder 90-95 für Landing). Point Controller Mode aktivieren. Den problematischen Fuß-Controller selektieren. <strong>Collision Penetration Cleaning</strong>-Button drücken.</p>
+      <p>Cascadeur verschiebt die selektierten Punkte automatisch über das Bodenlevel. Falls noch Clipping bleibt: <strong>Penetration Offset</strong>-Wert in den Settings höher setzen (Standard ist 0, ein Offset von 2-3 cm pusht den Punkt weiter weg vom Boden).</p>
+      <p>Funktioniert auch für Selbst-Penetration (Hand durch Hüfte, Beine durcheinander). Bei dieser Brochüre primär für Fuß-durch-Boden bei Take-Off und Landing.</p>
+      <div class="shortcut-row">
+        <span>Scene Settings:</span><kbd>N</kbd>
+        <span>Point Controller Mode:</span><span>Menü-Schalter</span>
+      </div>
+      <div class="box box-merk">
+        <div class="box-label">Muscle Stiffness als Verfeinerungs-Hebel</div>
+        <p>Jeder Point hat eine <em>Muscle Stiffness</em>-Eigenschaft (in Object Properties → Collision Penetration). Standard: Knie, Ellbogen, Schultern auf 0 (werden am stärksten bewegt). Brust, Spine auf höheren Werten (werden weniger verschoben). Damit kontrollierst du, welche Teile des Körpers die Cleaning-Anpassung absorbieren — wenn z.B. nur der Fuß angepasst werden soll und das Knie unverändert bleiben soll, Knie auf 100 setzen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 13 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">HAND-BÖGEN MIT TRAJECTORY TANGENTS</text>
+        <g opacity="0.3">
+          <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1"/>
+        </g>
+        <!-- Body silhouette -->
+        <g opacity="0.3">
+          <circle cx="160" cy="70" r="10" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="160" y1="80" x2="160" y2="140" stroke="#1f1a14" stroke-width="1.5"/>
+        </g>
+        <!-- Hand arc during full jump -->
+        <path d="M 50 150 Q 80 130, 110 110 Q 140 80, 160 65 Q 180 80, 210 110 Q 240 130, 270 150" fill="none" stroke="#b85528" stroke-width="2"/>
+        <circle cx="50" cy="150" r="4" fill="#b85528"/>
+        <text x="50" y="170" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">F0</text>
+        <circle cx="110" cy="110" r="4" fill="#b85528"/>
+        <text x="110" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">T-O</text>
+        <circle cx="160" cy="65" r="5" fill="#b85528"/>
+        <text x="160" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">APEX</text>
+        <circle cx="210" cy="110" r="4" fill="#b85528"/>
+        <text x="210" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">LDG</text>
+        <circle cx="270" cy="150" r="4" fill="#b85528"/>
+        <text x="270" y="170" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">F140</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Hand-Bahn folgt grob der CoM-Parabel, mit eigenem Polish</text>
+      </svg>
+      <div class="caption">Hand-Bögen über die ganze Sprung-Animation. Trajectory Tangents polishen die Bögen.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">13</span>
+        <span class="step-title">Trajectory Tangents für Hand-Bögen</span>
+      </div>
+      <p>Wie in Projekt 06: Trajectory Tangents für die Hand-Bahnen. Bei Sprung sind die Arm-Bewegungen dramatisch — Take-Off-Up-Swing, Apex-Out-Stretch, Landing-Forward-Reach. Die Hand-Bögen sollten flüssig sein, ohne Zickzack.</p>
+      <p>Hand-Controller selektieren, Relative Trajectory mit Pelvis als Pivot. Edit Mode auf Trajectory, Tangents-Button drücken. An den Handles ziehen, bis die Hand-Bögen voll und rund aussehen.</p>
+      <p>Wichtig: bei dieser Brochüre, in der Phase A bis Phase D viel über CoM-Mechanik gemacht wurde, ist Hand-Polish ein finaler Detail-Schritt. Nicht zu viel Zeit hier — die Animation ist primär „body story", die Hände sind Garnitur.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase D</div>
+        <p>CoM folgt einer sauberen Parabel in der Flight-Phase (gesnappt aus Ballistics-Tool). Kein Boden-Clipping (Collision Cleaning angewendet). Hand-Bögen sind flüssig (Trajectory Tangents polished). Manny springt physikalisch glaubwürdig — was du erwartest, sieht das Auge auch.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 7 — PHASE E: PHYSICS -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§7</div>
+    <div>
+      <div class="section-tag">Phase E · Physics</div>
+      <h2 class="section-title">Set Priority Frames <em>auf Take-Off und Landing</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">E</div>
+    <div>
+      <h4>Physics</h4>
+      <div class="phase-meta">Zwei Set Priority Frames · AutoPhysics 3-Pass</div>
+      <p>Zwei kritische Geometrien: Take-Off (Frame 50) und Landing (Frame 92). Beide via Set Priority Frame schützen. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 14 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">ZWEI PRIORITY-FRAMES · TAKE-OFF + LANDING</text>
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- All keyframes -->
+        <rect x="26" y="93" width="8" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <!-- Take-off priority -->
+        <rect x="113" y="88" width="14" height="24" fill="#b85528" stroke="#1f1a14" stroke-width="2"/>
+        <polygon points="113,88 127,88 127,82 133,86 127,90 113,90" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="120" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528" font-weight="600">★ T-O</text>
+        <rect x="155" y="93" width="8" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <!-- Landing priority -->
+        <rect x="193" y="88" width="14" height="24" fill="#b85528" stroke="#1f1a14" stroke-width="2"/>
+        <polygon points="193,88 207,88 207,82 213,86 207,90 193,90" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="200" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528" font-weight="600">★ LDG</text>
+        <rect x="278" y="93" width="8" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <text x="30" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">0</text>
+        <text x="120" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528" font-weight="600">50</text>
+        <text x="160" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">72</text>
+        <text x="200" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528" font-weight="600">92</text>
+        <text x="283" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">140</text>
+        <text x="160" y="160" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">T-O und Landing müssen unverändert bleiben</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">— sie definieren die Parabel</text>
+      </svg>
+      <div class="caption">Zwei Set Priority Frames: Take-Off (50) und Landing (92). Beide sind kritische Übergangspunkte.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">14</span>
+        <span class="step-title">Set Priority Frames auf Take-Off und Landing</span>
+      </div>
+      <p>Zwei kritische Frames bei dieser Animation: Take-Off (50) und Landing (92). Beide brauchen Schutz vor AutoPhysics-Anpassung.</p>
+      <p>Auf Frame 50: Physics-Tab, Set Priority Frame aktivieren. Auf Frame 92 wiederholen.</p>
+      <p>Warum beide: AutoPhysics würde sonst die Übergänge glätten und dabei eine oder beide Posen verschieben — Take-Off um 2 Frames später, Landing um 2 Frames früher, etc. Damit würde die Parabel anders aussehen als gewollt. Set Priority Frame auf beiden Endpunkten der ballistischen Phase definiert die Parabel exakt.</p>
+      <p>Optional auch Set Priority Frame auf Frame 72 (Apex) — das ist die höchste Punkt-Geometrie. Bei dieser Brochüre lassen wir das aus; AutoPhysics findet den Apex von alleine aus den zwei festen Endpunkten.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Zu viele Set Priority Frames</div>
+        <p>Eine Versuchung: jeden wichtigen Frame als Priority markieren. Ergebnis: AutoPhysics hat keine Freiheit mehr, die Bewegung zu polieren. Maximum 2-3 Priority Frames pro Animation — sonst wirkt der AutoPhysics-Filter nicht. Take-Off + Landing reicht in den meisten Fällen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 15 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="20" y="35" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">AUTOPHYSICS · TIMELINE BALLISTIC</text>
+        <line x1="20" y1="100" x2="300" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Anlauf: gelb -->
+        <rect x="20" y="93" width="90" height="14" fill="#e4b860" stroke="#1f1a14" stroke-width="0.8"/>
+        <text x="65" y="120" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">gelb</text>
+        <!-- Take-off: yellow brief -->
+        <rect x="110" y="93" width="18" height="14" fill="#e4b860" stroke="#1f1a14" stroke-width="0.8"/>
+        <!-- Flight: ORANGE -->
+        <rect x="128" y="93" width="65" height="14" fill="#c46b3a" stroke="#1f1a14" stroke-width="0.8"/>
+        <text x="160" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a" font-weight="600">BALLISTIC</text>
+        <!-- Landing: yellow -->
+        <rect x="193" y="93" width="18" height="14" fill="#e4b860" stroke="#1f1a14" stroke-width="0.8"/>
+        <!-- Auslauf: dark green -->
+        <rect x="211" y="93" width="79" height="14" fill="#5a8848" stroke="#1f1a14" stroke-width="0.8"/>
+        <text x="250" y="120" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">grün</text>
+        <!-- Legend -->
+        <rect x="40" y="140" width="14" height="10" fill="#5a8848"/>
+        <text x="60" y="148" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">grün = stabil mit Fulcrums</text>
+        <rect x="40" y="155" width="14" height="10" fill="#e4b860"/>
+        <text x="60" y="163" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">gelb = ein Fulcrum (Single-Foot)</text>
+        <rect x="40" y="170" width="14" height="10" fill="#c46b3a"/>
+        <text x="60" y="178" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">orange = ballistisch (richtig in Flight!)</text>
+      </svg>
+      <div class="caption">AutoPhysics-Timeline beim Sprung: Orange im Flight ist richtig, nicht falsch.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">15</span>
+        <span class="step-title">AutoPhysics Pass 1 + 2 (Ballistic)</span>
+      </div>
+      <p>Physics Assistance an. Bei Sprung hat die Timeline klar getrennte Farb-Zonen: gelb in Anlauf (Single-Foot-Run), kurzes Orange im Flight (kein Bodenkontakt — richtig!), dunkelgrün im Auslauf (Stand mit beiden Füßen).</p>
+      <p>Pass 1 + 2 wie üblich nur Physics Corrector. Ganze Sequenz, Solve, Snap, wiederholen. Cascadeur verarbeitet die Phasen unterschiedlich — in den Bodenkontakt-Phasen über Fulcrum-Berechnung, in der Flight-Phase ballistisch.</p>
+      <p>Wichtig: AutoPhysics versucht möglicherweise, die Take-Off-Pose oder Landing-Pose zu glätten. Set Priority Frame verhindert das. Wenn nach Pass 1 die Posen verschoben sind: Priority Frames noch nicht aktiv — prüfen und nochmal Pass 1.</p>
+      <p>Pass 3 mit Filtern für Sprung:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Physics Character</strong> 100</li>
+        <li><strong>Smooth Trajectory</strong> ~25 — wenig glätten, weil die Parabel exakt sein soll</li>
+        <li><strong>Smooth Rotation</strong> ~25 — Pelvis-Rotation glätten, besonders bei Take-Off und Landing</li>
+        <li><strong>Compensation Motion</strong> ~30 — Body schwingt sichtbar mit der Sprung-Bewegung</li>
+        <li><strong>Separation of Motion</strong> ~12</li>
+        <li><strong>Secondary Motion</strong> ~30 — wichtiger als bei Walk/Run, weil die Arm- und Hand-Bewegungen dramatisch sind</li>
+      </ul>
+      <p>Snap to Physics. Physics aus.</p>
+      <div class="box box-merk">
+        <div class="box-label">Smooth Trajectory zurückhaltend</div>
+        <p>Bei Run war Smooth Trajectory bei 35-40, bei Walk ähnlich. Bei Sprung gehst du runter auf 25, weil die Parabel exakt sein soll — zu starkes Smoothing flacht die Parabel ab und macht den Apex flacher. Die ballistische Bahn ist physikalisch definiert; sie soll nicht durch Filter verändert werden.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 16 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FINALER LANDING-IMPACT · SECONDARY MOTION</text>
+        <line x1="20" y1="220" x2="300" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Landing absorbed pose -->
+        <g>
+          <circle cx="160" cy="60" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="160" y1="71" x2="165" y2="135" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="161" cy="89" r="2.5" fill="#1f1a14"/>
+          <line x1="155" y1="135" x2="175" y2="135" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="175" y1="135" x2="180" y2="180" stroke="#b85528" stroke-width="2.4"/>
+          <line x1="180" y1="180" x2="175" y2="220" stroke="#b85528" stroke-width="2.4"/>
+          <line x1="155" y1="135" x2="145" y2="175" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="145" y1="175" x2="148" y2="220" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Secondary motion: arms swinging -->
+          <line x1="161" y1="89" x2="180" y2="125" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="180" y1="125" x2="190" y2="158" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="161" y1="89" x2="142" y2="125" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="142" y1="125" x2="132" y2="158" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="138" y1="220" x2="158" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="170" y1="220" x2="190" y2="220" stroke="#1f1a14" stroke-width="2.6"/>
+          <!-- Secondary motion indicators -->
+          <path d="M 190 158 Q 195 165, 188 172" fill="none" stroke="#c46b3a" stroke-width="1"/>
+          <path d="M 132 158 Q 127 165, 134 172" fill="none" stroke="#c46b3a" stroke-width="1"/>
+        </g>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 95 · POST-LANDING · 2-3 FRAMES NACH IMPACT</text>
+      </svg>
+      <div class="caption">Landing-Settle mit Secondary Motion: Arme schwingen nach, Spine bewegt sich noch nach unten.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">16</span>
+        <span class="step-title">Settle nach Landing prüfen</span>
+      </div>
+      <p>Bei korrekt arbeitendem AutoPhysics mit Secondary Motion sollte nach der Landing ein kleines Settle existieren — 2-3 Frames in denen das Bein weiter beugt, dann zurückfedert. Arme schwingen nach, Schultern leicht runter.</p>
+      <p>Wenn das nicht sichtbar ist: Secondary Motion-Filter zu schwach. Mit dem Slider hochgehen (35-40 statt 30) und Pass 3 nochmal laufen lassen.</p>
+      <p>Wenn das Settle zu stark ist (Manny taumelt oder federt mehrmals): Secondary Motion zu hoch. Runter auf 20-25.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase E</div>
+        <p>Manny rennt los, springt mit klarem Take-Off-Push, fliegt einer sauberen Parabel, landet mit kontrollierter Knie-Beuge, federt minimal nach, läuft aus. CoM-Pfad in der Flight-Phase ist eine exakte Parabel. Take-Off und Landing-Posen sind unverändert (Priority schützt). Sekundärbewegungen (Arme nach Landing, Spine-Settle) geben Lebendigkeit. Animation ist physikalisch glaubwürdig und visuell befriedigend.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 8 — PHASE F: EXPORT -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§8</div>
+    <div>
+      <div class="section-tag">Phase F · Export</div>
+      <h2 class="section-title">FBX mit <em>Root Motion</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">F</div>
+    <div>
+      <h4>Export</h4>
+      <div class="phase-meta">FBX · Root Motion · UE5</div>
+      <p>Sprung durch den Raum — Root Motion-Export wie bei Walk in Projekt 03. <em>Ein Schritt.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 17 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="80" y="50" width="160" height="100" rx="6" fill="#f3ecdc" stroke="#1f1a14" stroke-width="2"/>
+        <text x="160" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#b85528">FBX EXPORT</text>
+        <line x1="100" y1="88" x2="220" y2="88" stroke="#c8b89a" stroke-width="1"/>
+        <text x="100" y="105" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Bake animation</text>
+        <text x="220" y="105" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">✓</text>
+        <text x="100" y="122" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Frame range</text>
+        <text x="220" y="122" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">0–150</text>
+        <text x="100" y="139" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Root translation</text>
+        <text x="220" y="139" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528" font-weight="600">INCLUDE</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">In UE5: Enable Root Motion · Hindernis als Static Mesh in Level</text>
+      </svg>
+      <div class="caption">FBX mit Root Motion. In UE5 Hindernis räumlich passend platzieren.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">17</span>
+        <span class="step-title">FBX-Export mit Root Motion + UE5</span>
+      </div>
+      <p>File → Export → FBX. Settings:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Frame range</strong>: 0 bis 150</li>
+        <li><strong>Bake animation</strong>: ON, 30 fps</li>
+        <li><strong>Root translation</strong>: INCLUDE — wie bei Walk in Projekt 03, weil Manny tatsächlich durch den Raum springt</li>
+        <li><strong>Skeleton only</strong>: ON, Hindernis-Mesh nicht exportieren</li>
+      </ul>
+      <p>Dateiname <code>manny-jump-v01.fbx</code>.</p>
+      <p>In UE5 importieren mit Manny-Skelett. Animation Sequence wird angelegt. <strong>Enable Root Motion</strong> ON, Root Motion Root Lock auf „From Root Bone".</p>
+      <p>Im Level einen Hindernis-Asset platzieren — wo Manny landet, sollte das Hindernis räumlich passend stehen. Falls Animation und Hindernis-Position nicht exakt zusammenpassen: das Hindernis im Level ein paar Zentimeter verschieben, schneller als die Animation neu zu exportieren.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase F</div>
+        <p>In UE5: Manny rennt vom Anfangspunkt los, springt über das Hindernis, landet auf der anderen Seite, läuft aus, stoppt. Root Motion treibt die räumliche Translation. Sprung ist physikalisch glaubwürdig, kein Boden-Clipping. Animation ist in 5 Sekunden komplett, kann in narrativen Sequenzen oder als Action-Beat verwendet werden.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 9 — OUTRO -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§9</div>
+    <div>
+      <div class="section-tag">Ausblick</div>
+      <h2 class="section-title">Was du <em>jetzt zusätzlich</em> hast.</h2>
+    </div>
+  </div>
+
+  <p>Mit Projekt 07 ist die ballistische Animation komplett: <strong>Ballistics-Tool</strong> für Path-Visualization und Snap, <strong>Collision Penetration Cleaning</strong> für Boden- und Selbst-Clipping, <strong>mehrere Set Priority Frames</strong> pro Animation für mehrteilige kritische Geometrien. Die Lokomotions-Lehre der Reihe (Walk, Run, Jump) ist abgeschlossen.</p>
+
+  <p>Projekt 08 (Gestikulieren beim Sprechen) wechselt komplett den Fokus — von ganzkörperlicher Bewegung zu Upper-Body-Animation. Die Beine bleiben in einer Stand-Pose, der Oberkörper macht mehrere zusammenhängende Hand- und Arm-Gesten über zehn Sekunden. Inbetweening nur für die obere Hälfte. Finger-AutoPosing als neuer Detail-Werkzeug. Das ist die Brücke zum MetaHuman-Facial-Workflow — Manny gestikuliert, MetaHuman-Face liefert die Lippen- und Augen-Bewegung.</p>
+
+  <p>Bei Projekt 11+ kommen die Building Blocks aus 01-08 zusammen: Stand → Walk → Run → Jump → Land → Walk → Sit → Talk → Stand → Walk. Jeder einzelne Baustein ist eine eigenständige Animation, die im UE5-Sequencer oder Animation-Blueprint kombinierbar ist. Das Vokabular ist jetzt vollständig genug, um komplexe narrative Sequenzen zu bauen.</p>
+
+  <div class="box box-merk">
+    <div class="box-label">Was Projekt 07 nicht macht</div>
+    <p>Kein Vault (mit Hand-Stütze am Hindernis — würde Constraints brauchen). Kein Wall-Run. Kein Doppel-Sprung. Kein Sprung mit Last (etwas in der Hand). Kein Roll-Landing (Parkour-Stil mit Rolle am Boden). All das sind Erweiterungen — die ballistische Kern-Logik bleibt identisch.</p>
+  </div>
+
+  <div class="insight">
+    Pferde im Galopp haben eine Bewegung, die einem schnellen Sprung verblüffend ähnlich ist — die zwei klassischen Flight-Phasen pro Cycle (extended und gathered) sind im Grunde zwei kleine Hindernis-Sprünge in Folge. Muybridges berühmte Pferd-Galopp-Fotos von 1878 zeigten erstmals diese Mechanik — und legten unbeabsichtigt das Fundament für jede ballistische 3D-Animation, die seither gebaut wurde. Was du in dieser Brochüre über Take-Off, Apex, Landing gelernt hast, kannst du eins-zu-eins auf jedes Lebewesen anwenden, das sich vom Boden lösen kann. Vögel und Insekten sind eine Ausnahme — sie haben aerodynamische Korrekturen während des Flights, eine andere Physik. Aber für alles, was am Boden lebt und gelegentlich abhebt, gilt: die Parabel ist die Wahrheit.
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="doc-footer">
+  <div><span class="terracotta">Projekt 07 · v 1.0</span></div>
+  <div>17 Schritte · 6 Phasen + Reference</div>
+  <div>Cascadeur · Lernreihe</div>
+</footer>
+
+</article>
+
+</body>
+</html>
