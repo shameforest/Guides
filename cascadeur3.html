@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projekt 03 · Walk from A to B · Cascadeur-Lernreihe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3ecdc;
+    --paper-warm: #ede4d0;
+    --paper-dark: #e2d6b8;
+    --ink: #1f1a14;
+    --ink-soft: #5a4d3a;
+    --ink-faint: #8a7d68;
+    --terracotta: #b85528;
+    --terracotta-deep: #7a3414;
+    --cobalt: #284858;
+    --sage: #8a9878;
+    --warning: #c46b3a;
+    --rule: #c8b89a;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'DM Sans', -apple-system, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--paper);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    -webkit-font-smoothing: antialiased;
+  }
+  .doc { max-width: 1100px; margin: 0 auto; }
+
+  .cover {
+    padding: 3.5rem 5rem 2.5rem;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -10%; right: -8%;
+    width: 50%; aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(184, 85, 40, 0.08) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .cover-marker {
+    display: flex; align-items: center; gap: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 1.5rem;
+  }
+  .cover-marker .ml { width: 60px; height: 1px; background: var(--terracotta); }
+  .cover h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.6rem, 5vw, 4.2rem);
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 50;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+    max-width: 18ch;
+  }
+  .cover h1 em {
+    font-style: italic;
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    color: var(--terracotta);
+  }
+  .cover .subtitle {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.2rem;
+    color: var(--ink-soft);
+    max-width: 58ch;
+    margin-bottom: 2rem;
+  }
+  .cover-meta {
+    display: flex; gap: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    flex-wrap: wrap;
+  }
+  .mb { display: flex; flex-direction: column; gap: 0.2rem; }
+  .mb-label {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .mb span:last-child {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--ink);
+  }
+
+  .section {
+    padding: 3rem 5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .section-head {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.8rem;
+    align-items: start;
+  }
+  .section-num {
+    font-family: var(--font-display);
+    font-size: 2.8rem;
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    font-style: italic;
+    color: var(--terracotta);
+    line-height: 1;
+  }
+  .section-tag {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 0.4rem;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 3vw, 2.4rem);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    max-width: 26ch;
+  }
+  .section-title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--terracotta);
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  }
+
+  .section p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .section p.lead {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.18rem;
+    color: var(--ink-soft);
+    margin-bottom: 1.5rem;
+    max-width: 60ch;
+  }
+  .section h3 {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 1.6rem 0 0.6rem;
+    color: var(--ink);
+  }
+
+  .phase-banner {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 2rem;
+    margin: 2rem 0 2.5rem;
+    padding: 1.4rem 1.8rem;
+    background: linear-gradient(90deg, rgba(184, 85, 40, 0.10), transparent);
+    border-left: 4px solid var(--terracotta);
+    align-items: center;
+  }
+  .phase-letter {
+    font-family: var(--font-display);
+    font-size: 5rem;
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    font-style: italic;
+    color: var(--terracotta);
+    line-height: 0.85;
+    text-align: center;
+  }
+  .phase-banner h4 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+  }
+  .phase-banner .phase-meta {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.5rem;
+  }
+  .phase-banner p {
+    font-size: 0.97rem;
+    color: var(--ink);
+    margin-bottom: 0;
+    max-width: 65ch;
+  }
+  .phase-banner em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  /* Reference phase has its own treatment — cobalt banner */
+  .phase-banner.ref {
+    background: linear-gradient(90deg, rgba(40, 72, 88, 0.10), transparent);
+    border-left-color: var(--cobalt);
+  }
+  .phase-banner.ref .phase-letter { color: var(--cobalt); }
+
+  .step {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 1.8rem;
+    margin: 1.6rem 0;
+    padding: 1.6rem 1.8rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+  }
+  .step-diagram {
+    background: #f3ecdc;
+    border: 1px solid #c8b89a;
+    border-radius: 6px;
+    padding: 1rem 0.6rem 0.6rem;
+    align-self: start;
+  }
+  .step-diagram svg { width: 100%; height: auto; display: block; }
+  .step-diagram .caption {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .step-num-row {
+    display: flex; align-items: baseline; gap: 0.8rem;
+    margin-bottom: 0.6rem;
+  }
+  .step-num {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 300;
+    font-style: italic;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    color: var(--terracotta);
+    line-height: 1;
+  }
+  .step-title {
+    font-family: var(--font-display);
+    font-size: 1.18rem;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .step p { font-size: 0.96rem; margin-bottom: 0.6rem; max-width: none; }
+  .step p:last-child { margin-bottom: 0; }
+  .step em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+  .shortcut-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.7rem;
+    align-items: center;
+    margin: 0.5rem 0 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+  kbd {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0.05rem 0.4rem;
+    color: var(--ink);
+    box-shadow: 0 1px 0 var(--rule);
+  }
+
+  .box {
+    margin: 1.4rem 0;
+    padding: 1.1rem 1.3rem;
+    border-radius: 0 4px 4px 0;
+    max-width: none;
+  }
+  .step .box { margin: 0.9rem 0 0.4rem; }
+  .box-label {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .box-label::before { content: ''; width: 14px; height: 1.5px; background: currentColor; }
+  .box p { font-size: 0.93rem; margin-bottom: 0.4rem; }
+  .box p:last-child { margin-bottom: 0; }
+  .box-why { background: rgba(40, 72, 88, 0.10); border-left: 3px solid var(--cobalt); }
+  .box-why .box-label { color: var(--cobalt); }
+  .box-stolper { background: rgba(196, 107, 58, 0.13); border-left: 3px solid var(--warning); }
+  .box-stolper .box-label { color: var(--warning); }
+  .box-merk { background: rgba(184, 85, 40, 0.10); border-left: 3px solid var(--terracotta); }
+  .box-merk .box-label { color: var(--terracotta); }
+  .box-check { background: rgba(138, 152, 120, 0.18); border-left: 3px solid var(--sage); }
+  .box-check .box-label { color: var(--sage); }
+
+  /* Walk pose triptychon */
+  .pose-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.7rem;
+    margin: 1.2rem 0;
+  }
+  .pose-grid .step-diagram { padding: 0.7rem 0.4rem 0.5rem; }
+  .pose-grid .caption { font-size: 0.74rem; margin-top: 0.4rem; }
+
+  /* Channel list (for reference phase) */
+  .channel-list {
+    margin: 1rem 0;
+    padding: 0;
+    list-style: none;
+  }
+  .channel-list li {
+    padding: 0.6rem 0.8rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--cobalt);
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 0.4rem;
+    font-size: 0.92rem;
+  }
+  .channel-list .ch-name {
+    font-family: var(--font-display);
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .channel-list .ch-desc {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 0.88rem;
+  }
+
+  /* Insight rail */
+  .insight {
+    margin: 1.4rem 0;
+    padding: 1.1rem 1.3rem;
+    background: var(--paper-warm);
+    border: 1px dashed var(--rule);
+    border-radius: 6px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.96rem;
+    color: var(--ink-soft);
+    max-width: 65ch;
+  }
+  .insight::before {
+    content: 'Randnotiz';
+    display: block;
+    font-family: var(--font-mono);
+    font-style: normal;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 0.4rem;
+  }
+
+  .doc-footer {
+    padding: 2.5rem 5rem;
+    border-top: 2px solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex; justify-content: space-between;
+  }
+  .doc-footer .terracotta { color: var(--terracotta); }
+
+  @media (max-width: 900px) {
+    .cover, .section, .doc-footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .section-head { grid-template-columns: 1fr; gap: 0.5rem; }
+    .step { grid-template-columns: 1fr; gap: 1rem; }
+    .step-diagram { max-width: 280px; margin: 0 auto; }
+    .phase-banner { grid-template-columns: 1fr; gap: 0.5rem; }
+    .phase-letter { text-align: left; font-size: 3.5rem; }
+    .pose-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #1a1612;
+      --paper-warm: #221d17;
+      --paper-dark: #2a241c;
+      --ink: #ebe3d0;
+      --ink-soft: #b8a98a;
+      --ink-faint: #7a6e58;
+      --terracotta: #e8814a;
+      --terracotta-deep: #c25a2a;
+      --cobalt: #6a9aab;
+      --sage: #a8b898;
+      --warning: #e2884d;
+      --rule: #3a3026;
+    }
+    body {
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    }
+    .step-diagram { background: #f3ecdc !important; border-color: #c8b89a !important; }
+    .step-diagram .caption { color: #5a4d3a !important; }
+  }
+</style>
+</head>
+<body>
+
+<article class="doc">
+
+<!-- COVER -->
+<header class="cover">
+  <div class="cover-marker">
+    <span>Cascadeur · Lernreihe</span>
+    <div class="ml"></div>
+    <span>Projekt 03 · v 1.0</span>
+  </div>
+  <h1>Walk from <em>A nach B</em>:<br>zehn Schritte,<br>echte Distanz.</h1>
+  <p class="subtitle">Manny geht durch den Raum, nicht auf der Stelle. Inbetweening für Pelvis und Beine, klassische Interpolation für Arme. Erste Reference-Phase, erste Custom Track Hierarchy, Fulcrum Motion Cleaning gegen Foot-Sliding.</p>
+  <div class="cover-meta">
+    <div class="mb"><span class="mb-label">Charakter</span><span>UE5-Manny</span></div>
+    <div class="mb"><span class="mb-label">Dauer</span><span>6 s · 180 Frames</span></div>
+    <div class="mb"><span class="mb-label">Distanz</span><span>~7 m · 10 Schritte</span></div>
+    <div class="mb"><span class="mb-label">Kern-Werkzeug</span><span>Inbetweening + Cycle-Build</span></div>
+    <div class="mb"><span class="mb-label">Pipeline-Ziel</span><span>UE5 mit Root Motion</span></div>
+    <div class="mb"><span class="mb-label">Schritte</span><span>17</span></div>
+  </div>
+</header>
+
+
+<!-- § 1 — WAS DU BAUST -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§1</div>
+    <div>
+      <div class="section-tag">Walk-Konzept und Pipeline-Logik</div>
+      <h2 class="section-title">Ein Schritt-Cycle, <em>fünfmal kopiert</em>.</h2>
+    </div>
+  </div>
+
+  <p class="lead">Du baust nicht zehn Schritte einzeln. Du baust einen vollständigen Schritt-Cycle (zwei Schritte) als Anker-Set und replizierst ihn fünfmal durch den Raum.</p>
+
+  <p>Industrieller Standard: Walk-Animations entstehen als <em>Cycle</em>, weil die menschliche Gang-Mechanik repetitiv ist. Zwei Schritte (links-rechts) sind ein vollständiger Cycle, weil Pose 0 und Pose nach zwei Schritten wieder identisch sind. Diese zwei Schritte animierst du in voller Tiefe — Contact, Down, Passing, Up — dann mirror-copy-translate für die übrigen acht Schritte.</p>
+
+  <p>Manny startet bei Position A. Über 6 Sekunden macht er 10 Schritte vorwärts. Endet bei Position B, etwa 7 Meter entfernt. Dazwischen: zehn Bodenkontakte, fünf Passing-Posen, fünf Down-Beats. Inbetweening übernimmt die unteren Körperteile (Pelvis, Beine), klassische Interpolation den oberen Körper (Arme, Schultern, Kopf) — weil dort die Pose erhalten bleiben soll.</p>
+
+  <div class="box box-why">
+    <div class="box-label">Warum die Body-Part-Trennung hier wichtig wird</div>
+    <p>Bei der Arm-Geste in Projekt 02 ging Inbetweening über den ganzen Körper. Bei Walk ist das eine schlechte Idee — die Arme schwingen rhythmisch und gegenläufig zu den Beinen, mit klarer mechanischer Logik. Wenn Inbetweening das selbst generiert, fügt es oft zu viel Variation hinzu. Also: Beine via Inbetweening (KI macht die Schwung-Logik gut), Arme via klassischer Interpolation mit gesetzten Posen (du behältst die Kontrolle).</p>
+  </div>
+
+  <h3>Die vier Walk-Posen</h3>
+  <p>Richard Williams hat in <em>The Animator's Survival Kit</em> das Vokabular für Walk-Animation festgelegt, das heute Standard ist. Vier Kern-Posen pro Schritt-Cycle:</p>
+
+  <div class="pose-grid">
+    <div class="step-diagram">
+      <svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+        <line x1="5" y1="125" x2="95" y2="125" stroke="#1f1a14" stroke-width="1"/>
+        <!-- Contact pose: heel forward, toe back -->
+        <circle cx="50" cy="28" r="6" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="50" y1="34" x2="50" y2="78" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="50" cy="44" r="2" fill="#1f1a14"/>
+        <line x1="46" y1="78" x2="54" y2="78" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Front leg straight (heel strike) -->
+        <line x1="54" y1="78" x2="65" y2="105" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="65" y1="105" x2="72" y2="125" stroke="#b85528" stroke-width="2"/>
+        <!-- Back leg pushing (toe-off) -->
+        <line x1="46" y1="78" x2="38" y2="108" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="38" y1="108" x2="30" y2="125" stroke="#b85528" stroke-width="2"/>
+        <!-- Arms -->
+        <line x1="50" y1="44" x2="62" y2="80" stroke="#5a4d3a" stroke-width="1.2"/>
+        <line x1="50" y1="44" x2="38" y2="80" stroke="#5a4d3a" stroke-width="1.2"/>
+      </svg>
+      <div class="caption"><strong>Contact</strong> · Vorderfuß Ferse, Hinterfuß Zehen</div>
+    </div>
+    <div class="step-diagram">
+      <svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+        <line x1="5" y1="125" x2="95" y2="125" stroke="#1f1a14" stroke-width="1"/>
+        <!-- Down pose: lowest point, both feet flat -->
+        <circle cx="50" cy="33" r="6" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="50" y1="39" x2="50" y2="83" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="50" cy="49" r="2" fill="#1f1a14"/>
+        <line x1="46" y1="83" x2="54" y2="83" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Both legs bent — CoM low -->
+        <line x1="54" y1="83" x2="62" y2="107" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="62" y1="107" x2="60" y2="125" stroke="#b85528" stroke-width="2"/>
+        <line x1="46" y1="83" x2="38" y2="107" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="38" y1="107" x2="40" y2="125" stroke="#b85528" stroke-width="2"/>
+        <!-- Arms -->
+        <line x1="50" y1="49" x2="60" y2="85" stroke="#5a4d3a" stroke-width="1.2"/>
+        <line x1="50" y1="49" x2="40" y2="85" stroke="#5a4d3a" stroke-width="1.2"/>
+        <!-- Low marker -->
+        <line x1="15" y1="33" x2="20" y2="33" stroke="#8a7d68" stroke-width="0.6" stroke-dasharray="2,2"/>
+      </svg>
+      <div class="caption"><strong>Down</strong> · tiefster Punkt, beide Füße flach</div>
+    </div>
+    <div class="step-diagram">
+      <svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+        <line x1="5" y1="125" x2="95" y2="125" stroke="#1f1a14" stroke-width="1"/>
+        <!-- Passing pose: standing leg straight, other passing through -->
+        <circle cx="50" cy="25" r="6" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="50" y1="31" x2="50" y2="76" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="50" cy="41" r="2" fill="#1f1a14"/>
+        <line x1="46" y1="76" x2="54" y2="76" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Standing leg straight -->
+        <line x1="50" y1="76" x2="50" y2="125" stroke="#b85528" stroke-width="2.4"/>
+        <!-- Passing leg bent, knee high -->
+        <line x1="50" y1="76" x2="58" y2="98" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="58" y1="98" x2="52" y2="115" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Arms -->
+        <line x1="50" y1="41" x2="50" y2="80" stroke="#5a4d3a" stroke-width="1.2"/>
+      </svg>
+      <div class="caption"><strong>Passing</strong> · Standbein gestreckt, Spielbein passiert</div>
+    </div>
+    <div class="step-diagram">
+      <svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+        <line x1="5" y1="125" x2="95" y2="125" stroke="#1f1a14" stroke-width="1"/>
+        <!-- Up pose: highest, before heel strike -->
+        <circle cx="50" cy="22" r="6" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="50" y1="28" x2="50" y2="72" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="50" cy="38" r="2" fill="#1f1a14"/>
+        <line x1="46" y1="72" x2="54" y2="72" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Push leg on toes -->
+        <line x1="46" y1="72" x2="38" y2="100" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="38" y1="100" x2="32" y2="124" stroke="#b85528" stroke-width="2"/>
+        <circle cx="32" cy="124" r="2" fill="#b85528"/>
+        <!-- Forward leg about to land -->
+        <line x1="54" y1="72" x2="65" y2="100" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="65" y1="100" x2="72" y2="118" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Arms -->
+        <line x1="50" y1="38" x2="58" y2="74" stroke="#5a4d3a" stroke-width="1.2"/>
+        <line x1="50" y1="38" x2="42" y2="74" stroke="#5a4d3a" stroke-width="1.2"/>
+        <line x1="15" y1="22" x2="22" y2="22" stroke="#8a7d68" stroke-width="0.6" stroke-dasharray="2,2"/>
+      </svg>
+      <div class="caption"><strong>Up</strong> · höchster Punkt, vor Heel-Strike</div>
+    </div>
+  </div>
+
+  <div class="insight">
+    Eadweard Muybridge fotografierte 1878 erstmals systematisch das Galoppieren eines Pferdes mit zwölf Kameras hintereinander — und stellte fest, dass alle vier Hufe gleichzeitig vom Boden sind, was vorher umstritten war. Das war der Geburtsmoment der wissenschaftlichen Bewegungsstudie. Williams' Walk-Posen aus <em>The Animator's Survival Kit</em> stehen in derselben Tradition: nicht „so sieht das schön aus", sondern „so läuft ein Körper tatsächlich, beobachtet, dokumentiert, festgehalten".
+  </div>
+</section>
+
+
+<!-- § 2 — PHASE A: SETUP -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§2</div>
+    <div>
+      <div class="section-tag">Phase A · Setup</div>
+      <h2 class="section-title">Scene, Trajektorie, <em>Manny am Start</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">A</div>
+    <div>
+      <h4>Setup</h4>
+      <div class="phase-meta">Scene · 6-Sekunden-Timeline · Distanz-Planung</div>
+      <p>Manny laden, Track-Hierarchie via Quick Rigging Tool aktualisieren, Distanz und Startposition planen. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Top-down ground -->
+        <rect x="20" y="60" width="280" height="80" fill="#ede4d0" stroke="#c8b89a" stroke-width="1.5"/>
+        <!-- Grid lines -->
+        <line x1="48" y1="60" x2="48" y2="140" stroke="#c8b89a" stroke-width="0.6"/>
+        <line x1="76" y1="60" x2="76" y2="140" stroke="#c8b89a" stroke-width="0.6"/>
+        <line x1="104" y1="60" x2="104" y2="140" stroke="#c8b89a" stroke-width="0.6"/>
+        <line x1="132" y1="60" x2="132" y2="140" stroke="#c8b89a" stroke-width="0.6"/>
+        <line x1="160" y1="60" x2="160" y2="140" stroke="#c8b89a" stroke-width="0.6"/>
+        <line x1="188" y1="60" x2="188" y2="140" stroke="#c8b89a" stroke-width="0.6"/>
+        <line x1="216" y1="60" x2="216" y2="140" stroke="#c8b89a" stroke-width="0.6"/>
+        <line x1="244" y1="60" x2="244" y2="140" stroke="#c8b89a" stroke-width="0.6"/>
+        <line x1="272" y1="60" x2="272" y2="140" stroke="#c8b89a" stroke-width="0.6"/>
+        <!-- Start point A -->
+        <circle cx="35" cy="100" r="8" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="35" y="55" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="14" fill="#b85528">A</text>
+        <!-- End point B -->
+        <circle cx="285" cy="100" r="8" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="285" y="55" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="14" fill="#1f1a14">B</text>
+        <!-- Direction arrow -->
+        <line x1="50" y1="100" x2="270" y2="100" stroke="#b85528" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <path d="M 268 96 L 275 100 L 268 104 z" fill="#b85528"/>
+        <!-- Footprint markers -->
+        <g font-family="JetBrains Mono, monospace" font-size="6" fill="#5a4d3a">
+          <text x="58" y="85" text-anchor="middle">1</text>
+          <text x="83" y="115" text-anchor="middle">2</text>
+          <text x="108" y="85" text-anchor="middle">3</text>
+          <text x="133" y="115" text-anchor="middle">4</text>
+          <text x="158" y="85" text-anchor="middle">5</text>
+          <text x="183" y="115" text-anchor="middle">6</text>
+          <text x="208" y="85" text-anchor="middle">7</text>
+          <text x="233" y="115" text-anchor="middle">8</text>
+          <text x="258" y="85" text-anchor="middle">9</text>
+          <text x="278" y="115" text-anchor="middle">10</text>
+        </g>
+        <text x="160" y="170" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#1f1a14">~7 M · 10 SCHRITTE · 6 SEKUNDEN</text>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Top-Down · X-Achse vorwärts</text>
+      </svg>
+      <div class="caption">Trajektorie von A nach B. Zehn Fußabdrücke abwechselnd links/rechts. Eine Schrittlänge ≈ 70 cm.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">01</span>
+        <span class="step-title">Scene aufsetzen und Distanz planen</span>
+      </div>
+      <p>Manny laden, Scene-Settings: 30 fps, Timeline 0 bis 180. Manny auf Position A platzieren (Weltursprung oder eine X-Position deiner Wahl). Zielposition B liegt 7 Meter in X-Richtung — bei einem typischen Manny von ca. 1.80 m Höhe ist das eine glaubwürdige Schrittlänge von rund 70 cm pro Schritt.</p>
+      <p>Profilansicht (Side-View) aktivieren. Walk wird im Profil gebaut, weil die Vor-Zurück-Bewegung der Beine, die Höhen-Oszillation des CoM und die Hand-Bögen alle in der Bildebene liegen.</p>
+      <p>Speichern als <code>projekt-03-walk.casc</code>.</p>
+      <div class="shortcut-row">
+        <span>Side-View:</span><kbd>Numpad 3</kbd>
+        <span>Top-View:</span><kbd>Numpad 7</kbd>
+        <span>Save:</span><kbd>Ctrl</kbd>+<kbd>S</kbd>
+      </div>
+      <div class="box box-merk">
+        <div class="box-label">Maßstab vorher klären</div>
+        <p>Wenn Manny in deiner Scene gestaucht oder gestreckt im Vergleich zur Realwelt importiert wurde, sind 7 Meter nicht 7 Meter. Vor dem Setup einmal Bones-Length prüfen — der Manny-Femur sollte ca. 45 cm, der Tibia ca. 40 cm betragen. Falls Verzerrungen: Re-Import mit korrekter Skalierung.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Manny in profile, neutral start -->
+        <circle cx="100" cy="42" r="13" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="100" y1="55" x2="100" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <circle cx="100" cy="72" r="3" fill="#1f1a14"/>
+        <line x1="92" y1="130" x2="108" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Both arms slight forward swing position -->
+        <line x1="100" y1="72" x2="103" y2="125" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="103" y1="125" x2="105" y2="165" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Both feet on ground side by side -->
+        <line x1="92" y1="130" x2="93" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="93" y1="175" x2="95" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="108" y1="130" x2="107" y2="175" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="107" y1="175" x2="105" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="85" y1="220" x2="115" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <!-- Position A marker -->
+        <circle cx="100" cy="232" r="4" fill="#b85528"/>
+        <text x="115" y="235" font-family="Fraunces, serif" font-style="italic" font-size="11" fill="#b85528">A</text>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#8a7d68">FRAME 0 · STARTPOSITION A</text>
+      </svg>
+      <div class="caption">Manny bei A, beide Füße zusammen. Bereit zum ersten Schritt.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">02</span>
+        <span class="step-title">Track-Hierarchie und Startpose</span>
+      </div>
+      <p>Wie in Projekt 02: in den Rig-Mode, Quick Rigging Tool, <strong>Generate Rig</strong>. Stellt sicher, dass die 2025.3+-Track-Struktur aktiv ist.</p>
+      <p>In AutoPosing-Mode. Auf Frame 0 die Startpose setzen: stabiler Stand, beide Füße zusammen am Weltursprung, Arme neutral, Kopf gerade. Beide Füße via <kbd>R</kbd> fixieren. Erster Keyframe. Auf IK lassen — wir wechseln das Beinpaar später selektiv auf FK, weil hier Bewegung durch den Raum kommt.</p>
+      <div class="box box-stolper">
+        <div class="box-label">IK vs FK bei Bewegung durch den Raum</div>
+        <p>Bisher in der Reihe galt: Bodenkontakt = IK. Das stimmt weiterhin <em>für den momentanen Bodenkontakt</em>. Aber wenn der Charakter durch den Raum geht, müssen die Beine wechselseitig in IK (während Bodenkontakt) und FK (während Schwungphase) sein. Cascadeur kann das per Pose-Keyframe steuern — Bodenkontakt-Pose auf IK, Schwung-Pose auf FK. Das wird in Phase B konkret.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 3 — REFERENCE-PHASE -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§3</div>
+    <div>
+      <div class="section-tag">Reference-Phase (vor Phase B)</div>
+      <h2 class="section-title">Reference <em>aufbereiten</em>, dann posen.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner ref">
+    <div class="phase-letter">R</div>
+    <div>
+      <h4>Reference</h4>
+      <div class="phase-meta">Channel-Quellen · After Effects Time Remapping · Walk-Charakter</div>
+      <p>Bei jeder Lokomotions-Brochüre kommt vor dem Posen eine Reference-Phase. Diese hier ist die erste der Reihe und etabliert das Pattern. <em>Ein Schritt.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 3 — Reference -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- AE-style timeline with marker manipulation -->
+        <rect x="20" y="55" width="280" height="35" fill="#ede4d0" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="30" y="76" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">AE · Time Remap</text>
+        <!-- Original frame markers -->
+        <line x1="60" y1="80" x2="60" y2="88" stroke="#8a7d68" stroke-width="1"/>
+        <line x1="100" y1="80" x2="100" y2="88" stroke="#8a7d68" stroke-width="1"/>
+        <line x1="140" y1="80" x2="140" y2="88" stroke="#8a7d68" stroke-width="1"/>
+        <line x1="180" y1="80" x2="180" y2="88" stroke="#8a7d68" stroke-width="1"/>
+        <line x1="220" y1="80" x2="220" y2="88" stroke="#8a7d68" stroke-width="1"/>
+        <line x1="260" y1="80" x2="260" y2="88" stroke="#8a7d68" stroke-width="1"/>
+        <!-- Edited frame markers -->
+        <circle cx="60" cy="84" r="3" fill="#b85528"/>
+        <circle cx="115" cy="84" r="3" fill="#b85528"/>
+        <circle cx="135" cy="84" r="3" fill="#b85528"/>
+        <circle cx="200" cy="84" r="3" fill="#b85528"/>
+        <circle cx="240" cy="84" r="3" fill="#b85528"/>
+        <circle cx="270" cy="84" r="3" fill="#b85528"/>
+
+        <!-- Walk silhouettes below -->
+        <g transform="translate(40, 120)">
+          <circle cx="0" cy="0" r="5" fill="none" stroke="#1f1a14" stroke-width="1.2"/>
+          <line x1="0" y1="5" x2="0" y2="35" stroke="#1f1a14" stroke-width="1.2"/>
+          <line x1="0" y1="35" x2="-6" y2="50" stroke="#1f1a14" stroke-width="1.2"/>
+          <line x1="0" y1="35" x2="6" y2="50" stroke="#1f1a14" stroke-width="1.2"/>
+          <line x1="0" y1="15" x2="-7" y2="32" stroke="#1f1a14" stroke-width="1"/>
+          <line x1="0" y1="15" x2="7" y2="32" stroke="#1f1a14" stroke-width="1"/>
+        </g>
+        <g transform="translate(105, 120)">
+          <circle cx="0" cy="0" r="5" fill="none" stroke="#1f1a14" stroke-width="1.2"/>
+          <line x1="0" y1="5" x2="0" y2="35" stroke="#1f1a14" stroke-width="1.2"/>
+          <line x1="0" y1="35" x2="-10" y2="50" stroke="#1f1a14" stroke-width="1.2"/>
+          <line x1="0" y1="35" x2="9" y2="50" stroke="#1f1a14" stroke-width="1.2"/>
+          <line x1="0" y1="15" x2="-9" y2="30" stroke="#1f1a14" stroke-width="1"/>
+          <line x1="0" y1="15" x2="9" y2="30" stroke="#1f1a14" stroke-width="1"/>
+        </g>
+        <g transform="translate(180, 120)">
+          <circle cx="0" cy="0" r="5" fill="none" stroke="#1f1a14" stroke-width="1.2"/>
+          <line x1="0" y1="5" x2="0" y2="35" stroke="#1f1a14" stroke-width="1.2"/>
+          <line x1="0" y1="35" x2="-9" y2="50" stroke="#1f1a14" stroke-width="1.2"/>
+          <line x1="0" y1="35" x2="10" y2="50" stroke="#1f1a14" stroke-width="1.2"/>
+          <line x1="0" y1="15" x2="9" y2="30" stroke="#1f1a14" stroke-width="1"/>
+          <line x1="0" y1="15" x2="-9" y2="30" stroke="#1f1a14" stroke-width="1"/>
+        </g>
+        <g transform="translate(255, 120)">
+          <circle cx="0" cy="0" r="5" fill="none" stroke="#1f1a14" stroke-width="1.2"/>
+          <line x1="0" y1="5" x2="0" y2="35" stroke="#1f1a14" stroke-width="1.2"/>
+          <line x1="0" y1="35" x2="-6" y2="50" stroke="#1f1a14" stroke-width="1.2"/>
+          <line x1="0" y1="35" x2="6" y2="50" stroke="#1f1a14" stroke-width="1.2"/>
+        </g>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Reference vor Animation: Timing exaggerieren, Kontakt verlängern</text>
+      </svg>
+      <div class="caption">After Effects Time Remapping verschiebt Reference-Frames für animations-freundliches Timing.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">03</span>
+        <span class="step-title">Reference suchen und aufbereiten</span>
+      </div>
+      <p>Bevor du eine Pose setzt — Reference. Walk-Reference aus einer der vertrauenswürdigen Quellen ziehen. Bei einem normalen Schritt-Walk reicht oft schon ein Mocap-Clip oder eine seitliche Aufnahme einer realen Person, die mehrere Schritte vor der Kamera macht.</p>
+      <div class="box box-merk">
+        <div class="box-label">Reference-Quellen aus der Community</div>
+        <ul class="channel-list">
+          <li>
+            <span class="ch-name">Motion Actor Inc.</span> · <span class="ch-desc">YouTube. Breite Bibliothek von Walk-Stilen, mehrere Kamerawinkel pro Bewegung.</span>
+          </li>
+          <li>
+            <span class="ch-name">Endless Reference</span> · <span class="ch-desc">YouTube. Heavy Lifting, Acrobatics, neuerdings auch alltägliche Bewegungen.</span>
+          </li>
+          <li>
+            <span class="ch-name">Gamology</span> · <span class="ch-desc">YouTube. Reale Stunt-Actors stellen Game-Moves nach — gut für stylisierte Walks.</span>
+          </li>
+          <li>
+            <span class="ch-name">Howard Wimshurst · animationguild.com</span> · <span class="ch-desc">Kostenpflichtige Reference-Packs aus 2D-Animator-Sicht.</span>
+          </li>
+        </ul>
+      </div>
+      <p><strong>Reference aufbereiten</strong>: Reference-Video in After Effects laden. Time Remapping aktivieren. Wichtige Frames identifizieren (Contact-Moments, Heel-Strikes) und am Tempo der späteren Animation ausrichten. Schnelle Übergänge (Toe-off → Passing) noch schneller machen, langsame Momente (Heel-Strike → Down-Pose) etwas länger halten. Animation lebt von Exaggeration.</p>
+      <p>Das exportierte Reference-Video in einem Side-Viewer-Tool oder direkt im Cascadeur-Reference-Viewer laden, damit du beim Posen frame-genau abgleichen kannst.</p>
+      <div class="insight">
+        Steve McQueen ging mit ausladenden, langsamen Schritten und einer leichten Vor-Lehne — der „cool walk". Charlie Chaplins Tramp ging mit auswärts gestellten Füßen, kleinen Schritten, übertriebenem Hüftschwung. Der Walk <em>ist</em> der Charakter — bevor jemand spricht oder eine Mimik macht, hat der Zuschauer die Person über den Gang schon eingeschätzt. Bei deinem Manny entscheidet sich das in der Reference-Wahl.
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 4 — PHASE B: GROBSCHNITT -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§4</div>
+    <div>
+      <div class="section-tag">Phase B · Grobschnitt (Iteration 1)</div>
+      <h2 class="section-title">Ein Cycle als Anker, <em>dann replizieren</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">B</div>
+    <div>
+      <h4>Grobschnitt</h4>
+      <div class="phase-meta">Ein Schritt-Cycle · Contact + Down · Mirror + Copy</div>
+      <p>Bei 6 Sekunden / 10 Schritten dauert ein voller Schritt-Cycle (zwei Schritte) etwa 36 Frames. Anker-Posen für den ersten Cycle bauen, dann mirrorn und durch den Raum replizieren. <em>Vier Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Right contact pose: right foot forward heel down, left foot back toe up -->
+        <circle cx="100" cy="35" r="13" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="100" y1="48" x2="100" y2="125" stroke="#1f1a14" stroke-width="2"/>
+        <circle cx="100" cy="65" r="3" fill="#1f1a14"/>
+        <line x1="92" y1="125" x2="108" y2="125" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Front (right) leg: straight, heel landing -->
+        <line x1="108" y1="125" x2="135" y2="180" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="135" y1="180" x2="148" y2="218" stroke="#b85528" stroke-width="2.4"/>
+        <!-- Heel marker -->
+        <circle cx="148" cy="220" r="3" fill="#b85528"/>
+        <text x="158" y="223" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">HEEL</text>
+        <!-- Back (left) leg: pushing off, toe on ground -->
+        <line x1="92" y1="125" x2="65" y2="180" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="65" y1="180" x2="52" y2="218" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Toe marker -->
+        <circle cx="52" cy="220" r="3" fill="#b85528"/>
+        <text x="38" y="223" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">TOE</text>
+        <!-- Arms in counter-swing: left arm forward, right arm back -->
+        <line x1="100" y1="65" x2="115" y2="115" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="115" y1="115" x2="80" y2="150" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="100" y1="65" x2="85" y2="115" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="85" y1="115" x2="125" y2="148" stroke="#1f1a14" stroke-width="2"/>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 9 · R-CONTACT</text>
+      </svg>
+      <div class="caption">Rechter Fuß vorn (Ferse), linker Fuß hinten (Zehen). Arme gegenläufig.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">04</span>
+        <span class="step-title">Anker — R-Contact (Frame 9)</span>
+      </div>
+      <p>Auf Frame 9 — etwa ein Viertel des ersten Cycles. Die erste Contact-Pose: rechter Fuß vorn, Ferse berührt den Boden, Bein gestreckt. Linker Fuß hinten, nur die Zehen am Boden, Bein abstoßend. Hüfte mit subtiler Asymmetrie (Standbein-Seite leicht hoch). Arme gegenläufig: linker Arm nach vorn, rechter Arm nach hinten — das ist das gegenläufige Schwingen, das den Walk ausbalanciert.</p>
+      <p>CoM-Position: leicht angehoben gegenüber dem späteren Down-Punkt. Translation: rechter Fuß ca. 35 cm vor dem CoM, linker Fuß ca. 35 cm dahinter. Damit ist eine Schrittlänge von etwa 70 cm definiert.</p>
+      <p>Keyframe setzen. Beide Füße via <kbd>R</kbd> fixieren — wichtig, weil hier zwei verschiedene Body-Parts gleichzeitig Bodenkontakt haben.</p>
+      <div class="box box-merk">
+        <div class="box-label">Fuß-Rolle als Detail-Layer</div>
+        <p>Realistische Walks haben eine Fuß-Roll: Ferse landet zuerst, dann mittelfuß, dann ganzer Fuß flach (= Down-Pose), dann hebt sich die Ferse, dann nur Zehen. In dieser Brochüre arbeiten wir mit „Ferse vorn, Zehen hinten" als Vereinfachung — Detail-Pose-Anker für den vollen Fuß-Roll können später dazu, falls die Animation polished sein soll.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="220" x2="180" y2="220" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Down pose: both feet flat, knees bent, CoM lowest -->
+        <circle cx="100" cy="45" r="13" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="100" y1="58" x2="100" y2="135" stroke="#1f1a14" stroke-width="2"/>
+        <circle cx="100" cy="75" r="3" fill="#1f1a14"/>
+        <line x1="92" y1="135" x2="108" y2="135" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Both legs flat, knees bent -->
+        <line x1="108" y1="135" x2="125" y2="185" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="125" y1="185" x2="135" y2="218" stroke="#b85528" stroke-width="2.4"/>
+        <line x1="92" y1="135" x2="75" y2="185" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="75" y1="185" x2="65" y2="218" stroke="#b85528" stroke-width="2.4"/>
+        <!-- Both feet flat -->
+        <line x1="125" y1="220" x2="145" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <line x1="55" y1="220" x2="75" y2="220" stroke="#1f1a14" stroke-width="3"/>
+        <!-- Arms in counter-swing -->
+        <line x1="100" y1="75" x2="115" y2="125" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="115" y1="125" x2="80" y2="160" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="100" y1="75" x2="85" y2="125" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="85" y1="125" x2="125" y2="155" stroke="#1f1a14" stroke-width="2"/>
+        <!-- CoM low marker -->
+        <line x1="25" y1="115" x2="35" y2="115" stroke="#8a7d68" stroke-width="0.6" stroke-dasharray="2,2"/>
+        <text x="32" y="113" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="7" fill="#8a7d68">LOW</text>
+        <text x="100" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME 12 · DOWN</text>
+      </svg>
+      <div class="caption">Beide Füße flach am Boden, Knie gebeugt, CoM am tiefsten Punkt des Cycles.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">05</span>
+        <span class="step-title">Anker — Down (Frame 12)</span>
+      </div>
+      <p>Drei Frames nach Contact, auf Frame 12. Down-Pose: beide Füße jetzt flach am Boden, Knie deutlich gebeugt, CoM am tiefsten Punkt des Cycles — etwa 5-7 cm tiefer als bei Contact. Hüfte abgesenkt, Wirbelsäule minimal vorgebeugt (Stoßdämpfer-Effekt).</p>
+      <p>Die Arme haben sich kaum bewegt — sie sind noch in der gleichen Counter-Swing-Position wie bei Contact. Keyframe setzen.</p>
+      <p>Down ist der wichtigste Anker für den Walk-Charakter. Tiefer Down = schwerer, betonter Walk (wie ein müder Person oder schwere Last). Flacher Down = leichter, federnder Walk (Sportler, gut gelaunte Person). Die Differenz zwischen CoM-Up und CoM-Down ist der visuelle Walk-Charakter.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Down-Pose ohne CoM-Senkung</div>
+        <p>Wenn du Down setzt aber den CoM nicht wirklich absenkst (Hüfte bleibt gleich hoch), wird der Walk lebensgefährlich flach — Manny gleitet wie auf Schienen statt zu gehen. Mindestens 4-5 cm CoM-Differenz zwischen Contact-Höhe und Down-Tiefe, sonst ist der Walk unsichtbar.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Timeline showing pose pairs -->
+        <line x1="20" y1="100" x2="300" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- First half: R-contact, R-down -->
+        <rect x="60" y="93" width="12" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="78" y="93" width="12" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <text x="66" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">R-C</text>
+        <text x="84" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">R-D</text>
+        <!-- Mirror arrow -->
+        <path d="M 95 100 L 165 100" stroke="#284858" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="130" y="92" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="0.1em" fill="#284858">MIRROR</text>
+        <text x="130" y="115" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">+18 Frames</text>
+        <!-- Second half: L-contact, L-down -->
+        <rect x="170" y="93" width="12" height="14" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="188" y="93" width="12" height="14" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.2"/>
+        <text x="176" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">L-C</text>
+        <text x="194" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">L-D</text>
+        <!-- Cycle end -->
+        <rect x="244" y="93" width="12" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <text x="250" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">R-C2</text>
+        <!-- Frame labels -->
+        <text x="66" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">9</text>
+        <text x="84" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">12</text>
+        <text x="176" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">27</text>
+        <text x="194" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">30</text>
+        <text x="250" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">45</text>
+        <text x="160" y="160" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Ein Schritt-Cycle: R-Contact + R-Down + L-Contact + L-Down (gespiegelt)</text>
+        <text x="160" y="180" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">36 FRAMES · 2 SCHRITTE</text>
+      </svg>
+      <div class="caption">Ein vollständiger Schritt-Cycle: zwei Contact + zwei Down. Linke Hälfte via Mirror.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">06</span>
+        <span class="step-title">Mirror — L-Contact und L-Down generieren</span>
+      </div>
+      <p>Frame 27 (18 Frames nach R-Contact = halber Cycle): L-Contact-Pose. Statt sie von Hand zu bauen, mirrorst du die R-Contact-Pose.</p>
+      <p>Auf Frame 9 navigieren, alle Controller selektieren. <strong>Copy Frame</strong> (<kbd>Ctrl</kbd>+<kbd>C</kbd>). Auf Frame 27 navigieren. Paste auf der gespiegelten X-Achse — bei den meisten Cascadeur-Builds über das Mirror-Tool: Toolbar → Mirror → X-Plane → <em>Mirror on Frame</em> (oder die paste-into-interval-Variante mit Flip).</p>
+      <p>Die L-Contact-Pose ist jetzt aktiv: linker Fuß vorn mit Ferse, rechter Fuß hinten mit Zehen, Arme entsprechend gespiegelt (rechter Arm vorn, linker Arm hinten).</p>
+      <p>Selbe Prozedur für L-Down auf Frame 30: R-Down (Frame 12) → mirrorn → einfügen auf Frame 30.</p>
+      <p>Frame 45 = Beginn des zweiten Cycles. Pose von R-Contact (Frame 9) auf Frame 45 duplizieren mit X-Translation von +1.4 m (eine volle Schrittlänge × 2, da zwei Schritte). Das ist der erste Translations-Move durch den Raum.</p>
+      <div class="shortcut-row">
+        <span>Copy Frame:</span><kbd>Ctrl</kbd>+<kbd>C</kbd>
+        <span>Paste Frame:</span><kbd>Ctrl</kbd>+<kbd>V</kbd>
+        <span>Schneller Frame-Copy:</span><kbd>Shift</kbd>+<kbd>Middle-Click</kbd>+<kbd>Drag</kbd>
+      </div>
+      <div class="box box-stolper">
+        <div class="box-label">Mirror funktioniert nur bei sauberer L/R-Bone-Benennung</div>
+        <p>Cascadeur erkennt L/R-Bones an Naming-Conventions (z.B. <code>L_Foot</code>, <code>R_Foot</code>). Bei UE5-Manny aus der Sample-Szene funktioniert das. Bei eigenen Charakteren — vor allem aus Blender mit Auto-Rig Pro — kann die Naming abweichen. Falls Mirror nicht sauber arbeitet: Bone-Namen prüfen, oder im Symmetry-Settings die Side-Identifier manuell setzen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="100" x2="300" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- 5 cycles, each with 4 keys -->
+        <g fill="#b85528" stroke="#1f1a14" stroke-width="1">
+          <rect x="40" y="93" width="6" height="14"/>
+          <rect x="48" y="93" width="6" height="14"/>
+          <rect x="60" y="93" width="6" height="14"/>
+          <rect x="68" y="93" width="6" height="14"/>
+        </g>
+        <g fill="#b85528" stroke="#1f1a14" stroke-width="1" opacity="0.85">
+          <rect x="92" y="93" width="6" height="14"/>
+          <rect x="100" y="93" width="6" height="14"/>
+          <rect x="112" y="93" width="6" height="14"/>
+          <rect x="120" y="93" width="6" height="14"/>
+        </g>
+        <g fill="#b85528" stroke="#1f1a14" stroke-width="1" opacity="0.7">
+          <rect x="144" y="93" width="6" height="14"/>
+          <rect x="152" y="93" width="6" height="14"/>
+          <rect x="164" y="93" width="6" height="14"/>
+          <rect x="172" y="93" width="6" height="14"/>
+        </g>
+        <g fill="#b85528" stroke="#1f1a14" stroke-width="1" opacity="0.55">
+          <rect x="196" y="93" width="6" height="14"/>
+          <rect x="204" y="93" width="6" height="14"/>
+          <rect x="216" y="93" width="6" height="14"/>
+          <rect x="224" y="93" width="6" height="14"/>
+        </g>
+        <g fill="#b85528" stroke="#1f1a14" stroke-width="1" opacity="0.4">
+          <rect x="248" y="93" width="6" height="14"/>
+          <rect x="256" y="93" width="6" height="14"/>
+          <rect x="268" y="93" width="6" height="14"/>
+          <rect x="276" y="93" width="6" height="14"/>
+        </g>
+        <text x="57" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">C1</text>
+        <text x="109" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">C2</text>
+        <text x="161" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">C3</text>
+        <text x="213" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">C4</text>
+        <text x="265" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">C5</text>
+        <text x="40" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">0</text>
+        <text x="160" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">90</text>
+        <text x="280" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">180</text>
+        <text x="160" y="160" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Fünf Cycles, jeweils mit Translations-Offset durch den Raum</text>
+      </svg>
+      <div class="caption">Fünf vollständige Schritt-Cycles über 180 Frames. Jeweils +1.4 m X-Translation.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">07</span>
+        <span class="step-title">Cycle viermal replizieren — mit Translation</span>
+      </div>
+      <p>Der erste Cycle ist von Frame 0 bis 36 (mit Posen auf 9, 12, 27, 30 und Start- und End-Anker auf 0, 36). Ihn jetzt viermal in den Raum hinein replizieren.</p>
+      <p>Beste Methode: Interval Edit Mode. Frame 0 bis 36 selektieren, dann Mode auf <em>Step</em>, dann den ganzen Interval kopieren und mit X-Offset von +1.4 m an Position Frame 36 einfügen. Cascadeur dupliziert den Cycle inklusive der Translation. Wiederholen für Frames 72, 108, 144.</p>
+      <p>Wichtig: Bei jedem Cycle-Repeat verschiebst du den ganzen Charakter um eine volle Schrittlängen-Distanz nach vorn (ein voller Cycle = 2 Schritte = 1.4 m). Nach 5 Cycles ist Manny bei Frame 180 angekommen — etwa 7 Meter vor Position A.</p>
+      <p>Auf der Timeline siehst du jetzt ein dichtes Anker-Muster. Bezier-Interpolation zwischen den Ankern erzeugt schon eine erkennbare Walk-Bewegung — aber noch zu mechanisch. Phase C macht daraus echte Lokomotion.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase B</div>
+        <p>Manny steht bei A, macht zehn Schritte sichtbar und verteilt durch die 6 Sekunden, endet bei B. Anker-Frames sind sichtbar in der Timeline. Im Profil-View sieht man die Höhen-Oszillation des CoM (zwischen Contact-High und Down-Low). Im Top-View sieht man die abwechselnde Fußplatzierung. Noch nicht schön, aber strukturell richtig.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 5 — PHASE C: INBETWEENING -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§5</div>
+    <div>
+      <div class="section-tag">Phase C · Inbetweening (Iteration 2)</div>
+      <h2 class="section-title">Pelvis und Beine via Inbetweening, <em>Arme klassisch</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">C</div>
+    <div>
+      <h4>Inbetweening</h4>
+      <div class="phase-meta">Track-Separation · FK-Setting · Generation</div>
+      <p>Bisher hatten alle Intervalle die gleiche Interpolation. Jetzt trennst du: Pelvis + Beine via Inbetweening, Arme + Torso + Kopf via Bezier. Per-Body-Part-Interpolation ist das neue Werkzeug ab diesem Projekt. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Body parts tracks visualization -->
+        <text x="20" y="35" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">PER-BODY-PART INTERPOLATION</text>
+        <g font-family="DM Sans, sans-serif" font-size="11" fill="#1f1a14">
+          <!-- Head -->
+          <rect x="20" y="50" width="80" height="20" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="60" y="64" text-anchor="middle">Head</text>
+          <rect x="120" y="50" width="160" height="20" fill="#ede4d0" stroke="#284858" stroke-width="1.5"/>
+          <text x="200" y="64" text-anchor="middle" fill="#284858">Bezier · Pose erhalten</text>
+
+          <!-- Torso -->
+          <rect x="20" y="75" width="80" height="20" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="60" y="89" text-anchor="middle">Torso</text>
+          <rect x="120" y="75" width="160" height="20" fill="#ede4d0" stroke="#284858" stroke-width="1.5"/>
+          <text x="200" y="89" text-anchor="middle" fill="#284858">Bezier · Pose erhalten</text>
+
+          <!-- Arms -->
+          <rect x="20" y="100" width="80" height="20" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="60" y="114" text-anchor="middle">Arms</text>
+          <rect x="120" y="100" width="160" height="20" fill="#ede4d0" stroke="#284858" stroke-width="1.5"/>
+          <text x="200" y="114" text-anchor="middle" fill="#284858">Bezier · Counter-Swing</text>
+
+          <!-- Pelvis -->
+          <rect x="20" y="125" width="80" height="20" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="60" y="139" text-anchor="middle">Pelvis</text>
+          <rect x="120" y="125" width="160" height="20" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="200" y="139" text-anchor="middle" fill="#f3ecdc">Inbetweening · KI generiert</text>
+
+          <!-- Legs -->
+          <rect x="20" y="150" width="80" height="20" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="60" y="164" text-anchor="middle">Legs</text>
+          <rect x="120" y="150" width="160" height="20" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="200" y="164" text-anchor="middle" fill="#f3ecdc">Inbetweening · KI generiert</text>
+        </g>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Per-Track-Interpolation: jede Body-Part-Gruppe eigene Wahl</text>
+      </svg>
+      <div class="caption">Track-by-Track: Pelvis/Legs auf Inbetweening, Arms/Torso/Head bleiben Bezier.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">08</span>
+        <span class="step-title">Track-Separation und Interpolations-Wahl</span>
+      </div>
+      <p>Im Outliner die Track-Hierarchie öffnen. Du siehst die Gruppen aus Schritt 02: Pelvis → Torso → Head/Arms, Pelvis → Legs.</p>
+      <p>Für die beiden Bein-Tracks (L_Leg und R_Leg) und den Pelvis-Track die Interpolation auf <strong>Inbetweening</strong> setzen. Alle anderen Tracks (Torso, Head, L_Arm, R_Arm) lässt du auf <strong>Bezier Clamped</strong>.</p>
+      <p>Das ist der zentrale Unterschied zu Projekt 02. Bei der Arm-Geste war Inbetweening für den ganzen Körper aktiv. Hier wählst du gezielt aus, weil die Arme rhythmisch gegen die Beine schwingen sollen — eine Logik, die Inbetweening nicht zuverlässig hinbekommt, weil es plausible aber nicht koordinierte Bewegungen generiert.</p>
+      <div class="box box-why">
+        <div class="box-label">Warum nicht alles Inbetweening</div>
+        <p>Inbetweening kennt humanoide Bewegung, aber nicht <em>diese spezifische Walk-Choreografie</em>. Bei einer Cycle-Animation mit gegenläufigen Arme würde es manchmal die Arme synchron schwingen lassen oder Schultern-Rotationen weglassen, die du explizit gesetzt hast. Mit Bezier auf den Arme behältst du diese Kontrolle.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 9 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Side by side: IK vs FK for walking character -->
+        <g>
+          <text x="80" y="30" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#1f1a14">BODENKONTAKT</text>
+          <circle cx="80" cy="55" r="9" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="80" y1="64" x2="80" y2="120" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="72" y1="120" x2="88" y2="120" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="72" y1="120" x2="60" y2="160" stroke="#b85528" stroke-width="2"/>
+          <line x1="60" y1="160" x2="55" y2="180" stroke="#b85528" stroke-width="2"/>
+          <line x1="88" y1="120" x2="98" y2="160" stroke="#b85528" stroke-width="2"/>
+          <line x1="98" y1="160" x2="105" y2="180" stroke="#b85528" stroke-width="2"/>
+          <line x1="50" y1="180" x2="62" y2="180" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="100" y1="180" x2="112" y2="180" stroke="#1f1a14" stroke-width="2"/>
+          <text x="80" y="195" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#b85528" font-weight="600">IK</text>
+        </g>
+        <g>
+          <text x="240" y="30" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#1f1a14">SCHWUNGPHASE</text>
+          <circle cx="240" cy="55" r="9" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="240" y1="64" x2="240" y2="120" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="232" y1="120" x2="248" y2="120" stroke="#1f1a14" stroke-width="1.5"/>
+          <!-- Standing leg straight -->
+          <line x1="232" y1="120" x2="225" y2="180" stroke="#b85528" stroke-width="2"/>
+          <line x1="220" y1="180" x2="232" y2="180" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Swing leg in air -->
+          <line x1="248" y1="120" x2="260" y2="148" stroke="#284858" stroke-width="2"/>
+          <line x1="260" y1="148" x2="270" y2="160" stroke="#284858" stroke-width="2"/>
+          <text x="240" y="195" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#284858" font-weight="600">FK / GR</text>
+        </g>
+      </svg>
+      <div class="caption">Beinpose-Regel: Bodenkontakt = IK (Welt-relativ, bleibt am Boden). Schwung in der Luft = FK oder GR.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">09</span>
+        <span class="step-title">Keyframes selektiv auf FK setzen</span>
+      </div>
+      <p>Die FK-Stolperfalle ist jetzt das dritte Mal das Thema — aber bei Walk ist sie komplexer. Bei der Arm-Geste in Projekt 02 wurden alle Keyframes auf FK gesetzt, weil der Körper still stand. Hier bewegt sich Manny durch den Raum, also gilt die feinere Regel.</p>
+      <p>Bei <strong>Contact-Posen</strong> und <strong>Down-Posen</strong> haben die Füße Bodenkontakt — diese Keyframes bleiben auf <strong>IK</strong>. Cascadeur erkennt sonst nicht, dass die Füße dort am Boden „kleben" sollen.</p>
+      <p>Für die <strong>Pelvis und Bein-Tracks</strong> (jetzt Inbetweening) müssen aber gleichzeitig die Pelvis-Keyframes auf <strong>FK</strong>, damit Inbetweening die Beine relativ zum Pelvis berechnet und nicht im Weltraum verankert lässt.</p>
+      <p>Praktisch: Im Outliner die Pelvis-Track-Keyframes selektieren, FK setzen. Bein-Track-Keyframes selektiv nach Bedarf — Bodenkontakt-Frames auf IK, andere bleiben IK aber Cascadeur arbeitet damit korrekt durch das Pelvis-FK-Anchor.</p>
+      <div class="box box-stolper">
+        <div class="box-label">FK bei bewegtem Charakter — anders als Projekt 02</div>
+        <p>Wenn du den ganzen Charakter auf FK setzt wie in Projekt 02, kleben die Bodenkontakte nicht mehr — Manny rutscht. Wenn du alles auf IK lässt, generiert Inbetweening die Beine nicht sauber. Lösung: Pelvis FK, Bein-Posen mit Bodenkontakt IK, sonstige Bein-Posen FK. Das ist mühselig zu testen — typischer Workflow ist: erst alles IK lassen, Inbetweening laufen lassen, sehen wo es bricht, dann selektiv FK setzen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 10 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- CoM trajectory curve — sinusoidal -->
+        <line x1="20" y1="120" x2="300" y2="120" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Sinusoidal up-down trajectory -->
+        <path d="M 30 100 Q 60 80, 80 100 Q 100 120, 120 100 Q 140 80, 160 100 Q 180 120, 200 100 Q 220 80, 240 100 Q 260 120, 280 100" fill="none" stroke="#b85528" stroke-width="2"/>
+        <!-- Markers for Contact (high) and Down (low) -->
+        <g fill="#b85528">
+          <circle cx="50" cy="86" r="3"/>
+          <circle cx="80" cy="100" r="3"/>
+          <circle cx="110" cy="115" r="3"/>
+          <circle cx="140" cy="86" r="3"/>
+          <circle cx="170" cy="100" r="3"/>
+          <circle cx="200" cy="115" r="3"/>
+          <circle cx="230" cy="86" r="3"/>
+          <circle cx="260" cy="100" r="3"/>
+        </g>
+        <text x="50" y="75" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">Up</text>
+        <text x="110" y="130" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">Down</text>
+        <text x="20" y="148" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">CoM-Höhe</text>
+        <text x="160" y="170" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">CoM-Trajektorie sollte sinusförmig oszillieren · Up auf Passing, Down zwischen den Schritten</text>
+      </svg>
+      <div class="caption">CoM-Trajektorie als Visualisierung. Sinusförmige Oszillation = guter Walk. Flach = roboterhaft.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">10</span>
+        <span class="step-title">Erste Generation und CoM-Trajectory beobachten</span>
+      </div>
+      <p>Play drücken. Inbetweening rechnet die Beine zwischen den Anker-Posen — Passing-Pose, Up-Pose, alle Übergänge entstehen automatisch. Die Arme schwingen via Bezier wie gesetzt.</p>
+      <p>Für die wichtigste Diagnose: <strong>CoM-Trajectory einschalten</strong>. CoM-Controller selektieren, dann <kbd>\</kbd> für persistente Trajectory. In der Side-View siehst du die Höhen-Oszillation des CoM über die ganze Animation — sie sollte sinusförmig sein, mit Up-Peaks zwischen den Schritten (an Passing-Posen) und Down-Tälern an den Contact/Down-Punkten.</p>
+      <p>Wenn die CoM-Trajectory flach ist: Down-Posen nicht tief genug. Wenn sie zackig ist statt fließend: zu wenig Inbetweening-Spielraum, Anker zu eng. Wenn sie wandert ohne klare Periodizität: Cycles inkonsistent kopiert.</p>
+      <div class="shortcut-row">
+        <span>Persistente Trajectory:</span><kbd>\</kbd>
+        <span>Play:</span><kbd>Space</kbd>
+        <span>Slow Motion (0.3x):</span><span>Scene Settings · Time Factor</span>
+      </div>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase C</div>
+        <p>Manny geht erkennbar zehn Schritte von A nach B. CoM oszilliert sinusförmig. Beine machen Passing-Posen zwischen den Contact-Punkten. Arme schwingen counter-rhythmisch zu den Beinen. Noch nicht polished, aber strukturell korrekt — ein erkennbarer Walk-Cycle.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 6 — PHASE D: VERFEINERUNG -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§6</div>
+    <div>
+      <div class="section-tag">Phase D · Verfeinerung (Iteration 3)</div>
+      <h2 class="section-title">Custom Track Hierarchy <em>als neues Werkzeug</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">D</div>
+    <div>
+      <h4>Verfeinerung</h4>
+      <div class="phase-meta">Custom Track Hierarchy · Hand-Bögen · Tween Machine</div>
+      <p>Body-Parts gezielt ein- und ausblenden mit Custom Track Hierarchy. Hand-Bögen mit Trajectory Tangents korrigieren. Tween Machine für Leading Action (Kopf vor Body). <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 11 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="30" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">CUSTOM TRACK HIERARCHY</text>
+        <!-- Show/hide toggles per track group -->
+        <g font-family="DM Sans, sans-serif" font-size="11" fill="#1f1a14">
+          <rect x="60" y="50" width="200" height="22" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <circle cx="75" cy="61" r="5" fill="#8a9878"/>
+          <text x="90" y="65">Head</text>
+          <text x="240" y="65" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">visible</text>
+
+          <rect x="60" y="78" width="200" height="22" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <circle cx="75" cy="89" r="5" fill="#8a9878"/>
+          <text x="90" y="93">Torso · Spine</text>
+          <text x="240" y="93" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">visible</text>
+
+          <rect x="60" y="106" width="200" height="22" fill="#ede4d0" stroke="#c46b3a" stroke-width="1.5"/>
+          <circle cx="75" cy="117" r="5" fill="#f3ecdc" stroke="#c46b3a" stroke-width="1.5"/>
+          <text x="90" y="121">Arms</text>
+          <text x="240" y="121" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">hidden</text>
+
+          <rect x="60" y="134" width="200" height="22" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <circle cx="75" cy="145" r="5" fill="#8a9878"/>
+          <text x="90" y="149">Pelvis · Legs</text>
+          <text x="240" y="149" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">visible</text>
+        </g>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Arme ausblenden = beim Polishing der Beine nicht vom Arm-Schwung abgelenkt sein</text>
+      </svg>
+      <div class="caption">Custom Track Hierarchy: Body-Parts gruppieren und einzeln ein-/ausblenden für Detail-Arbeit.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">11</span>
+        <span class="step-title">Custom Track Hierarchy anlegen</span>
+      </div>
+      <p>Erstes Polish-Werkzeug der Reihe, das ab hier in jedem komplexeren Projekt wiederkehrt. In Point Controller Mode wechseln. Im Outliner neue Track-Gruppen anlegen: <strong>Head</strong>, <strong>Torso</strong>, <strong>Arms</strong>, <strong>Pelvis-Legs</strong>. Die jeweiligen Controller-Punkte via „Add object to track"-Button zuweisen.</p>
+      <p><em>Aus Erinnerung, nicht final verifiziert:</em> der Hotkey für Track-Zuweisung ist in einigen Builds <kbd>F9</kbd> (aus dem Run-Cycle-Transkript belegt für „assign selection to current track"). Per Menü-Klick funktioniert es in jedem Fall.</p>
+      <p>Wozu: Beim Polishing willst du dich auf eine Body-Part-Gruppe konzentrieren. Wenn du die Hand-Bögen korrigierst, sind die Arme die einzigen, die du siehst — keine ablenkenden Beine. Wenn du die Bein-Phase verfeinerst, blendest du die Arme aus. Das ist nicht kosmetisch; es macht die Detail-Arbeit dramatisch schneller, weil der Blick nicht abgelenkt wird.</p>
+      <div class="box box-merk">
+        <div class="box-label">Custom Track Hierarchy als Standardthema</div>
+        <p>Ab diesem Projekt wird Custom Track Hierarchy in jeder Brochüre als Polish-Werkzeug genutzt. Bei Projekt 09 (Mocap-Cleanup) ist sie unverzichtbar — Mocap-Daten enthalten oft Body-Part-Probleme, die nur isoliert lösbar sind. Bei Combat-Sequenzen wird sie zum primären Polish-Werkzeug.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 12 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">HAND-TRAJEKTORIE · RELATIV ZUM CHARAKTER</text>
+        <!-- Body silhouette -->
+        <g opacity="0.3">
+          <circle cx="160" cy="75" r="11" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="160" y1="86" x2="160" y2="155" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="148" y1="98" x2="172" y2="98" stroke="#1f1a14" stroke-width="1.5"/>
+        </g>
+        <!-- Hand trajectory: forward-back swing -->
+        <path d="M 100 130 Q 130 110, 160 130 Q 190 150, 220 130 Q 250 110, 280 130 Q 250 150, 220 130 Q 190 110, 160 130 Q 130 150, 100 130" fill="none" stroke="#b85528" stroke-width="1.8"/>
+        <!-- Keyframe markers -->
+        <circle cx="100" cy="130" r="4" fill="#b85528"/>
+        <circle cx="160" cy="130" r="4" fill="#b85528"/>
+        <circle cx="220" cy="130" r="4" fill="#b85528"/>
+        <circle cx="280" cy="130" r="4" fill="#b85528"/>
+        <!-- Smooth arc indication with arrows -->
+        <path d="M 140 113 L 145 110" stroke="#b85528" stroke-width="1" marker-end="url(#arrowtraj)"/>
+        <defs>
+          <marker id="arrowtraj" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M 0 0 L 6 3 L 0 6 z" fill="#b85528"/>
+          </marker>
+        </defs>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Relative Trajectory: Hand-Bogen relativ zum sich bewegenden Pelvis</text>
+      </svg>
+      <div class="caption">Hand-Trajectory relativ zum Charakter — schwingt vor und zurück, nicht durch den Raum.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">12</span>
+        <span class="step-title">Hand-Bögen mit Relative Trajectories</span>
+      </div>
+      <p>Die Hände schwingen counter-rhythmisch zu den Beinen. Wenn du die Hand-Controller-Trajectory in der Side-View ansiehst, läuft sie über die ganze Walk-Distanz mit — was 7 Meter lang ist und unübersichtlich wird.</p>
+      <p><strong>Relative Trajectories</strong> (ab Cascadeur 2023.2): Trajectory relativ zum Pivot eines Objekts. Hand-Controller selektieren, dann im Trajectory-Menü auf <em>Relative</em> umschalten und den Pelvis als Pivot wählen. Jetzt siehst du nur den Hand-Bogen relativ zum Körper — eine kleine Sinusbewegung statt einer 7-Meter-Linie.</p>
+      <p>Falls der Bogen unrund ist: in den IK-Mode wechseln (Tangenten-Bearbeitung), Tangents-Button drücken, Handles am Top und Bottom des Bogens ziehen. Wie in Projekt 02 — IK temporär, dann zurück auf FK.</p>
+      <div class="insight">
+        Die Hand-Bahn beim Walk ist ein gestreckter Bogen, nicht eine Acht und nicht ein Kreis. Wenn du die Bahn als Acht zeichnest, hast du einen Schwimmstil-Walk gemacht. Wenn sie zu rund ist, sieht der Charakter nervös aus. Eine gestreckte Sinuswelle ist die Norm — von vorne nach hinten, mit minimaler Höhen-Variation.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 13 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="30" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">LEADING ACTION · FRAME-VERSATZ</text>
+        <!-- Timeline showing frame offsets -->
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <text x="30" y="65">Head</text>
+          <line x1="80" y1="62" x2="290" y2="62" stroke="#c8b89a" stroke-width="1.5"/>
+          <circle cx="100" cy="62" r="5" fill="#b85528"/>
+          <text x="100" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">N</text>
+
+          <text x="30" y="95">Body</text>
+          <line x1="80" y1="92" x2="290" y2="92" stroke="#c8b89a" stroke-width="1.5"/>
+          <circle cx="110" cy="92" r="5" fill="#b85528"/>
+          <text x="110" y="85" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">N+1</text>
+
+          <text x="30" y="125">Arms</text>
+          <line x1="80" y1="122" x2="290" y2="122" stroke="#c8b89a" stroke-width="1.5"/>
+          <circle cx="120" cy="122" r="5" fill="#b85528"/>
+          <text x="120" y="115" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">N+2</text>
+        </g>
+        <text x="160" y="160" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Kopf reagiert zuerst · Body folgt · Arme zuletzt — ein bis zwei Frames Versatz</text>
+        <text x="160" y="180" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">G / L FÜR ATTRACT-TWEENS</text>
+      </svg>
+      <div class="caption">Leading Action: Body-Parts reagieren mit Frame-Versatz. Kopf führt, Arme folgen.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">13</span>
+        <span class="step-title">Leading Action — Kopf führt, Arme folgen</span>
+      </div>
+      <p>Letzter Detail-Schritt. Im echten Walk reagieren Body-Parts nicht synchron — der Kopf schwingt minimal früher als der Torso, der Torso früher als die Arme. Ein bis zwei Frames Versatz.</p>
+      <p>Tween Machine ist hier das Werkzeug. Für eine kleine Sequenz: Frame N (sagen wir Frame 50) selektieren, dann den Kopf-Controller. <kbd>G</kbd> drücken, die Pose Richtung Frame 48 ziehen (~30 %). Dann selber Frame, Body-Controller, weniger stark.</p>
+      <p>Das Ergebnis: an jedem Walk-Anker kommt der Kopf-Schwenk minimal früher, der Body-Schwenk genau auf dem Anker, die Arme leicht später. Das verleiht der Animation einen organischen Fluss — als ob der Körper aus mehreren losen Teilen besteht, die sich gegenseitig nachziehen.</p>
+      <div class="shortcut-row">
+        <span>Attract previous:</span><kbd>G</kbd>
+        <span>Attract next:</span><kbd>L</kbd>
+      </div>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase D</div>
+        <p>Manny geht jetzt mit erkennbarem Charakter — Kopf leicht voraus, Schulter mitschwingend, Arme entgegengesetzt zu den Beinen mit subtilem Versatz. Die Walk-Höhe oszilliert sichtbar zwischen Up und Down. Custom Track Hierarchy ist im Outliner als saubere Struktur sichtbar. Eine Bewegung, die anfängt nach „echtem Gehen" auszusehen — noch nicht physikalisch korrekt (das macht Phase E), aber Strukturell und choreografisch komplett.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 7 — PHASE E: PHYSICS -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§7</div>
+    <div>
+      <div class="section-tag">Phase E · Physics + Foot-Cleanup</div>
+      <h2 class="section-title">AutoPhysics und <em>Fulcrum Motion Cleaning</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">E</div>
+    <div>
+      <h4>Physics</h4>
+      <div class="phase-meta">3-Pass-AutoPhysics · Fulcrum Motion Cleaning · Foot-Sliding</div>
+      <p>Das gewohnte 3-Pass-AutoPhysics-Pattern. Danach Fulcrum Motion Cleaning gegen Foot-Sliding — das ist der typische Walk-Polish-Schritt, der sonst nie nötig war. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 14 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="20" y="35" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">PASS 3 · WALK · FILTERWERTE</text>
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <text x="20" y="60">Smooth Trajectory</text>
+          <line x1="170" y1="56" x2="290" y2="56" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="56" x2="220" y2="56" stroke="#b85528" stroke-width="3"/>
+          <circle cx="220" cy="56" r="4" fill="#b85528"/>
+          <text x="295" y="60" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~40</text>
+
+          <text x="20" y="85">Smooth Rotation</text>
+          <line x1="170" y1="81" x2="290" y2="81" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="81" x2="210" y2="81" stroke="#b85528" stroke-width="3"/>
+          <circle cx="210" cy="81" r="4" fill="#b85528"/>
+          <text x="295" y="85" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~30</text>
+
+          <text x="20" y="110">Compensation Motion</text>
+          <line x1="170" y1="106" x2="290" y2="106" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="106" x2="215" y2="106" stroke="#b85528" stroke-width="3"/>
+          <circle cx="215" cy="106" r="4" fill="#b85528"/>
+          <text x="295" y="110" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~35</text>
+
+          <text x="20" y="135">Separation of Motion</text>
+          <line x1="170" y1="131" x2="290" y2="131" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="131" x2="190" y2="131" stroke="#b85528" stroke-width="3"/>
+          <circle cx="190" cy="131" r="4" fill="#b85528"/>
+          <text x="295" y="135" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~10</text>
+
+          <text x="20" y="160">Secondary Motion</text>
+          <line x1="170" y1="156" x2="290" y2="156" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="156" x2="195" y2="156" stroke="#b85528" stroke-width="3"/>
+          <circle cx="195" cy="156" r="4" fill="#b85528"/>
+          <text x="295" y="160" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~15</text>
+        </g>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Walk: Compensation höher als bei Arm-Geste — Body soll mitschwingen</text>
+      </svg>
+      <div class="caption">Walk-spezifische Filter-Werte. Compensation deutlich höher als bei isolierter Arm-Geste.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">14</span>
+        <span class="step-title">AutoPhysics in drei Durchläufen</span>
+      </div>
+      <p>Das identische Pattern wie in Projekt 01 und 02. Physics Assistance an. <strong>Pass 1 + 2</strong> nur mit Physics Corrector, alle anderen Filter auf 0. Ganze Sequenz selektieren, Solve, Snap to Physics, wiederholen für Pass 2.</p>
+      <p><strong>Pass 3</strong> mit Filtern — für Walk höhere Werte als bei der Arm-Geste, weil der ganze Körper aktiv ist:</p>
+      <ul style="margin: 0.5rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Smooth Trajectory</strong> ~40 — glättet CoM-Bahn (sinusförmig bleibt erhalten)</li>
+        <li><strong>Smooth Rotation</strong> ~30 — glättet Pelvis- und Schulter-Rotation</li>
+        <li><strong>Compensation Motion</strong> ~35 — höher als bei Arm-Geste, weil hier der Body wirklich mitschwingen soll</li>
+        <li><strong>Separation of Motion</strong> ~10 — Body-Parts dürfen leicht voneinander entkoppeln</li>
+        <li><strong>Secondary Motion</strong> ~15 — leichter Hand- und Finger-Mitschwung</li>
+      </ul>
+      <p>Ganze Sequenz, Solve, Vergleich, Snap to Physics.</p>
+      <div class="box box-stolper">
+        <div class="box-label">AutoPhysics-Timeline bei Walk — meist gelb</div>
+        <p>Bei Walk wechseln die Fulcrum-Punkte ständig (mal nur ein Fuß am Boden, mal beide). Die AutoPhysics-Timeline wird daher selten dunkelgrün, eher gelb (= ein Fulcrum). Das ist normal und richtig für Walk. Orange wäre ein Problem — bedeutet beide Füße in der Luft, das gibt's beim Walk nie. Wenn orange auftritt: Anker-Posen prüfen, vermutlich ist eine Contact-Pose nicht sauber am Boden.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 15 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Foot positions: before (sliding) vs after (clean) -->
+        <text x="80" y="30" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#c46b3a">VOR FMC · SLIDING</text>
+        <line x1="20" y1="120" x2="140" y2="120" stroke="#1f1a14" stroke-width="1.2"/>
+        <!-- Foot positions with drift -->
+        <g>
+          <line x1="35" y1="120" x2="50" y2="120" stroke="#1f1a14" stroke-width="3"/>
+          <line x1="58" y1="118" x2="74" y2="118" stroke="#c46b3a" stroke-width="3"/>
+          <line x1="80" y1="123" x2="96" y2="123" stroke="#c46b3a" stroke-width="3"/>
+          <line x1="103" y1="120" x2="119" y2="120" stroke="#1f1a14" stroke-width="3"/>
+        </g>
+        <!-- Sliding arrows -->
+        <path d="M 53 134 L 71 134" stroke="#c46b3a" stroke-width="1" stroke-dasharray="2,2"/>
+        <path d="M 65 132 L 70 134 L 65 136 z" fill="#c46b3a"/>
+
+        <!-- After -->
+        <text x="240" y="30" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#8a9878">NACH FMC · CLEAN</text>
+        <line x1="180" y1="120" x2="300" y2="120" stroke="#1f1a14" stroke-width="1.2"/>
+        <g>
+          <line x1="195" y1="120" x2="210" y2="120" stroke="#1f1a14" stroke-width="3"/>
+          <line x1="218" y1="120" x2="234" y2="120" stroke="#8a9878" stroke-width="3"/>
+          <line x1="240" y1="120" x2="256" y2="120" stroke="#8a9878" stroke-width="3"/>
+          <line x1="263" y1="120" x2="279" y2="120" stroke="#1f1a14" stroke-width="3"/>
+        </g>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Fulcrum Motion Cleaning: Bodenkontakt-Frames werden zu echten Klebepositionen</text>
+      </svg>
+      <div class="caption">Foot-Sliding vor FMC, sauberer Foot-Plant danach. Standard-Walk-Polish.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">15</span>
+        <span class="step-title">Fulcrum Motion Cleaning — Foot-Sliding eliminieren</span>
+      </div>
+      <p>Nach AutoPhysics bleibt oft Foot-Sliding: Die Füße rutschen während des Bodenkontakts minimal vor oder zurück. Das passiert weil AutoPhysics die ganze CoM-Bewegung glättet und dabei die Kontaktpunkte minimal verschiebt.</p>
+      <p>Fulcrum Motion Cleaning ist das dedizierte Werkzeug dafür. Frames selektieren (am besten die ganze Animation), dann den <strong>Align Feet</strong>-Button drücken. Cascadeur berechnet die korrekten Foot-Positionen anhand des Durchschnitts der Animation und korrigiert die einzelnen Frames automatisch.</p>
+      <p>Bei großen Animationen (>120 Frames) lieber in zwei oder drei Segmenten anwenden — das Ergebnis ist meist sauberer als bei einem einzigen Pass über die ganze Animation.</p>
+      <p>Nach FMC nochmal Play. Die Füße sollten jetzt während Bodenkontakt absolut stillstehen — kein Drift, kein Slide. Das ist das Walk-Polish-Endkriterium.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase E</div>
+        <p>Walk physikalisch glaubwürdig: CoM oszilliert in Sinus, Body schwingt mit, Foot-Sliding ist eliminiert. Bei Slow Motion (Time Factor 0.3) sieht jeder einzelne Frame plausibel aus — kein zappeln, kein durchsacken, kein gleiten. Die ganze 7-Meter-Distanz ist saubere Lokomotion.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 8 — PHASE F: EXPORT -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§8</div>
+    <div>
+      <div class="section-tag">Phase F · Export</div>
+      <h2 class="section-title">FBX mit <em>Root Motion</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">F</div>
+    <div>
+      <h4>Export</h4>
+      <div class="phase-meta">FBX · Root Motion · UE5</div>
+      <p>Diese Animation hat echte Translation durch den Raum — das ist Root Motion in UE5-Sprache. Beim Export anders behandeln als die statischen Animationen aus Projekt 01-02. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 16 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="80" y="40" width="160" height="120" rx="6" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.8"/>
+        <text x="160" y="65" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#b85528">FBX EXPORT</text>
+        <line x1="100" y1="78" x2="220" y2="78" stroke="#c8b89a" stroke-width="1"/>
+        <text x="100" y="95" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Bake animation</text>
+        <text x="220" y="95" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">✓</text>
+        <text x="100" y="112" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Frame range</text>
+        <text x="220" y="112" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">0–180</text>
+        <text x="100" y="129" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Frame rate</text>
+        <text x="220" y="129" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">30 fps</text>
+        <text x="100" y="146" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Root translation</text>
+        <text x="220" y="146" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528" font-weight="600">INCLUDE</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Translation auf dem Root-Bone exportieren — das ist Root Motion</text>
+      </svg>
+      <div class="caption">Wichtigste Settings: Bake an, Frame Range voll, Root-Translation exportieren.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">16</span>
+        <span class="step-title">FBX-Export mit Root Motion</span>
+      </div>
+      <p>File → Export → FBX. Settings wie gewohnt — aber mit einem Unterschied: <strong>Root-Bone-Translation muss exportiert werden</strong>. Diese Option heißt in unterschiedlichen Cascadeur-Builds verschieden — meist <em>„Bake Root Motion"</em> oder <em>„Include Root Translation"</em>. <em>Aus Erinnerung, nicht final verifiziert:</em> bei Cascadeur 2026.1 sitzt diese Option im erweiterten FBX-Dialog.</p>
+      <p>Wenn diese Option nicht aktiv ist, exportiert Cascadeur nur den Skelett-internen Walk (alle Bones relativ zum Root), aber nicht die Translation des Root selbst. Das Ergebnis: in UE5 läuft Manny an Ort und Stelle, nicht 7 Meter vorwärts.</p>
+      <p>Dateiname <code>manny-walk-A-zu-B-v01.fbx</code>.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Root Motion vs In-Place</div>
+        <p>Es gibt zwei legitime Walk-Animations-Ansätze in UE5: <strong>Root Motion</strong> (Animation enthält die Translation, der Character bewegt sich entsprechend durch den Raum) und <strong>In-Place</strong> (Animation läuft on the spot, die Translation wird vom Gameplay-Code gesteuert). Für narrative Sequenzen ist Root Motion meist besser, weil die Animation den Raum-Bezug enthält. Für Gameplay ist In-Place flexibler. Für unsere Pipeline (UE5 Sequencer, narrative Sequenzen) bleiben wir bei Root Motion.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 17 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="50" width="280" height="110" fill="#284858" stroke="#1f1a14" stroke-width="1.5" opacity="0.05"/>
+        <rect x="20" y="50" width="280" height="110" fill="none" stroke="#284858" stroke-width="1.5"/>
+        <text x="160" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#284858">UE5 · ANIMATION SEQUENCE</text>
+        <line x1="40" y1="82" x2="280" y2="82" stroke="#284858" stroke-width="0.6"/>
+        <text x="40" y="100" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Skeleton</text>
+        <text x="280" y="100" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">SK_Mannequin</text>
+        <text x="40" y="117" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Enable Root Motion</text>
+        <text x="280" y="117" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">✓</text>
+        <text x="40" y="134" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Root Motion Mode</text>
+        <text x="280" y="134" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">From Root Bone</text>
+        <text x="40" y="151" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Length</text>
+        <text x="280" y="151" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">6.00 s</text>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">In UE5 Animation Sequence Properties: Root Motion explizit aktivieren</text>
+      </svg>
+      <div class="caption">UE5 Animation Sequence Properties: Root Motion einschalten, „From Root Bone".</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">17</span>
+        <span class="step-title">UE5-Import und Root-Motion-Aktivierung</span>
+      </div>
+      <p>FBX in UE5 importieren. Import-Dialog: Manny-Skelett als Target. Animation wird als Animation Sequence importiert. <em>Aus Erinnerung, nicht final verifiziert:</em> beim ersten Import kann ein Warning kommen, dass „Animation contains root motion data" — das ist erwartet und kein Fehler.</p>
+      <p>Im Persona-Editor die Animation öffnen. In den <strong>Animation Sequence Properties</strong>:</p>
+      <ul style="margin: 0.4rem 0 0.6rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Enable Root Motion</strong> einschalten</li>
+        <li><strong>Root Motion Root Lock</strong> auf <em>From Root Bone</em></li>
+        <li>Falls Foot-Sliding in UE5 nochmal auftaucht (passiert bei Re-Targeting-Differenzen): Hand-Cleanup in UE5 via IK Retargeter, nicht zurück in Cascadeur</li>
+      </ul>
+      <p>Im Sequencer als Animation Sequence verwenden. Manny geht von Position A zur Position B, die Translation passiert auf der Animation, nicht im Gameplay-Code.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase F</div>
+        <p>In UE5: Manny geht von A nach B mit den zehn Schritten aus Cascadeur. Keine Foot-Sliding-Reklamationen, kein In-Place-Laufen. Animation hat exakt 6 Sekunden, 180 Frames bei 30 fps. Im Sequencer kann eine MetaHuman-Face-Performance über die Walk-Animation gelegt werden — Manny geht und spricht gleichzeitig.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 9 — OUTRO -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§9</div>
+    <div>
+      <div class="section-tag">Ausblick</div>
+      <h2 class="section-title">Was du <em>jetzt zusätzlich</em> hast.</h2>
+    </div>
+  </div>
+
+  <p>Mit Projekt 03 sind drei neue Werkzeuge im Vokabular: <strong>Per-Track-Interpolation</strong> (Body-Parts mit verschiedenen Interpolations-Typen), <strong>Custom Track Hierarchy</strong> (Body-Parts für Polish ein- und ausblenden), <strong>Fulcrum Motion Cleaning</strong> (Foot-Sliding nach AutoPhysics eliminieren). Dazu der <strong>Reference-Workflow</strong> als eigene Phase und der <strong>Root-Motion-Export</strong> für UE5.</p>
+
+  <p>Das Inbetweening-Iterations-Pattern aus Projekt 02 bleibt das Rückgrat — Grobschnitt → Charakter → Detail → Physics — aber wird durch die Track-Separation komplexer. Ab hier weißt du, dass nicht alle Body-Parts dieselbe Interpolation brauchen.</p>
+
+  <p>Bei Projekt 09 (Mocap-Cleanup mit QuickMagic) treffen die Techniken aus Projekt 03 auf existierendes Material — die Animation kommt fertig aus QuickMagic, du musst sie nur cleanen statt von vorn zu bauen. Inbetweening wird dort zum <em>Resmoothing</em>-Werkzeug für problematische Sektionen, Fulcrum Motion Cleaning wird zum primären Polish-Werkzeug.</p>
+
+  <p>Bei Projekt 06 (Run) baust du den nächsten Lokomotions-Typ. Vieles ist gleich (Cycle-Pattern, Mirror-Replication), aber Run hat einen <em>Flight Frame</em> ohne Bodenkontakt — komplett neues physikalisches Verhalten, das in dieser Brochüre nicht relevant war.</p>
+
+  <div class="box box-merk">
+    <div class="box-label">Was Projekt 03 nicht macht</div>
+    <p>Kein Run, kein Stop, kein Start. Keine Richtungswechsel. Keine Steigungen. Kein Walk auf unebenem Boden. Kein Stylized Walk (kein Tramp, kein Heroic, kein Limp). Der Walk ist bewusst neutral gehalten, damit das Cycle-Build-Pattern lernbar bleibt. Stylisierung ist eine Frage der Anker-Pose-Modulation, nicht eine andere Workflow-Logik.</p>
+  </div>
+
+  <div class="insight">
+    Beim Walk macht eine durchschnittliche Person etwa 1.5 Schritte pro Sekunde (typische cadence rate). Bei unserer Animation sind es 10 Schritte in 6 Sekunden = 1.67 Schritte pro Sekunde — am oberen Ende des normalen Bereichs. Wenn du die Animation auf 8 Sekunden streckst, sind es 1.25 Schritte/Sekunde — langsamer, kontemplativer Walk. Wenn du auf 5 Sekunden komprimierst, sind es 2.0 Schritte/Sekunde — schneller, energischer Walk. Allein durch das Timing änderst du den Charakter — ohne eine Pose anzufassen. Das ist der wichtigste Hebel im Walk-Design, und der am häufigsten unterschätzte.
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="doc-footer">
+  <div><span class="terracotta">Projekt 03 · v 1.0</span></div>
+  <div>17 Schritte · 6 Phasen + Reference</div>
+  <div>Cascadeur · Lernreihe</div>
+</footer>
+
+</article>
+
+</body>
+</html>
