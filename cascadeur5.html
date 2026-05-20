@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projekt 05 · Aufstehen vom Stuhl · Cascadeur-Lernreihe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3ecdc;
+    --paper-warm: #ede4d0;
+    --paper-dark: #e2d6b8;
+    --ink: #1f1a14;
+    --ink-soft: #5a4d3a;
+    --ink-faint: #8a7d68;
+    --terracotta: #b85528;
+    --terracotta-deep: #7a3414;
+    --cobalt: #284858;
+    --sage: #8a9878;
+    --warning: #c46b3a;
+    --rule: #c8b89a;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'DM Sans', -apple-system, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--paper);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    -webkit-font-smoothing: antialiased;
+  }
+  .doc { max-width: 1100px; margin: 0 auto; }
+
+  .cover {
+    padding: 3.5rem 5rem 2.5rem;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -10%; right: -8%;
+    width: 50%; aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(184, 85, 40, 0.08) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .cover-marker {
+    display: flex; align-items: center; gap: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 1.5rem;
+  }
+  .cover-marker .ml { width: 60px; height: 1px; background: var(--terracotta); }
+  .cover h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.6rem, 5vw, 4.2rem);
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 50;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+    max-width: 18ch;
+  }
+  .cover h1 em {
+    font-style: italic;
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    color: var(--terracotta);
+  }
+  .cover .subtitle {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.2rem;
+    color: var(--ink-soft);
+    max-width: 58ch;
+    margin-bottom: 2rem;
+  }
+  .cover-meta {
+    display: flex; gap: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    flex-wrap: wrap;
+  }
+  .mb { display: flex; flex-direction: column; gap: 0.2rem; }
+  .mb-label {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .mb span:last-child {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--ink);
+  }
+
+  .section {
+    padding: 3rem 5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .section-head {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.8rem;
+    align-items: start;
+  }
+  .section-num {
+    font-family: var(--font-display);
+    font-size: 2.8rem;
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    font-style: italic;
+    color: var(--terracotta);
+    line-height: 1;
+  }
+  .section-tag {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 0.4rem;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 3vw, 2.4rem);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    max-width: 26ch;
+  }
+  .section-title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--terracotta);
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  }
+
+  .section p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .section p.lead {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.18rem;
+    color: var(--ink-soft);
+    margin-bottom: 1.5rem;
+    max-width: 60ch;
+  }
+  .section h3 {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 1.6rem 0 0.6rem;
+    color: var(--ink);
+  }
+
+  .phase-banner {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 2rem;
+    margin: 2rem 0 2.5rem;
+    padding: 1.4rem 1.8rem;
+    background: linear-gradient(90deg, rgba(184, 85, 40, 0.10), transparent);
+    border-left: 4px solid var(--terracotta);
+    align-items: center;
+  }
+  .phase-letter {
+    font-family: var(--font-display);
+    font-size: 5rem;
+    font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    font-style: italic;
+    color: var(--terracotta);
+    line-height: 0.85;
+    text-align: center;
+  }
+  .phase-banner h4 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+  }
+  .phase-banner .phase-meta {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.5rem;
+  }
+  .phase-banner p {
+    font-size: 0.97rem;
+    color: var(--ink);
+    margin-bottom: 0;
+    max-width: 65ch;
+  }
+  .phase-banner em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 1.8rem;
+    margin: 1.6rem 0;
+    padding: 1.6rem 1.8rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+  }
+  .step-diagram {
+    background: #f3ecdc;
+    border: 1px solid #c8b89a;
+    border-radius: 6px;
+    padding: 1rem 0.6rem 0.6rem;
+    align-self: start;
+  }
+  .step-diagram svg { width: 100%; height: auto; display: block; }
+  .step-diagram .caption {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .step-num-row {
+    display: flex; align-items: baseline; gap: 0.8rem;
+    margin-bottom: 0.6rem;
+  }
+  .step-num {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 300;
+    font-style: italic;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    color: var(--terracotta);
+    line-height: 1;
+  }
+  .step-title {
+    font-family: var(--font-display);
+    font-size: 1.18rem;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .step p { font-size: 0.96rem; margin-bottom: 0.6rem; max-width: none; }
+  .step p:last-child { margin-bottom: 0; }
+  .step em {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+  .shortcut-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.7rem;
+    align-items: center;
+    margin: 0.5rem 0 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+  kbd {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0.05rem 0.4rem;
+    color: var(--ink);
+    box-shadow: 0 1px 0 var(--rule);
+  }
+
+  .box {
+    margin: 1.4rem 0;
+    padding: 1.1rem 1.3rem;
+    border-radius: 0 4px 4px 0;
+    max-width: none;
+  }
+  .step .box { margin: 0.9rem 0 0.4rem; }
+  .box-label {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .box-label::before { content: ''; width: 14px; height: 1.5px; background: currentColor; }
+  .box p { font-size: 0.93rem; margin-bottom: 0.4rem; }
+  .box p:last-child { margin-bottom: 0; }
+  .box-why { background: rgba(40, 72, 88, 0.10); border-left: 3px solid var(--cobalt); }
+  .box-why .box-label { color: var(--cobalt); }
+  .box-stolper { background: rgba(196, 107, 58, 0.13); border-left: 3px solid var(--warning); }
+  .box-stolper .box-label { color: var(--warning); }
+  .box-merk { background: rgba(184, 85, 40, 0.10); border-left: 3px solid var(--terracotta); }
+  .box-merk .box-label { color: var(--terracotta); }
+  .box-check { background: rgba(138, 152, 120, 0.18); border-left: 3px solid var(--sage); }
+  .box-check .box-label { color: var(--sage); }
+
+  /* Insight rail */
+  .insight {
+    margin: 1.4rem 0;
+    padding: 1.1rem 1.3rem;
+    background: var(--paper-warm);
+    border: 1px dashed var(--rule);
+    border-radius: 6px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.96rem;
+    color: var(--ink-soft);
+    max-width: 65ch;
+  }
+  .insight::before {
+    content: 'Randnotiz';
+    display: block;
+    font-family: var(--font-mono);
+    font-style: normal;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 0.4rem;
+  }
+
+  .doc-footer {
+    padding: 2.5rem 5rem;
+    border-top: 2px solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex; justify-content: space-between;
+  }
+  .doc-footer .terracotta { color: var(--terracotta); }
+
+  @media (max-width: 900px) {
+    .cover, .section, .doc-footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .section-head { grid-template-columns: 1fr; gap: 0.5rem; }
+    .step { grid-template-columns: 1fr; gap: 1rem; }
+    .step-diagram { max-width: 280px; margin: 0 auto; }
+    .phase-banner { grid-template-columns: 1fr; gap: 0.5rem; }
+    .phase-letter { text-align: left; font-size: 3.5rem; }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #1a1612;
+      --paper-warm: #221d17;
+      --paper-dark: #2a241c;
+      --ink: #ebe3d0;
+      --ink-soft: #b8a98a;
+      --ink-faint: #7a6e58;
+      --terracotta: #e8814a;
+      --terracotta-deep: #c25a2a;
+      --cobalt: #6a9aab;
+      --sage: #a8b898;
+      --warning: #e2884d;
+      --rule: #3a3026;
+    }
+    body {
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    }
+    .step-diagram { background: #f3ecdc !important; border-color: #c8b89a !important; }
+    .step-diagram .caption { color: #5a4d3a !important; }
+  }
+</style>
+</head>
+<body>
+
+<article class="doc">
+
+<!-- COVER -->
+<header class="cover">
+  <div class="cover-marker">
+    <span>Cascadeur · Lernreihe</span>
+    <div class="ml"></div>
+    <span>Projekt 05 · v 1.0</span>
+  </div>
+  <h1>Aufstehen <em>vom Stuhl</em>:<br>der Push-<br>Moment.</h1>
+  <p class="subtitle">Drei Sekunden vom Sitzen zum Stand. Asymmetrisches Spacing — eng am Anfang, weit am Ende. Anticipation, Push, Aufrichten, Settle. Leading Action mit Kopf vor Body vor Beinen.</p>
+  <div class="cover-meta">
+    <div class="mb"><span class="mb-label">Charakter</span><span>UE5-Manny</span></div>
+    <div class="mb"><span class="mb-label">Dauer</span><span>3 s · 90 Frames</span></div>
+    <div class="mb"><span class="mb-label">Neu</span><span>Push-Phase · Constraint-Deaktivierung</span></div>
+    <div class="mb"><span class="mb-label">Pipeline-Ziel</span><span>UE5 Sequencer</span></div>
+    <div class="mb"><span class="mb-label">Schritte</span><span>17</span></div>
+  </div>
+</header>
+
+
+<!-- § 1 — WAS DU BAUST -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§1</div>
+    <div>
+      <div class="section-tag">Aufsteh-Konzept und Spacing-Logik</div>
+      <h2 class="section-title">Nicht <em>Hinsetzen rückwärts</em>.</h2>
+    </div>
+  </div>
+
+  <p class="lead">Aufstehen ist asymmetrisch zum Hinsetzen. Anticipation und Push passieren in den ersten 35 Frames, das Aufrichten dehnt sich über die übrigen 55. Eng am Anfang, weit am Ende.</p>
+
+  <p>Manny startet sitzend (die Pose aus Frame 90 von Projekt 04). Über drei Sekunden lehnt er sich vor (Anticipation), die Beine drücken (Push), das Becken hebt sich vom Sitz, der Spine richtet sich auf, er steht. Nicht der gleiche Pfad rückwärts — das Aufstehen kostet mehr Energie, hat einen klaren Hochpunkt der Kraftanwendung, und endet mit einem Settle in der aufrechten Pose.</p>
+
+  <p>Drei neue Konzepte bauen sich in dieser Brochüre auf: <strong>Push-Phase</strong> als physikalisch aktives Strecken der Beine, <strong>Constraint-Deaktivierung</strong> als Übergangsmoment zwischen Sitz- und Steh-Kontakt, <strong>asymmetrisches Spacing</strong> mit Tween Machine. Constraint-Setup als Konzept ist bekannt aus Projekt 04 — hier nicht mehr in voller Tiefe erklärt.</p>
+
+  <div class="box box-why">
+    <div class="box-label">Warum nicht einfach Projekt 04 rückwärts spielen</div>
+    <p>Beim Hinsetzen ist Schwerkraft der Antrieb — Manny lässt sich kontrolliert fallen. Beim Aufstehen muss er <em>gegen</em> die Schwerkraft arbeiten. Die Bein-Streck-Phase ist ein aktiver Push-Moment, der bei Hinsetzen nicht existiert. Physiologisch kostet Aufstehen etwa doppelt so viel Energie pro Sekunde wie Hinsetzen — diese Asymmetrie muss in der Animation sichtbar werden, sonst wirkt der Charakter schwerelos.</p>
+  </div>
+
+  <div class="insight">
+    Bei älteren Menschen vergrößert sich die Asymmetrie zwischen Hinsetzen und Aufstehen dramatisch. Hinsetzen bleibt ähnlich, Aufstehen wird zu einem ein- oder zweisekündigen Akt mit Armstütze, Vorbeuge, langer Push-Phase. Bei jüngeren Personen schrumpft die Push-Phase zu einer einzigen schnellen Aktion zusammen — manche athletische Personen können sich aus einem niedrigen Stuhl mit einem einzigen Bein-Schwung aufrichten. Die Aufsteh-Animation ist nicht universal — sie codiert Alter, Fitness, manchmal Stimmung.
+  </div>
+</section>
+
+
+<!-- § 2 — PHASE A: SETUP -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§2</div>
+    <div>
+      <div class="section-tag">Phase A · Setup</div>
+      <h2 class="section-title">Sit als Startpose, <em>Constraint aktiv</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">A</div>
+    <div>
+      <h4>Setup</h4>
+      <div class="phase-meta">Scene · Sit-Startpose · Track-Hierarchie · Constraint von Beginn aktiv</div>
+      <p>Manny in Sit-Pose, Stuhl-Proxy, Constraint Pelvis-Stuhl von Frame 0 aktiv. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Chair -->
+        <g>
+          <rect x="170" y="120" width="80" height="6" fill="#ede4d0" stroke="#b85528" stroke-width="2"/>
+          <rect x="232" y="80" width="18" height="46" fill="#ede4d0" stroke="#b85528" stroke-width="2"/>
+          <line x1="175" y1="126" x2="175" y2="160" stroke="#b85528" stroke-width="2"/>
+          <line x1="245" y1="126" x2="245" y2="160" stroke="#b85528" stroke-width="2"/>
+        </g>
+        <!-- Manny seated (start pose) -->
+        <g>
+          <circle cx="195" cy="60" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="195" y1="71" x2="200" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="195" cy="83" r="2.5" fill="#1f1a14"/>
+          <line x1="190" y1="118" x2="210" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="195" y1="83" x2="187" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="187" y1="118" x2="195" y2="135" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="195" y1="83" x2="208" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="208" y1="118" x2="215" y2="135" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="190" y1="118" x2="170" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="210" y1="118" x2="190" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="170" y1="120" x2="160" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="190" y1="120" x2="180" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="152" y1="160" x2="168" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="172" y1="160" x2="188" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <!-- CoM at seat level -->
+          <circle cx="200" cy="110" r="4" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+          <!-- Contact constraint visualization -->
+          <circle cx="200" cy="120" r="5" fill="none" stroke="#b85528" stroke-width="1.5" stroke-dasharray="2,1"/>
+          <text x="200" y="145" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">CONSTRAINT</text>
+        </g>
+        <!-- R pins on feet -->
+        <text x="160" y="175" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528" font-weight="600">R</text>
+        <text x="180" y="175" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528" font-weight="600">R</text>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#b85528">FRAME 0 · SITZ</text>
+      </svg>
+      <div class="caption">Startpose: identisch zu Frame 90 von Projekt 04. Constraint zwischen Pelvis und Stuhl ist von Frame 0 aktiv.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">01</span>
+        <span class="step-title">Scene mit Sit-Startpose</span>
+      </div>
+      <p>Zwei Wege: (a) die fertige Hinsetzen-Animation aus Projekt 04 öffnen und die letzte Frame (90) als neuen Frame 0 für Projekt 05 nehmen — alle anderen Frames löschen. (b) Neue Scene starten, Manny laden, Stuhl-Proxy platzieren wie in Projekt 04, dann Frame 0 die Sit-Pose von Hand setzen.</p>
+      <p>Option (a) ist pragmatischer und stellt sicher, dass die zwei Animationen nahtlos im UE5-Sequencer aneinander gereiht werden können — Manny endet das Hinsetzen genau dort, wo das Aufstehen beginnt. 30 fps, Timeline 0 bis 90.</p>
+      <p>Beide Füße bleiben am Boden, via <kbd>R</kbd> fixiert (das war schon in Projekt 04 so, bleibt durchgehend). Speichern als <code>projekt-05-aufstehen.casc</code>.</p>
+      <div class="box box-merk">
+        <div class="box-label">Building Block-Logik</div>
+        <p>Die Animationen aus Projekt 01-05 sind Building Blocks für narrative Sequenzen. Wenn Hinsetzen-Final-Frame und Aufstehen-Start-Frame identisch sind, kannst du sie im Sequencer ohne Übergangs-Animation aneinander setzen — Manny sitzt für eine beliebige Zeit (vielleicht spricht er) und steht dann auf. Pose-Konsistenz zwischen Building Blocks ist die wichtigste Pipeline-Disziplin.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">TRACK-HIERARCHIE · STANDARDSCHRITT</text>
+        <rect x="40" y="50" width="240" height="120" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="50" y1="68" x2="270" y2="68" stroke="#c8b89a" stroke-width="1"/>
+        <text x="160" y="62" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Outliner</text>
+        <text x="55" y="86" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Pelvis</text>
+        <text x="70" y="100" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">└ Torso</text>
+        <text x="90" y="114" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">└ Head</text>
+        <text x="90" y="128" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">└ L_Arm, R_Arm</text>
+        <text x="70" y="142" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">└ L_Leg, R_Leg</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Quick Rigging Tool → Generate Rig — wie in jedem Projekt ab 02</text>
+      </svg>
+      <div class="caption">Track-Hierarchie kontrollieren. Bei Übernahme aus Projekt 04 sollte sie schon aktuell sein.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">02</span>
+        <span class="step-title">Track-Hierarchie kontrollieren</span>
+      </div>
+      <p>Bei Übernahme aus Projekt 04 ist die Track-Hierarchie schon korrekt. Falls neue Scene: Quick Rigging Tool, Generate Rig.</p>
+      <p>Im Outliner kontrollieren, dass die Pelvis → Torso → Head/Arms und Pelvis → Legs-Struktur vorhanden ist. Bei dieser Brochüre wichtiger als sonst, weil die Push-Phase Pelvis-Bewegung mit Bein-Streckung koordiniert braucht.</p>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">CONSTRAINT-STATUS · ÜBERNAHME AUS PROJEKT 04</text>
+        <!-- Object properties showing active constraint -->
+        <rect x="50" y="55" width="220" height="100" fill="#ede4d0" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="75" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#b85528">Pelvis Properties · Frame 0</text>
+        <line x1="60" y1="82" x2="260" y2="82" stroke="#c8b89a" stroke-width="1"/>
+        <text x="60" y="100" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Constraint to Chair</text>
+        <line x1="60" y1="106" x2="260" y2="106" stroke="#c8b89a" stroke-width="0.5"/>
+        <text x="60" y="125" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Keyframe Active</text>
+        <rect x="200" y="115" width="50" height="14" fill="#8a9878" stroke="#1f1a14" stroke-width="1"/>
+        <text x="225" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#f3ecdc">✓ ON</text>
+        <text x="60" y="146" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Interpolation Active</text>
+        <rect x="200" y="136" width="50" height="14" fill="#8a9878" stroke="#1f1a14" stroke-width="1"/>
+        <text x="225" y="146" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#f3ecdc">✓ ON</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Constraint ist die ganze Sit-Phase aktiv · später deaktiviert</text>
+      </svg>
+      <div class="caption">Constraint von Frame 0 aktiv — Pelvis ist an die Sitzfläche gebunden, solange Manny sitzt.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">03</span>
+        <span class="step-title">Constraint-Status auf Frame 0 setzen</span>
+      </div>
+      <p>Im Constraint-Setup zwischen Pelvis und Stuhl-Sitzfläche (übernommen aus Projekt 04, oder neu angelegt — siehe Projekt-04-Schritt 09 für volle Anleitung).</p>
+      <p>Auf Frame 0: Pelvis-Controller selektieren. Object Properties öffnen. Für die Constraint sowohl <strong>Keyframe Active</strong> als auch <strong>Interpolation Active</strong> auf ON. Damit hält die Constraint ab Frame 0 — der Pelvis ist an die Sitzfläche gebunden.</p>
+      <p>Anders als in Projekt 04, wo die Constraint <em>mitten</em> in der Animation aktiviert wurde, ist sie hier <em>von Anfang an</em> aktiv. Später (Phase D) wird sie an einem bestimmten Frame deaktiviert — das ist der Push-Moment, wo Manny den Sitz verlässt.</p>
+      <div class="shortcut-row">
+        <span>Object Properties:</span><kbd>N</kbd>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 3 — PHASE B: GROBSCHNITT -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§3</div>
+    <div>
+      <div class="section-tag">Phase B · Grobschnitt (Iteration 1)</div>
+      <h2 class="section-title">Drei Anker, <em>vorne dicht gepackt</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">B</div>
+    <div>
+      <h4>Grobschnitt</h4>
+      <div class="phase-meta">Asymmetrische Anker · Anticipation · Push · Aufrichten</div>
+      <p>Die ersten 35 Frames machen die meiste Arbeit (Anticipation + Push), die übrigen 55 das ruhige Aufrichten. Das spiegelt sich in der Anker-Verteilung. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Chair (still under character) -->
+        <g>
+          <rect x="170" y="120" width="80" height="6" fill="#ede4d0" stroke="#b85528" stroke-width="2"/>
+          <rect x="232" y="80" width="18" height="46" fill="#ede4d0" stroke="#b85528" stroke-width="2"/>
+        </g>
+        <!-- Manny: still seated but leaning forward -->
+        <g>
+          <circle cx="170" cy="68" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Forward-tilted spine -->
+          <line x1="170" y1="79" x2="195" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="175" cy="92" r="2.5" fill="#1f1a14"/>
+          <!-- Hip still on seat -->
+          <line x1="190" y1="118" x2="210" y2="118" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Arms slightly forward -->
+          <line x1="175" y1="92" x2="165" y2="125" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="165" y1="125" x2="170" y2="143" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="175" y1="92" x2="190" y2="125" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="190" y1="125" x2="200" y2="143" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Legs -->
+          <line x1="190" y1="118" x2="170" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="210" y1="118" x2="190" y2="120" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="170" y1="120" x2="160" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="190" y1="120" x2="180" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="152" y1="160" x2="168" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="172" y1="160" x2="188" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <!-- CoM shifted forward (toward feet) -->
+          <circle cx="180" cy="110" r="4" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+          <line x1="180" y1="110" x2="175" y2="160" stroke="#b85528" stroke-width="0.8" stroke-dasharray="2,2"/>
+        </g>
+        <!-- Lean direction arrow -->
+        <path d="M 130 75 Q 145 80, 160 88" fill="none" stroke="#b85528" stroke-width="1.2"/>
+        <text x="115" y="65" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">Spine vor</text>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#b85528">FRAME 12 · ANTICIPATION</text>
+      </svg>
+      <div class="caption">Anticipation: Spine deutlich vorgelehnt, CoM wandert über die Füße. Pelvis noch auf Sitz.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">04</span>
+        <span class="step-title">Anker — Anticipation (Frame 12)</span>
+      </div>
+      <p>Frame 12. Anticipation-Pose: Spine deutlich vorgelehnt (etwa 30-40° aus der Vertikalen), Kopf folgt der Spine-Neigung, Arme können sich leicht vom Körper lösen (typisches Vorbereitungs-Gesticulieren). Der CoM wandert sichtbar nach vorne — über die Füße statt über die Sitzfläche.</p>
+      <p>Das Pelvis bleibt aber <em>noch</em> auf dem Sitz. Constraint ist immer noch aktiv. Die Vor-Lehnung ist kein Aufstehen, sondern die Vorbereitung — der Körper sammelt Impuls und CoM-Position, bevor die Beine drücken.</p>
+      <p>Keyframe setzen mit aktiver Constraint (Pelvis stays). Pelvis-Keyframe FK setzen.</p>
+      <div class="box box-merk">
+        <div class="box-label">Anticipation als CoM-Positionierung</div>
+        <p>Bei Aufstehen ist Anticipation nicht nur stilistisch — sie ist physikalisch nötig. Wenn der CoM beim Push-Moment <em>nicht</em> über den Füßen ist, kann Manny nicht aufstehen ohne nach hinten zu fallen. Die Anticipation-Pose ist der CoM-Vor-Positionierungs-Schritt. Bei einem fitten Charakter ist sie kurz (10-15 Frames), bei einem älteren oder schweren Charakter länger (20-30 Frames).</p>
+      </div>
+      <div class="insight">
+        Der „Sit-to-Stand"-Test in der klinischen Gerontologie misst genau diesen Moment: die Sekunden zwischen „Sitz" und „Lift-off". Bei einer 30-jährigen Person sind das etwa 0.3 Sekunden. Bei einer 80-jährigen Person 1.5 Sekunden oder mehr — fünfmal so lang. Manny in dieser Brochüre ist bei 0.4 Sekunden (Frame 12 bei 30 fps) — also Junge Erwachsener. Längere Anticipation = älterer Charakter, fast automatisch.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Chair -->
+        <g>
+          <rect x="170" y="120" width="80" height="6" fill="#ede4d0" stroke="#b85528" stroke-width="2"/>
+          <rect x="232" y="80" width="18" height="46" fill="#ede4d0" stroke="#b85528" stroke-width="2"/>
+        </g>
+        <!-- Manny mid-push: pelvis off seat, knees still bent, spine angled -->
+        <g>
+          <circle cx="155" cy="48" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="155" y1="59" x2="170" y2="103" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="160" cy="72" r="2.5" fill="#1f1a14"/>
+          <!-- Hip lifted off seat -->
+          <line x1="163" y1="103" x2="183" y2="103" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Arms -->
+          <line x1="160" y1="72" x2="148" y2="115" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="148" y1="115" x2="153" y2="138" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="160" y1="72" x2="175" y2="115" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="175" y1="115" x2="185" y2="138" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Bent knees pushing -->
+          <line x1="163" y1="103" x2="165" y2="135" stroke="#b85528" stroke-width="2.4"/>
+          <line x1="165" y1="135" x2="162" y2="160" stroke="#b85528" stroke-width="2.4"/>
+          <line x1="183" y1="103" x2="185" y2="135" stroke="#b85528" stroke-width="2.4"/>
+          <line x1="185" y1="135" x2="182" y2="160" stroke="#b85528" stroke-width="2.4"/>
+          <line x1="152" y1="160" x2="172" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="172" y1="160" x2="192" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <!-- CoM forward and rising -->
+          <circle cx="170" cy="95" r="4" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+          <line x1="170" y1="95" x2="172" y2="160" stroke="#b85528" stroke-width="0.8" stroke-dasharray="2,2"/>
+        </g>
+        <!-- Push direction arrows -->
+        <path d="M 215 130 L 215 105" stroke="#b85528" stroke-width="1.5"/>
+        <path d="M 213 107 L 215 102 L 217 107 z" fill="#b85528"/>
+        <text x="220" y="125" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">PUSH</text>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#b85528">FRAME 20 · LIFT-OFF</text>
+      </svg>
+      <div class="caption">Push-Moment: Pelvis hebt sich vom Sitz, Knie noch deutlich gebeugt, Beine drücken aktiv.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">05</span>
+        <span class="step-title">Anker — Lift-Off / Push (Frame 20)</span>
+      </div>
+      <p>Frame 20 — nur 8 Frames nach Anticipation. Lift-Off-Moment: das Pelvis hat sich gerade vom Sitz gelöst, ist ein paar Zentimeter über der Sitzfläche. Knie sind noch deutlich gebeugt (etwa 90°), aber die Bein-Muskulatur drückt aktiv. Spine ist immer noch vorgelehnt — der Push erfolgt diagonal nach oben-vorne, nicht direkt nach oben.</p>
+      <p>Wichtig: das Pelvis hat den Sitz <em>verlassen</em>. Wenn die Constraint zu diesem Frame noch aktiv wäre, würde der Pelvis am Sitz festkleben. Constraint-Deaktivierung passiert in Phase D — vorerst Keyframe setzen, Pelvis FK, Constraint im Frame-Bereich 0-19 aktiv, ab Frame 20 inaktiv (wird in Schritt 11 konfiguriert).</p>
+      <div class="box box-stolper">
+        <div class="box-label">Push-Pose ohne genug Knie-Beugung</div>
+        <p>Wenn du den Push-Frame mit fast gestreckten Beinen baust, übersieht die Animation die Kraftanstrengung. Manny scheint sich aus dem Stuhl zu „schwingen" statt zu „drücken". Knie auf 80-100° bei Lift-Off ist die richtige Beuge — sie zeigt, dass die Muskulatur arbeitet.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Chair (empty now) -->
+        <g opacity="0.5">
+          <rect x="170" y="120" width="80" height="6" fill="none" stroke="#b85528" stroke-width="1.5"/>
+          <rect x="232" y="80" width="18" height="46" fill="none" stroke="#b85528" stroke-width="1.5"/>
+        </g>
+        <!-- Manny standing -->
+        <g>
+          <circle cx="140" cy="38" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="140" y1="49" x2="140" y2="113" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="140" cy="65" r="2.5" fill="#1f1a14"/>
+          <line x1="132" y1="113" x2="148" y2="113" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Arms relaxed at side -->
+          <line x1="140" y1="65" x2="143" y2="108" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="143" y1="108" x2="144" y2="138" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="140" y1="65" x2="137" y2="108" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="137" y1="108" x2="136" y2="138" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Legs straight -->
+          <line x1="132" y1="113" x2="133" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="148" y1="113" x2="147" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="125" y1="160" x2="141" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="139" y1="160" x2="155" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <!-- CoM up high -->
+          <circle cx="140" cy="100" r="4" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+          <line x1="140" y1="100" x2="140" y2="160" stroke="#b85528" stroke-width="0.8" stroke-dasharray="2,2"/>
+        </g>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#b85528">FRAME 75 · STAND</text>
+      </svg>
+      <div class="caption">Stand-Endpose. Aufrecht, Knie ganz leicht gelöst, neutrale Haltung. CoM zentral über Füßen.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">06</span>
+        <span class="step-title">Anker — Stand (Frame 75)</span>
+      </div>
+      <p>Frame 75 — 55 Frames nach dem Lift-Off. Die ruhige Aufricht-Phase. Manny ist jetzt voll aufrecht: Spine vertikal, Knie ganz leicht gelöst (nicht durchgestreckt), Schultern entspannt, Arme seitlich am Körper.</p>
+      <p>Der Frame liegt absichtlich nicht am Animationsende (Frame 89), sondern 14 Frames vorher. Die letzten 14 Frames sind <strong>Settle</strong> — Manny kommt zur Ruhe, leichtes Nachschwingen, dann Stillstand. Wenn der Stand-Anker am letzten Frame läge, würde keine Settle-Phase existieren.</p>
+      <p>Optional Frame 89 als finalen Anker setzen mit minimaler Abweichung von Frame 75 (z.B. Kopf um 1° anders, Brustkorb minimal angehoben durch Atmung) — damit ist die Pose nicht statisch, hat ein bisschen Moving Hold.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase B</div>
+        <p>Drei Anker stehen: Frame 0 (Sit), Frame 12 (Anticipation), Frame 20 (Lift-off), Frame 75 (Stand). Die Anker-Dichte ist asymmetrisch — erste 20 Frames haben 3 Anker, die übrigen 70 Frames nur 1. Das ist gewollt: Anticipation und Push brauchen detaillierte Posen, das Aufrichten dehnt sich entspannt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 4 — PHASE C: INBETWEENING -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§4</div>
+    <div>
+      <div class="section-tag">Phase C · Inbetweening (Iteration 2)</div>
+      <h2 class="section-title">Pelvis und Beine via Inbetweening, <em>Bezier oben</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">C</div>
+    <div>
+      <h4>Inbetweening</h4>
+      <div class="phase-meta">Track-Separation · FK-Setting · Generation</div>
+      <p>Standard-Pattern aus Projekt 03 und 04: Pelvis und Bein-Tracks auf Inbetweening, Rest auf Bezier. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <rect x="40" y="40" width="240" height="20" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="50" y="54">Head</text>
+          <text x="270" y="54" text-anchor="end" fill="#284858">Bezier · FK</text>
+
+          <rect x="40" y="62" width="240" height="20" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="50" y="76">Torso · Spine</text>
+          <text x="270" y="76" text-anchor="end" fill="#284858">Bezier · FK</text>
+
+          <rect x="40" y="84" width="240" height="20" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="50" y="98">Arms</text>
+          <text x="270" y="98" text-anchor="end" fill="#284858">Bezier · FK</text>
+
+          <rect x="40" y="106" width="240" height="20" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="50" y="120" fill="#f3ecdc">Pelvis</text>
+          <text x="270" y="120" text-anchor="end" fill="#f3ecdc">Inbetweening · FK</text>
+
+          <rect x="40" y="128" width="240" height="20" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="50" y="142" fill="#f3ecdc">L_Leg · R_Leg</text>
+          <text x="270" y="142" text-anchor="end" fill="#f3ecdc">Inbetweening · IK</text>
+        </g>
+        <text x="160" y="175" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Identisch zu Projekt 04 — die Konfiguration ist Pipeline-Standard</text>
+      </svg>
+      <div class="caption">Track-Separation wie in Projekt 04. Pelvis und Beine auf Inbetweening, Rest auf Bezier.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">07</span>
+        <span class="step-title">Track-Separation und FK-Setting</span>
+      </div>
+      <p>Wie in Projekt 03 und 04. Pelvis-Track und beide Bein-Tracks auf <strong>Inbetweening</strong>. Torso, Head, beide Arm-Tracks auf <strong>Bezier Clamped</strong>.</p>
+      <p>FK-Setting für alle Pelvis- und Arm-Keyframes. Bein-Keyframes bleiben IK (Bodenkontakt durchgehend), nur die Pelvis-Keyframes auf FK — damit Inbetweening die Pelvis-Trajectory relativ zum Spine-Parent rechnet.</p>
+      <p>Das Pattern ist Pipeline-Standard ab Projekt 03 und wird in jedem Projekt mit Bodenkontakt-Lokomotion wiederkehren.</p>
+    </div>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">COM-TRAJEKTORIE · L-FORM</text>
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- CoM trajectory: forward then upward -->
+        <path d="M 210 110 Q 200 105, 180 95 Q 170 85, 150 65 L 140 50" fill="none" stroke="#b85528" stroke-width="2"/>
+        <!-- Sit CoM -->
+        <circle cx="210" cy="110" r="6" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="210" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">0</text>
+        <!-- Anticipation CoM -->
+        <circle cx="180" cy="95" r="6" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="180" y="80" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">12</text>
+        <!-- Lift-off CoM -->
+        <circle cx="170" cy="85" r="6" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="170" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">20</text>
+        <!-- Stand CoM -->
+        <circle cx="140" cy="50" r="6" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="140" y="38" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">75</text>
+        <!-- Chair reference -->
+        <g opacity="0.4">
+          <rect x="200" y="120" width="40" height="3" fill="none" stroke="#b85528" stroke-width="1"/>
+        </g>
+        <!-- Feet position -->
+        <line x1="130" y1="160" x2="155" y2="160" stroke="#284858" stroke-width="2.5"/>
+        <text x="140" y="178" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#284858">Füße fix</text>
+        <!-- Direction labels -->
+        <line x1="265" y1="80" x2="290" y2="80" stroke="#5a4d3a" stroke-width="1"/>
+        <path d="M 288 78 L 292 80 L 288 82 z" fill="#5a4d3a"/>
+        <text x="278" y="73" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">vorne</text>
+        <line x1="270" y1="85" x2="270" y2="60" stroke="#5a4d3a" stroke-width="1"/>
+        <path d="M 268 62 L 270 58 L 272 62 z" fill="#5a4d3a"/>
+        <text x="278" y="65" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">oben</text>
+      </svg>
+      <div class="caption">CoM-Pfad: erst nach vorn (Anticipation), dann nach oben (Push und Aufrichten). Eine L-Form.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">08</span>
+        <span class="step-title">Erste Generation und CoM-L-Pfad prüfen</span>
+      </div>
+      <p>Play. Inbetweening rechnet die Frames zwischen Anker 0, 12, 20, 75 — das sind drei sehr unterschiedlich lange Intervalle (12, 8, 55 Frames). Das KI-Modell handhabt das gut: in den ersten 20 Frames passiert viel (Anticipation, Lift-off), die letzten 55 sind eine ruhige Aufricht-Phase.</p>
+      <p>CoM-Trajectory einschalten (<kbd>\</kbd>). Der Pfad sollte eine <strong>L-Form</strong> sein: erst horizontal nach vorne (Frame 0 zu 12), dann diagonal nach oben (Frame 12 zu 20), dann fast vertikal nach oben (Frame 20 zu 75). Das ist anders als der S-Pfad beim Hinsetzen — beim Aufstehen ist die Bewegung in zwei klar getrennten Phasen.</p>
+      <p>Wenn der CoM-Pfad <em>ohne</em> die L-Form rauskommt — z.B. eine direkte Diagonale von Sit zu Stand — ist die Anticipation-Pose zu schwach. Manny würde versuchen, ohne Vor-Lehnen aufzustehen, was physikalisch nicht funktioniert. Pose anpassen, Inbetweening rechnet sofort neu.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase C</div>
+        <p>Manny bewegt sich kontinuierlich vom Sit zum Stand. Anticipation-Lean ist sichtbar. Lift-Off-Moment ist klar erkennbar (Pelvis verlässt Sitz). Aufricht-Phase ist ruhig und gleichmäßig. CoM-Pfad ist L-förmig. Aber: Constraint ist noch über die ganze Animation aktiv — der Pelvis klebt also auch in der Aufricht-Phase noch am Sitz, was visuell falsch ist. Das ist der nächste Schritt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 5 — PHASE D: VERFEINERUNG -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§5</div>
+    <div>
+      <div class="section-tag">Phase D · Verfeinerung (Iteration 3)</div>
+      <h2 class="section-title">Constraint <em>auslösen</em>, Leading Action setzen.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">D</div>
+    <div>
+      <h4>Verfeinerung</h4>
+      <div class="phase-meta">Constraint-Deaktivierung · Settle · Leading Action · Spacing</div>
+      <p>Constraint im Lift-Off-Frame deaktivieren — der Pelvis löst sich vom Sitz. Settle nach Aufrichten. Tween Machine für Kopf-Body-Versatz. <em>Vier Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 9 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">CONSTRAINT AUF FRAME 20 DEAKTIVIEREN</text>
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Active constraint region -->
+        <rect x="30" y="93" width="46" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1.2"/>
+        <text x="55" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">CONSTRAINT</text>
+        <text x="55" y="120" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">aktiv</text>
+        <!-- Transition marker -->
+        <line x1="76" y1="80" x2="76" y2="115" stroke="#c46b3a" stroke-width="2.5"/>
+        <text x="76" y="135" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#c46b3a" font-weight="600">F20 · OFF</text>
+        <!-- Inactive constraint region -->
+        <rect x="76" y="93" width="214" height="14" fill="#ede4d0" stroke="#8a7d68" stroke-width="1.2"/>
+        <text x="180" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7d68">CONSTRAINT</text>
+        <text x="180" y="120" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#5a4d3a">inaktiv · Pelvis frei</text>
+        <text x="35" y="156" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">0</text>
+        <text x="76" y="156" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">20</text>
+        <text x="287" y="156" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">89</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Frame 20: Pelvis verlässt Sitz, Constraint löst sich</text>
+      </svg>
+      <div class="caption">Constraint-Schaltung: aktiv Frame 0-19, deaktiviert ab Frame 20. Auf dem Lift-Off-Frame umschalten.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">09</span>
+        <span class="step-title">Constraint auf Frame 20 deaktivieren</span>
+      </div>
+      <p>Auf Frame 20 (Lift-Off) navigieren. Pelvis-Controller selektieren. In den Object Properties die Constraint-Toggles für die Constraint-zu-Stuhl:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Keyframe Active</strong> → OFF</li>
+        <li><strong>Interpolation Active</strong> → OFF</li>
+      </ul>
+      <p>Für die Frames 20 bis 89 bleibt die Constraint inaktiv. Das Pelvis ist ab Frame 20 frei und kann die Aufricht-Bewegung machen, ohne am Sitz festzukleben.</p>
+      <p>Falls Inbetweening jetzt sofort neu rechnet und der Pelvis-Pfad sich verändert: gut, das ist erwartet. Bei aktiver Constraint hatte Inbetweening den Pelvis künstlich am Sitz gehalten, jetzt kann die natürliche Inbetweening-Bewegung wirken.</p>
+      <div class="box box-merk">
+        <div class="box-label">Constraint-Deaktivierung als „Übergangs-Moment"</div>
+        <p>Constraints sind kein Toggle der ganzen Animation, sondern ein Per-Frame-Zustand. Bei Aufstehen ist Frame 20 ein klares Übergangs-Moment: davor sitzt Manny (Pelvis am Stuhl), danach steht/wird er sich (Pelvis frei). Diese Pattern — Constraint aktiv → deaktiviert mitten in der Animation — kehrt in vielen späteren Projekten wieder: Tisch loslassen, Tür schließen und weiter gehen, Waffe abstellen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 10 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Two figures side by side: Frame 75 (stand) and Frame 82 (settle) -->
+        <g opacity="0.5">
+          <circle cx="100" cy="40" r="11" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="100" y1="51" x2="100" y2="115" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="92" y1="115" x2="108" y2="115" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="92" y1="115" x2="93" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="108" y1="115" x2="107" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        </g>
+        <text x="100" y="178" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">F75</text>
+        <!-- Settle pose: slight body lean back -->
+        <g>
+          <circle cx="220" cy="42" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <!-- Spine slightly back -->
+          <line x1="220" y1="53" x2="222" y2="117" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="220" cy="65" r="2.5" fill="#1f1a14"/>
+          <line x1="214" y1="117" x2="230" y2="117" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="220" y1="65" x2="218" y2="108" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="218" y1="108" x2="219" y2="138" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="220" y1="65" x2="226" y2="108" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="226" y1="108" x2="227" y2="138" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="214" y1="117" x2="213" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="230" y1="117" x2="231" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="205" y1="160" x2="221" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="223" y1="160" x2="239" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <!-- Slight back-lean indicator -->
+          <path d="M 245 50 Q 235 55, 230 65" fill="none" stroke="#b85528" stroke-width="1.2"/>
+          <text x="252" y="60" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">leicht zurück</text>
+        </g>
+        <text x="220" y="178" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">F82</text>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#b85528">SETTLE · NACHSCHWINGEN ZURÜCK</text>
+      </svg>
+      <div class="caption">Settle: nach voll aufgerichtet schwingt der Körper minimal nach hinten und kommt zur Ruhe.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">10</span>
+        <span class="step-title">Settle-Anker nach Aufrichten (Frame 82)</span>
+      </div>
+      <p>Frame 82 — 7 Frames nach dem Stand-Anker, 7 Frames vor dem Endframe. Settle-Pose: Manny ist gerade voll aufgerichtet, der Körper hat den Impuls der Push-Phase noch, schwingt minimal nach hinten — etwa 2-3° Spine-Lean rückwärts. Knie sind komplett gestreckt (oder fast).</p>
+      <p>Das ist eine Inertia-Konsequenz: nach starkem Push gibt es immer ein leichtes Über-Aufrichten, das dann ausschwingt. Praktisch: Frame 75-Pose duplizieren und die Spine um 2-3° rückwärts kippen, Kopf folgt.</p>
+      <p>Frame 89 = Endframe: zurück zur Frame 75-Pose (oder minimal davon abweichend für Moving Hold).</p>
+      <div class="insight">
+        Das Settle nach Aufstehen ist ein subtiler aber unverkennbarer Indikator für Energie. Bei einem fitten Charakter ist es klein (1-2°), bei jemandem der gerade etwas schweres gehoben hat größer (4-5°). Bei einem alten Menschen kann es <em>vor</em> das Stand-Pose kommen — die Aufricht-Bewegung ist so kraftraubend, dass der Körper kurz nach vorn überkippt bevor er sich stabilisiert. Manny in dieser Brochüre ist Standard-Atlet: Settle 2°, kurz, sauber.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 11 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">LEADING ACTION · KOPF VOR BODY</text>
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <text x="30" y="60">Kopf-Track</text>
+          <line x1="100" y1="56" x2="290" y2="56" stroke="#c8b89a" stroke-width="1.5"/>
+          <circle cx="130" cy="56" r="5" fill="#b85528"/>
+          <circle cx="170" cy="56" r="5" fill="#b85528"/>
+          <text x="130" y="48" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">F10</text>
+          <text x="170" y="48" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">F18</text>
+
+          <text x="30" y="95">Body-Track</text>
+          <line x1="100" y1="91" x2="290" y2="91" stroke="#c8b89a" stroke-width="1.5"/>
+          <circle cx="138" cy="91" r="5" fill="#b85528"/>
+          <circle cx="178" cy="91" r="5" fill="#b85528"/>
+          <text x="138" y="83" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">F12</text>
+          <text x="178" y="83" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">F20</text>
+
+          <text x="30" y="130">Arms-Track</text>
+          <line x1="100" y1="126" x2="290" y2="126" stroke="#c8b89a" stroke-width="1.5"/>
+          <circle cx="148" cy="126" r="5" fill="#b85528"/>
+          <circle cx="188" cy="126" r="5" fill="#b85528"/>
+          <text x="148" y="118" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">F15</text>
+          <text x="188" y="118" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">F23</text>
+        </g>
+        <text x="160" y="170" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Kopf reagiert zuerst (F10), Body folgt (F12), Arme zuletzt (F15)</text>
+        <text x="160" y="188" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">VERSATZ 2-3 FRAMES PRO TRACK</text>
+      </svg>
+      <div class="caption">Leading Action: Kopf reagiert auf das Aufsteh-Signal zuerst, Körper folgt, Arme zuletzt.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">11</span>
+        <span class="step-title">Leading Action mit Tween Machine</span>
+      </div>
+      <p>Bei Aufstehen ist Leading Action ausgeprägter als sonst, weil die Bewegung ein klares „Start-Signal" hat (die Entscheidung, jetzt aufzustehen). Wie in der Workflow-Referenz beschrieben: <em>Kopf reagiert zuerst, Body folgt, Arme zuletzt</em>.</p>
+      <p>Praktisch: für die Anticipation-Phase (Frame 0-12) nutzt du Tween Machine, um die Body-Parts mit Frame-Versatz zu animieren:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Kopf-Pose-Wechsel beginnt bei Frame 10 — Kopf neigt sich leicht vor</li>
+        <li>Body-Lean kommt bei Frame 12 (Hauptanker)</li>
+        <li>Arme reagieren bei Frame 15 — schwingen leicht nach vorn als Folge des Spine-Lean</li>
+      </ul>
+      <p>Mit <kbd>G</kbd> (attract previous) auf den Kopf-Controller in Frame 10 ziehen, dann auf Frame 15 für Arms. Tween Machine setzt automatisch passende Mid-Frames.</p>
+      <p>Selbe Logik für den Lift-Off-Bereich (Frame 18-23): Kopf beginnt die Aufricht-Bewegung früh, Body folgt, Arme schwingen zuletzt nach.</p>
+      <div class="shortcut-row">
+        <span>Attract previous:</span><kbd>G</kbd>
+        <span>Attract next:</span><kbd>L</kbd>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 12 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">SPACING-KONTROLLE · HOLD AM ENDE</text>
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Anker -->
+        <rect x="28" y="93" width="10" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <rect x="60" y="93" width="10" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <rect x="80" y="93" width="10" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <rect x="220" y="93" width="10" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <rect x="240" y="93" width="10" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <rect x="278" y="93" width="10" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <!-- L-Tween between Stand (F75) and Settle (F82) -->
+        <circle cx="155" cy="100" r="6" fill="#f3ecdc" stroke="#284858" stroke-width="2"/>
+        <text x="155" y="85" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#284858">L→</text>
+        <!-- Labels -->
+        <text x="32" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">0</text>
+        <text x="65" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">12</text>
+        <text x="85" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">20</text>
+        <text x="225" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">75</text>
+        <text x="245" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">82</text>
+        <text x="278" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">89</text>
+        <text x="155" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#284858">~50</text>
+        <text x="160" y="155" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Mid-Frame zwischen Lift-Off und Stand mit L</text>
+        <text x="160" y="172" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">— Hold-erweiternd Richtung Stand-Anker</text>
+        <text x="160" y="190" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">RUHIG ANKOMMEN</text>
+      </svg>
+      <div class="caption">Spacing-Polish: Mid-Frame zwischen Lift-Off und Stand mit L zum Stand-Anker ziehen — entspanntes Aufrichten.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">12</span>
+        <span class="step-title">Spacing-Polish — Aufrichten verlangsamen</span>
+      </div>
+      <p>Die letzte Iteration: das Aufrichten von Frame 20 bis 75 ist eine lange Phase. Inbetweening hat dort wahrscheinlich eine relativ gleichmäßige Bewegung erzeugt. Aber realistischer ist: schnelles initial Aufrichten direkt nach Lift-Off, dann immer langsamer, bis Manny voll aufrecht steht.</p>
+      <p>Frame 50 (ungefähr Mitte zwischen Lift-Off und Stand): einen Mid-Frame mit Tween Machine. <kbd>L</kbd> drücken — die aktuelle Pose wird Richtung Stand-Anker gezogen (etwa 40-60% Stärke). Das macht das Aufrichten zur Mitte schon weit fortgeschritten und gibt der letzten Phase einen Hold-Effekt.</p>
+      <p>Effekt: Manny richtet sich schnell auf in der Push-Phase, kommt fast bis zum Stand, dann „setzt" sich der Aufricht — die letzten 5° passieren langsamer als die ersten 20°. Das ist physiologisch realistisch und visuell ruhiger.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase D</div>
+        <p>Constraint löst sich auf Frame 20 sauber. Pelvis verlässt den Sitz ohne Bruch in der Bewegung. Leading Action ist sichtbar — Kopf führt die Anticipation. Settle nach Aufrichten ist subtil. Spacing ist asymmetrisch — viel passiert in den ersten 25 Frames, das Aufrichten dehnt sich. Bei Slow Motion sieht jeder Übergang sauber aus.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 6 — PHASE E: PHYSICS -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§6</div>
+    <div>
+      <div class="section-tag">Phase E · Physics</div>
+      <h2 class="section-title">Set Priority Frame <em>auf Lift-Off</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">E</div>
+    <div>
+      <h4>Physics</h4>
+      <div class="phase-meta">Set Priority Frame · Constraint-Mode · 3-Pass-AutoPhysics</div>
+      <p>Set Priority Frame auf den Lift-Off-Moment. AutoPhysics mit reduzierten Filtern wegen aktiver Constraint in der ersten Hälfte. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 13 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">SET PRIORITY FRAME · FRAME 20</text>
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <rect x="26" y="93" width="10" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <rect x="58" y="93" width="10" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <!-- Priority frame -->
+        <rect x="78" y="88" width="14" height="24" fill="#b85528" stroke="#1f1a14" stroke-width="2"/>
+        <polygon points="78,88 92,88 92,82 98,86 92,90 78,90" fill="#b85528" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="85" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528" font-weight="600">★ PRIORITY</text>
+        <rect x="218" y="93" width="10" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <rect x="240" y="93" width="10" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <rect x="278" y="93" width="10" height="14" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <text x="31" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">0</text>
+        <text x="63" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">12</text>
+        <text x="85" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528" font-weight="600">20</text>
+        <text x="223" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">75</text>
+        <text x="245" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">82</text>
+        <text x="283" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">89</text>
+        <text x="160" y="160" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Lift-Off-Frame ist die kritische Geometrie</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">— AutoPhysics darf ihn nicht verschieben</text>
+      </svg>
+      <div class="caption">Set Priority Frame auf Frame 20. AutoPhysics behält die Lift-Off-Geometrie unverändert.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">13</span>
+        <span class="step-title">Set Priority Frame auf Frame 20</span>
+      </div>
+      <p>Auf Frame 20 (Lift-Off-Moment) navigieren. Im Physics-Tab Set Priority Frame aktivieren. Das ist das Pendant zu Schritt 13 in Projekt 04: AutoPhysics weiß jetzt, dass Frame 20 nicht verschoben werden darf.</p>
+      <p>Warum dieser Frame? Lift-Off ist die physikalische Übergangsstelle — vor diesem Frame hat Manny Sitz-Kontakt, danach nur Fuß-Kontakt. AutoPhysics könnte ohne Schutz versuchen, den scharfen Kontakt-Wechsel zu glätten und dabei die Lift-Off-Pose um ein paar Frames verschieben. Mit Set Priority Frame bleibt der Punkt fix — Constraint deaktiviert sich genau dort, wo das Pelvis vom Sitz abhebt.</p>
+      <p>Optional zusätzlich: Set Priority Frame auf Frame 0 (Sit-Start) — damit AutoPhysics auch die initiale Sit-Pose unverändert lässt. Bei kurzen Animationen wie dieser ist es selten nötig, aber bei längeren narrativen Sequenzen sinnvoll.</p>
+    </div>
+  </div>
+
+  <!-- STEP 14 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="20" y="35" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">AUTOPHYSICS · FILTER FÜR AUFSTEHEN</text>
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <text x="20" y="60">Physics Character</text>
+          <line x1="170" y1="56" x2="290" y2="56" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="56" x2="290" y2="56" stroke="#b85528" stroke-width="3"/>
+          <circle cx="290" cy="56" r="4" fill="#b85528"/>
+          <text x="295" y="60" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">100</text>
+
+          <text x="20" y="85">Smooth Trajectory</text>
+          <line x1="170" y1="81" x2="290" y2="81" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="81" x2="220" y2="81" stroke="#b85528" stroke-width="3"/>
+          <circle cx="220" cy="81" r="4" fill="#b85528"/>
+          <text x="295" y="85" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~40</text>
+
+          <text x="20" y="110" fill="#c46b3a">Smooth Rotation</text>
+          <line x1="170" y1="106" x2="290" y2="106" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="106" x2="170" y2="106" stroke="#c46b3a" stroke-width="3"/>
+          <circle cx="170" cy="106" r="4" fill="#c46b3a"/>
+          <text x="295" y="110" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">0</text>
+
+          <text x="20" y="135" fill="#c46b3a">Compensation Motion</text>
+          <line x1="170" y1="131" x2="290" y2="131" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="131" x2="170" y2="131" stroke="#c46b3a" stroke-width="3"/>
+          <circle cx="170" cy="131" r="4" fill="#c46b3a"/>
+          <text x="295" y="135" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">0</text>
+
+          <text x="20" y="160">Secondary Motion</text>
+          <line x1="170" y1="156" x2="290" y2="156" stroke="#c8b89a" stroke-width="2"/>
+          <line x1="170" y1="156" x2="210" y2="156" stroke="#b85528" stroke-width="3"/>
+          <circle cx="210" cy="156" r="4" fill="#b85528"/>
+          <text x="295" y="160" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~30</text>
+        </g>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Constraints in erster Hälfte aktiv — Filter wie in Projekt 04</text>
+      </svg>
+      <div class="caption">Filter-Werte mit Constraint-Awareness. Nur Physics Character, Smooth Trajectory, Secondary Motion.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">14</span>
+        <span class="step-title">AutoPhysics Pass 1 + 2</span>
+      </div>
+      <p>Physics Assistance an. Pass 1 + 2 nur mit Physics Corrector. Ganze Sequenz selektieren, Solve, Snap, wiederholen.</p>
+      <p>Weil die Constraint in den ersten 20 Frames aktiv ist, gilt die Cascadeur-2026.1-Constraint-Aware-Regel: nur <strong>Physics Character</strong>, <strong>Smooth Trajectory</strong>, <strong>Secondary Motion</strong> in Pass 3 verwenden. Die anderen Filter werden zu Konflikten mit der Constraint-Logik führen.</p>
+      <p>Bei AutoPhysics-Timeline-Farbe: in den Sit-Frames (0-19) wird sie wahrscheinlich grau oder gelb sein (Constraint übersteuert Fulcrum-Erkennung). In den Steh-Frames (20-89) sollte sie dunkelgrün sein (beide Füße Bodenkontakt). Wenn orange in den Steh-Frames: Anker-Posen prüfen, Foot-Fixation via <kbd>R</kbd> verifizieren.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Constraint-Deaktivierung mitten in der Animation</div>
+        <p>AutoPhysics in 2026.1 erkennt Constraints für den Zeitraum, in dem sie aktiv sind. Bei dieser Brochüre ist die Constraint nur Frame 0-19 aktiv, ab Frame 20 inaktiv. AutoPhysics behandelt die zwei Bereiche unterschiedlich — in der Constraint-Phase weniger Filter-Anwendung, in der Steh-Phase normale Filter. Das ist eine der raffinierteren Funktionen von 2026.1 und einer der Hauptgründe, warum diese Brochüren auf 2026.1 zielen statt auf ältere Versionen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 15 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Final stand pose with arms slight settle motion -->
+        <g>
+          <circle cx="155" cy="38" r="11" fill="none" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="155" y1="49" x2="155" y2="113" stroke="#1f1a14" stroke-width="2"/>
+          <circle cx="155" cy="65" r="2.5" fill="#1f1a14"/>
+          <line x1="148" y1="113" x2="162" y2="113" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="155" y1="65" x2="148" y2="108" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="148" y1="108" x2="146" y2="138" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="155" y1="65" x2="162" y2="108" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="162" y1="108" x2="164" y2="138" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="148" y1="113" x2="148" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="162" y1="113" x2="162" y2="160" stroke="#1f1a14" stroke-width="2"/>
+          <line x1="140" y1="160" x2="156" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <line x1="154" y1="160" x2="170" y2="160" stroke="#1f1a14" stroke-width="2.6"/>
+          <!-- Secondary motion on arms -->
+          <path d="M 146 138 Q 142 142, 146 146" fill="none" stroke="#b85528" stroke-width="1"/>
+          <path d="M 164 138 Q 168 142, 164 146" fill="none" stroke="#b85528" stroke-width="1"/>
+        </g>
+        <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em" fill="#8a9878">SECONDARY MOTION · MITSCHWUNG IN ARMEN</text>
+      </svg>
+      <div class="caption">Pass 3 mit Secondary Motion: leichter Mitschwung in Armen und Fingern beim Settle.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">15</span>
+        <span class="step-title">Pass 3 mit Filtern und Secondary Motion</span>
+      </div>
+      <p>Pass 3 mit:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Physics Character</strong> 100</li>
+        <li><strong>Smooth Trajectory</strong> ~40 — glättet den L-CoM-Pfad, lässt aber den Knick bei Lift-Off intakt</li>
+        <li><strong>Smooth Rotation</strong> 0 — weg</li>
+        <li><strong>Compensation Motion</strong> 0 — weg</li>
+        <li><strong>Separation of Motion</strong> 0 — weg</li>
+        <li><strong>Secondary Motion</strong> ~30 — Mitschwung in Armen und Schultern, besonders sichtbar beim Settle</li>
+      </ul>
+      <p>Ganze Sequenz, Solve, Snap to Physics. Die Push-Phase sollte jetzt einen klar erkennbaren Energie-Charakter haben — Beine drücken, Spine richtet sich auf, die Bewegung hat „Schwung". Das Settle nach dem Aufrichten bekommt durch Secondary Motion zusätzliches Detail (Arme schwingen leicht mit dem Spine-Rück-Lean).</p>
+      <p>Physics Assistance aus. Animation ist gebaked.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase E</div>
+        <p>Lift-Off-Frame ist exakt — kein Drift im Pelvis-Pfad. CoM-Pfad ist eine saubere L-Form. Push-Phase hat sichtbare Energie (Schwung im Spine, Beine drücken). Settle nach Aufrichten ist subtil aber erkennbar. Manny endet stabil im Stand, leichte Restschwingung in Armen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 7 — PHASE F: EXPORT -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§7</div>
+    <div>
+      <div class="section-tag">Phase F · Export</div>
+      <h2 class="section-title">FBX und <em>Building-Block-Pairing</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">F</div>
+    <div>
+      <h4>Export</h4>
+      <div class="phase-meta">FBX · UE5 · Anschluss an Projekt 04</div>
+      <p>Export wie üblich. Im UE5-Sequencer kann diese Animation direkt an die Hinsetzen-Animation aus Projekt 04 anschließen. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 16 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="80" y="50" width="160" height="100" rx="6" fill="#f3ecdc" stroke="#1f1a14" stroke-width="2"/>
+        <text x="160" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#b85528">FBX EXPORT</text>
+        <line x1="100" y1="88" x2="220" y2="88" stroke="#c8b89a" stroke-width="1"/>
+        <text x="100" y="105" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Bake animation</text>
+        <text x="220" y="105" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">✓</text>
+        <text x="100" y="122" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Frame range</text>
+        <text x="220" y="122" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">0–89</text>
+        <text x="100" y="139" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Skeleton only</text>
+        <text x="220" y="139" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">✓</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Stuhl bleibt zurück · UE5-Stuhl ersetzt den Proxy</text>
+      </svg>
+      <div class="caption">Standard-FBX. Stuhl nicht mitexportieren — der UE5-Stuhl von Projekt 04 wird wiederverwendet.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">16</span>
+        <span class="step-title">FBX-Export ohne Stuhl</span>
+      </div>
+      <p>File → Export → FBX. Wie in Projekt 04: nur Manny exportieren, Stuhl-Proxy bleibt zurück. Bake animation, 30 fps, 0-89 Frames, Skeleton only.</p>
+      <p>Constraint wird wieder nicht übersetzt — die Bake-Phase hat die korrekten Pelvis-Positionen schon eingearbeitet. Dateiname <code>manny-aufstehen-v01.fbx</code>.</p>
+    </div>
+  </div>
+
+  <!-- STEP 17 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="50" width="280" height="110" fill="none" stroke="#284858" stroke-width="1.5"/>
+        <text x="160" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#284858">UE5 · SEQUENCER · GEKOPPELT</text>
+        <line x1="40" y1="82" x2="280" y2="82" stroke="#284858" stroke-width="0.6"/>
+        <!-- Three animation segments in sequence -->
+        <rect x="40" y="92" width="60" height="18" fill="#b85528" opacity="0.5"/>
+        <text x="70" y="105" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#f3ecdc">Projekt 04</text>
+        <rect x="100" y="92" width="40" height="18" fill="#8a9878" opacity="0.5"/>
+        <text x="120" y="105" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#1f1a14">idle/talk</text>
+        <rect x="140" y="92" width="55" height="18" fill="#b85528" opacity="0.5"/>
+        <text x="167" y="105" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#f3ecdc">Projekt 05</text>
+        <rect x="195" y="92" width="85" height="18" fill="#284858" opacity="0.4"/>
+        <text x="237" y="105" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#1f1a14">walk (Projekt 03)</text>
+        <text x="160" y="135" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Hinsetzen → Sit-Idle → Aufstehen → Walk</text>
+        <text x="160" y="155" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">— Building Blocks aneinandergereiht</text>
+      </svg>
+      <div class="caption">Im Sequencer: Hinsetzen → Sit-Idle → Aufstehen → Walk als nahtlose narrative Sequenz.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">17</span>
+        <span class="step-title">UE5-Import und Sequenz-Kopplung</span>
+      </div>
+      <p>FBX in UE5 importieren wie üblich. Manny-Skelett als Target, Animation Sequence wird angelegt.</p>
+      <p>Im Sequencer kann diese Animation direkt nach der Hinsetzen-Animation aus Projekt 04 platziert werden. Optional dazwischen eine Sit-Idle-Pose (etwa der finale Frame von Projekt 04 als statische Pose für 2-5 Sekunden, in denen Manny vielleicht spricht oder atmet).</p>
+      <p>Nach dem Aufstehen kann die Walk-Animation aus Projekt 03 anschließen — Manny steht auf und geht los. Wenn die Pose-Endframes und Start-Frames konsistent sind (was sie sind, weil beide auf demselben Manny-Skelett und ähnlicher Stand-Pose basieren), ist der Übergang nahtlos.</p>
+      <div class="box box-merk">
+        <div class="box-label">Narrative Sequenz-Komposition</div>
+        <p>Mit den Animationen aus Projekt 01-05 hast du jetzt das Basis-Vokabular für narrative Szenen: stehen (01), gestikulieren (02), gehen (03), hinsetzen (04), aufstehen (05). In UE5 lassen sich diese als Animation Sequences aneinanderhängen — jede ist ein wenige-Sekunden-Block, die Kombinationen ergeben Minuten. Projekt 11+ (Kombinations-Szenen) wird sich genau diese Kompositions-Disziplin vornehmen.</p>
+      </div>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase F</div>
+        <p>In UE5: Manny startet sitzend, steht über 3 Sekunden auf, endet stehend. Lift-Off-Moment ist sauber. Im Sequencer kann die Animation direkt nach Hinsetzen platziert werden. MetaHuman-Face-Performance kann zeitlich abgestimmt eingelegt werden — vielleicht spricht Manny, während er aufsteht.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 8 — OUTRO -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§8</div>
+    <div>
+      <div class="section-tag">Ausblick</div>
+      <h2 class="section-title">Was du <em>jetzt zusätzlich</em> hast.</h2>
+    </div>
+  </div>
+
+  <p>Mit Projekt 05 ist das Constraint-Vokabular vollständig: Constraint <strong>einschalten</strong> (Projekt 04, Sit-Kontakt-Moment) und Constraint <strong>ausschalten</strong> (Projekt 05, Lift-Off-Moment). Asymmetrisches Spacing ist als didaktisches Konzept eingeführt — eng am Anfang, weit am Ende — und kann auf andere Bewegungen übertragen werden. Leading Action mit klaren Frame-Versätzen ist bewusst gesetzt, nicht nur subtil eingewoben.</p>
+
+  <p>Projekt 06 (Rennen) wird die Lokomotion aus Projekt 03 in höhere Geschwindigkeit übersetzen. Wichtigster neuer Aspekt: ein <em>Flight Frame</em> ohne Bodenkontakt. AutoPhysics behandelt das ganz anders als Walk — ballistischer Modus, CoM-Parabel statt -Sinus, GR (Global Rotation) statt FK für die Beine in der Luft.</p>
+
+  <p>Bei Projekt 11+ (Kombinations-Szenen) kommen die Building Blocks aus 01-05 zusammen. Hinsetzen und Aufstehen sind besonders nützlich, weil sie Manny zwischen aktiven Posen-Klassen wechseln lassen — eine Szene wie „kommt rein, geht zum Stuhl, setzt sich, redet, steht auf, geht raus" lässt sich aus 03 + 04 + Idle + 05 + 03 in UE5 zusammensetzen, ohne dass eine neue Animation entstehen muss.</p>
+
+  <div class="box box-merk">
+    <div class="box-label">Was Projekt 05 nicht macht</div>
+    <p>Kein Aufstehen mit Armstütze (Hand drückt sich vom Stuhl ab — typisch bei älteren Personen). Kein Aufstehen unter Last (etwas in der Hand halten). Kein partielles Aufstehen (in halb-aufgerichteter Pose stoppen). Kein Aufstehen aus tiefem Sofa (anderer CoM-Pfad, mehr Vorlehnen). All das sind Pose-Modulationen des selben Phasenmodells — nicht ein neuer Workflow.</p>
+  </div>
+
+  <div class="insight">
+    Es gibt einen klassischen Animation-Übung-Klassiker, der mit diesem Projekt eng verwandt ist: ein „weight shift"-Test, bei dem ein Charakter etwas Schweres aufhebt und sich aufrichtet. Die Mechanik ist erstaunlich ähnlich zum Aufstehen — Anticipation (Vor-Lehnung), Push (Beine aktiv), Aufrichten, Settle. Nur die Pose-Endung unterscheidet sich: aufrechtes Stehen mit hängenden Armen vs. aufrechtes Stehen mit erhobener Last. Sobald du Projekt 05 sauber gebaut hast, ist eine „Heavy Lift"-Variante eine kleine Pose-Modulation, nicht ein neues Projekt.
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="doc-footer">
+  <div><span class="terracotta">Projekt 05 · v 1.0</span></div>
+  <div>17 Schritte · 6 Phasen</div>
+  <div>Cascadeur · Lernreihe</div>
+</footer>
+
+</article>
+
+</body>
+</html>
