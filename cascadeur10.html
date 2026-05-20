@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projekt 10 · Custom-Charakter aus Blender · Cascadeur-Lernreihe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3ecdc; --paper-warm: #ede4d0; --paper-dark: #e2d6b8;
+    --ink: #1f1a14; --ink-soft: #5a4d3a; --ink-faint: #8a7d68;
+    --terracotta: #b85528; --terracotta-deep: #7a3414;
+    --cobalt: #284858; --sage: #8a9878; --warning: #c46b3a; --rule: #c8b89a;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'DM Sans', -apple-system, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+    color: var(--ink); background: var(--paper);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    -webkit-font-smoothing: antialiased;
+  }
+  .doc { max-width: 1100px; margin: 0 auto; }
+
+  .cover { padding: 3.5rem 5rem 2.5rem; border-bottom: 1px solid var(--rule); position: relative; overflow: hidden; }
+  .cover::before { content: ''; position: absolute; top: -10%; right: -8%; width: 50%; aspect-ratio: 1; background: radial-gradient(circle, rgba(184, 85, 40, 0.08) 0%, transparent 65%); border-radius: 50%; pointer-events: none; }
+  .cover-marker { display: flex; align-items: center; gap: 1.5rem; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 1.5rem; }
+  .cover-marker .ml { width: 60px; height: 1px; background: var(--terracotta); }
+  .cover h1 { font-family: var(--font-display); font-size: clamp(2.6rem, 5vw, 4.2rem); font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 50; line-height: 1.05; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 1.5rem; max-width: 18ch; }
+  .cover h1 em { font-style: italic; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); }
+  .cover .subtitle { font-family: var(--font-display); font-style: italic; font-size: 1.2rem; color: var(--ink-soft); max-width: 58ch; margin-bottom: 2rem; }
+  .cover-meta { display: flex; gap: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); flex-wrap: wrap; }
+  .mb { display: flex; flex-direction: column; gap: 0.2rem; }
+  .mb-label { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); }
+  .mb span:last-child { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: var(--ink); }
+
+  .section { padding: 3rem 5rem; border-bottom: 1px solid var(--rule); }
+  .section-head { display: grid; grid-template-columns: 80px 1fr; gap: 1.5rem; margin-bottom: 1.8rem; align-items: start; }
+  .section-num { font-family: var(--font-display); font-size: 2.8rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 1; }
+  .section-tag { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+  .section-title { font-family: var(--font-display); font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 400; line-height: 1.15; color: var(--ink); letter-spacing: -0.01em; max-width: 26ch; }
+  .section-title em { font-style: italic; font-weight: 300; color: var(--terracotta); font-variation-settings: 'opsz' 144, 'SOFT' 100; }
+
+  .section p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .section p.lead { font-family: var(--font-display); font-style: italic; font-size: 1.18rem; color: var(--ink-soft); margin-bottom: 1.5rem; max-width: 60ch; }
+  .section h3 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 500; margin: 1.6rem 0 0.6rem; color: var(--ink); }
+
+  .phase-banner { display: grid; grid-template-columns: 110px 1fr; gap: 2rem; margin: 2rem 0 2.5rem; padding: 1.4rem 1.8rem; background: linear-gradient(90deg, rgba(184, 85, 40, 0.10), transparent); border-left: 4px solid var(--terracotta); align-items: center; }
+  .phase-letter { font-family: var(--font-display); font-size: 5rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 0.85; text-align: center; }
+  .phase-banner h4 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; color: var(--ink); margin-bottom: 0.3rem; }
+  .phase-banner .phase-meta { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.5rem; }
+  .phase-banner p { font-size: 0.97rem; color: var(--ink); margin-bottom: 0; max-width: 65ch; }
+  .phase-banner em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .phase-banner.blender { background: linear-gradient(90deg, rgba(196, 107, 58, 0.10), transparent); border-left-color: var(--warning); }
+  .phase-banner.blender .phase-letter { color: var(--warning); }
+  .phase-banner.unreal { background: linear-gradient(90deg, rgba(40, 72, 88, 0.10), transparent); border-left-color: var(--cobalt); }
+  .phase-banner.unreal .phase-letter { color: var(--cobalt); }
+
+  .step { display: grid; grid-template-columns: 320px 1fr; gap: 1.8rem; margin: 1.6rem 0; padding: 1.6rem 1.8rem; background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; }
+  .step-diagram { background: #f3ecdc; border: 1px solid #c8b89a; border-radius: 6px; padding: 1rem 0.6rem 0.6rem; align-self: start; }
+  .step-diagram svg { width: 100%; height: auto; display: block; }
+  .step-diagram .caption { margin-top: 0.5rem; text-align: center; font-family: var(--font-display); font-style: italic; font-size: 0.82rem; color: var(--ink-soft); line-height: 1.4; }
+  .step-num-row { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 0.6rem; }
+  .step-num { font-family: var(--font-display); font-size: 1.8rem; font-weight: 300; font-style: italic; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); line-height: 1; }
+  .step-title { font-family: var(--font-display); font-size: 1.18rem; font-weight: 500; color: var(--ink); line-height: 1.25; }
+  .step p { font-size: 0.96rem; margin-bottom: 0.6rem; max-width: none; }
+  .step p:last-child { margin-bottom: 0; }
+  .step em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .shortcut-row { display: flex; flex-wrap: wrap; gap: 0.4rem 0.7rem; align-items: center; margin: 0.5rem 0 0.4rem; font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; color: var(--ink-soft); }
+  kbd { font-family: var(--font-mono); font-size: 0.78rem; background: var(--paper-warm); border: 1px solid var(--rule); border-radius: 3px; padding: 0.05rem 0.4rem; color: var(--ink); box-shadow: 0 1px 0 var(--rule); }
+
+  .box { margin: 1.4rem 0; padding: 1.1rem 1.3rem; border-radius: 0 4px 4px 0; max-width: none; }
+  .step .box { margin: 0.9rem 0 0.4rem; }
+  .box-label { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; margin-bottom: 0.4rem; }
+  .box-label::before { content: ''; width: 14px; height: 1.5px; background: currentColor; }
+  .box p { font-size: 0.93rem; margin-bottom: 0.4rem; }
+  .box p:last-child { margin-bottom: 0; }
+  .box-why { background: rgba(40, 72, 88, 0.10); border-left: 3px solid var(--cobalt); }
+  .box-why .box-label { color: var(--cobalt); }
+  .box-stolper { background: rgba(196, 107, 58, 0.13); border-left: 3px solid var(--warning); }
+  .box-stolper .box-label { color: var(--warning); }
+  .box-merk { background: rgba(184, 85, 40, 0.10); border-left: 3px solid var(--terracotta); }
+  .box-merk .box-label { color: var(--terracotta); }
+  .box-check { background: rgba(138, 152, 120, 0.18); border-left: 3px solid var(--sage); }
+  .box-check .box-label { color: var(--sage); }
+
+  .insight { margin: 1.4rem 0; padding: 1.1rem 1.3rem; background: var(--paper-warm); border: 1px dashed var(--rule); border-radius: 6px; font-family: var(--font-display); font-style: italic; font-size: 0.96rem; color: var(--ink-soft); max-width: 65ch; }
+  .insight::before { content: 'Randnotiz'; display: block; font-family: var(--font-mono); font-style: normal; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+
+  .doc-footer { padding: 2.5rem 5rem; border-top: 2px solid var(--ink); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); display: flex; justify-content: space-between; }
+  .doc-footer .terracotta { color: var(--terracotta); }
+
+  @media (max-width: 900px) {
+    .cover, .section, .doc-footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .section-head { grid-template-columns: 1fr; gap: 0.5rem; }
+    .step { grid-template-columns: 1fr; gap: 1rem; }
+    .step-diagram { max-width: 280px; margin: 0 auto; }
+    .phase-banner { grid-template-columns: 1fr; gap: 0.5rem; }
+    .phase-letter { text-align: left; font-size: 3.5rem; }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #1a1612; --paper-warm: #221d17; --paper-dark: #2a241c;
+      --ink: #ebe3d0; --ink-soft: #b8a98a; --ink-faint: #7a6e58;
+      --terracotta: #e8814a; --terracotta-deep: #c25a2a;
+      --cobalt: #6a9aab; --sage: #a8b898; --warning: #e2884d; --rule: #3a3026;
+    }
+    body { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"); }
+    .step-diagram { background: #f3ecdc !important; border-color: #c8b89a !important; }
+    .step-diagram .caption { color: #5a4d3a !important; }
+  }
+</style>
+</head>
+<body>
+
+<article class="doc">
+
+<!-- COVER -->
+<header class="cover">
+  <div class="cover-marker">
+    <span>Cascadeur · Lernreihe · Track 3</span>
+    <div class="ml"></div>
+    <span>Projekt 10 · v 1.0</span>
+  </div>
+  <h1>Custom-<em>Charakter</em><br>aus Blender:<br>die volle Pipeline.</h1>
+  <p class="subtitle">Auto-Rig Pro in Blender, Game Rig Tools für Game-fähiges Skelett, Connect Bones und Mute Control Rig, Import in Cascadeur via Quick Rigging Tool. Animation aus 02-09 auf den neuen Charakter übertragen — UE5-Retargeting bevorzugt, Cascadeur-Pro-Retargeting als Backup.</p>
+  <div class="cover-meta">
+    <div class="mb"><span class="mb-label">Quelle</span><span>Blender Auto-Rig Pro</span></div>
+    <div class="mb"><span class="mb-label">Brücke</span><span>Game Rig Tools (CG Dive)</span></div>
+    <div class="mb"><span class="mb-label">Ziel</span><span>Cascadeur + UE5</span></div>
+    <div class="mb"><span class="mb-label">Neu</span><span>Custom-Rig · Retargeting-Wahl</span></div>
+    <div class="mb"><span class="mb-label">Pipeline-Reichweite</span><span>Blender ↔ Cascadeur ↔ UE5</span></div>
+    <div class="mb"><span class="mb-label">Schritte</span><span>17</span></div>
+  </div>
+</header>
+
+
+<!-- § 1 — WAS DU BAUST -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§1</div>
+    <div>
+      <div class="section-tag">Pipeline-Konzept und Skelett-Wahl</div>
+      <h2 class="section-title">Animation ist universal, <em>Skelett ist spezifisch</em>.</h2>
+    </div>
+  </div>
+
+  <p class="lead">Die Animationen aus 01-09 sind alle auf dem UE5-Manny-Skelett gebaut. Wenn dein Projekt einen Custom-Charakter braucht — anderer Körperbau, andere Proportionen, andere Personality — bleibt die Animation die gleiche, aber das Skelett ist anders. Diese Brochüre zeigt, wie du den Pipeline-Bruch dazwischen sauber überbrückst.</p>
+
+  <p>Workflow: dein Custom-Charakter ist in Blender mit Auto-Rig Pro gerigt — Industrie-Standard für Blender-Rigging mit Control-Rig und Deform-Rig. Auto-Rig Pro produziert ein sehr komplexes Control-Rig (gut für Blender-Animation) und ein einfacheres Deform-Rig (für Game-Engines). Cascadeur braucht das Deform-Rig, aber „direkt" exportiert kommt das Control-Rig mit. Lösung: <strong>Game Rig Tools</strong> (CG Dive, kostenlos auf Gumroad) — ein Blender-Addon, das ein simplifiziertes Game-Rig generiert, ohne Control-Constraints.</p>
+
+  <p>In Cascadeur kommt der Charakter mit dem Game-Rig an. Quick Rigging Tool wird manuell verwendet, um Cascadeurs eigene Controller dem Custom-Skelett zuzuordnen. Template speichern für Wiederverwendung. Dann: bestehende Animation aus 02-09 importieren und auf den Custom-Charakter übertragen — Retargeting (Pro) oder Copy/Paste Interval bei identischen Bone-Namen.</p>
+
+  <div class="box box-why">
+    <div class="box-label">Warum diese Pipeline existiert</div>
+    <p>UE5-Manny ist Standard und einfach. Aber Game-Charaktere sind selten Standard — sie haben individuelle Proportionen, Stile, manchmal nicht-humanoide Elemente (Schwanz, zusätzliche Glieder, Stilisierung). Auto-Rig Pro ist in Blender die Standardlösung für Custom-Rigging. Cascadeur kann mit beliebigen humanoiden Skeletten arbeiten, aber braucht eine sauber strukturierte Deform-Rig-Variante. Game Rig Tools schließt diese Lücke.</p>
+  </div>
+
+  <div class="insight">
+    Es gibt eine historische Pipeline-Frage, die seit den 1990ern offen ist: sollte Animation auf dem Control-Rig (animator-freundlich) oder dem Deform-Rig (engine-freundlich) gebaut werden? Maya hat das Problem mit „HumanIK" gelöst, Blender mit Rigify, jetzt erweitert um Auto-Rig Pro und Game Rig Tools. Cascadeur ist eine spätere Generation — sein Quick Rigging Tool baut ein neues Cascadeur-Control-Rig auf jedem Deform-Skelett. Das gibt drei Rig-Layer: dein originales Blender Control-Rig (für Modeling und Setup), Auto-Rig Pro's Deform-Rig (für Game-Engine), und Cascadeur's AutoPosing-Rig (für die Animation). Klingt komplex, ist es auch — aber jedes Layer hat seinen Sinn.
+  </div>
+</section>
+
+
+<!-- § 2 — PHASE A: BLENDER-PREP -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§2</div>
+    <div>
+      <div class="section-tag">Phase A · Blender-Prep</div>
+      <h2 class="section-title">Auto-Rig Pro → <em>Game Rig Tools</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner blender">
+    <div class="phase-letter">A</div>
+    <div>
+      <h4>Blender-Prep</h4>
+      <div class="phase-meta">Auto-Rig Pro · Game Rig Tools · Connect Bones · FBX-Export</div>
+      <p>Charakter in Blender mit Auto-Rig Pro fertig. Game Rig Tools-Addon installieren. Game Rig generieren. Mute Control Rig. Bones connecten. FBX exportieren. <em>Vier Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">AUTO-RIG PRO · DREI RIG-LAYER</text>
+        <g>
+          <rect x="40" y="55" width="80" height="100" fill="#284858" opacity="0.2" stroke="#284858" stroke-width="1.5"/>
+          <text x="80" y="73" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#284858">CONTROL</text>
+          <text x="80" y="88" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#5a4d3a">ARP-Rig</text>
+          <text x="80" y="110" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">IK · FK</text>
+          <text x="80" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">Constraints</text>
+          <text x="80" y="148" text-anchor="middle" font-style="italic" font-family="Fraunces, serif" font-size="7" fill="#5a4d3a">in Blender</text>
+
+          <text x="160" y="105" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#b85528">→</text>
+
+          <rect x="200" y="55" width="80" height="100" fill="#b85528" opacity="0.3" stroke="#b85528" stroke-width="1.5"/>
+          <text x="240" y="73" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">DEFORM</text>
+          <text x="240" y="88" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#b85528">Game-Rig</text>
+          <text x="240" y="110" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">nur Joints</text>
+          <text x="240" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">kein IK/Constraints</text>
+          <text x="240" y="148" text-anchor="middle" font-style="italic" font-family="Fraunces, serif" font-size="7" fill="#b85528">für Engine</text>
+        </g>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Game Rig Tools generiert das Game-Rig aus dem Control-Rig</text>
+      </svg>
+      <div class="caption">Zwei Rig-Layer in Blender: Control-Rig für Posing, Deform-Rig für Export.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">01</span>
+        <span class="step-title">Charakter mit Auto-Rig Pro in Blender</span>
+      </div>
+      <p>Voraussetzung: Custom-Charakter ist in Blender mit Auto-Rig Pro fertig geriggt. Das umfasst:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Mesh mit allen Body-Parts (Torso, Arme, Beine, Kopf, Hände, Finger)</li>
+        <li>Auto-Rig Pro Control-Rig mit IK/FK-Switches, Constraints, Custom-Bone-Shapes</li>
+        <li>Skinning/Weight-Painting für alle Bones</li>
+        <li>Optional: Auto-Rig Pro's eingebauter „Smart" für automatisches Bone-Placement</li>
+      </ul>
+      <p>Dies ist der Start-Punkt der Brochüre — der Rigging-Prozess selbst ist nicht Teil der Cascadeur-Reihe, sondern ein eigenes Pipeline-Thema. Auto-Rig Pro hat hervorragende eigene Doku und Tutorials für diesen Vorlauf.</p>
+      <p>Wichtig: das Skelett enthält jetzt ein Control-Rig (komplex, mit Constraints) und ein Deform-Rig (simpel, nur Bones). Auto-Rig Pro speichert beide in einer Armature. Für den Cascadeur-Export ist das Deform-Rig relevant — aber direkt exportiert kommt das Control-Rig auch mit, was Probleme verursacht.</p>
+      <div class="box box-merk">
+        <div class="box-label">Auto-Rig Pro vs Rigify</div>
+        <p>Beide Blender-Rigs haben ähnliche Probleme im Cascadeur-Export. Game Rig Tools ist primär für Rigify entwickelt, funktioniert aber auch mit Auto-Rig Pro (mit kleinen manuellen Anpassungen). Falls dein Charakter mit Rigify gerigt ist, gilt der gleiche Workflow — das Setup ist identisch. Bei Auto-Rig Pro hat man manchmal mehr custom Bones (Twist Bones, Extra Bones), die im Game Rig Tools nicht automatisch verarbeitet werden — manuelle Connect-Schritte sind dann nötig (Schritt 03).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">GAME RIG TOOLS · INSTALLATION</text>
+        <rect x="50" y="50" width="220" height="120" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">CG Dive · Gumroad</text>
+        <line x1="60" y1="76" x2="260" y2="76" stroke="#c8b89a" stroke-width="1"/>
+        <text x="65" y="92" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">1. Download (kostenlos)</text>
+        <text x="65" y="108" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">2. Core Module wählen</text>
+        <text x="65" y="124" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">3. Blender: Edit → Preferences</text>
+        <text x="65" y="140" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">4. Install from Disk</text>
+        <text x="65" y="156" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">5. Activate Addon</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Blender 4.3 oder 4.4 unterstützt</text>
+      </svg>
+      <div class="caption">Game Rig Tools (CG Dive) Installation. Kostenlos via Gumroad mit Preis-Schieber auf 0.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">02</span>
+        <span class="step-title">Game Rig Tools Addon installieren und Game Rig generieren</span>
+      </div>
+      <p>Game Rig Tools von CG Dive auf <code>cgdive.com/comic-tools-blender-add-on</code> oder direkt auf Gumroad. Kostenlos — bei Gumroad den Preis-Slider auf 0 setzen (optional spenden, um den Entwickler zu unterstützen). „Core Module" auswählen, nicht „Unreal Module" (das ist separat und nicht nötig für unseren Workflow).</p>
+      <p>Installation:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Blender starten. Edit → Preferences</li>
+        <li>Tab „Add-ons" → Install from Disk → das Game Rig Tools ZIP wählen</li>
+        <li>Addon aktivieren (Checkbox)</li>
+      </ol>
+      <p>Game Rig generieren:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>In den <strong>Pose Mode</strong> wechseln (nicht Object Mode — das kann zum Crash führen)</li>
+        <li>Control-Rig selektieren</li>
+        <li>Im Game Rig Tools-Panel: <strong>Generate Game Rig</strong></li>
+        <li>Name vergeben (z.B. „cascadeur") und bestätigen</li>
+      </ol>
+      <p>Ergebnis: ein neues Skelett im Outliner, das das Deform-Rig isoliert (ohne Control-Constraints), bereit für Engine-Export.</p>
+      <div class="shortcut-row">
+        <span>Pose Mode:</span><kbd>Ctrl</kbd>+<kbd>Tab</kbd>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">CONNECT BONES · CTRL+P</text>
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <rect x="30" y="50" width="270" height="22" fill="#ede4d0" stroke="#c46b3a" stroke-width="1.5"/>
+          <text x="40" y="64" font-weight="600">Face · Mirror</text>
+          <text x="290" y="64" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">Ctrl+P · Keep Offset</text>
+
+          <rect x="30" y="76" width="270" height="22" fill="#ede4d0" stroke="#c46b3a" stroke-width="1.5"/>
+          <text x="40" y="90" font-weight="600">Shoulders</text>
+          <text x="290" y="90" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">Ctrl+P · Keep Offset</text>
+
+          <rect x="30" y="102" width="270" height="22" fill="#ede4d0" stroke="#b85528" stroke-width="1.5"/>
+          <text x="40" y="116" font-weight="600">Arms (ohne Twist Bones)</text>
+          <text x="290" y="116" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Ctrl+P · Connected</text>
+
+          <rect x="30" y="128" width="270" height="22" fill="#ede4d0" stroke="#b85528" stroke-width="1.5"/>
+          <text x="40" y="142" font-weight="600">Forearm</text>
+          <text x="290" y="142" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Ctrl+P · Connected</text>
+
+          <rect x="30" y="154" width="270" height="22" fill="#ede4d0" stroke="#b85528" stroke-width="1.5"/>
+          <text x="40" y="168" font-weight="600">Legs an dev_spine</text>
+          <text x="290" y="168" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Ctrl+P · Connected</text>
+        </g>
+        <text x="160" y="195" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Twist Bones NICHT connecten · sonst Cascadeur-Probleme</text>
+      </svg>
+      <div class="caption">Connect-Bones-Schema. Face/Shoulders mit Keep Offset, Arms/Legs connected. Twist Bones NICHT.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">03</span>
+        <span class="step-title">Connect Bones und Mute Control Rig</span>
+      </div>
+      <p>Das Game Rig hat noch Hierarchie-Probleme. Cascadeur erwartet eine bestimmte Bone-Hierarchie für automatisches Quick Rigging Tool-Erkennen. Standardmäßig sind die Game-Rig-Bones unconnected, was problematisch ist.</p>
+      <p>Vorgehen aus dem Game-Rig-Tools-Tutorial:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>In den <strong>Edit Mode</strong> wechseln (im Game-Rig)</li>
+        <li>Face-Bones selektieren (Mirror-Tool für die andere Seite), dann <kbd>Ctrl</kbd>+<kbd>P</kbd> → <strong>Keep Offset</strong></li>
+        <li>Shoulders selektieren, <kbd>Ctrl</kbd>+<kbd>P</kbd> → <strong>Keep Offset</strong></li>
+        <li>Arms (ohne Twist Bones!) selektieren, <kbd>Ctrl</kbd>+<kbd>P</kbd> → <strong>Connected</strong></li>
+        <li>Forearm an Upper-Arm connecten, <kbd>Ctrl</kbd>+<kbd>P</kbd> → <strong>Connected</strong></li>
+        <li>Legs an <code>dev_spine</code> (oder den entsprechenden Spine-Bone) connecten, <kbd>Ctrl</kbd>+<kbd>P</kbd> → <strong>Connected</strong></li>
+      </ol>
+      <p>Twist Bones NICHT connecten — sie sind extra Bones für realistisches Skinning, die mit eigener Rotation arbeiten. Wenn man sie connectet, gibt es Probleme im AutoPosing für Finger.</p>
+      <p>Vor dem FBX-Export: im Game-Rig-Tools-Panel <strong>Mute Control Rig</strong> drücken. Damit wird das Original-Control-Rig deaktiviert — sonst überschreibt es alles im Game-Rig.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Mute Control Rig nicht vergessen</div>
+        <p>Falls Mute Control Rig nicht aktiviert ist, kann das Control-Rig im Hintergrund weiterhin Bones überschreiben. Beim FBX-Export wäre dann immer noch das Control-Rig im Export — Cascadeur-Import würde scheitern oder ein verwirrendes Skelett zeigen. Erkennbar daran, dass nach Generate Game Rig die Game-Rig-Bones nicht manuell bewegbar sind — sie werden vom Control-Rig dominiert. Mute → bewegbar.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="80" y="50" width="160" height="110" rx="6" fill="#f3ecdc" stroke="#1f1a14" stroke-width="2"/>
+        <text x="160" y="76" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#b85528">BLENDER FBX EXPORT</text>
+        <line x1="100" y1="86" x2="220" y2="86" stroke="#c8b89a" stroke-width="1"/>
+        <text x="100" y="105" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Selected Objects</text>
+        <text x="220" y="105" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">✓ Game-Rig</text>
+        <text x="100" y="122" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Apply Scalings</text>
+        <text x="220" y="122" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">FBX All</text>
+        <text x="100" y="139" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Forward Axis</text>
+        <text x="220" y="139" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Y</text>
+        <text x="100" y="156" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Up Axis</text>
+        <text x="220" y="156" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Z</text>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Nur Game-Rig + Mesh exportieren · Control-Rig ausschließen</text>
+      </svg>
+      <div class="caption">FBX-Export aus Blender. Nur Game-Rig auswählen, Y-Forward, Z-Up.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">04</span>
+        <span class="step-title">FBX-Export aus Blender</span>
+      </div>
+      <p>File → Export → FBX. Wichtige Settings für Cascadeur-Pipeline:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Selected Objects</strong>: ON — nur das Game-Rig und das Mesh werden exportiert (vorher selektieren)</li>
+        <li><strong>Apply Scalings</strong>: FBX All (Standard)</li>
+        <li><strong>Forward Axis</strong>: -Y oder Y (je nach Blender-Default)</li>
+        <li><strong>Up Axis</strong>: Z (für Cascadeur und UE5 obligatorisch)</li>
+        <li><strong>Mesh: Apply Modifiers</strong>: ON (damit alle Modifier gebakt sind)</li>
+        <li><strong>Armature: Primary Bone Axis</strong>: Y</li>
+        <li><strong>Use Armature FBX Node Type</strong>: Null (kompatibler mit Cascadeur)</li>
+        <li><strong>Add Leaf Bones</strong>: OFF (sonst entstehen leere End-Bones, die im Cascadeur stören)</li>
+      </ul>
+      <p>Dateiname: <code>character-custom.fbx</code>.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Add Leaf Bones-Default</div>
+        <p>Blender's FBX-Export aktiviert standardmäßig „Add Leaf Bones". Das fügt zusätzliche End-Bones an jedes Finger-Ende und Bone-Tail an. Im Cascadeur ist das verwirrend — die Quick Rigging Tool sieht mehr Bones als der Charakter eigentlich hat. Deaktivieren spart spätere Verwirrung.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 3 — PHASE B: CASCADEUR-SETUP -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§3</div>
+    <div>
+      <div class="section-tag">Phase B · Cascadeur-Setup</div>
+      <h2 class="section-title">Quick Rigging Tool <em>manuell</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">B</div>
+    <div>
+      <h4>Cascadeur-Setup</h4>
+      <div class="phase-meta">FBX-Import · Quick Rigging Tool manuell · Template speichern</div>
+      <p>Import, manuelle Joint-Zuordnung, Generate Rig, Template-Speichern für spätere Wiederverwendung. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FBX-IMPORT · MODEL PRESET</text>
+        <rect x="50" y="50" width="220" height="120" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Cascadeur · File → Import</text>
+        <line x1="60" y1="76" x2="260" y2="76" stroke="#c8b89a" stroke-width="1"/>
+        <text x="65" y="94" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">1. Preset</text>
+        <text x="255" y="94" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Model</text>
+        <text x="65" y="112" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">2. Popup: Rig Mode?</text>
+        <text x="255" y="112" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Yes</text>
+        <text x="65" y="130" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">3. Humanoid erkannt?</text>
+        <text x="255" y="130" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">manchmal nein</text>
+        <text x="65" y="148" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">4. Quick Rigging Tool</text>
+        <text x="255" y="148" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">manuell</text>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Bei Custom-Charakter ist Quick Rigging Tool meist nicht-automatisch</text>
+      </svg>
+      <div class="caption">FBX-Import als Model. Bei Custom-Skelett-Strukturen ist manuelle Joint-Zuordnung nötig.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">05</span>
+        <span class="step-title">FBX in Cascadeur importieren als Model</span>
+      </div>
+      <p>Cascadeur starten, neue Scene. File → Import → FBX. Wichtig: <strong>Model</strong>-Preset wählen, nicht „Animation only". Bei Custom-Charakter wollen wir den Charakter selbst importieren, nicht nur die Animation-Daten.</p>
+      <p>Nach dem Import erscheint ein Popup „Switch to Rig Mode?" — mit Yes bestätigen. Cascadeur erkennt den Charakter und versucht, das Skelett-Template zu identifizieren.</p>
+      <p>Bei einem standardisierten Skelett (Mixamo, UE5) erkennt Cascadeur das automatisch und das Quick Rigging Tool füllt sich selbst aus. <strong>Bei Custom-Charakter ist das meist nicht der Fall</strong> — die Bone-Namen aus Blender (Auto-Rig Pro / Game Rig Tools) entsprechen keinem Cascadeur-Template.</p>
+      <p>Daher: manueller Quick-Rigging-Tool-Prozess (Schritt 06).</p>
+      <div class="box box-merk">
+        <div class="box-label">Template-Erkennung verbessern</div>
+        <p>Game Rig Tools versucht standardisierte Bone-Namen zu vergeben (mixamorig-style oder UE5-style, je nach Setting). Bei perfekter Standard-Konformität würde Cascadeur das Template automatisch erkennen. In der Praxis weichen Custom-Charaktere meist ab — extra Bones, andere Reihenfolge — sodass manueller Quick Rigging Tool nötig ist.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">QUICK RIGGING TOOL · MANUELL</text>
+        <rect x="40" y="50" width="240" height="130" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <!-- Schematic body with dots -->
+        <g>
+          <circle cx="160" cy="75" r="6" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+          <text x="180" y="78" font-family="DM Sans, sans-serif" font-size="8" fill="#1f1a14">Head</text>
+          
+          <circle cx="160" cy="95" r="5" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+          <text x="180" y="98" font-family="DM Sans, sans-serif" font-size="8" fill="#1f1a14">Neck</text>
+          
+          <circle cx="160" cy="115" r="5" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+          <text x="180" y="118" font-family="DM Sans, sans-serif" font-size="8" fill="#1f1a14">Spine_01</text>
+          
+          <circle cx="135" cy="105" r="5" fill="#284858" stroke="#1f1a14" stroke-width="1"/>
+          <text x="115" y="108" text-anchor="end" font-family="DM Sans, sans-serif" font-size="8" fill="#1f1a14">L_Shoulder</text>
+          
+          <circle cx="125" cy="125" r="4" fill="#284858" stroke="#1f1a14" stroke-width="1"/>
+          <text x="115" y="128" text-anchor="end" font-family="DM Sans, sans-serif" font-size="8" fill="#1f1a14">L_Upper</text>
+          
+          <circle cx="115" cy="145" r="4" fill="#284858" stroke="#1f1a14" stroke-width="1"/>
+          <text x="105" y="148" text-anchor="end" font-family="DM Sans, sans-serif" font-size="8" fill="#1f1a14">L_Lower</text>
+          
+          <circle cx="160" cy="140" r="5" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+          <text x="180" y="143" font-family="DM Sans, sans-serif" font-size="8" fill="#1f1a14">Pelvis</text>
+          
+          <circle cx="150" cy="160" r="4" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+          <text x="135" y="170" text-anchor="end" font-family="DM Sans, sans-serif" font-size="7" fill="#1f1a14">L_Hip</text>
+        </g>
+        <text x="160" y="195" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Schematische Diagramm-Punkte mit Custom-Bones verbinden</text>
+      </svg>
+      <div class="caption">Quick Rigging Tool: jeder Schematik-Punkt wird einem Custom-Bone zugeordnet.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">06</span>
+        <span class="step-title">Quick Rigging Tool manuell ausfüllen</span>
+      </div>
+      <p>Im Rig Mode öffnet sich das Quick Rigging Tool-Schema. Es zeigt eine schematische Humanoid-Figur mit Punkten an Standard-Joint-Positionen (Head, Neck, Spine_01, Pelvis, L/R_Shoulder, L/R_Hip, etc.).</p>
+      <p>Vorgehen aus dem Mocap-Cleanup-Course:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Custom-Skelett im Outliner anzeigen (alle Bones sichtbar)</li>
+        <li>Jeden Schematik-Punkt anklicken (z.B. „Head")</li>
+        <li>Den entsprechenden Bone im Custom-Skelett selektieren (z.B. „head_def" oder wie auch immer Auto-Rig Pro ihn benannt hat)</li>
+        <li>Connect-Button drücken oder Drag-and-Drop in den Schematik-Punkt</li>
+        <li>Für alle Punkte wiederholen — Head, Neck, Spine, Pelvis, Schultern, Arme, Beine, Hände (mindestens)</li>
+        <li>Optional: Finger-Bones, Twist-Bones, Extra-Bones (Schwanz, etc.) in den entsprechenden Tabs</li>
+      </ol>
+      <p>Mirror-Tool ist hilfreich: einmal die linke Seite ausfüllen, dann Mirror, Cascadeur generiert die rechte Seite automatisch (basierend auf Bone-Naming-Convention, z.B. <code>L_</code> ↔ <code>R_</code>).</p>
+      <p>Bei vollständiger Zuordnung: <strong>Generate Rig</strong>-Button. Cascadeur baut sein internes Control-Rig auf dem Custom-Skelett.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Bone-Naming-Konvention</div>
+        <p>Wenn die Bone-Namen nicht der L/R-Konvention folgen (z.B. „Arm_left" statt „L_Arm"), funktioniert Mirror-Auto-Fill nicht. Dann jede Seite manuell ausfüllen. Vor dem Cascadeur-Import in Blender die Bone-Namen prüfen und ggf. standardisieren — spart Zeit bei jedem Re-Import.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">TEMPLATE SPEICHERN · WIEDERVERWENDUNG</text>
+        <rect x="50" y="55" width="220" height="110" rx="6" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#b85528">Save as Template</text>
+        <line x1="70" y1="86" x2="250" y2="86" stroke="#c8b89a" stroke-width="1"/>
+        <text x="160" y="108" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Schemata-Zuordnung wird gespeichert</text>
+        <text x="160" y="125" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">und beim nächsten Import</text>
+        <text x="160" y="142" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">automatisch verwendet</text>
+        <text x="160" y="185" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">EINMAL SETUP · DAUERHAFT NUTZBAR</text>
+      </svg>
+      <div class="caption">Template speichern: gleiche Custom-Charakter-Skelette werden später automatisch erkannt.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">07</span>
+        <span class="step-title">Template speichern und Scene-Save</span>
+      </div>
+      <p>Nach erfolgreichem Generate Rig: das Skelett-Template speichern, damit bei zukünftigen Imports desselben Charakters (oder ähnlich aufgebauter Charaktere) Cascadeur den Rig automatisch erkennt.</p>
+      <p>Vorgehen:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Im Quick Rigging Tool: <strong>Save as Template</strong></li>
+        <li>Name vergeben (z.B. „CustomCharacter_v1")</li>
+        <li>Template wird in Cascadeur's Template-Bibliothek gespeichert</li>
+      </ol>
+      <p>Beim nächsten Import desselben Custom-Charakters (oder eines mit identischem Skelett aber anderem Mesh — z.B. ein Outfit-Wechsel) erkennt Cascadeur das Template automatisch und das Rig wird sofort generiert.</p>
+      <p>Scene speichern als <code>projekt-10-character-rigged.casc</code>. Diese Datei ist jetzt der „leere Charakter" — Custom-Mesh + Custom-Skelett + Cascadeur-Control-Rig. Animation kommt im nächsten Schritt dazu.</p>
+      <div class="box box-merk">
+        <div class="box-label">Reusable Setup als Pipeline-Beschleuniger</div>
+        <p>Wenn dein Workflow mehrere Custom-Charaktere mit demselben Skelett verwendet (typisch bei Outfit-Varianten oder Body-Skin-Wechsel innerhalb einer Charakter-Familie), spart das gespeicherte Template enorm Zeit. Erstmals Setup: 15-30 Minuten. Folge-Imports: 30 Sekunden.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 4 — PHASE C: ANIMATION LADEN -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§4</div>
+    <div>
+      <div class="section-tag">Phase C · Animation laden</div>
+      <h2 class="section-title">Source-Animation und <em>Skelett-Vergleich</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">C</div>
+    <div>
+      <h4>Animation laden</h4>
+      <div class="phase-meta">Source aus 02-09 · Skelett-Vergleich · Retargeting-Wahl</div>
+      <p>Eine fertige Animation aus den vorigen Projekten laden. Skelette vergleichen — gleicher Bone-Name = Copy/Paste, anders = Retargeting. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">ZWEI SCENES · TAB-WORKFLOW</text>
+        <!-- Tab 1: Custom Char -->
+        <g>
+          <rect x="20" y="55" width="130" height="110" fill="#b85528" opacity="0.15" stroke="#b85528" stroke-width="1.5"/>
+          <text x="85" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="0.1em" fill="#b85528">TAB 1</text>
+          <text x="85" y="88" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="11" fill="#1f1a14">Custom-Charakter</text>
+          <text x="85" y="105" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">aus Phase A+B</text>
+          <text x="85" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">leerer Rig</text>
+          <text x="85" y="145" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#b85528">Ziel</text>
+        </g>
+        <!-- Arrow -->
+        <text x="160" y="115" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="16" fill="#b85528">←</text>
+        <!-- Tab 2: Source animation -->
+        <g>
+          <rect x="170" y="55" width="130" height="110" fill="#284858" opacity="0.15" stroke="#284858" stroke-width="1.5"/>
+          <text x="235" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="0.1em" fill="#284858">TAB 2</text>
+          <text x="235" y="88" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="11" fill="#1f1a14">UE5-Manny</text>
+          <text x="235" y="105" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">aus Projekt 02-09</text>
+          <text x="235" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">mit Animation</text>
+          <text x="235" y="145" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#284858">Source</text>
+        </g>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Beide Scenes parallel offen — Copy oder Retarget zwischen ihnen</text>
+      </svg>
+      <div class="caption">Zwei-Tab-Workflow: Custom-Charakter und Source-Animation parallel offen.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">08</span>
+        <span class="step-title">Source-Animation in zweitem Tab laden</span>
+      </div>
+      <p>Cascadeur unterstützt mehrere Scenes parallel in verschiedenen Tabs. Das ist der Standard-Workflow für Animation-Übertragung.</p>
+      <p>Vorgehen:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Tab 1</strong>: Custom-Charakter-Scene aus Phase B (mit leerem Rig, ohne Animation)</li>
+        <li><strong>Tab 2</strong>: eine fertige Animation aus den vorigen Projekten — z.B. <code>manny-walk-v01.fbx</code> aus Projekt 03 oder eine andere Animation aus 02-09</li>
+        <li>In Tab 2 die Animation laden — entweder die <code>.casc</code>-Datei öffnen oder die FBX-Datei importieren</li>
+      </ol>
+      <p>Jetzt hast du beide Scenes gleichzeitig: links der leere Custom-Charakter, rechts der animierte UE5-Manny.</p>
+      <div class="box box-merk">
+        <div class="box-label">Welche Animation als Source wählen</div>
+        <p>Idle (Projekt 01), Walk (03), Stand-Up (05), Gestik (08) sind „universal" und gut für Custom-Charakter-Tests. Sprung (07) ist anspruchsvoller — die Hindernis-Höhe muss zum Custom-Charakter passen, sonst springt er drüber oder dagegen. Mocap-Animation (09) ist möglich, aber die Pose-Qualität kann beim Retargeting auf andere Proportionen leiden. Anfangen mit Walk oder Idle — wenn die funktionieren, klappt der Rest auch.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 9 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">SKELETT-VERGLEICH · ENTSCHEIDUNGSBAUM</text>
+        <!-- Decision tree -->
+        <rect x="100" y="50" width="120" height="30" rx="3" fill="#ede4d0" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="69" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#1f1a14">Bone-Namen identisch?</text>
+        <!-- Left: YES -->
+        <line x1="135" y1="80" x2="80" y2="105" stroke="#1f1a14" stroke-width="1"/>
+        <text x="105" y="95" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878" font-weight="600">YES</text>
+        <rect x="20" y="110" width="120" height="50" rx="3" fill="#8a9878" opacity="0.4" stroke="#8a9878" stroke-width="1.5"/>
+        <text x="80" y="128" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#1f1a14">COPY/PASTE</text>
+        <text x="80" y="143" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Edit → Copy/Paste</text>
+        <text x="80" y="155" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Interval</text>
+        <!-- Right: NO -->
+        <line x1="185" y1="80" x2="240" y2="105" stroke="#1f1a14" stroke-width="1"/>
+        <text x="215" y="95" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a" font-weight="600">NO</text>
+        <rect x="180" y="110" width="120" height="50" rx="3" fill="#b85528" opacity="0.4" stroke="#b85528" stroke-width="1.5"/>
+        <text x="240" y="128" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#1f1a14">RETARGETING</text>
+        <text x="240" y="143" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">UE5 bevorzugt</text>
+        <text x="240" y="155" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Cascadeur Pro Backup</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Bei Custom-Charakter aus Auto-Rig Pro meist „NO"</text>
+      </svg>
+      <div class="caption">Skelett-Vergleich-Entscheidungsbaum. Identische Namen → Copy/Paste. Anders → Retargeting.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">09</span>
+        <span class="step-title">Skelette vergleichen und Übertragungs-Methode wählen</span>
+      </div>
+      <p>Cascadeur unterscheidet zwei Fälle für Animation-Übertragung zwischen Scenes:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Bone-Namen identisch</strong>: Cascadeur erkennt es als „gleiches Skelett". <em>Copy Interval</em> + <em>Paste Interval</em> funktioniert direkt. Schnell, einfach, funktioniert ohne Pro-Version</li>
+        <li><strong>Bone-Namen unterschiedlich</strong>: Cascadeur betrachtet es als „anderes Skelett", auch wenn die Struktur ähnlich ist. <em>Retargeting Copy/Paste</em> nötig (Cascadeur Pro Feature)</li>
+      </ul>
+      <p>Praxis: dein Custom-Charakter aus Auto-Rig Pro hat sehr wahrscheinlich andere Bone-Namen als UE5-Manny — anders benannte Spine-Bones, eigene Naming-Conventions. Daher: meist Retargeting-Fall.</p>
+      <p>Test: in Tab 2 (Source) alle Joints selektieren, Edit → Copy Interval. In Tab 1 (Target) alle Joints selektieren, Edit → Paste Interval. Wenn eine Fehlermeldung „Names of guides or object to copy and objects to paste don't match" erscheint: Retargeting-Fall.</p>
+      <div class="box box-stolper">
+        <div class="box-label">„Don't match"-Fehler beim Paste Interval</div>
+        <p>Standard-Fehlermeldung bei unterschiedlichen Bone-Namen. Bedeutet nicht „kaputt", sondern „nicht für direkten Copy/Paste geeignet". Lösung: Retargeting (Pro) oder UE5-Retargeting (kostenlos, siehe Schritt 11).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 10 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FRAME-RANGE-VORBEREITUNG</text>
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <!-- Source range -->
+        <rect x="30" y="93" width="200" height="14" fill="#284858" opacity="0.5" stroke="#284858" stroke-width="1.5"/>
+        <text x="130" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#284858">SOURCE · 200 Frames</text>
+        <!-- Target needs extension -->
+        <rect x="30" y="120" width="80" height="14" fill="#c46b3a" opacity="0.5" stroke="#c46b3a" stroke-width="1.5"/>
+        <text x="70" y="111" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#c46b3a">TARGET · zu kurz</text>
+        <line x1="110" y1="127" x2="135" y2="127" stroke="#1f1a14" stroke-width="1" stroke-dasharray="2,2"/>
+        <text x="170" y="130" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">+ Frames hinzufügen</text>
+        <text x="160" y="160" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Target-Scene muss mindestens so viele Frames haben wie Source</text>
+        <text x="160" y="180" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">EXTEND-TIMELINE-BUTTON</text>
+      </svg>
+      <div class="caption">Target-Frame-Range muss zur Source passen. Erweitern, wenn nötig.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">10</span>
+        <span class="step-title">Target-Frame-Range erweitern</span>
+      </div>
+      <p>Wichtige Vorbereitung vor Copy/Paste oder Retargeting: die Target-Scene (Custom-Charakter, Tab 1) muss mindestens so viele Frames haben wie die Source-Animation.</p>
+      <p>Standardmäßig hat eine neue Cascadeur-Scene 30-90 Frames. Wenn die Source 200 Frames hat (z.B. eine Walk-Animation aus Projekt 03), würde Paste Interval nur die ersten 90 Frames übertragen.</p>
+      <p>Vorgehen:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>In Tab 1 (Custom-Charakter): auf der Timeline navigieren</li>
+        <li>Right-Click auf den Time-Slider → <strong>Set Animation Length</strong> oder ähnlich (UI variiert leicht zwischen Cascadeur-Versionen)</li>
+        <li>End-Frame entsprechend setzen (z.B. 200 oder 300 — gleich oder mehr als Source)</li>
+        <li>Optional: bei sehr langen Source-Animationen den Quick-Expand-Button im Timeline-Panel nutzen</li>
+      </ol>
+      <p>Frame-Range zu klein → Animation wird abgeschnitten. Frame-Range zu groß → kein Problem, die extra Frames bleiben leer.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 5 — PHASE D: ÜBERTRAGUNG -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§5</div>
+    <div>
+      <div class="section-tag">Phase D · Übertragung</div>
+      <h2 class="section-title">UE5-Retargeting <em>bevorzugt</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner unreal">
+    <div class="phase-letter">D</div>
+    <div>
+      <h4>Übertragung</h4>
+      <div class="phase-meta">UE5-IK-Retargeter · Cascadeur Pro · Copy/Paste Interval</div>
+      <p>UE5-Retargeting ist sauberer und schneller (Deform-Rig → Deform-Rig). Cascadeur-Retargeting als Backup. Beide Wege gezeigt. <em>Drei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 11 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">UE5 IK RETARGETER · DEFORM ZU DEFORM</text>
+        <!-- Source skeleton -->
+        <g>
+          <rect x="30" y="60" width="80" height="100" fill="#284858" opacity="0.2" stroke="#284858" stroke-width="1.5"/>
+          <text x="70" y="80" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#284858">UE5-MANNY</text>
+          <text x="70" y="100" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#1f1a14">Source</text>
+          <text x="70" y="130" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">Deform-Rig</text>
+          <text x="70" y="145" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">Joint-Daten</text>
+        </g>
+        <!-- Arrow -->
+        <text x="160" y="115" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#b85528">→</text>
+        <text x="160" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">UE5 IK</text>
+        <text x="160" y="130" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">Retargeter</text>
+        <!-- Target skeleton -->
+        <g>
+          <rect x="210" y="60" width="80" height="100" fill="#b85528" opacity="0.2" stroke="#b85528" stroke-width="1.5"/>
+          <text x="250" y="80" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">CUSTOM</text>
+          <text x="250" y="100" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#1f1a14">Target</text>
+          <text x="250" y="130" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">Deform-Rig</text>
+          <text x="250" y="145" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">Joint-Daten</text>
+        </g>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Direkter Pfad · keine Control-Rig-Proxy-Zwischenstufe</text>
+      </svg>
+      <div class="caption">UE5 IK Retargeter: direkter Deform-Rig-Pfad. Sauberer als Cascadeur-Retargeting.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">11</span>
+        <span class="step-title">UE5-Retargeting (bevorzugter Pfad)</span>
+      </div>
+      <p>Aus dem Unreal-Retargeting-Tutorial: UE5's IK Retargeter ist deutlich besser als Cascadeur's eingebautes Retargeting. Grund: UE5 retargetet direkt Deform-Rig → Deform-Rig, ohne Control-Rig-Proxy-Zwischenstufe. Cascadeur retargetet Control-Rig → Control-Rig (mit Deform-Rig als Proxy dazwischen) — länger und unsauberer.</p>
+      <p>Vorgehen:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Source-Animation (UE5-Manny mit Animation) als FBX aus Cascadeur exportieren</li>
+        <li>In UE5 importieren — Skeletal Mesh, Animation Sequence, Physics Asset, Skeleton werden angelegt</li>
+        <li>Custom-Charakter (aus Cascadeur Tab 1, ohne Animation) ebenfalls als FBX exportieren und in UE5 importieren</li>
+        <li>In UE5 Content Browser: Rechtsklick auf die Source-Animation → <strong>Retarget Animations</strong></li>
+        <li>Source Skeleton: UE5-Manny. Target Skeleton: Custom-Charakter</li>
+        <li>Bone-Mapping prüfen — meist erkennt UE5 viele Bones automatisch. Bei Abweichungen manuell mappen (Pelvis → Pelvis, Spine_01 → Spine_01, etc.)</li>
+        <li>Export Animations → Custom-Charakter hat jetzt eine retargetete Animation Sequence</li>
+      </ol>
+      <p>Optional: die retargetete Animation als FBX exportieren aus UE5 zurück nach Cascadeur — falls weitere Cascadeur-Polish nötig ist (z.B. AutoPhysics auf der retargeteten Version).</p>
+      <div class="box box-merk">
+        <div class="box-label">UE5-Retargeting als Pipeline-Standard</div>
+        <p>Aus dem Briefing: bei Export-Fragen UE5-Retargeting bevorzugen statt Cascadeur-Retargeting. Diese Brochüre folgt dem Standard. UE5-Retargeting funktioniert mit Free-Lizenz; Cascadeur-Retargeting braucht Pro. Auch wenn du Cascadeur Pro hast: UE5-Retargeting ist trotzdem oft die bessere Wahl wegen der Deform-Rig-Direkt-Übertragung.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 12 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">CASCADEUR PRO · RETARGETING-WORKFLOW</text>
+        <rect x="50" y="55" width="220" height="120" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="76" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Backup-Pfad · nur Pro-Version</text>
+        <line x1="60" y1="84" x2="260" y2="84" stroke="#c8b89a" stroke-width="1"/>
+        <text x="65" y="100" font-family="DM Sans, sans-serif" font-size="9" fill="#1f1a14">1. Source-Scene · Select All</text>
+        <text x="65" y="116" font-family="DM Sans, sans-serif" font-size="9" fill="#1f1a14">2. Edit → Retargeting Copy</text>
+        <text x="65" y="132" font-family="DM Sans, sans-serif" font-size="9" fill="#1f1a14">3. Tab wechseln zu Target</text>
+        <text x="65" y="148" font-family="DM Sans, sans-serif" font-size="9" fill="#1f1a14">4. Frames hinzufügen falls nötig</text>
+        <text x="65" y="164" font-family="DM Sans, sans-serif" font-size="9" fill="#1f1a14">5. Edit → Retargeting Paste</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Funktioniert nur, wenn Target-Charakter Cascadeur-Rig hat</text>
+      </svg>
+      <div class="caption">Cascadeur-Pro-Retargeting als Backup. Beide Charaktere brauchen Cascadeur-Rigs.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">12</span>
+        <span class="step-title">Cascadeur-Pro-Retargeting als Backup</span>
+      </div>
+      <p>Wenn UE5-Retargeting aus irgendwelchen Gründen nicht funktioniert (zu exotisches Skelett, UE5 nicht verfügbar, oder Workflow-Präferenz): Cascadeur-Pro-Retargeting als Backup.</p>
+      <p>Voraussetzung: <strong>beide Charaktere</strong> brauchen Cascadeur-Rigs (Generate Rig erfolgreich). Bei dieser Brochüre ist das der Fall — der Custom-Charakter hat das Cascadeur-Rig aus Phase B, der UE5-Manny-Source ebenfalls (aus den vorigen Projekten).</p>
+      <p>Vorgehen:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>In Tab 2 (Source mit UE5-Manny-Animation): <strong>Select All</strong> in der Scene (Click auf den Charakter-Namen wählt alle Frames)</li>
+        <li>Edit → <strong>Retargeting Copy</strong></li>
+        <li>In Tab 1 (Custom-Charakter) wechseln</li>
+        <li>Frame-Range erweitern, wenn nötig (siehe Schritt 10)</li>
+        <li>Select All in der Custom-Charakter-Scene</li>
+        <li>Edit → <strong>Retargeting Paste</strong></li>
+      </ol>
+      <p>Cascadeur überträgt die Animation. Erwartete Probleme: kleine Pose-Abweichungen wegen unterschiedlicher Bone-Längen zwischen Source und Target. Bei stark unterschiedlichen Proportionen (z.B. Source ist Standard-Mannequin 180 cm, Target ist klein und stämmig) kann die Animation seltsam aussehen — die Bewegungs-Geste bleibt, aber die Posen passen nicht zum Charakter.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Pose-Verzerrungen bei stark unterschiedlichen Proportionen</div>
+        <p>Retargeting (egal ob Cascadeur oder UE5) kann nicht zaubern. Wenn der Source-Charakter 180 cm groß und schlank ist und der Target 150 cm und stämmig, wird die Animation auf dem Target nicht perfekt aussehen. Lösung: Posen nach dem Retargeting nochmal mit Cascadeur-Werkzeugen polishen — Hände an erwartete Positionen ziehen, Schritt-Längen anpassen, Knie-Beugen verfeinern. Das ist ein eigener Polish-Pass (Schritt 14).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 13 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">COPY/PASTE INTERVAL · WENN BONES PASSEN</text>
+        <rect x="50" y="55" width="220" height="110" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">Schnell-Pfad · keine Pro nötig</text>
+        <line x1="60" y1="86" x2="260" y2="86" stroke="#c8b89a" stroke-width="1"/>
+        <text x="65" y="105" font-family="DM Sans, sans-serif" font-size="9" fill="#1f1a14">1. Source · Joints selektieren</text>
+        <text x="65" y="121" font-family="DM Sans, sans-serif" font-size="9" fill="#1f1a14">2. Edit → Copy Interval</text>
+        <text x="65" y="137" font-family="DM Sans, sans-serif" font-size="9" fill="#1f1a14">3. Target · Joints selektieren</text>
+        <text x="65" y="153" font-family="DM Sans, sans-serif" font-size="9" fill="#1f1a14">4. Edit → Paste Interval</text>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Funktioniert nur bei identischen Bone-Namen UND -Hierarchie</text>
+      </svg>
+      <div class="caption">Copy/Paste Interval: schnellster Pfad bei identischen Skeletten.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">13</span>
+        <span class="step-title">Copy/Paste Interval bei identischen Skeletten</span>
+      </div>
+      <p>Wenn das Custom-Skelett zufällig die gleichen Bone-Namen wie UE5-Manny hat (z.B. weil du in Auto-Rig Pro das UE5-Manny-Naming verwendet hast): direkter Copy/Paste-Workflow ohne Retargeting.</p>
+      <p>Aus dem Retargeting-Tutorial belegt:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>In Source-Scene: zum Joint-Mode wechseln (statt AutoPosing oder Point Controller)</li>
+        <li>Joints selektieren (Strg+A oder Click auf Joint-Root)</li>
+        <li>Edit → <strong>Copy Interval</strong> mit dem ganzen Range</li>
+        <li>Target-Scene wechseln, Frame-Range erweitern wenn nötig</li>
+        <li>In Target zum Joint-Mode wechseln, alle Joints selektieren</li>
+        <li>Edit → <strong>Paste Interval</strong></li>
+      </ol>
+      <p>Funktioniert direkt — Animation ist auf dem Custom-Charakter, ohne Retargeting-Schritte. Schnellster Weg, wenn die Skelette kompatibel sind.</p>
+      <div class="box box-merk">
+        <div class="box-label">Finger via Copy/Paste Interval — Achtung</div>
+        <p>Finger-Animation kann via Copy/Paste Interval Probleme geben — selbst bei identischen Skelett-Namen werden Finger-Bones manchmal nicht übertragen. Für Finger-Animation auf Custom-Charakter: separater Schritt mit Finger-AutoPosing oder dediziertes Retargeting (Cascadeur Pro hat Retargeting auch für Finger).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 6 — PHASE E: POLISH -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§6</div>
+    <div>
+      <div class="section-tag">Phase E · Polish + Track-Update</div>
+      <h2 class="section-title">Pose-Anpassung und <em>Custom-Tracks</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">E</div>
+    <div>
+      <h4>Polish</h4>
+      <div class="phase-meta">Pose-Anpassung · Track-Hierarchie für Custom-Charakter</div>
+      <p>Retargeting-Artefakte korrigieren. Custom Track Hierarchy für den neuen Charakter setzen. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 14 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">TYPISCHE RETARGETING-ARTEFAKTE</text>
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <rect x="30" y="50" width="270" height="22" fill="#ede4d0" stroke="#c46b3a" stroke-width="1.5"/>
+          <text x="40" y="64" fill="#c46b3a" font-weight="600">Foot-Position-Drift</text>
+          <text x="290" y="64" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">bei Proportions-Unterschied</text>
+
+          <rect x="30" y="76" width="270" height="22" fill="#ede4d0" stroke="#c46b3a" stroke-width="1.5"/>
+          <text x="40" y="90" fill="#c46b3a" font-weight="600">Arm-Reichweite zu lang/kurz</text>
+          <text x="290" y="90" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">Custom-Proportionen</text>
+
+          <rect x="30" y="102" width="270" height="22" fill="#ede4d0" stroke="#e4b860" stroke-width="1.5"/>
+          <text x="40" y="116">Spine-Twists bei großen Drehungen</text>
+          <text x="290" y="116" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">gelegentlich</text>
+
+          <rect x="30" y="128" width="270" height="22" fill="#ede4d0" stroke="#e4b860" stroke-width="1.5"/>
+          <text x="40" y="142">Finger-Posen-Verlust</text>
+          <text x="290" y="142" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Re-Apply nötig</text>
+
+          <rect x="30" y="154" width="270" height="22" fill="#ede4d0" stroke="#8a9878" stroke-width="1.5"/>
+          <text x="40" y="168">Body-Trajectory · Timing</text>
+          <text x="290" y="168" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">meist gut</text>
+        </g>
+        <text x="160" y="195" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Diagnose-Pass wie bei Mocap-Cleanup (Projekt 09)</text>
+      </svg>
+      <div class="caption">Typische Retargeting-Artefakte. Foot-Drift und Arm-Reichweite häufige Pflicht-Fixes.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">14</span>
+        <span class="step-title">Retargeting-Artefakte diagnostizieren und polishen</span>
+      </div>
+      <p>Nach Retargeting (entweder UE5 oder Cascadeur) hat die Animation auf dem Custom-Charakter typische Artefakte, ähnlich zu Mocap-Cleanup (Projekt 09):</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Foot-Position-Drift</strong>: Bei Proportions-Unterschied (Custom-Charakter kürzere/längere Beine) landen die Füße nicht mehr exakt am Boden. → <strong>Fulcrum Motion Cleaning</strong> aus Projekt 03</li>
+        <li><strong>Arm-Reichweite zu lang/zu kurz</strong>: Wenn Manny eine Geste mit Arm-Reichweite X gemacht hat und der Custom-Charakter andere Arm-Länge hat, kann die Hand-End-Position verschoben sein. → Manuelle Pose-Korrektur, oder Trajectory Tangents</li>
+        <li><strong>Spine-Twists</strong>: Selten bei kleinen Proportions-Unterschieden, häufiger bei sehr stylisierten Charakteren. → Selektives Re-Inbetweening</li>
+        <li><strong>Finger-Posen-Verlust</strong>: Bei Retargeting werden Finger oft nicht oder schlecht übertragen. → Finger-AutoPosing neu anwenden, idealerweise Shift+Z über die ganze Sequenz</li>
+        <li><strong>Body-Trajectory und Timing</strong>: bleibt meist gut. Retargeting respektiert die Bewegungs-Logik</li>
+      </ul>
+      <p>Die Polish-Werkzeuge sind alle bekannt aus den vorigen Projekten — Fulcrum Motion Cleaning (03/09), Trajectory Tangents (06), Finger-AutoPosing (08), Selektives Re-Inbetweening (09). Hier kommen sie kombiniert zum Einsatz.</p>
+      <div class="insight">
+        Es gibt ein Pipeline-Phänomen, das in der 3D-Branche „Charakter-Schock" heißt: wenn eine etablierte Animation auf einen neuen Charakter retargetet wird, sieht sie immer leicht „off" aus. Nicht weil das Retargeting schlecht ist, sondern weil die Animation für eine bestimmte Körperlichkeit gebaut wurde. Pixar-Animatoren machen daher fast nie pure Retargeting — sie polishen jede Animation pro Charakter neu, weil jeder Charakter „seine eigene Bewegung" haben soll. Für Game-Pipelines mit dutzenden NPCs ist das nicht möglich; man retargetet und akzeptiert kleine Inkonsistenzen. Für Hero-Charaktere in Cutscenes lohnt sich der Pro-Pixar-Polish.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 15 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">CUSTOM TRACK HIERARCHY · NEU ANLEGEN</text>
+        <g font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">
+          <rect x="40" y="50" width="240" height="20" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="50" y="64">Pelvis</text>
+          <text x="270" y="64" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Group</text>
+
+          <rect x="40" y="72" width="240" height="20" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="50" y="86">Torso · Spine · Head</text>
+          <text x="270" y="86" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Group</text>
+
+          <rect x="40" y="94" width="240" height="20" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="50" y="108">L_Arm · R_Arm + Hands</text>
+          <text x="270" y="108" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Group</text>
+
+          <rect x="40" y="116" width="240" height="20" fill="#ede4d0" stroke="#8a7d68" stroke-width="1"/>
+          <text x="50" y="130">L_Leg · R_Leg + Feet</text>
+          <text x="270" y="130" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Group</text>
+
+          <rect x="40" y="138" width="240" height="20" fill="#b85528" opacity="0.4" stroke="#b85528" stroke-width="1.5"/>
+          <text x="50" y="152" font-weight="600">Custom-spezifische Tracks</text>
+          <text x="270" y="152" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Tail, Wings, etc.</text>
+        </g>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Bei Custom-Charakter oft Extra-Tracks für non-humanoide Elemente</text>
+      </svg>
+      <div class="caption">Track-Hierarchie für Custom-Charakter. Standard-Groups plus Custom-spezifische Tracks.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">15</span>
+        <span class="step-title">Custom Track Hierarchy für den neuen Charakter</span>
+      </div>
+      <p>Nach Generate Rig hat Cascadeur eine Default-Track-Struktur für das Custom-Skelett angelegt. Diese ist oft minimal — alle Body-Parts in einem Track, ohne Trennung. Für effizienten Animator-Workflow sollte sie umgebaut werden.</p>
+      <p>Wie in Projekt 03 / 08 / 09 — Custom Track Hierarchy anlegen mit den Standard-Groups:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Pelvis</li>
+        <li>Torso, Spine, Head</li>
+        <li>L_Arm, R_Arm + Hands</li>
+        <li>L_Leg, R_Leg + Feet</li>
+        <li>Optional Custom-spezifische Tracks für non-humanoide Elemente — Tail, Wings, Extra Arms, etc.</li>
+      </ul>
+      <p>Bei AI Inbetweening Tutorial wurde gezeigt: ältere Cascadeur-Versionen (vor 2025.3) hatten alle Bones auf einem Track. Quick Rigging Tool in neueren Versionen separiert Pelvis automatisch. Falls dein Custom-Charakter in der älteren Struktur kommt: Quick Rigging Tool nochmal mit „Regenerate Rig" — die neue Struktur wird angelegt.</p>
+      <div class="box box-merk">
+        <div class="box-label">Inbetweening braucht Pelvis-Separation</div>
+        <p>Das ist der Hauptgrund für das Track-Hierarchy-Update: Inbetweening kann den Lower-Body separat vom Upper-Body generieren, wenn Pelvis und Beine in eigener Track-Gruppe sind. Bei nicht-separierter Hierarchie greift Inbetweening auf den ganzen Body — was bei sehr komplexen Custom-Charakteren zu unerwarteten Ergebnissen führen kann.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 7 — PHASE F: EXPORT -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§7</div>
+    <div>
+      <div class="section-tag">Phase F · Export</div>
+      <h2 class="section-title">Custom-Charakter <em>in UE5</em>.</h2>
+    </div>
+  </div>
+
+  <div class="phase-banner">
+    <div class="phase-letter">F</div>
+    <div>
+      <h4>Export</h4>
+      <div class="phase-meta">FBX · UE5 · Sequencer</div>
+      <p>Custom-Charakter mit übertragener Animation als FBX. In UE5 als Animation Sequence verwenden. <em>Zwei Schritte.</em></p>
+    </div>
+  </div>
+
+  <!-- STEP 16 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="80" y="50" width="160" height="110" rx="6" fill="#f3ecdc" stroke="#1f1a14" stroke-width="2"/>
+        <text x="160" y="76" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#b85528">FBX EXPORT</text>
+        <line x1="100" y1="86" x2="220" y2="86" stroke="#c8b89a" stroke-width="1"/>
+        <text x="100" y="105" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">FbxUpAxis</text>
+        <text x="220" y="105" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Z (UE5)</text>
+        <text x="100" y="122" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">TypeFbxAscii</text>
+        <text x="220" y="122" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">OFF</text>
+        <text x="100" y="139" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Bake animation</text>
+        <text x="220" y="139" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">✓</text>
+        <text x="100" y="156" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Skeleton + Mesh</text>
+        <text x="220" y="156" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">beide</text>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Custom-Charakter mit Animation komplett exportieren</text>
+      </svg>
+      <div class="caption">FBX-Export inkl. Mesh, damit der Custom-Charakter in UE5 sichtbar ist.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">16</span>
+        <span class="step-title">FBX-Export mit Mesh und Animation</span>
+      </div>
+      <p>File → Export → FBX. Anders als bei vorigen Projekten (wo nur Skeleton ausgegeben wurde): hier wird auch das Mesh mit exportiert, damit der Custom-Charakter in UE5 sichtbar ist.</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>FbxUpAxis = Z</strong> (für UE5)</li>
+        <li><strong>TypeFbxAscii = OFF</strong> — binäres FBX</li>
+        <li><strong>Bake animation</strong>: ON, 30 fps</li>
+        <li><strong>Skeleton only</strong>: <em>OFF</em> — Mesh mit exportieren (anders als bei vorigen Projekten)</li>
+        <li><strong>Frame range</strong>: voller Animations-Range</li>
+        <li><strong>Root translation</strong>: INCLUDE wenn Lokomotion, OFF wenn In-Place</li>
+      </ul>
+      <p>Dateiname: <code>custom-character-animated.fbx</code>.</p>
+    </div>
+  </div>
+
+  <!-- STEP 17 -->
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="50" width="280" height="110" fill="none" stroke="#284858" stroke-width="1.5"/>
+        <text x="160" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.1em" fill="#284858">UE5 · CUSTOM-CHARAKTER VOLL VERWENDBAR</text>
+        <line x1="40" y1="82" x2="280" y2="82" stroke="#284858" stroke-width="0.6"/>
+        <rect x="40" y="92" width="240" height="18" fill="#b85528" opacity="0.5"/>
+        <text x="50" y="105" font-family="JetBrains Mono, monospace" font-size="9" fill="#f3ecdc">Custom-Charakter Skeletal Mesh + Animation</text>
+        <rect x="40" y="114" width="240" height="18" fill="#8a9878" opacity="0.5"/>
+        <text x="50" y="127" font-family="JetBrains Mono, monospace" font-size="9" fill="#1f1a14">Optional · MetaHuman-Face (auf Custom-Skelett gemappt)</text>
+        <rect x="40" y="136" width="240" height="18" fill="#284858" opacity="0.5"/>
+        <text x="50" y="149" font-family="JetBrains Mono, monospace" font-size="9" fill="#f3ecdc">Animation Library aus 01-09 verwendbar</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Komplette Pipeline · Blender → Cascadeur → UE5</text>
+      </svg>
+      <div class="caption">UE5 mit Custom-Charakter und Animation. Pipeline ist komplett geschlossen.</div>
+    </div>
+    <div>
+      <div class="step-num-row">
+        <span class="step-num">17</span>
+        <span class="step-title">UE5-Integration des Custom-Charakters</span>
+      </div>
+      <p>FBX in UE5 importieren. UE5 fragt nach Skeleton — entweder ein bestehendes Skeleton verwenden (falls schon ein Custom-Skelett-Asset existiert) oder ein neues anlegen.</p>
+      <p>Bei Import werden angelegt:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Skeletal Mesh (Custom-Charakter)</li>
+        <li>Skeleton (Custom-Skelett)</li>
+        <li>Animation Sequence (die übertragene Animation)</li>
+        <li>Physics Asset (Default)</li>
+      </ul>
+      <p>Im Sequencer oder Animation Blueprint kann der Custom-Charakter jetzt wie der UE5-Manny verwendet werden. Mehrere Animationen können auf dem Skeleton aufgenommen werden (Walk, Run, Sit, Gestik etc.) — jede ist eine eigene Animation Sequence.</p>
+      <p>Für Pipeline-Komplettheit: die gesamte Animation-Bibliothek aus 01-09 kann via Retargeting auf den Custom-Charakter übertragen werden. Statt nur eine Walk-Animation hast du dann eine komplette Bewegungs-Bibliothek für den Custom-Charakter.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase F</div>
+        <p>In UE5: Custom-Charakter steht im Level, mit übertragener Animation. Bewegung sieht plausibel aus (kleinere Proportions-Artefakte sind okay nach Phase E Polish). Skeleton ist sauber importiert. Animation Sequence kann im Animation Blueprint verwendet werden für Game-Logic oder im Sequencer für Cutscenes. Pipeline ist komplett geschlossen — von Blender-Model bis UE5-Animation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- § 8 — OUTRO -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-num">§8</div>
+    <div>
+      <div class="section-tag">Ausblick</div>
+      <h2 class="section-title">Pipeline <em>komplett geschlossen</em>.</h2>
+    </div>
+  </div>
+
+  <p>Mit Projekt 10 ist die volle Pipeline durchgespielt: <strong>Blender + Auto-Rig Pro</strong> für Custom-Charakter-Rigging, <strong>Game Rig Tools (CG Dive)</strong> als Brücke für Game-fähiges Skelett, <strong>Quick Rigging Tool manuell</strong> für Cascadeur-Setup, <strong>Template-Speichern</strong> für Wiederverwendung, <strong>UE5-IK-Retargeter</strong> als bevorzugter Übertragungs-Pfad, <strong>Cascadeur-Pro-Retargeting</strong> und <strong>Copy/Paste Interval</strong> als Alternativen. Track 3 ist abgeschlossen.</p>
+
+  <p>Projekt 11+ (Kombinations-Szenen) ist der finale Akt der Reihe. Nicht mehr „lerne ein Werkzeug" oder „lerne einen Workflow" — sondern „kombiniere alles, was du gelernt hast, zu einer narrativen Sequenz". Charakter geht in einen Raum (Walk aus 03), bleibt stehen (Idle aus 01), gestikuliert beim Sprechen (08 + MetaHuman), setzt sich (04), steht auf (05), rennt raus (06), springt über ein Hindernis (07), landet, läuft aus. Optional auf einem Custom-Charakter (10) statt UE5-Manny.</p>
+
+  <p>Was du in dieser Reihe gelernt hast, ist nicht „Cascadeur in der Tiefe" — sondern „Cascadeur in deiner Pipeline". Das Werkzeug existiert nicht isoliert. Es kommt in einem konkreten Kontext zum Einsatz: Blender für Modeling, Auto-Rig Pro für Rigging, QuickMagic für Mocap, MetaHuman + FaceIt für Gesicht, Cascadeur für Body, UE5 für Komposition. Die Reihe hat versucht, in jeder Brochüre diesen Pipeline-Kontext mitzudenken.</p>
+
+  <div class="box box-merk">
+    <div class="box-label">Was Projekt 10 nicht macht</div>
+    <p>Kein non-humanoides Rigging (vierbeiniger Charakter, Mech, Insekt — alle anders). Kein Cloth-Sim oder Hair-Sim (separate UE5-Systeme). Kein Custom-Bones-Cascadeur-Tutorial (z.B. wenn der Charakter einen Schwanz hat — Cascadeur unterstützt das via Box Controller, aber das ist eine eigene Tiefe). Kein Multi-Charakter-Setup in einer Scene (das kommt in Projekt 11+).</p>
+  </div>
+
+  <div class="insight">
+    Es gibt eine Faustregel in 3D-Pipelines: <em>jedes Layer zwischen Charakter und Animation ist ein Engpass</em>. Modelling → Rigging → Animation → Engine. Bei perfektem Workflow können diese Layer parallel laufen — Modelling-Update propagiert automatisch in Rigging, Rigging-Update propagiert in Animation, Animation in Engine. In der Praxis brechen die Layer ständig — neue Bone-Namen, Naming-Inconsistencies, FBX-Probleme. Pipeline-Engineer ist eine eigene Rolle in größeren Studios, deren Job nur darin besteht, diese Brüche zu reparieren. Was du in dieser Brochüre gemacht hast, ist die Pipeline-Bridge zwischen drei Tools (Blender, Cascadeur, UE5) und zwei Rig-Layern (Auto-Rig Pro Control-Rig, Game-Rig). Wenn du diesen Workflow einmal sauber im Kopf hast, kannst du ihn auch bei anderen Tools wiederholen — z.B. Maya → MotionBuilder → Unity, oder Houdini → Cascadeur → UE5.
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="doc-footer">
+  <div><span class="terracotta">Projekt 10 · v 1.0</span></div>
+  <div>17 Schritte · 6 Phasen</div>
+  <div>Cascadeur · Lernreihe · Track 3 abgeschlossen</div>
+</footer>
+
+</article>
+
+</body>
+</html>
