@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projekt 15 · Creative Root Motion 2026.1 · Cascadeur-Lernreihe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --paper: #f3ecdc; --paper-warm: #ede4d0; --paper-dark: #e2d6b8; --ink: #1f1a14; --ink-soft: #5a4d3a; --ink-faint: #8a7d68; --terracotta: #b85528; --terracotta-deep: #7a3414; --cobalt: #284858; --sage: #8a9878; --warning: #c46b3a; --rule: #c8b89a; --font-display: 'Fraunces', Georgia, serif; --font-body: 'DM Sans', -apple-system, system-ui, sans-serif; --font-mono: 'JetBrains Mono', Consolas, monospace; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); font-size: 16px; line-height: 1.6; color: var(--ink); background: var(--paper); background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"); -webkit-font-smoothing: antialiased; }
+  .doc { max-width: 1100px; margin: 0 auto; }
+  .cover { padding: 3.5rem 5rem 2.5rem; border-bottom: 1px solid var(--rule); position: relative; overflow: hidden; }
+  .cover::before { content: ''; position: absolute; top: -10%; right: -8%; width: 50%; aspect-ratio: 1; background: radial-gradient(circle, rgba(184, 85, 40, 0.08) 0%, transparent 65%); border-radius: 50%; pointer-events: none; }
+  .cover-marker { display: flex; align-items: center; gap: 1.5rem; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 1.5rem; }
+  .cover-marker .ml { width: 60px; height: 1px; background: var(--terracotta); }
+  .cover h1 { font-family: var(--font-display); font-size: clamp(2.6rem, 5vw, 4.2rem); font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 50; line-height: 1.05; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 1.5rem; max-width: 18ch; }
+  .cover h1 em { font-style: italic; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); }
+  .cover .subtitle { font-family: var(--font-display); font-style: italic; font-size: 1.2rem; color: var(--ink-soft); max-width: 58ch; margin-bottom: 2rem; }
+  .cover-meta { display: flex; gap: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); flex-wrap: wrap; }
+  .mb { display: flex; flex-direction: column; gap: 0.2rem; }
+  .mb-label { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); }
+  .mb span:last-child { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: var(--ink); }
+  .section { padding: 3rem 5rem; border-bottom: 1px solid var(--rule); }
+  .section-head { display: grid; grid-template-columns: 80px 1fr; gap: 1.5rem; margin-bottom: 1.8rem; align-items: start; }
+  .section-num { font-family: var(--font-display); font-size: 2.8rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 1; }
+  .section-tag { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+  .section-title { font-family: var(--font-display); font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 400; line-height: 1.15; color: var(--ink); letter-spacing: -0.01em; max-width: 26ch; }
+  .section-title em { font-style: italic; font-weight: 300; color: var(--terracotta); font-variation-settings: 'opsz' 144, 'SOFT' 100; }
+  .section p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .section p.lead { font-family: var(--font-display); font-style: italic; font-size: 1.18rem; color: var(--ink-soft); margin-bottom: 1.5rem; max-width: 60ch; }
+  .phase-banner { display: grid; grid-template-columns: 110px 1fr; gap: 2rem; margin: 2rem 0 2.5rem; padding: 1.4rem 1.8rem; background: linear-gradient(90deg, rgba(184, 85, 40, 0.10), transparent); border-left: 4px solid var(--terracotta); align-items: center; }
+  .phase-letter { font-family: var(--font-display); font-size: 5rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 0.85; text-align: center; }
+  .phase-banner h4 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; color: var(--ink); margin-bottom: 0.3rem; }
+  .phase-banner .phase-meta { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.5rem; }
+  .phase-banner p { font-size: 0.97rem; color: var(--ink); margin-bottom: 0; max-width: 65ch; }
+  .phase-banner em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .phase-banner.gen { background: linear-gradient(90deg, rgba(40, 72, 88, 0.10), transparent); border-left-color: var(--cobalt); }
+  .phase-banner.gen .phase-letter { color: var(--cobalt); }
+  .phase-banner.cleanup { background: linear-gradient(90deg, rgba(138, 152, 120, 0.18), transparent); border-left-color: var(--sage); }
+  .phase-banner.cleanup .phase-letter { color: var(--sage); }
+  .step { display: grid; grid-template-columns: 320px 1fr; gap: 1.8rem; margin: 1.6rem 0; padding: 1.6rem 1.8rem; background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; }
+  .step-diagram { background: #f3ecdc; border: 1px solid #c8b89a; border-radius: 6px; padding: 1rem 0.6rem 0.6rem; align-self: start; }
+  .step-diagram svg { width: 100%; height: auto; display: block; }
+  .step-diagram .caption { margin-top: 0.5rem; text-align: center; font-family: var(--font-display); font-style: italic; font-size: 0.82rem; color: var(--ink-soft); line-height: 1.4; }
+  .step-num-row { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 0.6rem; }
+  .step-num { font-family: var(--font-display); font-size: 1.8rem; font-weight: 300; font-style: italic; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); line-height: 1; }
+  .step-title { font-family: var(--font-display); font-size: 1.18rem; font-weight: 500; color: var(--ink); line-height: 1.25; }
+  .step p { font-size: 0.96rem; margin-bottom: 0.6rem; max-width: none; }
+  .step p:last-child { margin-bottom: 0; }
+  .step em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .shortcut-row { display: flex; flex-wrap: wrap; gap: 0.4rem 0.7rem; align-items: center; margin: 0.5rem 0 0.4rem; font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; color: var(--ink-soft); }
+  kbd { font-family: var(--font-mono); font-size: 0.78rem; background: var(--paper-warm); border: 1px solid var(--rule); border-radius: 3px; padding: 0.05rem 0.4rem; color: var(--ink); box-shadow: 0 1px 0 var(--rule); }
+  .box { margin: 1.4rem 0; padding: 1.1rem 1.3rem; border-radius: 0 4px 4px 0; max-width: none; }
+  .step .box { margin: 0.9rem 0 0.4rem; }
+  .box-label { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; margin-bottom: 0.4rem; }
+  .box-label::before { content: ''; width: 14px; height: 1.5px; background: currentColor; }
+  .box p { font-size: 0.93rem; margin-bottom: 0.4rem; }
+  .box p:last-child { margin-bottom: 0; }
+  .box-why { background: rgba(40, 72, 88, 0.10); border-left: 3px solid var(--cobalt); }
+  .box-why .box-label { color: var(--cobalt); }
+  .box-stolper { background: rgba(196, 107, 58, 0.13); border-left: 3px solid var(--warning); }
+  .box-stolper .box-label { color: var(--warning); }
+  .box-merk { background: rgba(184, 85, 40, 0.10); border-left: 3px solid var(--terracotta); }
+  .box-merk .box-label { color: var(--terracotta); }
+  .box-check { background: rgba(138, 152, 120, 0.18); border-left: 3px solid var(--sage); }
+  .box-check .box-label { color: var(--sage); }
+  .insight { margin: 1.4rem 0; padding: 1.1rem 1.3rem; background: var(--paper-warm); border: 1px dashed var(--rule); border-radius: 6px; font-family: var(--font-display); font-style: italic; font-size: 0.96rem; color: var(--ink-soft); max-width: 65ch; }
+  .insight::before { content: 'Randnotiz'; display: block; font-family: var(--font-mono); font-style: normal; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+  .outro { padding: 3rem 5rem; background: linear-gradient(180deg, var(--paper), var(--paper-warm)); border-top: 2px solid var(--terracotta); }
+  .outro h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 3.5vw, 2.5rem); font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); margin-bottom: 1.2rem; max-width: 22ch; line-height: 1.1; }
+  .outro p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .outro p.intro { font-family: var(--font-display); font-style: italic; font-size: 1.12rem; color: var(--ink-soft); margin-bottom: 1.4rem; }
+  .next-up { margin-top: 1.5rem; padding: 1.2rem 1.5rem; background: var(--paper); border-left: 4px solid var(--cobalt); border-radius: 0 4px 4px 0; }
+  .next-up .next-label { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cobalt); margin-bottom: 0.4rem; }
+  .next-up h3 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 500; color: var(--ink); margin-bottom: 0.5rem; }
+  .next-up h3 em { font-style: italic; color: var(--cobalt); }
+  .doc-footer { padding: 2.5rem 5rem; border-top: 2px solid var(--ink); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); display: flex; justify-content: space-between; }
+  .doc-footer .terracotta { color: var(--terracotta); }
+  @media (max-width: 900px) {
+    .cover, .section, .doc-footer, .outro { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .section-head { grid-template-columns: 1fr; gap: 0.5rem; }
+    .step { grid-template-columns: 1fr; gap: 1rem; }
+    .step-diagram { max-width: 280px; margin: 0 auto; }
+    .phase-banner { grid-template-columns: 1fr; gap: 0.5rem; }
+    .phase-letter { text-align: left; font-size: 3.5rem; }
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #1a1612; --paper-warm: #221d17; --paper-dark: #2a241c; --ink: #ebe3d0; --ink-soft: #b8a98a; --ink-faint: #7a6e58; --terracotta: #e8814a; --terracotta-deep: #c25a2a; --cobalt: #6a9aab; --sage: #a8b898; --warning: #e2884d; --rule: #3a3026; }
+    body { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"); }
+    .step-diagram { background: #f3ecdc !important; border-color: #c8b89a !important; }
+    .step-diagram .caption { color: #5a4d3a !important; }
+  }
+</style>
+</head>
+<body>
+
+<article class="doc">
+
+<header class="cover">
+  <div class="cover-marker"><span>Cascadeur · Lernreihe · Track 4</span><div class="ml"></div><span>Projekt 15 · v 1.0</span></div>
+  <h1>Creative<br>Root <em>Motion</em>:<br>Diffusions-Model.</h1>
+  <p class="subtitle">Cascadeur 2026.1 hat ein Diffusions-Model eingeführt — Animations-Generation aus zwei Posen, ähnlich wie Inbetweening, aber kreativer, unvorhersehbarer, mit Style-Presets. Walking, Running, Jumping, Acrobatics als Stil-Wahlen. Reference Mode kopiert Mixamo-Animations-Stil auf eigenen Path. Idle-Generation funktioniert hier, wo Inbetweening passt.</p>
+  <div class="cover-meta">
+    <div class="mb"><span class="mb-label">Cascadeur-Version</span><span>2026.1 nur</span></div>
+    <div class="mb"><span class="mb-label">Methode</span><span>Diffusions-Model</span></div>
+    <div class="mb"><span class="mb-label">Styles</span><span>Walking · Running · Jumping · Acrobatics</span></div>
+    <div class="mb"><span class="mb-label">Reference-Quelle</span><span>Mixamo (oder eigene Animation)</span></div>
+    <div class="mb"><span class="mb-label">Output</span><span>Fixed Interpolation Bake</span></div>
+    <div class="mb"><span class="mb-label">Schritte</span><span>15</span></div>
+  </div>
+</header>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§1</div><div><div class="section-tag">Diffusion vs Inbetweening</div><h2 class="section-title">Generierte <em>statt</em> interpoliert.</h2></div></div>
+  <p class="lead">Inbetweening interpoliert zwischen Posen mit einer deterministischen Engine. Root Motion ist anders — ein Diffusions-Model, ähnlich zu Stable Diffusion bei Bildern, generiert eine neue Animation. Jedes Mal anders. Mit Stil-Wahl. Mit Reference-Übertragung.</p>
+  <p>Konkretes Szenario: Manny startet an Punkt A, soll an Punkt B ankommen. Statt manuell die Walk-Cycle-Posen zu setzen und Inbetweening zu nutzen, gibt man Cascadeur die Start- und End-Pelvis-Position plus einen Style-Preset („walking", „running", „jumping", „acrobatics") — das Model generiert die ganze Animation dazwischen. Bei „acrobatics" macht Manny auch mal einen Salto.</p>
+  <p>Fünf zentrale Unterschiede zu Inbetweening:</p>
+  <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+    <li><strong>Diffusion statt Interpolation</strong>: jedes Mal anderes Ergebnis</li>
+    <li><strong>Bakt sofort</strong>: kein Echtzeit-Update, keine inkrementelle Anpassung</li>
+    <li><strong>Kann Posen ändern</strong>: nicht nur Werte dazwischen, sondern auch die Keyframe-Posen selbst</li>
+    <li><strong>Idle-Animation möglich</strong>: generiert zwischen identischen Posen Bewegung (Inbetweening tut das nicht)</li>
+    <li><strong>Nicht physikalisch akkurat</strong>: AutoPhysics-Pass danach ist Pflicht</li>
+  </ul>
+  <div class="box box-why">
+    <div class="box-label">Wann Root Motion, wann Inbetweening</div>
+    <p>Inbetweening für: präzise Animation-Kontrolle, deterministische Ergebnisse, iterative Verfeinerung, jede Game-Animation wo Vorhersagbarkeit zählt. Root Motion für: kreative Variations-Erkundung, schnelle Prototypen, Idle-Animationen, Style-Transfer von Reference-Animationen. Nicht eines ersetzt das andere — sie sind komplementär. In der Praxis wirst du Root Motion für initiale Ideen nutzen, Inbetweening für die Verfeinerung.</p>
+  </div>
+  <div class="insight">
+    Diffusions-Models haben mit Stable Diffusion (2022) und DALL-E die Bildwelt revolutioniert — generieren statt malen. Cascadeurs Root Motion ist die Anwendung dieser Technologie auf 3D-Animation. Das Prinzip ist identisch: das Model wurde auf Millionen Animations-Beispielen trainiert, kennt die statistischen Muster von Bewegung, kann auf Anweisung neue plausible Sequenzen generieren. Wie bei Stable Diffusion gilt: das Ergebnis ist nie reproduzierbar, der gleiche Prompt erzeugt nie das exakt gleiche Bild. Bei Cascadeur: derselbe Path mit derselben Style-Wahl generiert nie die exakt gleiche Animation. Das ist die Schöne und das Schwierige an generativen Modellen — Kreativität als Feature, Reproduzierbarkeit als Bug.
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§2</div><div><div class="section-tag">Phase A · Setup</div><h2 class="section-title">Scene und <em>Root-Motion-Panel</em>.</h2></div></div>
+  <div class="phase-banner gen"><div class="phase-letter">A</div><div><h4>Setup</h4><div class="phase-meta">Cascadeur 2026.1 · Scene · Root Motion Tab</div><p>Cascadeur 2026.1 öffnen, Manny laden, Root-Motion-Settings finden. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">VERSION-CHECK · 2026.1</text>
+        <rect x="40" y="50" width="240" height="125" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Cascadeur Version</text>
+        <line x1="60" y1="80" x2="260" y2="80" stroke="#c8b89a" stroke-width="0.5"/>
+        <text x="60" y="100" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Erforderlich</text>
+        <text x="260" y="100" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">2026.1 oder neuer</text>
+        <text x="60" y="120" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Pre-2026.1</text>
+        <text x="260" y="120" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">Feature nicht verfügbar</text>
+        <text x="60" y="140" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Standard-Edition</text>
+        <text x="260" y="140" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Pro nicht nötig</text>
+        <text x="60" y="160" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Check</text>
+        <text x="260" y="160" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Help → About</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Versionsspezifisches Feature · keine Backports</text>
+      </svg>
+      <div class="caption">Cascadeur 2026.1 Version-Check. Feature ist neu, nicht in älteren Versionen.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">01</span><span class="step-title">Cascadeur 2026.1 Version-Check</span></div>
+      <p>Creative Root Motion Generation ist ein 2026.1-spezifisches Feature. Vor Beginn der Brochüre prüfen, ob die Cascadeur-Installation die richtige Version hat.</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Cascadeur öffnen</li>
+        <li>Top-Menu: <strong>Help → About</strong></li>
+        <li>Version prüfen — erforderlich: <strong>2026.1</strong> oder neuer</li>
+      </ol>
+      <p>Wenn die Installation auf 2026.0.x oder älter ist: Update über die Cascadeur-Website. Das Feature ist nicht in älteren Versionen verfügbar — auch nicht durch Plugins oder Workarounds.</p>
+      <p>Standard-Edition reicht. Pro-Edition ist nicht nötig für dieses Feature (im Gegensatz zu manchen anderen 2026.1-Features).</p>
+      <div class="box box-stolper">
+        <div class="box-label">Diffusions-Model läuft lokal</div>
+        <p>Im Gegensatz zu Cloud-AI-Services (Mixamo, ActorCore) läuft Cascadeur's Diffusions-Model lokal auf dem Rechner. Das bedeutet: kein Internet-Zugang nötig nach dem Setup, keine Pro-Subscription für jede Generation. Aber: ältere/schwächere GPUs können das Model langsam ausführen — eine Generation dauert je nach Hardware zwischen 5 und 60 Sekunden. NVIDIA RTX-Karten sind optimiert, AMD und Intel können kompatibilitäts-Probleme haben (aus Erinnerung, nicht final verifiziert — Cascadeur-Doku für aktuelle GPU-Support-Matrix prüfen).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">SCENE SETTINGS · ROOT MOTION TAB</text>
+        <rect x="40" y="50" width="240" height="125" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Scene Settings</text>
+        <line x1="60" y1="80" x2="260" y2="80" stroke="#c8b89a" stroke-width="0.5"/>
+        <text x="60" y="100" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Tab: Animation</text>
+        <text x="60" y="120" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Tab: Physics</text>
+        <text x="60" y="140" font-family="DM Sans, sans-serif" font-size="10" font-weight="600" fill="#b85528">Tab: Root Motion</text>
+        <text x="260" y="140" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">← hier</text>
+        <text x="60" y="160" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Tab: Inbetweening</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Root Motion Tab unter Scene Settings · neu in 2026.1</text>
+      </svg>
+      <div class="caption">Root-Motion-Tab in Scene Settings. Neu eingeführt in 2026.1.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">02</span><span class="step-title">Root-Motion-Panel öffnen</span></div>
+      <p>Aus Tutorial direkt: <em>„You will find root motion controls under the scene settings tab."</em></p>
+      <p>Vorgehen:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Cascadeur 2026.1 öffnen, neue Scene</li>
+        <li>UE5-Manny laden (FBX-Import aus Standard-Library)</li>
+        <li>Right-Panel: <strong>Scene Settings</strong> öffnen</li>
+        <li>Tab <strong>Root Motion</strong> auswählen (neu in 2026.1, zwischen anderen Tabs)</li>
+      </ol>
+      <p>Im Root-Motion-Panel sichtbar:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Style-Dropdown</strong>: walking / running / jumping / acrobatics</li>
+        <li><strong>Key Frame Force</strong>: Slider (0-100, Default 30)</li>
+        <li><strong>Reference Mode</strong>: Toggle</li>
+        <li><strong>Reference Force</strong>: Slider (wenn Reference Mode aktiv)</li>
+        <li><strong>Generate</strong>-Button oder Toggle</li>
+      </ul>
+      <p>Das Panel ist die zentrale Schaltzentrale für die ganze Brochüre. Hier wird der Style gewählt, die Posen-Erhaltung kontrolliert, und die Generation ausgelöst.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">START + END POSE · PELVIS-FOKUSSIERT</text>
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+        <g><text x="80" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">F0 · Start</text>
+        <circle cx="80" cy="75" r="9" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="80" y1="84" x2="80" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <circle cx="80" cy="105" r="4" fill="#b85528"/>
+        <text x="100" y="108" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">Pelvis</text>
+        <line x1="80" y1="130" x2="74" y2="170" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="80" y1="130" x2="86" y2="170" stroke="#1f1a14" stroke-width="2"/></g>
+        <path d="M 100 90 Q 160 60, 220 90" stroke="#b85528" stroke-width="2" fill="none" stroke-dasharray="4,2"/>
+        <text x="160" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">Animation generieren</text>
+        <g><text x="240" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">F90 · Ende</text>
+        <circle cx="240" cy="75" r="9" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="240" y1="84" x2="240" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <circle cx="240" cy="105" r="4" fill="#b85528"/>
+        <line x1="240" y1="130" x2="234" y2="170" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="240" y1="130" x2="246" y2="170" stroke="#1f1a14" stroke-width="2"/></g>
+        <text x="160" y="195" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Pelvis-Position und -Rotation ist alles was zählt</text>
+      </svg>
+      <div class="caption">Start- und End-Pose definieren. Pelvis-Position als kritischer Parameter.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">03</span><span class="step-title">Start- und End-Pose setzen</span></div>
+      <p>Anders als bei Inbetweening, das mit detaillierten Anker-Posen arbeitet, ist Root Motion <em>Pelvis-fokussiert</em>. Aus Tutorial direkt: <em>„The only thing it pays attention to is the position and rotation of the pelvis"</em> (bei Key Frame Force 0).</p>
+      <p>Workflow:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Auf Frame 0: Manny in Default-Stand-Pose, Pelvis am Welt-Origin</li>
+        <li>Keyframe setzen</li>
+        <li>Auf Frame 90 (3 Sekunden bei 30 fps): Pelvis um 3-4 Meter nach vorn verschieben</li>
+        <li>Pose ansonsten frei — Stand-Pose oder leicht rotiert</li>
+        <li>Keyframe setzen</li>
+      </ol>
+      <p>Zwischen den beiden Keyframes ist erstmal eine simple Linear-Interpolation oder Bezier — die Root Motion wird in Phase B generiert.</p>
+      <p>Detail-Posen (Arme, Beine, Hände) brauchen nicht gesetzt zu werden — das Model generiert sie aus der Pelvis-Bahn plus Style-Wahl. Wer dennoch detaillierte Posen setzt, kann mit <strong>Key Frame Force</strong> kontrollieren, wieviel das Model davon respektieren soll (siehe Schritt 06).</p>
+      <div class="box box-merk">
+        <div class="box-label">Pelvis-Höhe und -Rotation</div>
+        <p>Pelvis-Höhe und -Rotation in den Keyframes haben starken Einfluss auf das generierte Ergebnis. Aus Tutorial: wenn der Body leicht nach vorn rotiert wird, sieht der Charakter „wie wenn er sucht" aus. Wenn er aufrecht ist, wirkt es wie normales Walking. Bei aufrechter Pelvis-Pose mit hoher Position ergibt sich oft athletischeres Walking, bei abgesenkter Position eher schleichend.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§3</div><div><div class="section-tag">Phase B · Generation</div><h2 class="section-title">Style wählen, <em>generieren</em>.</h2></div></div>
+  <div class="phase-banner"><div class="phase-letter">B</div><div><h4>Generation</h4><div class="phase-meta">Style-Presets · Key Frame Force · Toggle Root Motion</div><p>Eine Wahl pro Klick, ein Ergebnis pro Generation. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">STYLE PRESETS · VIER WAHLEN</text>
+        <rect x="40" y="50" width="240" height="125" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="60" y="72" font-family="DM Sans, sans-serif" font-size="11" font-weight="600" fill="#1f1a14">Walking</text>
+        <text x="260" y="72" text-anchor="end" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">normaler Walk-Cycle</text>
+        <text x="60" y="94" font-family="DM Sans, sans-serif" font-size="11" font-weight="600" fill="#1f1a14">Running</text>
+        <text x="260" y="94" text-anchor="end" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Sprint-Bewegung</text>
+        <text x="60" y="116" font-family="DM Sans, sans-serif" font-size="11" font-weight="600" fill="#1f1a14">Jumping</text>
+        <text x="260" y="116" text-anchor="end" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">vertikale Bewegung</text>
+        <text x="60" y="138" font-family="DM Sans, sans-serif" font-size="11" font-weight="600" fill="#b85528">Acrobatics</text>
+        <text x="260" y="138" text-anchor="end" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#b85528">Salti, Tricks, Akrobatik</text>
+        <text x="160" y="165" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Wahl in Scene Settings → Root Motion → Style</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Style bestimmt Charakter der generierten Bewegung</text>
+      </svg>
+      <div class="caption">Vier Style-Presets. Acrobatics als extremster, Walking als konservativster.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">04</span><span class="step-title">Style-Preset wählen</span></div>
+      <p>Aus Tutorial direkt: vier Style-Presets verfügbar. Style-Wahl bestimmt den Charakter der generierten Bewegung — bei gleichem Pelvis-Path werden mit verschiedenen Styles fundamental verschiedene Animationen generiert.</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Walking</strong>: normaler Walk-Cycle, gemäßigte Geschwindigkeit, natürliche Arm-Bewegung. Beste Wahl für Default-Lokomotion-Animationen</li>
+        <li><strong>Running</strong>: Sprint-Bewegung, dynamischere Arme, kürzere Boden-Kontakt-Zeit. Beste Wahl wenn die Pelvis-Distanz größer ist (Manny soll schnell zwischen Punkten)</li>
+        <li><strong>Jumping</strong>: vertikale Bewegung dominiert, ballistische Trajektorien. Beste Wahl wenn Pelvis-Position in End-Pose höher ist als Start-Pose</li>
+        <li><strong>Acrobatics</strong>: Salti, Tricks, alles was Akrobatik-Charakter hat. Aus Tutorial: <em>„since the preset was set to acrobatic, it added another trick"</em></li>
+      </ul>
+      <p>Wahl in Scene Settings → Root Motion → Style-Dropdown.</p>
+      <div class="box box-merk">
+        <div class="box-label">Acrobatics ist unvorhersehbar</div>
+        <p>Walking, Running, Jumping erzeugen relativ konsistente Ergebnisse. Acrobatics ist die kreativste Wahl — das Model erfindet oft Salti, Drehungen, Tricks, die nicht durch die Pelvis-Path vorgegeben sind. Wer Akrobatik will, bekommt sie. Wer Vorhersagbarkeit will, sollte Walking oder Running wählen.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">KEY FRAME FORCE SLIDER</text>
+        <line x1="40" y1="100" x2="280" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <text x="40" y="80" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">0</text>
+        <text x="40" y="125" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#c46b3a">volle Freiheit</text>
+        <text x="40" y="140" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#c46b3a">Model ändert Posen</text>
+        <text x="160" y="80" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528" font-weight="600">30</text>
+        <text x="160" y="125" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#b85528">Default · ausgewogen</text>
+        <text x="160" y="140" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#b85528">Empfohlen</text>
+        <text x="280" y="80" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">100</text>
+        <text x="280" y="125" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#5a4d3a">Posen erhalten</text>
+        <text x="280" y="140" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#5a4d3a">Wie Inbetweening</text>
+        <circle cx="40" cy="100" r="6" fill="#c46b3a"/>
+        <circle cx="160" cy="100" r="7" fill="#b85528"/>
+        <circle cx="280" cy="100" r="6" fill="#284858"/>
+        <text x="160" y="175" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Höher = Posen erhalten · Niedriger = mehr Kreativität</text>
+      </svg>
+      <div class="caption">Key Frame Force Slider. 0 = maximale Freiheit, 100 = volle Posen-Erhaltung.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">05</span><span class="step-title">Key Frame Force einstellen</span></div>
+      <p>Aus Tutorial direkt: <em>„Key frame force controls how much you wanted to preserve the poses in the key frames."</em></p>
+      <p>Drei Bereiche praktisch:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Force 0</strong>: volle Freiheit. Model ignoriert die Detail-Posen in den Keyframes, achtet nur auf Pelvis-Position und -Rotation. Maximale Kreativität, maximale Unvorhersehbarkeit</li>
+        <li><strong>Force 30 (Default)</strong>: ausgewogene Wahl. Model respektiert die Keyframe-Posen grob, hat aber Freiheit für kreative Variationen</li>
+        <li><strong>Force 100</strong>: maximale Posen-Erhaltung. Model versucht die Keyframe-Posen exakt zu treffen — Ergebnis ähnelt dann Inbetweening, aber mit der Diffusion-Eigenschaft (jedes Mal anders)</li>
+      </ul>
+      <p>Empfehlung: Default 30 für die meisten Fälle. Force 0 für extreme Akrobatik-Experimente. Force 100 wenn die Posen sehr spezifisch eingehalten werden müssen aber Style-Transfer gewünscht ist.</p>
+      <p>Aus Tutorial belegt: bei Force 0 kann derselbe Pelvis-Path mit verschiedenen Acrobatic-Generations völlig unterschiedliche Animationen ergeben — einmal Salto, einmal Schraube, einmal Sprung mit Drehung.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">TOGGLE ROOT MOTION · GENERATE</text>
+        <rect x="40" y="50" width="240" height="125" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="60" y="72" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">1.</text>
+        <text x="80" y="72" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Toggle Root Motion ON</text>
+        <text x="60" y="92" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">2.</text>
+        <text x="80" y="92" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Wait 5-60 Sekunden (GPU-abhängig)</text>
+        <text x="60" y="112" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">3.</text>
+        <text x="80" y="112" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Ergebnis im Viewport ansehen</text>
+        <text x="60" y="132" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">4.</text>
+        <text x="80" y="132" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Bei Bedarf: Toggle OFF + ON erneut</text>
+        <text x="60" y="160" font-family="DM Sans, sans-serif" font-size="10" font-weight="600" fill="#b85528">→ Wenn Ergebnis gefällt: SOFORT speichern</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Generation ist nicht reproduzierbar · Save als Pflicht</text>
+      </svg>
+      <div class="caption">Generation-Workflow. Toggle ON, warten, prüfen, ggf. erneut. Save bei Erfolg.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">06</span><span class="step-title">Root Motion togglen und generieren</span></div>
+      <p>Workflow:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Im Root-Motion-Panel: <strong>Toggle Root Motion ON</strong></li>
+        <li>Cascadeur startet die Diffusions-Berechnung. Je nach GPU 5-60 Sekunden Wartezeit. Fortschritts-Anzeige im Status-Bar</li>
+        <li>Nach Abschluss: Animation wird automatisch in der Timeline gebakt. Frames werden grün (Fixed Interpolation)</li>
+        <li>Playback prüfen — Animation läuft mit dem gewählten Style ab</li>
+        <li>Wenn nicht zufrieden: Toggle OFF (Animation wird gelöscht), evtl. Settings anpassen, Toggle ON erneut → neues Ergebnis</li>
+      </ol>
+      <p>Wichtig aus Tutorial: <em>„Once you get the result that you like, we recommend saving the scene as the same result might be next to impossible to replicate fully."</em></p>
+      <p>Sobald ein gutes Ergebnis da ist: <strong>sofort Scene speichern</strong> (<kbd>Ctrl+S</kbd>). Die Generation ist nicht reproduzierbar — selbe Settings, anderes Ergebnis. Wer nach 10 Generations das beste hat und dann den Toggle nochmal drückt, verliert es eventuell.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Undo vor Re-Generation</div>
+        <p>Aus Tutorial: <em>„since it changes the poses in the key frames it's a good idea to undo before generating the animation again."</em> Wenn Force &gt; 0 ist, ändert die Generation auch die Keyframe-Posen. Bei wiederholter Generation ohne Undo werden die geänderten Posen als neue Basis genommen — das Ergebnis drift weg von der ursprünglichen Intention. Workflow: Undo (<kbd>Ctrl+Z</kbd>) zurück zur Pre-Generation-Pose, dann erneut Toggle. So bleibt jede Generation ein „frischer" Versuch.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§4</div><div><div class="section-tag">Phase C · Style-Experimente</div><h2 class="section-title">Vier Styles, <em>Idle-Generation</em>.</h2></div></div>
+  <div class="phase-banner"><div class="phase-letter">C</div><div><h4>Experimente</h4><div class="phase-meta">Style-Variationen · Idle-Animation · Force-Variationen</div><p>Die generative Methode lebt von Iteration. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">VIER STYLES · GLEICHER PATH</text>
+        <line x1="20" y1="100" x2="300" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <text x="40" y="80" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Start</text>
+        <circle cx="40" cy="100" r="4" fill="#1f1a14"/>
+        <text x="280" y="80" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Ende</text>
+        <circle cx="280" cy="100" r="4" fill="#1f1a14"/>
+        <path d="M 40 100 L 100 95 L 160 105 L 220 90 L 280 100" stroke="#8a9878" stroke-width="1.5" fill="none"/>
+        <text x="50" y="125" font-family="JetBrains Mono, monospace" font-size="7" fill="#8a9878">Walking</text>
+        <path d="M 40 100 Q 80 60, 120 100 Q 160 60, 200 100 Q 240 60, 280 100" stroke="#284858" stroke-width="1.5" fill="none"/>
+        <text x="50" y="55" font-family="JetBrains Mono, monospace" font-size="7" fill="#284858">Running</text>
+        <path d="M 40 100 Q 100 30, 160 100 Q 220 30, 280 100" stroke="#b85528" stroke-width="1.5" fill="none"/>
+        <text x="50" y="35" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">Jumping</text>
+        <path d="M 40 100 L 70 40 L 100 130 L 130 50 L 160 120 L 200 35 L 240 110 L 280 100" stroke="#c46b3a" stroke-width="1.5" fill="none"/>
+        <text x="50" y="155" font-family="JetBrains Mono, monospace" font-size="7" fill="#c46b3a">Acrobatics</text>
+        <text x="160" y="195" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Identischer Path · vier völlig verschiedene Animationen</text>
+      </svg>
+      <div class="caption">Vier Styles auf gleichem Pelvis-Path. Vier verschiedene Animations-Ergebnisse.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">07</span><span class="step-title">Style-Experimente durchspielen</span></div>
+      <p>Aus Tutorial direkt: <em>„Let's quickly set some trajectory for the character and then go through the styles and see the results."</em> Tutorial-Workflow nachvollziehen mit allen vier Styles auf demselben Pelvis-Path.</p>
+      <p>Workflow:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Mit Walking starten. Generate, prüfen, speichern als <code>v01-walking.casc</code></li>
+        <li>Undo bis vor Generation. Style auf Running. Generate, speichern als <code>v02-running.casc</code></li>
+        <li>Undo, Style auf Jumping. Generate, speichern als <code>v03-jumping.casc</code></li>
+        <li>Undo, Style auf Acrobatics. Generate, speichern als <code>v04-acrobatics.casc</code></li>
+      </ol>
+      <p>Vergleich der vier Animationen: gleicher Pelvis-Path, völlig unterschiedliche Charaktere. Walking ist konservativ, Running dynamisch, Jumping vertikal-akzentuiert, Acrobatics chaotisch-kreativ.</p>
+      <p>Diese Experimente sind kein Selbstzweck — sie helfen verstehen, wie das Model auf Style-Wahl reagiert. Bei realer Anwendung wirst du den Style basierend auf der gewünschten narrativen Wirkung wählen.</p>
+      <div class="insight">
+        Mixamo wurde 2008 gestartet, von Adobe 2015 übernommen, und beherbergt heute die größte öffentliche Animation-Library für Game-Charaktere. Cascadeurs Root Motion Diffusion-Model ist auf einer ähnlichen Datenbasis trainiert — wahrscheinlich Mixamo-Daten plus eigene Sammlungen plus Mocap-Bibliotheken. Das erklärt, warum Cascadeurs Walking-Style wie Mixamo's „Walking" wirkt, und warum Acrobatics-Stil wie Mixamo's „Backflip" oder „Cartwheel" anmutet. Das Model hat sich diese Bewegungs-Vokabel angeeignet. Wer Mixamo gut kennt, erkennt im Cascadeur-Output dieselben statistischen Muster — nur mit Diffusion gewürzt, also kreativer kombiniert.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">IDLE-GENERATION · POSEN GLEICH</text>
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+        <g><text x="80" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">F0</text>
+        <circle cx="80" cy="75" r="9" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="80" y1="84" x2="80" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="80" y1="130" x2="74" y2="170" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="80" y1="130" x2="86" y2="170" stroke="#1f1a14" stroke-width="2"/></g>
+        <text x="140" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b85528">≈</text>
+        <g><text x="200" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">F60</text>
+        <circle cx="200" cy="75" r="9" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="200" y1="84" x2="200" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="200" y1="130" x2="194" y2="170" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="200" y1="130" x2="206" y2="170" stroke="#1f1a14" stroke-width="2"/></g>
+        <text x="260" y="80" font-family="JetBrains Mono, monospace" font-size="8" fill="#c46b3a">Inbetweening:</text>
+        <text x="260" y="93" font-family="JetBrains Mono, monospace" font-size="8" fill="#c46b3a">nichts</text>
+        <text x="260" y="115" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a9878">Root Motion:</text>
+        <text x="260" y="128" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a9878">Idle-Bewegung</text>
+        <text x="160" y="195" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Zwei identische Posen · Inbetweening stagniert · Root Motion improvisiert</text>
+      </svg>
+      <div class="caption">Idle-Generation. Root Motion erfindet Bewegung wo Inbetweening leer bleibt.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">08</span><span class="step-title">Idle-Generation testen</span></div>
+      <p>Aus Tutorial direkt belegt: <em>„unlike inbetweening, root motion can generate idle animations. As you can see here, inbetweening does nothing between two similar poses, while root motion will come up with something to generate."</em></p>
+      <p>Test:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Neue Scene, Manny laden</li>
+        <li>Auf Frame 0: Standard-Stand-Pose, Keyframe</li>
+        <li>Auf Frame 60: <strong>identische</strong> Standard-Stand-Pose, Keyframe</li>
+        <li>Vergleich: Inbetweening würde zwischen den identischen Posen nichts generieren — Manny steht 60 Frames still</li>
+        <li>Root Motion: Style „Walking", Toggle ON</li>
+        <li>Cascadeur generiert eine subtile Idle-Bewegung — leichtes Schwanken, Atmen, Mikro-Pose-Wechsel</li>
+      </ol>
+      <p>Das ist eine echte 2026.1-Innovation. Idle-Animationen waren bisher manuell zu bauen, weil Inbetweening zwischen identischen Posen stagniert. Mit Root Motion ist Idle-Generation in wenigen Sekunden möglich.</p>
+      <p>Anwendung: in Cutscenes brauchst du oft kurze Idle-Phasen zwischen Aktionen — Manny wartet auf etwas, oder steht zwischen Dialogen. Statt manuelle Atmungs-Animation zu bauen: Root Motion mit Walking-Style zwischen identischen Posen.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FORCE-VARIATIONEN VERGLEICHEN</text>
+        <rect x="20" y="50" width="80" height="125" fill="#c46b3a" opacity="0.15" stroke="#c46b3a" stroke-width="1.2"/>
+        <text x="60" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" font-weight="600" fill="#c46b3a">Force 0</text>
+        <text x="60" y="88" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Volle Freiheit</text>
+        <text x="60" y="108" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Posen ändern</text>
+        <text x="60" y="128" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">sich</text>
+        <text x="60" y="148" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Kreativ</text>
+        <text x="60" y="168" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">unvorhersehbar</text>
+        <rect x="115" y="50" width="80" height="125" fill="#b85528" opacity="0.25" stroke="#b85528" stroke-width="1.5"/>
+        <text x="155" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" font-weight="600" fill="#b85528">Force 30</text>
+        <text x="155" y="88" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Default</text>
+        <text x="155" y="108" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Ausgewogen</text>
+        <text x="155" y="128" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Posen grob</text>
+        <text x="155" y="148" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">erhalten</text>
+        <rect x="210" y="50" width="80" height="125" fill="#284858" opacity="0.15" stroke="#284858" stroke-width="1.2"/>
+        <text x="250" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" font-weight="600" fill="#284858">Force 100</text>
+        <text x="250" y="88" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Posen exakt</text>
+        <text x="250" y="108" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Erhalten</text>
+        <text x="250" y="128" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Wie</text>
+        <text x="250" y="148" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Inbetweening</text>
+        <text x="250" y="168" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">aber diffuser</text>
+      </svg>
+      <div class="caption">Force-Werte im Vergleich. Drei Bereiche: Freiheit, Default, Erhaltung.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">09</span><span class="step-title">Force-Variationen mit gleichem Style</span></div>
+      <p>Drittes Experiment: gleichen Style (z.B. Walking) mit verschiedenen Force-Werten generieren. Zeigt, wie Force die Kreativität-Erhaltung-Balance steuert.</p>
+      <p>Workflow:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Style auf Walking, Detail-Pose in Frame 0 setzen (z.B. linker Arm leicht angehoben, charakteristische Pose)</li>
+        <li>Force 0, Toggle, Ergebnis: Arm-Position wird ignoriert, Model generiert neutrale Walking-Animation</li>
+        <li>Undo, Force 30, Toggle, Ergebnis: Arm-Position grob erhalten, aber Walking-Style überlagert</li>
+        <li>Undo, Force 100, Toggle, Ergebnis: Arm-Position exakt erhalten, Walking-Style nur als Bewegungs-Untergrund</li>
+      </ol>
+      <p>Sichtbar: bei Force 0 kann das Model auch komplett andere Arm-Posen generieren. Bei Force 100 ist es nahe an Inbetweening, nur mit diffusionsbasierten Mikro-Variationen.</p>
+      <p>Praktische Empfehlung: für Workflow-Geschwindigkeit Force 30 nutzen (Default). Force 0 für kreative Erkundung, Force 100 wenn Posen-Treue entscheidend ist.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§5</div><div><div class="section-tag">Phase D · Reference Mode</div><h2 class="section-title">Mixamo-Stil <em>kopieren</em>.</h2></div></div>
+  <div class="phase-banner gen"><div class="phase-letter">D</div><div><h4>Reference Mode</h4><div class="phase-meta">Mixamo-Animation · Style-Transfer · Reference Force</div><p>Animation-Stil aus einer Source kopieren auf eigenen Path. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">MIXAMO-ANIMATION VORBEREITEN</text>
+        <text x="30" y="55" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">1.</text>
+        <text x="50" y="55" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Mixamo-Account → Animation wählen</text>
+        <text x="30" y="78" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">2.</text>
+        <text x="50" y="78" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">FBX download (auch mit Skin OK)</text>
+        <text x="30" y="101" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">3.</text>
+        <text x="50" y="101" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">In Cascadeur importieren</text>
+        <text x="30" y="124" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">4.</text>
+        <text x="50" y="124" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Charakter riggen (Quick Rigging)</text>
+        <text x="30" y="147" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">5.</text>
+        <text x="50" y="147" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">~1 Minute Aufwand laut Tutorial</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Reference muss als geriggte Animation</text>
+        <text x="160" y="195" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">in Cascadeur vorliegen</text>
+      </svg>
+      <div class="caption">Mixamo als Reference. Animation downloaden, riggen, in Cascadeur.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">10</span><span class="step-title">Mixamo-Animation als Reference laden</span></div>
+      <p>Aus Tutorial direkt: <em>„This animation we got from Mixamo. In order to use it as a reference, we have to rig the character first, which usually takes less than a minute."</em></p>
+      <p>Vorgehen:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Mixamo.com aufrufen (Adobe-Account nötig, kostenlos für Standard-Animations)</li>
+        <li>Animation auswählen, die als Style-Reference dienen soll — z.B. „Catwalk Walk", „Drunk Walk", „Zombie Walk" für expressive Walk-Variations</li>
+        <li>Charakter wählen (Y-Bot oder X-Bot reichen für reine Animation, ohne Skin)</li>
+        <li>Download als FBX</li>
+        <li>In Cascadeur neue Scene öffnen, FBX importieren</li>
+        <li>Quick Rigging Tool aufrufen, Rig generieren (im Tutorial: „less than a minute")</li>
+      </ol>
+      <p>Mixamo bietet hunderte Animationen. Für Reference-Style-Transfer eignen sich besonders Animationen mit klarem Stil-Charakter — Drunk Walks, Sneak Walks, Catwalk-Animationen, Zombie-Bewegungen. Standard-Walks sind weniger interessant, weil sie dem Default-Walking-Style nahe sind.</p>
+      <div class="box box-merk">
+        <div class="box-label">Reference aus eigenen Animationen</div>
+        <p>Reference Mode funktioniert nicht nur mit Mixamo — jede geriggte Cascadeur-Animation kann als Reference dienen. Wer eigene charakteristische Walk-Animationen aus früheren Projekten hat (Projekt 03, Projekt 11 Walk-Phase, Custom-Charakter aus Projekt 10), kann sie als Reference nutzen. Das ergibt eine eigene „Style-Library" — du baust einen Walk einmal sorgfältig, dann generierst du mit Reference Mode beliebige andere Walks im gleichen Stil.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">SELECT ROOT MOTION REFERENCE</text>
+        <rect x="40" y="50" width="240" height="125" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">In Reference-Scene</text>
+        <line x1="60" y1="80" x2="260" y2="80" stroke="#c8b89a" stroke-width="0.5"/>
+        <text x="60" y="100" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">1.</text>
+        <text x="80" y="100" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Alle Animations-Frames selektieren</text>
+        <text x="60" y="120" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">2.</text>
+        <text x="80" y="120" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Edit → Select Root Motion Reference</text>
+        <text x="60" y="140" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">3.</text>
+        <text x="80" y="140" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Cascadeur speichert Reference intern</text>
+        <text x="60" y="160" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">4.</text>
+        <text x="80" y="160" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Jetzt zur Target-Scene wechseln</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Reference wird global gespeichert · scene-übergreifend</text>
+      </svg>
+      <div class="caption">Reference markieren. Edit-Menu Befehl, Reference wird intern verfügbar.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">11</span><span class="step-title">Reference markieren</span></div>
+      <p>Aus Tutorial direkt: <em>„let's create a motion path. Now to copy the style of this animation, select the frames on the timeline, then go to edit, select root motion reference."</em></p>
+      <p>Workflow in der Reference-Scene (Mixamo-Animation):</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Auf der Timeline alle Animations-Frames selektieren (Shift+Click oder Marquee)</li>
+        <li>Top-Menu: <strong>Edit → Select Root Motion Reference</strong></li>
+        <li>Cascadeur speichert die Animation intern als aktuelle Reference</li>
+        <li>Dies ist scene-übergreifend — die Reference bleibt verfügbar wenn du in eine andere Scene wechselst</li>
+      </ol>
+      <p>Die Reference ist jetzt im internen Speicher von Cascadeur — nicht in einer Datei, sondern in der aktuellen Cascadeur-Session. Wenn du Cascadeur schließt, ist die Reference weg.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Reference geht beim Cascadeur-Restart verloren</div>
+        <p>Aus Erinnerung, nicht final verifiziert — Cascadeur 2026.1 speichert die Reference im Session-Speicher, nicht persistent. Wer eine Reference wiederverwenden will, muss sie nach jedem Cascadeur-Start neu markieren (Reference-Scene öffnen, Frames selektieren, Edit → Select Root Motion Reference). Lösung: Reference-Scenes als separate Cascadeur-Files behalten (z.B. <code>references/mixamo-drunk-walk.casc</code>), bei Bedarf öffnen und Reference markieren.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">REFERENCE MODE · TARGET-SCENE</text>
+        <rect x="40" y="50" width="240" height="125" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Scene Settings · Root Motion</text>
+        <line x1="60" y1="80" x2="260" y2="80" stroke="#c8b89a" stroke-width="0.5"/>
+        <text x="60" y="100" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Reference Mode</text>
+        <text x="260" y="100" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">ON</text>
+        <text x="60" y="120" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Reference Force</text>
+        <text x="260" y="120" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">50-80 (Default)</text>
+        <text x="60" y="140" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Style-Dropdown</text>
+        <text x="260" y="140" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">ignored</text>
+        <text x="60" y="160" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Toggle Root Motion</text>
+        <text x="260" y="160" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Generate</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Reference Mode disregards Style-Settings</text>
+      </svg>
+      <div class="caption">Reference Mode aktivieren in Target-Scene. Style-Settings werden ignoriert.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">12</span><span class="step-title">Reference Mode in Target-Scene</span></div>
+      <p>Aus Tutorial direkt: <em>„Now back in our scene, in the scene settings under root motion, turn on reference mode. This way it will disregard all the settings above it and generate the animation using the reference that we just selected."</em></p>
+      <p>Workflow:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Zur Target-Scene wechseln (eigene Scene mit Pelvis-Path-Keyframes)</li>
+        <li>Scene Settings → Root Motion Tab</li>
+        <li><strong>Reference Mode</strong>: Toggle ON</li>
+        <li><strong>Reference Force</strong>: Default-Wert (etwa 50-80, je nach gewünschter Stil-Treue)</li>
+        <li>Style-Dropdown wird ignoriert — Reference Mode überschreibt das</li>
+        <li><strong>Toggle Root Motion</strong> → Generate</li>
+      </ol>
+      <p>Effekt: das Diffusions-Model generiert die Animation in dem Stil der markierten Reference. Wenn die Reference ein Drunk Walk war, generiert es einen Drunk Walk auf dem eigenen Pelvis-Path. Wenn es ein Catwalk war, einen Catwalk.</p>
+      <p><strong>Reference Force</strong> kontrolliert die Stil-Treue:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Force 0</strong>: Reference wird ignoriert, normales Walking generiert</li>
+        <li><strong>Force 50-80</strong>: ausgewogene Stil-Übertragung, eigener Path mit Reference-Charakteristik</li>
+        <li><strong>Force 100</strong>: maximale Stil-Treue, sehr nah an der Source-Animation</li>
+      </ul>
+      <div class="box box-merk">
+        <div class="box-label">Style-Library aufbauen</div>
+        <p>Reference Mode öffnet eine wichtige Pipeline-Möglichkeit: persönliche Style-Library. Du sammelst charakteristische Animationen (Mixamo-Picks, eigene Builds aus Projekt 03 und 12), benennst sie konsistent, hältst sie in einem Reference-Ordner. Bei jeder neuen Animation: passende Reference laden, Reference Mode aktivieren, eigener Path generieren. Das ist die Diffusion-Variante des Animation-Compositing aus Projekt 11.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§6</div><div><div class="section-tag">Phase E · Post-Processing</div><h2 class="section-title">Unbaking, <em>Physics</em>, Fulcrum.</h2></div></div>
+  <div class="phase-banner cleanup"><div class="phase-letter">E</div><div><h4>Cleanup</h4><div class="phase-meta">Unbaking · AutoPhysics · Fulcrum Motion Cleaning</div><p>Generierte Animationen sind nicht physikalisch akkurat. Cleanup-Pipeline. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#8a9878">UNBAKING · BEARBEITBAR MACHEN</text>
+        <line x1="20" y1="80" x2="300" y2="80" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="30" y="75" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Vorher (Fixed)</text>
+        <g><circle cx="50" cy="80" r="3" fill="#8a9878"/><circle cx="65" cy="80" r="3" fill="#8a9878"/><circle cx="80" cy="80" r="3" fill="#8a9878"/><circle cx="95" cy="80" r="3" fill="#8a9878"/><circle cx="110" cy="80" r="3" fill="#8a9878"/><circle cx="125" cy="80" r="3" fill="#8a9878"/><circle cx="140" cy="80" r="3" fill="#8a9878"/><circle cx="155" cy="80" r="3" fill="#8a9878"/><circle cx="170" cy="80" r="3" fill="#8a9878"/><circle cx="185" cy="80" r="3" fill="#8a9878"/><circle cx="200" cy="80" r="3" fill="#8a9878"/><circle cx="215" cy="80" r="3" fill="#8a9878"/><circle cx="230" cy="80" r="3" fill="#8a9878"/><circle cx="245" cy="80" r="3" fill="#8a9878"/><circle cx="260" cy="80" r="3" fill="#8a9878"/><circle cx="275" cy="80" r="3" fill="#8a9878"/></g>
+        <text x="160" y="110" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#b85528">↓</text>
+        <text x="160" y="105" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">Unbaking</text>
+        <line x1="20" y1="140" x2="300" y2="140" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="30" y="135" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Nachher (Bezier)</text>
+        <g><circle cx="50" cy="140" r="4" fill="#1f1a14"/><circle cx="125" cy="140" r="4" fill="#1f1a14"/><circle cx="200" cy="140" r="4" fill="#1f1a14"/><circle cx="275" cy="140" r="4" fill="#1f1a14"/></g>
+        <text x="160" y="170" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Wenige Anker-Keyframes statt durchgehende Fixed Interpolation</text>
+        <text x="160" y="187" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">— ermöglicht weitere Bearbeitung</text>
+      </svg>
+      <div class="caption">Unbaking. Aus Fixed Interpolation werden Bezier-Anker-Keyframes.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">13</span><span class="step-title">Unbaking für Bearbeitbarkeit</span></div>
+      <p>Aus Tutorial direkt: <em>„The animation that root motion generates is in the form of fixed interpolation or soft bake. Use animation unbaking to make it easier to edit."</em></p>
+      <p>Root-Motion-Output ist Fixed Interpolation auf jedem Frame — jeder Frame ist Keyframe. Das ist für weitere Bearbeitung suboptimal: bei Pose-Änderungen müssen alle Frames neu gebakt werden, Inbetweening funktioniert nicht, Trajectory Tangents nicht verfügbar.</p>
+      <p>Vorgehen:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Generierte Animation selektieren (alle Frames)</li>
+        <li><strong>Unbaking-Button</strong> in der Tool-Leiste (oder Commands → Unbaking)</li>
+        <li>Cascadeur reduziert die Fixed-Frames auf wenige Bezier-Anker-Keyframes</li>
+        <li>Tolerance einstellbar — kleiner Wert = mehr Keyframes (näher am Original), größerer Wert = weniger Keyframes (vereinfachte Animation)</li>
+        <li>Standard-Tolerance reicht meistens</li>
+      </ol>
+      <p>Nach Unbaking: die Animation ist klassisch bearbeitbar — Inbetweening kann zusätzlich angewendet werden, Trajectory Tangents stehen zur Verfügung, Pose-Änderungen an Anker-Keyframes propagieren wie gewohnt.</p>
+      <div class="insight">
+        Generative Modelle haben in Vision (Stable Diffusion) und Language (GPT) gezeigt: das Output zu refinen ist Teil des Prozesses, nicht ein Defekt. Niemand erwartet, dass ChatGPT auf den ersten Schuss einen finalen Roman schreibt — der Output wird editiert, verfeinert, kombiniert. Bei Cascadeur's Root Motion ist es identisch: das Diffusions-Model generiert eine kreative Rohversion, der Animator verfeinert sie mit klassischen Tools (Inbetweening, Tween Machine, AutoPhysics). Wer Root Motion als „one-click animation" missversteht und das Rohergebnis direkt exportiert, bekommt mediokre Animationen. Wer es als kreativen Startpunkt nutzt und konventionelle Werkzeuge zur Verfeinerung einsetzt, bekommt das Beste aus beiden Welten.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#8a9878">AUTOPHYSICS · BALLISTIC FIX</text>
+        <rect x="40" y="50" width="240" height="125" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="60" y="72" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Vor AutoPhysics</text>
+        <text x="260" y="72" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">nicht physikalisch</text>
+        <text x="60" y="92" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Ballistic Trajectory</text>
+        <text x="260" y="92" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">wird korrigiert</text>
+        <text x="60" y="112" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Inertia</text>
+        <text x="260" y="112" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">wird hinzugefügt</text>
+        <text x="60" y="132" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">CoM-Trajectory</text>
+        <text x="260" y="132" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">wird geglättet</text>
+        <text x="60" y="152" font-family="DM Sans, sans-serif" font-size="10" font-weight="600" fill="#b85528">→ 3-Pass-Workflow wie immer</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Tutorial-belegt: „autophysics fixed the ballistic trajectory"</text>
+      </svg>
+      <div class="caption">AutoPhysics fixt das, was das Diffusions-Model nicht physikalisch korrekt hatte.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">14</span><span class="step-title">AutoPhysics-Pass anwenden</span></div>
+      <p>Aus Tutorial direkt: <em>„we highly advise to do an autophysics pass on them. Like here, for instance, autophysics fixed the ballistic trajectory, added inertia, and overall smooth the trajectory of the center of mass."</em></p>
+      <p>Workflow analog zu allen vorigen Brochüren (siehe insbesondere Projekt 07 für AutoPhysics-Vertiefung):</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Center of Mass selektieren</li>
+        <li>Physics Tab öffnen, Physics-Ghost aktivieren</li>
+        <li><strong>Pass 1-2</strong>: nur Physics Character (ohne weitere Filter)</li>
+        <li><strong>Pass 3</strong>: zusätzliche Filter — Smooth Trajectory ~30, Smooth Rotation ~30, Compensation Motion ~30, Secondary Motion ~30</li>
+        <li>Bei jedem Pass: Ghost-Vorschau prüfen, dann Snap to Physics</li>
+      </ol>
+      <p>Das Diffusions-Model produziert oft ballistische Bahnen, die physikalisch fragwürdig sind (Charakter „schwebt" leicht, Inertia fehlt, Gravity wird ignoriert). AutoPhysics korrigiert das. Bei Acrobatics-Style: AutoPhysics kann manchmal übersteuern und Tricks „zurückreduzieren" — bei Acrobatics-Animations Physics-Filter eventuell niedriger ansetzen.</p>
+      <div class="box box-stolper">
+        <div class="box-label">AutoPhysics + Acrobatics-Konflikt</div>
+        <p>Acrobatics-Animationen aus Root Motion enthalten oft physikalisch unplausible Tricks — Salti aus dem Stand, Backflips ohne Anlauf. AutoPhysics versucht das zu korrigieren und macht die Animation oft langweiliger. Empfehlung bei Acrobatics: Physics Character auf 60-70 statt 100, andere Filter ganz weglassen. So bleibt der akrobatische Charakter erhalten, nur grobe Physik-Fehler werden gefixt.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#8a9878">FULCRUM MOTION CLEANING</text>
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <g opacity="0.4"><text x="80" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#c46b3a">Vorher</text>
+        <line x1="70" y1="158" x2="78" y2="160" stroke="#c46b3a" stroke-width="2"/>
+        <line x1="68" y1="160" x2="76" y2="162" stroke="#c46b3a" stroke-width="2"/>
+        <line x1="66" y1="162" x2="74" y2="164" stroke="#c46b3a" stroke-width="2"/>
+        <text x="80" y="178" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#c46b3a">Fuß driftet</text></g>
+        <text x="160" y="105" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#b85528">→</text>
+        <g><text x="240" y="55" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#8a9878">Nachher</text>
+        <line x1="230" y1="160" x2="245" y2="160" stroke="#8a9878" stroke-width="3"/>
+        <text x="240" y="178" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#8a9878">Fuß stabil</text></g>
+        <text x="160" y="195" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Fulcrum Motion Cleaning · gegen Foot-Sliding</text>
+      </svg>
+      <div class="caption">Fulcrum Motion Cleaning als finaler Cleanup-Pass.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">15</span><span class="step-title">Fulcrum Motion Cleaning für Foot-Stability</span></div>
+      <p>Aus Tutorial direkt: <em>„Here we'll apply the physics result and use fulcrum motion cleaning to prevent the feed from sliding and falling through the ground plane."</em></p>
+      <p>Letzter Cleanup-Schritt vor Export. Foot-Sliding und Ground-Penetration sind bei generierten Animationen häufig — das Model hat keine direkte Boden-Kontakt-Awareness.</p>
+      <p>Vorgehen (aus Projekt 09 Mocap-Cleanup übertragen):</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Fulcrum Motion Cleaning Tool öffnen (Top-Bar)</li>
+        <li>Foot-Controller selektieren</li>
+        <li>Cleaning-Pass starten</li>
+        <li>Cascadeur erkennt Boden-Kontakt-Phasen und stabilisiert sie</li>
+        <li>Sliding wird minimiert, Ground-Penetration gefixt</li>
+      </ol>
+      <p>Bei Bedarf kombinieren mit Paste-Into-Interval (aus Projekt 12) für besonders hartnäckige Sliding-Stellen.</p>
+      <div class="box box-check">
+        <div class="box-label">Pipeline-Abschluss</div>
+        <p>Diffusions-Generation → Unbaking → AutoPhysics → Fulcrum Cleaning. Die generierte Animation ist jetzt bearbeitet, physikalisch korrigiert, Foot-stabil. Bereit für FBX-Export wie aus allen vorigen Brochüren — Up Axis Z, Bake Animation enable, in UE5 importieren. Standard-Pipeline.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="outro">
+  <h2>Was du jetzt <em>kannst</em>.</h2>
+  <p class="intro">Track 4 hat jetzt eine generative Dimension — kreative Animation aus Pelvis-Path und Style-Wahl.</p>
+  <p>Du kennst die Trennung zwischen Inbetweening (deterministisch, interpolativ, real-time) und Root Motion (stochastisch, generativ, baked). Beide Methoden haben ihre Anwendungsfelder, und du kannst bewusst zwischen ihnen wählen. Plus: Reference Mode öffnet den Style-Transfer von Mixamo oder eigenen Animationen — eine kreative Möglichkeit, die in keiner anderen Brochüre vorkommt.</p>
+  <p>Die Cleanup-Pipeline nach Generation (Unbaking → AutoPhysics → Fulcrum) ist eine kanonische Folge, die du nach jeder Root Motion Generation durchspielen solltest. Direkt aus dem Cascadeur-Tutorial belegt, in dieser Reihenfolge nicht verhandelbar.</p>
+  <p>Was die Brochüre nicht gezeigt hat — bewusst: detailliertes Diffusion-Model-Tuning (Cascadeur-Defaults reichen für die meisten Anwendungen), Custom-Style-Training (nicht user-zugänglich in 2026.1), Multi-Reference-Blending (nicht offiziell unterstützt). Diese Features könnten in späteren Cascadeur-Versionen kommen — die Roadmap-Notiz im Tutorial weist darauf hin: <em>„this diffusion model has definitely a lot more potential."</em></p>
+  <div class="next-up">
+    <div class="next-label">Letzte empfohlene Brochüre (optional)</div>
+    <h3>Projekt 16 · <em>References-Workflow</em></h3>
+    <p style="font-size: 0.92rem; margin: 0;">Profi-Disziplin: Reference-Quellen, After-Effects-Vorbereitung, Reference-Stage als eigene Pipeline-Phase. Kompakter (10-12 Schritte statt 17). Meta-thematisch — kein neues Tool, sondern Workflow-Reflexion über das, was vor Cascadeur passiert. Schließt Track 4 ab als „letzte Vertiefung".</p>
+  </div>
+</section>
+
+<footer class="doc-footer">
+  <div><span class="terracotta">Projekt 15 · v 1.0 · Root Motion 2026.1</span></div>
+  <div>15 Schritte · 5 Phasen</div>
+  <div>Cascadeur · Lernreihe · Track 4</div>
+</footer>
+
+</article>
+
+</body>
+</html>

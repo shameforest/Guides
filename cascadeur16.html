@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projekt 16 · References-Workflow · Cascadeur-Lernreihe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --paper: #f3ecdc; --paper-warm: #ede4d0; --paper-dark: #e2d6b8; --ink: #1f1a14; --ink-soft: #5a4d3a; --ink-faint: #8a7d68; --terracotta: #b85528; --terracotta-deep: #7a3414; --cobalt: #284858; --sage: #8a9878; --warning: #c46b3a; --rule: #c8b89a; --font-display: 'Fraunces', Georgia, serif; --font-body: 'DM Sans', -apple-system, system-ui, sans-serif; --font-mono: 'JetBrains Mono', Consolas, monospace; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); font-size: 16px; line-height: 1.6; color: var(--ink); background: var(--paper); background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"); -webkit-font-smoothing: antialiased; }
+  .doc { max-width: 1100px; margin: 0 auto; }
+  .cover { padding: 3.5rem 5rem 2.5rem; border-bottom: 1px solid var(--rule); position: relative; overflow: hidden; }
+  .cover::before { content: ''; position: absolute; top: -10%; right: -8%; width: 50%; aspect-ratio: 1; background: radial-gradient(circle, rgba(184, 85, 40, 0.08) 0%, transparent 65%); border-radius: 50%; pointer-events: none; }
+  .cover-marker { display: flex; align-items: center; gap: 1.5rem; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 1.5rem; }
+  .cover-marker .ml { width: 60px; height: 1px; background: var(--terracotta); }
+  .cover h1 { font-family: var(--font-display); font-size: clamp(2.6rem, 5vw, 4.2rem); font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 50; line-height: 1.05; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 1.5rem; max-width: 18ch; }
+  .cover h1 em { font-style: italic; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); }
+  .cover .subtitle { font-family: var(--font-display); font-style: italic; font-size: 1.2rem; color: var(--ink-soft); max-width: 58ch; margin-bottom: 2rem; }
+  .cover-meta { display: flex; gap: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); flex-wrap: wrap; }
+  .mb { display: flex; flex-direction: column; gap: 0.2rem; }
+  .mb-label { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); }
+  .mb span:last-child { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: var(--ink); }
+  .section { padding: 3rem 5rem; border-bottom: 1px solid var(--rule); }
+  .section-head { display: grid; grid-template-columns: 80px 1fr; gap: 1.5rem; margin-bottom: 1.8rem; align-items: start; }
+  .section-num { font-family: var(--font-display); font-size: 2.8rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 1; }
+  .section-tag { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+  .section-title { font-family: var(--font-display); font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 400; line-height: 1.15; color: var(--ink); letter-spacing: -0.01em; max-width: 26ch; }
+  .section-title em { font-style: italic; font-weight: 300; color: var(--terracotta); font-variation-settings: 'opsz' 144, 'SOFT' 100; }
+  .section p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .section p.lead { font-family: var(--font-display); font-style: italic; font-size: 1.18rem; color: var(--ink-soft); margin-bottom: 1.5rem; max-width: 60ch; }
+  .phase-banner { display: grid; grid-template-columns: 110px 1fr; gap: 2rem; margin: 2rem 0 2.5rem; padding: 1.4rem 1.8rem; background: linear-gradient(90deg, rgba(184, 85, 40, 0.10), transparent); border-left: 4px solid var(--terracotta); align-items: center; }
+  .phase-letter { font-family: var(--font-display); font-size: 5rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 0.85; text-align: center; }
+  .phase-banner h4 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; color: var(--ink); margin-bottom: 0.3rem; }
+  .phase-banner .phase-meta { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.5rem; }
+  .phase-banner p { font-size: 0.97rem; color: var(--ink); margin-bottom: 0; max-width: 65ch; }
+  .phase-banner em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .phase-banner.source { background: linear-gradient(90deg, rgba(40, 72, 88, 0.10), transparent); border-left-color: var(--cobalt); }
+  .phase-banner.source .phase-letter { color: var(--cobalt); }
+  .phase-banner.discipline { background: linear-gradient(90deg, rgba(138, 152, 120, 0.18), transparent); border-left-color: var(--sage); }
+  .phase-banner.discipline .phase-letter { color: var(--sage); }
+  .step { display: grid; grid-template-columns: 320px 1fr; gap: 1.8rem; margin: 1.6rem 0; padding: 1.6rem 1.8rem; background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; }
+  .step-diagram { background: #f3ecdc; border: 1px solid #c8b89a; border-radius: 6px; padding: 1rem 0.6rem 0.6rem; align-self: start; }
+  .step-diagram svg { width: 100%; height: auto; display: block; }
+  .step-diagram .caption { margin-top: 0.5rem; text-align: center; font-family: var(--font-display); font-style: italic; font-size: 0.82rem; color: var(--ink-soft); line-height: 1.4; }
+  .step-num-row { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 0.6rem; }
+  .step-num { font-family: var(--font-display); font-size: 1.8rem; font-weight: 300; font-style: italic; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); line-height: 1; }
+  .step-title { font-family: var(--font-display); font-size: 1.18rem; font-weight: 500; color: var(--ink); line-height: 1.25; }
+  .step p { font-size: 0.96rem; margin-bottom: 0.6rem; max-width: none; }
+  .step p:last-child { margin-bottom: 0; }
+  .step em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .shortcut-row { display: flex; flex-wrap: wrap; gap: 0.4rem 0.7rem; align-items: center; margin: 0.5rem 0 0.4rem; font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; color: var(--ink-soft); }
+  kbd { font-family: var(--font-mono); font-size: 0.78rem; background: var(--paper-warm); border: 1px solid var(--rule); border-radius: 3px; padding: 0.05rem 0.4rem; color: var(--ink); box-shadow: 0 1px 0 var(--rule); }
+  .box { margin: 1.4rem 0; padding: 1.1rem 1.3rem; border-radius: 0 4px 4px 0; max-width: none; }
+  .step .box { margin: 0.9rem 0 0.4rem; }
+  .box-label { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; margin-bottom: 0.4rem; }
+  .box-label::before { content: ''; width: 14px; height: 1.5px; background: currentColor; }
+  .box p { font-size: 0.93rem; margin-bottom: 0.4rem; }
+  .box p:last-child { margin-bottom: 0; }
+  .box-why { background: rgba(40, 72, 88, 0.10); border-left: 3px solid var(--cobalt); }
+  .box-why .box-label { color: var(--cobalt); }
+  .box-stolper { background: rgba(196, 107, 58, 0.13); border-left: 3px solid var(--warning); }
+  .box-stolper .box-label { color: var(--warning); }
+  .box-merk { background: rgba(184, 85, 40, 0.10); border-left: 3px solid var(--terracotta); }
+  .box-merk .box-label { color: var(--terracotta); }
+  .box-check { background: rgba(138, 152, 120, 0.18); border-left: 3px solid var(--sage); }
+  .box-check .box-label { color: var(--sage); }
+  .insight { margin: 1.4rem 0; padding: 1.1rem 1.3rem; background: var(--paper-warm); border: 1px dashed var(--rule); border-radius: 6px; font-family: var(--font-display); font-style: italic; font-size: 0.96rem; color: var(--ink-soft); max-width: 65ch; }
+  .insight::before { content: 'Randnotiz'; display: block; font-family: var(--font-mono); font-style: normal; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+  .outro { padding: 3rem 5rem; background: linear-gradient(180deg, var(--paper), var(--paper-warm)); border-top: 2px solid var(--terracotta); }
+  .outro h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 3.5vw, 2.5rem); font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); margin-bottom: 1.2rem; max-width: 22ch; line-height: 1.1; }
+  .outro p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .outro p.intro { font-family: var(--font-display); font-style: italic; font-size: 1.12rem; color: var(--ink-soft); margin-bottom: 1.4rem; }
+  .track-complete { margin-top: 1.5rem; padding: 1.5rem 1.8rem; background: var(--paper-warm); border: 2px solid var(--terracotta); border-radius: 6px; }
+  .track-complete .complete-label { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.6rem; font-weight: 600; }
+  .track-complete h3 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; color: var(--ink); margin-bottom: 0.7rem; }
+  .track-complete h3 em { font-style: italic; color: var(--terracotta); }
+  .doc-footer { padding: 2.5rem 5rem; border-top: 2px solid var(--ink); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); display: flex; justify-content: space-between; }
+  .doc-footer .terracotta { color: var(--terracotta); }
+  @media (max-width: 900px) {
+    .cover, .section, .doc-footer, .outro { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .section-head { grid-template-columns: 1fr; gap: 0.5rem; }
+    .step { grid-template-columns: 1fr; gap: 1rem; }
+    .step-diagram { max-width: 280px; margin: 0 auto; }
+    .phase-banner { grid-template-columns: 1fr; gap: 0.5rem; }
+    .phase-letter { text-align: left; font-size: 3.5rem; }
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #1a1612; --paper-warm: #221d17; --paper-dark: #2a241c; --ink: #ebe3d0; --ink-soft: #b8a98a; --ink-faint: #7a6e58; --terracotta: #e8814a; --terracotta-deep: #c25a2a; --cobalt: #6a9aab; --sage: #a8b898; --warning: #e2884d; --rule: #3a3026; }
+    body { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"); }
+    .step-diagram { background: #f3ecdc !important; border-color: #c8b89a !important; }
+    .step-diagram .caption { color: #5a4d3a !important; }
+  }
+</style>
+</head>
+<body>
+
+<article class="doc">
+
+<header class="cover">
+  <div class="cover-marker"><span>Cascadeur · Lernreihe · Track 4</span><div class="ml"></div><span>Projekt 16 · v 1.0 · Finale</span></div>
+  <h1>References als<br><em>Disziplin</em>:<br>Profi-Workflow.</h1>
+  <p class="subtitle">Anders als alle vorigen Brochüren — keine Animation-Anleitung, sondern Workflow-Reflexion. Reference-Stage als eigene Pipeline-Phase vor Cascadeur. Quellen-Index für Combat, Akrobatik, Tanz, Parkour. After-Effects-Time-Remapping als Exaggeration-Tool. Die meta-thematische Schlussbrochüre der Reihe.</p>
+  <div class="cover-meta">
+    <div class="mb"><span class="mb-label">Format</span><span>Workflow-Reflexion</span></div>
+    <div class="mb"><span class="mb-label">Schritte</span><span>12 (kompakt)</span></div>
+    <div class="mb"><span class="mb-label">Charakter</span><span>—</span></div>
+    <div class="mb"><span class="mb-label">Tools</span><span>YouTube · After Effects</span></div>
+    <div class="mb"><span class="mb-label">Position</span><span>Vor Cascadeur</span></div>
+    <div class="mb"><span class="mb-label">Track-4-Position</span><span>Finale</span></div>
+  </div>
+</header>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§1</div><div><div class="section-tag">Reference als Pipeline-Phase</div><h2 class="section-title">Was <em>vor</em> Cascadeur passiert.</h2></div></div>
+  <p class="lead">Fünfzehn Brochüren über Cascadeur-Werkzeuge, Animations-Techniken, Pipeline-Schritte. Diese Brochüre dreht sich um. Sie behandelt das, was vor Cascadeur passieren sollte — und in den meisten Anfänger-Pipelines fehlt. Reference-Stage ist keine Vorbereitung, sondern eine eigene Pipeline-Phase mit eigenen Werkzeugen, eigener Methode, eigener Disziplin.</p>
+  <p>In jeder Brochüre der Reihe wurde References erwähnt, aber nie als Hauptthema behandelt. In Projekt 12 (Kick) waren sie der erste Schritt, in Projekt 14 (Sword) ebenso. Aus dem Cascadeur-Tutorial direkt belegt: <em>„References are the must-have thing for animators."</em> Hier kommt das systematisch zusammen.</p>
+  <p>Drei Stufen der Reference-Nutzung:</p>
+  <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+    <li><strong>Quellen finden</strong>: Wo bekommt man brauchbares Reference-Material? Welche YouTube-Kanäle, welche Premium-Quellen?</li>
+    <li><strong>Reference vorbereiten</strong>: Wie macht man aus einem Reference-Video eine für Animation nutzbare Vorlage? After-Effects-Time-Remapping als zentrales Werkzeug</li>
+    <li><strong>Reference-Disziplin</strong>: Wann folgt man der Reference nah, wann lässt man sie los? Wie baut man eine persönliche Reference-Library auf?</li>
+  </ul>
+  <div class="box box-why">
+    <div class="box-label">Warum eine Workflow-Brochüre zum Schluss</div>
+    <p>Die fünfzehn vorigen Brochüren haben das technische Vokabular aufgebaut — Pose-Setting, Inbetweening, Constraints, AutoPhysics, Stepped Animation, Diffusion-Models. Was sie nicht systematisch behandelt haben: wie man als Animator entscheidet, was animiert werden soll, und wie es aussehen soll. Reference ist die Antwort darauf. Sie ist die Brücke zwischen Konzept und Umsetzung. Ohne Reference animiert man aus dem Gedächtnis — was meistens schlechter ist als aus Beobachtung. Diese Brochüre ist die meta-thematische Schluss-Reflexion über das, was Animation als Disziplin ausmacht.</p>
+  </div>
+  <div class="insight">
+    Die „Disney Nine Old Men" — Frank Thomas, Ollie Johnston, Eric Larson und ihre Kollegen — haben in den 1950er und 60er Jahren systematisch Reference-Material gesammelt. Schauspieler wurden engagiert um Live-Action für Animation zu spielen, dann wurde Frame-für-Frame analysiert. Frank Thomas hat in „The Illusion of Life" (1981) beschrieben, wie sich Disney-Animationen von früheren Cartoons unterschieden: durch die Disziplin der Beobachtung. Hayao Miyazaki bei Studio Ghibli hat dieses Prinzip weitergeführt — vor jeder Studio-Ghibli-Produktion gibt es eine ausgedehnte Beobachtungs-Phase. Für „Spirited Away" lebte Miyazaki tagelang in einem traditionellen japanischen Bad. Für „Princess Mononoke" wanderte er durch alte Wälder. Das sind keine Quirks — das ist Reference-Disziplin auf ihrem höchsten Niveau. Was 3D-Animatoren mit YouTube-Channels und After-Effects-Time-Remapping machen, ist die digitale Variante dieses jahrhundertealten Handwerks.
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§2</div><div><div class="section-tag">Phase A · Mindset-Shift</div><h2 class="section-title">Animation ist <em>Beobachtung</em> plus Exaggeration.</h2></div></div>
+  <div class="phase-banner"><div class="phase-letter">A</div><div><h4>Mindset</h4><div class="phase-meta">Reference als Phase · Beobachtungs-Disziplin</div><p>Vor den Werkzeugen: das richtige Mindset. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">REFERENCE-STAGE · PIPELINE-PHASE</text>
+        <rect x="20" y="50" width="80" height="50" fill="#284858" opacity="0.2" stroke="#284858" stroke-width="1.5"/>
+        <text x="60" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" font-weight="600" fill="#284858">KONZEPT</text>
+        <text x="60" y="88" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Was animieren?</text>
+        <text x="105" y="78" font-family="JetBrains Mono, monospace" font-size="11" fill="#b85528">→</text>
+        <rect x="120" y="50" width="80" height="50" fill="#b85528" opacity="0.25" stroke="#b85528" stroke-width="2"/>
+        <text x="160" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" font-weight="600" fill="#b85528">REFERENCE</text>
+        <text x="160" y="88" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Wie soll es aussehen?</text>
+        <text x="205" y="78" font-family="JetBrains Mono, monospace" font-size="11" fill="#b85528">→</text>
+        <rect x="220" y="50" width="80" height="50" fill="#8a9878" opacity="0.3" stroke="#8a9878" stroke-width="1.5"/>
+        <text x="260" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" font-weight="600" fill="#8a9878">CASCADEUR</text>
+        <text x="260" y="88" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Wie umsetzen?</text>
+        <text x="160" y="135" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Reference als eigene Phase zwischen Konzept und Umsetzung</text>
+        <text x="160" y="155" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Nicht „schnell ein Video gucken" — eigene Disziplin</text>
+        <text x="160" y="185" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">→ wertet Animation um Größenordnungen auf</text>
+      </svg>
+      <div class="caption">Reference-Stage als eigene Pipeline-Phase zwischen Konzept und Cascadeur.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">01</span><span class="step-title">Reference als Pipeline-Phase verstehen</span></div>
+      <p>Der Anfänger-Workflow: Konzept → Cascadeur. Der Profi-Workflow: Konzept → <strong>Reference</strong> → Cascadeur. Die mittlere Phase ist nicht „schnell ein YouTube-Video gucken" — sie ist eine eigene Disziplin mit eigener Methode.</p>
+      <p>Was Reference-Stage konkret bedeutet:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Zeit-Investition</strong>: für eine 5-Sekunden-Combat-Animation lohnen sich 15-30 Minuten Reference-Suche</li>
+        <li><strong>Mehrere Quellen</strong>: eine einzige Reference reicht selten, mehrere Winkel/Variationen geben besseres Verständnis</li>
+        <li><strong>Aktive Beobachtung</strong>: nicht nur durchscrollen, sondern in Slow-Motion analysieren, bestimmte Frames isolieren</li>
+        <li><strong>Vorbereitung des Materials</strong>: After Effects oder ähnliches Tool, um die Reference auf die geplante Animation anzupassen</li>
+        <li><strong>Reference-Library</strong>: gesammeltes Material für spätere Wiederverwendung</li>
+      </ul>
+      <p>Wer Reference-Stage als Phase begreift, animiert anders. Statt aus dem Gedächtnis zu rekonstruieren („wie hebt man nochmal das Bein für einen Kick?"), arbeitet man aus Beobachtung („so hebt dieser Schauspieler das Bein, ich übernehme das mit folgender Anpassung").</p>
+      <div class="box box-merk">
+        <div class="box-label">Aus dem Gedächtnis vs aus der Beobachtung</div>
+        <p>Selbst erfahrene Animator-Veteranen referenzieren ständig. Frank Thomas wurde gefragt warum er nach 30 Jahren Disney noch Reference braucht — seine Antwort: weil das Gedächtnis lügt. Was wir glauben über Bewegung zu wissen, ist meistens eine vereinfachte Karikatur. Echte Bewegung hat Details, die nur Beobachtung liefert. Reference ist nicht „für Anfänger" — sie ist die Disziplin des Berufes.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">REFERENCE-ANALYSE · 3 SCHRITTE</text>
+        <text x="30" y="55" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">1.</text>
+        <text x="50" y="55" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Was tut der Body als Ganzes?</text>
+        <text x="60" y="70" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Pelvis-Pfad, Gewichts-Verlagerung</text>
+        <text x="30" y="92" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">2.</text>
+        <text x="50" y="92" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Welche Body-Part führt?</text>
+        <text x="60" y="107" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Hüfte vor Bein, Kopf vor Body</text>
+        <text x="30" y="129" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">3.</text>
+        <text x="50" y="129" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Wo sind die Pose-Anker?</text>
+        <text x="60" y="144" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Anticipation, Impact, Settle</text>
+        <text x="160" y="175" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Drei-Schritte-Analyse vor dem Animieren</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">— deutlich besser als ad-hoc-Animieren</text>
+      </svg>
+      <div class="caption">Drei-Schritte-Analyse-Pattern beim Reference-Studium.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">02</span><span class="step-title">Reference aktiv analysieren · 3 Fragen</span></div>
+      <p>Aus Tutorial direkt: <em>„this tutorial, guy will show you in three simple steps what is key poses for your animation."</em> Reference-Analyse ist nicht passives Anschauen — sondern aktive Frage-Beantwortung.</p>
+      <p>Drei Standard-Fragen bei jeder Reference:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Was tut der Body als Ganzes?</strong> Pelvis-Pfad durch den Raum, Gewichts-Verlagerung von Bein zu Bein, Körper-Schwerpunkt-Bewegung. Das ist die globale Bewegung</li>
+        <li><strong>Welche Body-Part führt die Bewegung?</strong> Hüfte vor Bein (Kick aus Projekt 12), Kopf vor Body (Pointing aus Projekt 13), Schulter vor Arm (Sword aus Projekt 14). Leading Action als Prinzip</li>
+        <li><strong>Wo sind die Pose-Anker?</strong> Wie viele Frames braucht die ganze Bewegung? Wo sind Anticipation, Impact, Settle? Welche Frames eignen sich als Schlüssel-Posen?</li>
+      </ol>
+      <p>Bei einem Combat-Kick-Reference-Video von Motion Actor Inc:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Body: leicht nach hinten verlagert in Wind-Up, dann nach vorn beim Impact</li>
+        <li>Führung: Hüfte rotiert zuerst, Bein folgt 2-3 Frames später</li>
+        <li>Anker: F0 Setup, F15 Wind-Up-Peak, F22 Impact, F35 Recovery-Pose</li>
+      </ul>
+      <p>Diese Analyse ist die Grundlage für die Blocking-Phase in Cascadeur. Was hier nicht beobachtet wird, muss in Cascadeur erfunden werden — meist schlechter als wenn es vorher analysiert wurde.</p>
+      <div class="insight">
+        Nat Hearn ist ein Martial-Arts-Practitioner und YouTuber, der sich auf Pose-Analyse spezialisiert hat. In seinen Videos zeigt er nicht „wie man einen Kick macht", sondern „was vor dem Kick im Body passiert" — die Hüft-Rotation, die Gewichtsverlagerung, die Schulter-Vorbereitung. Das ist die Pose-Analyse-Pädagogik, die Disney's Frank Thomas in den 1950ern gelehrt hat, in 2020er-Form. Wer Combat-Animation lernt, kommt an Nat Hearn nicht vorbei — seine analytischen Breakdowns sind besser als die meisten Animation-Tutorials.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">REFERENCE ≠ MOCAP</text>
+        <rect x="20" y="50" width="135" height="120" fill="#284858" opacity="0.15" stroke="#284858" stroke-width="1.5"/>
+        <text x="87" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#284858">REFERENCE</text>
+        <text x="87" y="85" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#1f1a14">Beobachtung</text>
+        <text x="87" y="100" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#1f1a14">+ Interpretation</text>
+        <text x="87" y="115" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#1f1a14">+ Exaggeration</text>
+        <text x="87" y="135" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="9" fill="#5a4d3a">= Animation</text>
+        <text x="87" y="155" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#284858">Stärkt Animator-Können</text>
+        <rect x="165" y="50" width="135" height="120" fill="#c46b3a" opacity="0.15" stroke="#c46b3a" stroke-width="1.5"/>
+        <text x="232" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#c46b3a">MOCAP</text>
+        <text x="232" y="85" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#1f1a14">Direkte Übertragung</text>
+        <text x="232" y="100" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#1f1a14">+ Cleanup</text>
+        <text x="232" y="115" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#1f1a14">+ Retargeting</text>
+        <text x="232" y="135" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="9" fill="#5a4d3a">= Imitation</text>
+        <text x="232" y="155" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#c46b3a">Ersetzt Animator-Können</text>
+      </svg>
+      <div class="caption">Reference vs Mocap. Verwandte Welten, unterschiedliche Disziplinen.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">03</span><span class="step-title">Reference ist nicht Mocap</span></div>
+      <p>Wichtige konzeptuelle Trennung. Mocap und Reference sind verwandt aber fundamental verschieden:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Mocap</strong>: direkte Übertragung der Bewegung von realem Schauspieler auf Charakter. Bewegung wird aufgezeichnet und in den Rig retargeted. Cleanup-Pipeline aus Projekt 09. Ergebnis: Imitation der real aufgenommenen Bewegung</li>
+        <li><strong>Reference</strong>: indirekte Inspiration aus beobachteter Bewegung. Animator entscheidet, was übernommen wird und was nicht. Bewegung wird interpretiert und exaggeriert. Ergebnis: stilisierte Animation, oft besser als die Reality</li>
+      </ul>
+      <p>Mocap ersetzt Animator-Können, Reference erweitert es. Beide haben ihre Berechtigung — aber sie sind nicht dasselbe.</p>
+      <p>Wer Reference 1:1 kopiert, macht „arme-Mocap" — das schlechteste aus beiden Welten: Imitation ohne die technische Präzision echten Mocaps. Aus dem Cascadeur-Tutorial direkt belegt: <em>„you need to stick the reference only to the certain moments. After that, you can just turn off and go your way to polish animation."</em></p>
+      <div class="box box-stolper">
+        <div class="box-label">1:1-Kopie ergibt mediokre Animation</div>
+        <p>Bei Reference-Stage gilt: die Reference ist Lehrmaterial, nicht Vorlage. Wer Frame-für-Frame nachbaut, bekommt eine Mocap-Imitation, die weder die technische Präzision von Mocap noch die Exaggeration von Animation hat. Reference informiert die Schlüssel-Posen und das Timing, aber die Animation selbst ist eine kreative Übertragung — mit bewusster Stilisierung, Exaggeration, Polish.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§3</div><div><div class="section-tag">Phase B · Quellen-Index</div><h2 class="section-title">Wo <em>finden</em> man's wirklich.</h2></div></div>
+  <div class="phase-banner source"><div class="phase-letter">B</div><div><h4>Quellen</h4><div class="phase-meta">YouTube-Kanäle · Premium-Quellen · Tutorial-Reference</div><p>Konkrete Quellen-Liste statt Vagheit. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">YOUTUBE-KANÄLE · STANDARD-QUELLEN</text>
+        <rect x="30" y="45" width="260" height="22" fill="#b85528" opacity="0.15" stroke="#b85528" stroke-width="1.5"/>
+        <text x="40" y="59" font-family="DM Sans, sans-serif" font-size="10" font-weight="600" fill="#1f1a14">Motion Actor Inc</text>
+        <text x="280" y="59" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">Kampfkunst breit</text>
+        <rect x="30" y="69" width="260" height="22" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+        <text x="40" y="83" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Endless Reference</text>
+        <text x="280" y="83" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Heavy Lifting · Akrobatik</text>
+        <rect x="30" y="93" width="260" height="22" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+        <text x="40" y="107" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Nat Hearn Martial Arts</text>
+        <text x="280" y="107" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Pose-Breakdowns</text>
+        <rect x="30" y="117" width="260" height="22" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+        <text x="40" y="131" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Gamology</text>
+        <text x="280" y="131" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Game-Move-Recreations</text>
+        <rect x="30" y="141" width="260" height="22" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+        <text x="40" y="155" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Bob Reese Parkour</text>
+        <text x="280" y="155" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Parkour, Free Running</text>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Fünf YouTube-Standard-Quellen · gratis</text>
+      </svg>
+      <div class="caption">YouTube-Standard-Quellen. Motion Actor Inc als Haupt-Anlaufstelle.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">04</span><span class="step-title">YouTube-Kanäle als gratis Hauptquelle</span></div>
+      <p>Aus Tutorial direkt belegt: fünf YouTube-Standard-Kanäle für Animation-Reference.</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Motion Actor Inc</strong> — die breiteste Bibliothek. Aus Tutorial: <em>„different style of reference even dance katana some heavy weapon, short weapon, entertainment, dual wield, long weapon, whatever you want."</em> Stylized-Inhalte plus klassische Combat. Mehrere Kamerawinkel pro Move. Für die meisten Combat-Animationen die erste Anlaufstelle</li>
+        <li><strong>Endless Reference</strong> — nach Jahren Pause wieder aktiv. Heavy Weight Lifting, Backflips, Tanz, Sprung-Reference, Kalisthenik. Aus Tutorial: <em>„they woke up after some years of sleeping"</em> — explizit erwähnt</li>
+        <li><strong>Nat Hearn Martial Arts</strong> — analytische Breakdowns. Erklärt explizit, was VOR dem Move im Body passiert (Hüft-Rotation vor Kick). Anders als reine Bewegungs-Videos lehrt Nat Hearn das Verständnis</li>
+        <li><strong>Gamology</strong> — Game-Moves real nachgestellt. Zwei japanische Samurai recreieren Ghost-of-Tsushima-Moves. Aus Tutorial: <em>„you can see the difference between the real footage and already edited footage."</em> Zeigt explizit den Übergang von Reality zu Stilisierung</li>
+        <li><strong>Bob Reese Parkour</strong> — Parkour-Reference</li>
+      </ul>
+      <p>Workflow: für eine geplante Animation 2-3 dieser Kanäle durchsuchen, mehrere Videos sammeln, in einer lokalen Sammlung speichern oder mit YouTube-Save-Liste organisieren.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">HOWARD WIMSHURST · PREMIUM</text>
+        <rect x="40" y="50" width="240" height="125" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">animationguild.com</text>
+        <line x1="60" y1="80" x2="260" y2="80" stroke="#c8b89a" stroke-width="0.5"/>
+        <text x="60" y="100" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Format</text>
+        <text x="260" y="100" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Reference-Packs</text>
+        <text x="60" y="120" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Themen</text>
+        <text x="260" y="120" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Sword · Acrobatic · mehr</text>
+        <text x="60" y="140" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Lizenz</text>
+        <text x="260" y="140" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">kostenpflichtig</text>
+        <text x="60" y="160" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Hintergrund</text>
+        <text x="260" y="160" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">2D-Animator-Veteran</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Premium-Quelle · für ernsthafte Projekte</text>
+      </svg>
+      <div class="caption">Howard Wimshurst Reference-Packs. Kostenpflichtig, aber kuratiert.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">05</span><span class="step-title">Premium-Quellen für ernsthafte Projekte</span></div>
+      <p>Aus Tutorial direkt: <em>„Worth mentioning. Howard Wimshurst. It's amazing 2D animator and he has also his reference footage on his uh sites animationguild.com."</em></p>
+      <p>Howard Wimshurst ist ein erfahrener 2D-Animator (Ex-Disney/Cartoon Network), der eine eigene Reference-Pack-Library auf animationguild.com anbietet. Charakteristika:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Themen-Packs</strong>: Sword, Acrobatic, Martial Arts, Movement</li>
+        <li><strong>Format</strong>: kuratierte Video-Sammlungen, oft mit Pose-Markers oder Slow-Motion-Versionen</li>
+        <li><strong>Lizenz</strong>: kostenpflichtig (laut Erinnerung etwa 20-50 USD pro Pack, nicht final verifiziert)</li>
+        <li><strong>Qualität</strong>: höher kuratiert als YouTube, oft mit professionellem Schauspieler-Cast</li>
+      </ul>
+      <p>Aus Tutorial: <em>„I'm not using until now but I wanted to buy many of these pack for example sword acrobatic, yeah I would watch all the time keep an eye on this and I hope will be maybe some discounts and I will buy it anyway."</em> Selbst der Tutorial-Author plant einen Kauf — Qualitäts-Empfehlung.</p>
+      <p>Andere Premium-Quellen mit ähnlichem Modell:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Animation Reference Marketplace</strong> (verschiedene Anbieter) — themen-spezifische Packs</li>
+        <li><strong>Aaron Blaise Course</strong> — animation-mentor-style Kurs mit Reference-Material</li>
+        <li><strong>The Animator's Survival Kit</strong> — Reference-Buch von Richard Williams, klassisch (Buch, nicht Video, aber als ergänzende Quelle wertvoll)</li>
+      </ul>
+      <div class="box box-merk">
+        <div class="box-label">Build vs Buy</div>
+        <p>YouTube-Kanäle sind kostenlos aber unsortiert — Suche braucht Zeit. Premium-Packs sind teuer aber kuratiert — Zeit-Ersparnis. Für gelegentliche Hobby-Projekte reichen YouTube-Quellen. Für professionelle Pipelines mit regelmäßiger Animations-Arbeit lohnt sich der Premium-Kauf, weil die kuratierte Qualität die Pre-Production beschleunigt.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">TUTORIAL ALS REFERENCE</text>
+        <rect x="20" y="50" width="135" height="60" fill="#284858" opacity="0.15" stroke="#284858" stroke-width="1.5"/>
+        <text x="87" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" font-weight="600" fill="#284858">Reines Bewegungs-Video</text>
+        <text x="87" y="85" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Was passiert</text>
+        <text x="87" y="100" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Beobachtung</text>
+        <rect x="165" y="50" width="135" height="60" fill="#b85528" opacity="0.25" stroke="#b85528" stroke-width="1.5"/>
+        <text x="232" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" font-weight="600" fill="#b85528">Tutorial mit Erklärung</text>
+        <text x="232" y="85" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Warum es passiert</text>
+        <text x="232" y="100" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Pose-Analyse</text>
+        <text x="160" y="135" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Tutorial-Quellen liefern den „Warum"-Anteil</text>
+        <text x="160" y="155" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">— oft wertvoller als reine Bewegungs-Videos</text>
+        <text x="160" y="185" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">Bsp: Nat Hearn erklärt Hip-Bewegung vor Kick</text>
+      </svg>
+      <div class="caption">Tutorial-Quellen kombinieren Beobachtung mit Erklärung.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">06</span><span class="step-title">Tutorials als analytische Reference</span></div>
+      <p>Aus Tutorial direkt: <em>„Why it's a good idea to watch tutorial? Because you will get some insight how to pause your character."</em> Tutorials sind eine besondere Form von Reference — sie kombinieren Beobachtung mit Erklärung.</p>
+      <p>Unterschied zu reinen Bewegungs-Videos:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Reines Bewegungs-Video</strong> (Motion Actor Inc-Style): zeigt was passiert. Animator muss selbst analysieren</li>
+        <li><strong>Tutorial</strong> (Nat Hearn-Style): zeigt was passiert UND erklärt warum. Animator bekommt die Pose-Analyse mitgeliefert</li>
+      </ul>
+      <p>Konkrete Tutorial-Quellen für Animation:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Nat Hearn Martial Arts</strong> — wie gesagt, analytische Breakdowns. Aus Tutorial: <em>„guys shows you exactly what happen with your body before the kick"</em></li>
+        <li><strong>Animation Foundation</strong> — Disney-12-Prinzipien-Erklärungen</li>
+        <li><strong>Alex Grigg</strong> — 2D-Animator mit kurzen Lehr-Videos zu Body-Mechanics</li>
+        <li><strong>Gamology Samurai-Erklärungen</strong> — auch wenn primär als Bewegungs-Reference: die Erklärung des „Wie wird das Move stylized" ist Tutorial-Qualität</li>
+      </ul>
+      <p>Workflow-Empfehlung: für jede neue Animations-Klasse (Combat, Walk, Sprung) zuerst 1-2 Tutorial-Quellen, dann reine Bewegungs-Reference. Das Tutorial gibt das Verständnis-Framework, die Bewegungs-Quellen die konkrete Bewegung.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§4</div><div><div class="section-tag">Phase C · After-Effects-Vorbereitung</div><h2 class="section-title">Time Remapping als <em>Exaggeration-Tool</em>.</h2></div></div>
+  <div class="phase-banner"><div class="phase-letter">C</div><div><h4>Vorbereitung</h4><div class="phase-meta">After Effects · Time Remapping · Exaggeration</div><p>Reference-Material für Animation aufbereiten. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">AFTER EFFECTS · TIME REMAPPING</text>
+        <rect x="40" y="50" width="240" height="125" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Workflow</text>
+        <line x1="60" y1="80" x2="260" y2="80" stroke="#c8b89a" stroke-width="0.5"/>
+        <text x="60" y="100" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">1.</text>
+        <text x="80" y="100" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Reference-Video importieren</text>
+        <text x="60" y="120" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">2.</text>
+        <text x="80" y="120" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Layer-Right-Click → Time</text>
+        <text x="60" y="140" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">3.</text>
+        <text x="80" y="140" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Enable Time Remapping</text>
+        <text x="60" y="160" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">4.</text>
+        <text x="80" y="160" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Keyframes auf Timeline anpassen</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Tool zum Strecken/Stauchen von Bewegungs-Sektionen</text>
+      </svg>
+      <div class="caption">After Effects Time Remapping. Einfaches Tool für Bewegungs-Timing-Anpassung.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">07</span><span class="step-title">After Effects Time Remapping setup</span></div>
+      <p>Aus Tutorial direkt: <em>„In after effects for example you can go to time enable time remapping."</em></p>
+      <p>Setup-Schritte:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Reference-Video in After Effects importieren (z.B. heruntergeladenes YouTube-Video, MP4-Datei)</li>
+        <li>Video auf Timeline ziehen, eigene Composition erstellen</li>
+        <li>Layer im Timeline-Panel <strong>Right-Click → Time → Enable Time Remapping</strong></li>
+        <li>AE fügt zwei Keyframes hinzu: einen am Anfang, einen am Ende</li>
+        <li>Diese Keyframes definieren die Original-Geschwindigkeit (1:1)</li>
+      </ol>
+      <p>Was Time Remapping macht: es entkoppelt die Video-Zeit von der Composition-Zeit. Du kannst eigene Keyframes setzen, die definieren, welcher Original-Frame zu welcher Comp-Zeit angezeigt wird. So lassen sich Bewegungs-Sektionen strecken, stauchen, umkehren.</p>
+      <p>Alternativen zu After Effects (für Animator ohne Adobe-Subscription):</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>DaVinci Resolve</strong> (kostenlos) — hat „Retime Controls" mit ähnlicher Funktion</li>
+        <li><strong>HitFilm Express</strong> (kostenlos) — Speed-Ramping verfügbar</li>
+        <li><strong>VLC Player</strong> — sehr einfach: Playback-Geschwindigkeit ändern für ad-hoc Slow-Motion. Keine echte Bearbeitung, aber für reine Beobachtung ausreichend</li>
+      </ul>
+      <p>Für die Brochüre fokussiert auf After Effects, weil im Cascadeur-Tutorial direkt erwähnt — aber das Konzept ist tool-unabhängig.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">EXAGGERATION · SLOW STRETCH + FAST CRUNCH</text>
+        <text x="20" y="60" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Reality</text>
+        <line x1="60" y1="58" x2="290" y2="58" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="60" y="51" width="80" height="14" fill="#284858" opacity="0.4"/>
+        <text x="100" y="61" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">Wind-Up</text>
+        <rect x="140" y="51" width="8" height="14" fill="#b85528" opacity="0.6"/>
+        <rect x="148" y="51" width="142" height="14" fill="#284858" opacity="0.4"/>
+        <text x="219" y="61" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">Recovery</text>
+        <text x="160" y="95" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#b85528">↓ Time Remapping</text>
+        <text x="20" y="125" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">Animation</text>
+        <line x1="60" y1="123" x2="290" y2="123" stroke="#1f1a14" stroke-width="1.5"/>
+        <rect x="60" y="116" width="50" height="14" fill="#284858" opacity="0.4"/>
+        <text x="85" y="126" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#1f1a14">FAST W-U</text>
+        <rect x="110" y="116" width="40" height="14" fill="#b85528" opacity="0.7" stroke="#b85528" stroke-width="1"/>
+        <text x="130" y="126" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#f3ecdc">SLOW IMPACT</text>
+        <rect x="150" y="116" width="140" height="14" fill="#284858" opacity="0.4"/>
+        <text x="220" y="126" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">Recovery</text>
+        <text x="160" y="160" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Wind-Up komprimieren (crunch) · Impact strecken</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Beide Modi nach Bedarf · sektions-spezifisch</text>
+      </svg>
+      <div class="caption">Exaggeration-Strategie. Schnelle Bewegungen schneller, langsame länger.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">08</span><span class="step-title">Exaggeration · Slow Stretch und Fast Crunch</span></div>
+      <p>Aus Tutorial direkt: <em>„you need to exaggerate slow movement and you need to exaggerate fast movement."</em> Beide Richtungen — langsame Bewegungen langsamer, schnelle Bewegungen schneller.</p>
+      <p>Konkrete Anwendung am Combat-Kick-Beispiel:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Wind-Up komprimieren (fast crunch)</strong>: in Reality 0.5 Sekunden Anticipation → in Animation 0.3 Sekunden. Schneller wirkt impulsiver, eindringlicher</li>
+        <li><strong>Impact verlängern (slow stretch)</strong>: in Reality 1 Frame Treffer → in Animation 3-4 Frames. Aus Tutorial direkt: <em>„impact frame is two frame when leg stretched even maybe one frame. But I decided to make it more to prolong it more"</em></li>
+        <li><strong>Recovery natürlich lassen</strong>: meist keine Anpassung nötig, weil der Recovery-Phase weniger dramatische Wirkung trägt</li>
+      </ul>
+      <p>Workflow in After Effects:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Reference-Video mit Time Remapping (Schritt 07)</li>
+        <li>Wind-Up-Frame identifizieren (z.B. Original-Frame 30-50)</li>
+        <li>Neuen Keyframe setzen, sodass diese Sektion auf weniger Comp-Frames abgebildet wird → Beschleunigung</li>
+        <li>Impact-Frame identifizieren (z.B. Original-Frame 51)</li>
+        <li>Mehrere Keyframes so setzen, dass dieser Frame über 3-4 Comp-Frames bleibt → Verlängerung</li>
+        <li>Recovery-Sektion unverändert lassen</li>
+      </ol>
+      <p>Resultat: ein für Animation aufbereitetes Reference-Video. Beim Cascadeur-Blocking diese exaggerierten Frames als Schlüssel-Posen-Vorlage nehmen.</p>
+      <div class="insight">
+        Disney's „12 Prinzipien der Animation" (Frank Thomas und Ollie Johnston, 1981) listen Exaggeration als eigenes Prinzip. Im Original-Text heißt es: „Exaggeration is, of course, the essence of caricature, and that's the basis for all animated drawings." Animation ist Karikatur — sie übertreibt, um Wesentliches sichtbar zu machen. Was in Reality 1 Frame ist (der Impact-Moment), wird in Animation 3-4 Frames, weil der Zuschauer sonst die Wichtigkeit nicht wahrnimmt. Was 30 Frames Reality-Anticipation sind (subtle Vorbereitung), wird in Animation 10 Frames, weil 30 Frames Vorbereitung langweilen würden. Time Remapping ist das digitale Werkzeug, um diese Disney-Prinzipien auf reales Video-Material anzuwenden. Aus Reality wird Animation-Material durch bewusste Karikatur.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">REFERENCE-ANNOTATION · WORKFLOW</text>
+        <rect x="40" y="50" width="240" height="125" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Annotation-Methoden</text>
+        <line x1="60" y1="80" x2="260" y2="80" stroke="#c8b89a" stroke-width="0.5"/>
+        <text x="60" y="100" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Frame-Notes</text>
+        <text x="260" y="100" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">„F22 = Impact"</text>
+        <text x="60" y="120" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Pose-Markers</text>
+        <text x="260" y="120" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">visuelle Marker im AE</text>
+        <text x="60" y="140" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Side-by-Side</text>
+        <text x="260" y="140" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Reference + Animation</text>
+        <text x="60" y="160" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Slow-Mo Pass</text>
+        <text x="260" y="160" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">0.25x für Detail-Studie</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Reference für eigene Anwendung markieren</text>
+      </svg>
+      <div class="caption">Reference-Annotation. Vier Methoden um Reference für Animation nutzbar zu machen.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">09</span><span class="step-title">Reference annotieren für Cascadeur-Anwendung</span></div>
+      <p>Nach Time Remapping: die Reference annotieren — was sind die Schlüssel-Frames, welche Posen sollen in Cascadeur als Anker dienen?</p>
+      <p>Vier praktische Annotations-Methoden:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Frame-Notes</strong>: einfache Text-Datei mit Frame-Zeit-Codes: „F22 = Impact-Pose, F35 = Recovery-Start". Reicht für die meisten Anwendungen</li>
+        <li><strong>Pose-Markers in AE</strong>: visuelle Marker auf der Comp-Timeline. Right-Click → Add Marker. Beim Playback sichtbar, schnelle Navigation</li>
+        <li><strong>Side-by-Side-Setup</strong>: zweiter Monitor mit Reference, Cascadeur auf dem ersten. Während Animation läuft, kann parallel zur Reference gepost werden</li>
+        <li><strong>Slow-Motion-Pass</strong>: zusätzliches AE-Comp mit Time Remapping auf 0.25x — für Detail-Studie der Impact-Frames</li>
+      </ul>
+      <p>Die Wahl der Methode hängt von der Animation-Komplexität ab. Für einfache Walk-Cycles reicht Frame-Notes. Für komplexe Combat-Choreografien lohnt sich Side-by-Side mit Pose-Markers und Slow-Motion-Pass.</p>
+      <div class="box box-check">
+        <div class="box-label">Annotation als Brücke zur Cascadeur-Phase</div>
+        <p>Eine gut annotierte Reference ist ein direktes Skript für die Blocking-Phase in Cascadeur. Bei Combat-Animation (Projekt 12): jeder annotierte Frame wird zum Anker-Keyframe in Cascadeur. Bei Walk (Projekt 03): annotierte Pose-Marker werden zu den Pelvis-Anker-Positionen. Die Annotation übersetzt die Reference in eine Cascadeur-Arbeitsanweisung. Ohne Annotation wird die Reference während der Animation ständig neu interpretiert — mit Annotation ist die Interpretation schon vor Beginn erledigt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§5</div><div><div class="section-tag">Phase D · Reference-Disziplin</div><h2 class="section-title">Wann <em>folgen</em>, wann loslassen.</h2></div></div>
+  <div class="phase-banner discipline"><div class="phase-letter">D</div><div><h4>Disziplin</h4><div class="phase-meta">Sticken vs Loslassen · Library aufbauen · Track-4-Abschluss</div><p>Die Profi-Disziplin: wissen, wann Reference noch hilft, wann sie behindert. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">STICKEN vs LOSLASSEN</text>
+        <rect x="20" y="50" width="135" height="125" fill="#b85528" opacity="0.15" stroke="#b85528" stroke-width="1.5"/>
+        <text x="87" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#b85528">STICKEN</text>
+        <text x="87" y="88" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Anticipation-Peak</text>
+        <text x="87" y="103" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Impact-Frames</text>
+        <text x="87" y="118" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Settle-Punkt</text>
+        <text x="87" y="138" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">= Schlüssel-Anker</text>
+        <text x="87" y="160" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#5a4d3a">Treu folgen</text>
+        <rect x="165" y="50" width="135" height="125" fill="#8a9878" opacity="0.20" stroke="#8a9878" stroke-width="1.5"/>
+        <text x="232" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#8a9878">LOSLASSEN</text>
+        <text x="232" y="88" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Inbetween-Frames</text>
+        <text x="232" y="103" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Polish-Sektionen</text>
+        <text x="232" y="118" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#1f1a14">Charakter-Details</text>
+        <text x="232" y="138" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">= Kreativer Raum</text>
+        <text x="232" y="160" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#5a4d3a">Frei animieren</text>
+      </svg>
+      <div class="caption">Sticken vs Loslassen. Schlüssel-Frames treu, Polish frei.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">10</span><span class="step-title">Sticken bei Schlüssel-Frames · Loslassen bei Polish</span></div>
+      <p>Aus Tutorial direkt belegt: <em>„you need to stick the reference only to the certain moments. After that, you can just turn off and go your way to polish animation to make it more interesting, more appealing, to make it shine really."</em></p>
+      <p>Wann der Reference treu folgen (sticken):</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Anticipation-Peak</strong>: der Moment vor der Hauptaktion. Reference zeigt klar, wie der Body sich vorbereitet</li>
+        <li><strong>Impact-Frames</strong>: die Treffer-Momente. Body-Position, Limbs-Stellung, Pose-Extreme</li>
+        <li><strong>Settle-Punkt</strong>: das Ende der Bewegung. Wie kommt der Body zur Ruhe?</li>
+        <li>Generell: alle Pose-Anker, die in Phase A (Schritt 02) identifiziert wurden</li>
+      </ul>
+      <p>Wann loslassen:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Inbetween-Frames</strong>: die Bewegung zwischen Schlüssel-Posen. Hier kommt Inbetweening (Cascadeur) oder Bezier ins Spiel</li>
+        <li><strong>Polish-Sektionen</strong>: Secondary Motion, Mikrobewegungen, Atmung, Augenbewegung. Reference zeigt das oft nicht in nutzbarer Detailtiefe — Animator-Freiheit</li>
+        <li><strong>Charakter-Details</strong>: der spezifische Stil des Animations-Charakters. Reference-Schauspieler ≠ Cascadeur-Charakter. Anpassung nötig</li>
+      </ul>
+      <p>Die Profi-Disziplin: zu wissen, welcher Frame in welche Kategorie gehört. Bei jeder Reference vor der Animation entscheiden: das sind die 4-6 Schlüssel-Posen, die ich treu übernehme. Der Rest ist mein.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Treue ohne Loslassen ergibt Mocap-Imitation</div>
+        <p>Wer auch die Inbetween-Frames treu kopiert, baut keine Animation — er macht Frame-für-Frame-Mocap-Imitation ohne die Vorteile echten Mocaps (technische Präzision, automatisierte Aufzeichnung). Das ist das schlechteste aus beiden Welten. Reference ist Lehrer, nicht Schablone. Beim Loslassen entsteht die animatorische Handschrift.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">REFERENCE-LIBRARY · STRUKTUR</text>
+        <rect x="20" y="50" width="280" height="125" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="35" y="68" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">references/</text>
+        <text x="50" y="85" font-family="JetBrains Mono, monospace" font-size="9" fill="#1f1a14">combat/</text>
+        <text x="65" y="100" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">front-kick-motion-actor-001.mp4</text>
+        <text x="65" y="113" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">roundhouse-nat-hearn.mp4</text>
+        <text x="50" y="130" font-family="JetBrains Mono, monospace" font-size="9" fill="#1f1a14">locomotion/</text>
+        <text x="65" y="145" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">walk-cycle-endless-ref.mp4</text>
+        <text x="50" y="162" font-family="JetBrains Mono, monospace" font-size="9" fill="#1f1a14">prepared/</text>
+        <text x="65" y="175" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">front-kick-exaggerated-v01.mp4</text>
+      </svg>
+      <div class="caption">Reference-Library mit thematischer Ordner-Struktur.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">11</span><span class="step-title">Persönliche Reference-Library aufbauen</span></div>
+      <p>Über Zeit sammelt sich Reference-Material an. Eine strukturierte Library spart bei zukünftigen Projekten Stunden. Empfohlene Struktur:</p>
+      <pre style="background: var(--paper-warm); padding: 0.7rem 1rem; border-radius: 4px; font-family: var(--font-mono); font-size: 0.84rem; margin: 0.5rem 0; overflow-x: auto;">references/
+  combat/
+    front-kick-motion-actor-001.mp4
+    front-kick-motion-actor-002.mp4
+    roundhouse-nat-hearn.mp4
+    sword-slash-gamology.mp4
+  locomotion/
+    walk-cycle-endless-ref.mp4
+    run-cycle-motion-actor.mp4
+    sneak-bob-reese.mp4
+  acrobatics/
+    backflip-endless-ref.mp4
+    cartwheel-motion-actor.mp4
+  prepared/
+    front-kick-exaggerated-v01.aep
+    walk-cycle-slowmo-v01.aep
+  notes/
+    front-kick-pose-analysis.md</pre>
+      <p>Konventionen:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Thematische Ordner</strong>: combat, locomotion, acrobatics, dance, etc.</li>
+        <li><strong>Dateinamen mit Quelle</strong>: <code>front-kick-motion-actor-001.mp4</code> erinnert beim späteren Browsen woher das Material kam</li>
+        <li><strong>Prepared-Ordner</strong>: After-Effects-Projekte mit Time-Remapping-Anpassungen. Wiederverwendbar bei ähnlichen Animationen</li>
+        <li><strong>Notes-Ordner</strong>: Markdown-Dateien mit Pose-Analyse-Notizen. Was ist das Wichtigste an dieser Reference?</li>
+      </ul>
+      <p>Über Jahre wird das eine substantielle Asset-Sammlung. Bei neuer Animation: zuerst Library-Check, dann ggf. ergänzen.</p>
+      <div class="box box-merk">
+        <div class="box-label">Library als Karriere-Investment</div>
+        <p>Eine kuratierte Reference-Library ist über Karriere-Lebenszeit wertvoller als jedes einzelne Animation-Projekt. Ein Animator mit 10 Jahren Erfahrung und gut sortierter Library kann eine neue Combat-Animation in Stunden bauen — weil das Reference-Material gefunden, geschnitten, annotiert bereits da liegt. Ein Anfänger ohne Library braucht die volle Suchzeit. Die Library wächst mit der Karriere — und beschleunigt sie.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">REFERENCE-INTEGRATION · CASCADEUR</text>
+        <rect x="40" y="50" width="240" height="125" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="60" y="72" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">1.</text>
+        <text x="80" y="72" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Reference-Annotation öffnen</text>
+        <text x="60" y="92" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">2.</text>
+        <text x="80" y="92" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Cascadeur: Scene mit Charakter</text>
+        <text x="60" y="112" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">3.</text>
+        <text x="80" y="112" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Reference-Player parallel öffnen</text>
+        <text x="60" y="132" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">4.</text>
+        <text x="80" y="132" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Schlüssel-Frames in Cascadeur setzen</text>
+        <text x="60" y="152" font-family="DM Sans, sans-serif" font-size="10" font-weight="600" fill="#b85528">→ Pose-für-Pose, mit Reference als Vorlage</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Reference + Cascadeur · Side-by-Side</text>
+      </svg>
+      <div class="caption">Reference-Integration in Cascadeur. Side-by-Side-Workflow.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">12</span><span class="step-title">Reference in Cascadeur-Workflow integrieren</span></div>
+      <p>Letzter Schritt der Brochüre und der Reihe — wie übersetzt sich die Reference-Phase konkret in den Cascadeur-Workflow?</p>
+      <p>Empfohlener Side-by-Side-Workflow:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Reference-Annotation öffnen</strong>: Frame-Notes, Pose-Markers, was auch immer aus Schritt 09 erstellt wurde</li>
+        <li><strong>Cascadeur-Scene vorbereiten</strong>: Charakter geladen, Default-Pose</li>
+        <li><strong>Reference-Player parallel öffnen</strong>: zweiter Monitor wenn verfügbar, oder VLC/Video-Player im Split-Screen. Direkt-Zugriff auf annotierte Frames</li>
+        <li><strong>Schlüssel-Frames in Cascadeur setzen</strong>: jeder annotierte Reference-Frame wird zu einem Anker-Keyframe in Cascadeur</li>
+        <li><strong>Zwischen den Schlüssel-Posen</strong>: Inbetweening oder Bezier (je nach Projekt — siehe Brochüren 12, 13, 14, 15)</li>
+        <li><strong>Polish-Phase</strong>: Reference schließen, frei polishen</li>
+      </ol>
+      <p>Dieses Pattern haben implizit alle vorigen Brochüren verwendet — diese Brochüre macht es explizit. Phase A der vorigen Brochüren (Reference) war komprimiert; hier ist sie ausführlich behandelt.</p>
+      <div class="box box-check">
+        <div class="box-label">Track-4-Abschluss</div>
+        <p>Mit Reference-Workflow ist Track 4 komplett. Combat (12), Stilwechsel (13), Waffen (14), Generative Animation (15), Reference-Disziplin (16) als finale Reflexion. Die Reihe hat 16 Brochüren von Idle-Pose (Projekt 01) bis Reference-Library (Projekt 16) — ein vollständiges Cascadeur-Curriculum von absolutem Anfang bis Profi-Workflow.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="outro">
+  <h2>Was du jetzt <em>kannst</em>.</h2>
+  <p class="intro">Track 4 ist abgeschlossen — und damit die ganze Lernreihe. 16 Brochüren · 4 Tracks · vollständiges Cascadeur-Curriculum.</p>
+  <p>Mit dieser Brochüre hast du das Konzept der Reference-Stage als eigene Pipeline-Phase verinnerlicht. Du kennst die wichtigsten Quellen (Motion Actor Inc, Endless Reference, Nat Hearn, Gamology, Bob Reese, Howard Wimshurst), den After-Effects-Time-Remapping-Workflow für Exaggeration, und die Disziplin des Stickens und Loslassens.</p>
+  <p>Anders als die vorigen Brochüren ist diese reflexiv — sie behandelt nicht eine neue Cascadeur-Funktion, sondern macht explizit, was die vorigen 15 Brochüren implizit gelehrt haben. Reference war in jeder Brochüre Phase A. Jetzt ist sie eine eigenständige Disziplin mit eigener Methode.</p>
+  <p>Was bleibt nach Track 4: die Wahl was als Nächstes kommt. Tier-3-Themen aus der Roadmap (Polishing als Disziplin, Walkcycle-Varianten) sind als Patches zu bestehenden Brochüren denkbar, aber nicht zwingend nötig. Wer alle 16 Brochüren durchgearbeitet hat, hat das Cascadeur-Vokabular für 95% der professionellen Animation-Anwendungen.</p>
+  
+  <div class="track-complete">
+    <div class="complete-label">Track 4 · komplett</div>
+    <h3>Lernreihe <em>abgeschlossen</em></h3>
+    <p style="font-size: 0.95rem; margin: 0;">Track 1 (Fundament) · Track 2 (Vokabular) · Track 3 (Pipeline) · Track 4 (Spezialisierung) — 16 Brochüren, von der ersten Idle-Pose bis zur professionellen Reference-Disziplin. Cascadeur-Curriculum komplett. Die Brochüren sind Referenz-Material für die Praxis — kein einmaliger Durchlauf-Stoff, sondern Nachschlagewerk für laufende Animations-Projekte. Jede Brochüre kann eigenständig wieder konsultiert werden, wenn das entsprechende Thema in einem Projekt auftaucht.</p>
+  </div>
+</section>
+
+<footer class="doc-footer">
+  <div><span class="terracotta">Projekt 16 · v 1.0 · References-Workflow</span></div>
+  <div>12 Schritte · 4 Phasen · Finale</div>
+  <div>Cascadeur · Lernreihe · Track 4</div>
+</footer>
+
+</article>
+
+</body>
+</html>

@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projekt 13 · Stepped Stylized · Cascadeur-Lernreihe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --paper: #f3ecdc; --paper-warm: #ede4d0; --paper-dark: #e2d6b8; --ink: #1f1a14; --ink-soft: #5a4d3a; --ink-faint: #8a7d68; --terracotta: #b85528; --terracotta-deep: #7a3414; --cobalt: #284858; --sage: #8a9878; --warning: #c46b3a; --rule: #c8b89a; --font-display: 'Fraunces', Georgia, serif; --font-body: 'DM Sans', -apple-system, system-ui, sans-serif; --font-mono: 'JetBrains Mono', Consolas, monospace; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); font-size: 16px; line-height: 1.6; color: var(--ink); background: var(--paper); background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"); -webkit-font-smoothing: antialiased; }
+  .doc { max-width: 1100px; margin: 0 auto; }
+  .cover { padding: 3.5rem 5rem 2.5rem; border-bottom: 1px solid var(--rule); position: relative; overflow: hidden; }
+  .cover::before { content: ''; position: absolute; top: -10%; right: -8%; width: 50%; aspect-ratio: 1; background: radial-gradient(circle, rgba(184, 85, 40, 0.08) 0%, transparent 65%); border-radius: 50%; pointer-events: none; }
+  .cover-marker { display: flex; align-items: center; gap: 1.5rem; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 1.5rem; }
+  .cover-marker .ml { width: 60px; height: 1px; background: var(--terracotta); }
+  .cover h1 { font-family: var(--font-display); font-size: clamp(2.6rem, 5vw, 4.2rem); font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 50; line-height: 1.05; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 1.5rem; max-width: 18ch; }
+  .cover h1 em { font-style: italic; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); }
+  .cover .subtitle { font-family: var(--font-display); font-style: italic; font-size: 1.2rem; color: var(--ink-soft); max-width: 58ch; margin-bottom: 2rem; }
+  .cover-meta { display: flex; gap: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); flex-wrap: wrap; }
+  .mb { display: flex; flex-direction: column; gap: 0.2rem; }
+  .mb-label { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); }
+  .mb span:last-child { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: var(--ink); }
+  .section { padding: 3rem 5rem; border-bottom: 1px solid var(--rule); }
+  .section-head { display: grid; grid-template-columns: 80px 1fr; gap: 1.5rem; margin-bottom: 1.8rem; align-items: start; }
+  .section-num { font-family: var(--font-display); font-size: 2.8rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 1; }
+  .section-tag { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+  .section-title { font-family: var(--font-display); font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 400; line-height: 1.15; color: var(--ink); letter-spacing: -0.01em; max-width: 26ch; }
+  .section-title em { font-style: italic; font-weight: 300; color: var(--terracotta); font-variation-settings: 'opsz' 144, 'SOFT' 100; }
+  .section p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .section p.lead { font-family: var(--font-display); font-style: italic; font-size: 1.18rem; color: var(--ink-soft); margin-bottom: 1.5rem; max-width: 60ch; }
+  .phase-banner { display: grid; grid-template-columns: 110px 1fr; gap: 2rem; margin: 2rem 0 2.5rem; padding: 1.4rem 1.8rem; background: linear-gradient(90deg, rgba(184, 85, 40, 0.10), transparent); border-left: 4px solid var(--terracotta); align-items: center; }
+  .phase-letter { font-family: var(--font-display); font-size: 5rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 0.85; text-align: center; }
+  .phase-banner h4 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; color: var(--ink); margin-bottom: 0.3rem; }
+  .phase-banner .phase-meta { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.5rem; }
+  .phase-banner p { font-size: 0.97rem; color: var(--ink); margin-bottom: 0; max-width: 65ch; }
+  .phase-banner em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .phase-banner.stil { background: linear-gradient(90deg, rgba(40, 72, 88, 0.10), transparent); border-left-color: var(--cobalt); }
+  .phase-banner.stil .phase-letter { color: var(--cobalt); }
+  .phase-banner.tools { background: linear-gradient(90deg, rgba(138, 152, 120, 0.18), transparent); border-left-color: var(--sage); }
+  .phase-banner.tools .phase-letter { color: var(--sage); }
+  .step { display: grid; grid-template-columns: 320px 1fr; gap: 1.8rem; margin: 1.6rem 0; padding: 1.6rem 1.8rem; background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; }
+  .step-diagram { background: #f3ecdc; border: 1px solid #c8b89a; border-radius: 6px; padding: 1rem 0.6rem 0.6rem; align-self: start; }
+  .step-diagram svg { width: 100%; height: auto; display: block; }
+  .step-diagram .caption { margin-top: 0.5rem; text-align: center; font-family: var(--font-display); font-style: italic; font-size: 0.82rem; color: var(--ink-soft); line-height: 1.4; }
+  .step-num-row { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 0.6rem; }
+  .step-num { font-family: var(--font-display); font-size: 1.8rem; font-weight: 300; font-style: italic; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); line-height: 1; }
+  .step-title { font-family: var(--font-display); font-size: 1.18rem; font-weight: 500; color: var(--ink); line-height: 1.25; }
+  .step p { font-size: 0.96rem; margin-bottom: 0.6rem; max-width: none; }
+  .step p:last-child { margin-bottom: 0; }
+  .step em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .shortcut-row { display: flex; flex-wrap: wrap; gap: 0.4rem 0.7rem; align-items: center; margin: 0.5rem 0 0.4rem; font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; color: var(--ink-soft); }
+  kbd { font-family: var(--font-mono); font-size: 0.78rem; background: var(--paper-warm); border: 1px solid var(--rule); border-radius: 3px; padding: 0.05rem 0.4rem; color: var(--ink); box-shadow: 0 1px 0 var(--rule); }
+  .box { margin: 1.4rem 0; padding: 1.1rem 1.3rem; border-radius: 0 4px 4px 0; max-width: none; }
+  .step .box { margin: 0.9rem 0 0.4rem; }
+  .box-label { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; margin-bottom: 0.4rem; }
+  .box-label::before { content: ''; width: 14px; height: 1.5px; background: currentColor; }
+  .box p { font-size: 0.93rem; margin-bottom: 0.4rem; }
+  .box p:last-child { margin-bottom: 0; }
+  .box-why { background: rgba(40, 72, 88, 0.10); border-left: 3px solid var(--cobalt); }
+  .box-why .box-label { color: var(--cobalt); }
+  .box-stolper { background: rgba(196, 107, 58, 0.13); border-left: 3px solid var(--warning); }
+  .box-stolper .box-label { color: var(--warning); }
+  .box-merk { background: rgba(184, 85, 40, 0.10); border-left: 3px solid var(--terracotta); }
+  .box-merk .box-label { color: var(--terracotta); }
+  .box-check { background: rgba(138, 152, 120, 0.18); border-left: 3px solid var(--sage); }
+  .box-check .box-label { color: var(--sage); }
+  .insight { margin: 1.4rem 0; padding: 1.1rem 1.3rem; background: var(--paper-warm); border: 1px dashed var(--rule); border-radius: 6px; font-family: var(--font-display); font-style: italic; font-size: 0.96rem; color: var(--ink-soft); max-width: 65ch; }
+  .insight::before { content: 'Randnotiz'; display: block; font-family: var(--font-mono); font-style: normal; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+  .outro { padding: 3rem 5rem; background: linear-gradient(180deg, var(--paper), var(--paper-warm)); border-top: 2px solid var(--terracotta); }
+  .outro h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 3.5vw, 2.5rem); font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); margin-bottom: 1.2rem; max-width: 22ch; line-height: 1.1; }
+  .outro p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .outro p.intro { font-family: var(--font-display); font-style: italic; font-size: 1.12rem; color: var(--ink-soft); margin-bottom: 1.4rem; }
+  .next-up { margin-top: 1.5rem; padding: 1.2rem 1.5rem; background: var(--paper); border-left: 4px solid var(--cobalt); border-radius: 0 4px 4px 0; }
+  .next-up .next-label { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cobalt); margin-bottom: 0.4rem; }
+  .next-up h3 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 500; color: var(--ink); margin-bottom: 0.5rem; }
+  .next-up h3 em { font-style: italic; color: var(--cobalt); }
+  .doc-footer { padding: 2.5rem 5rem; border-top: 2px solid var(--ink); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); display: flex; justify-content: space-between; }
+  .doc-footer .terracotta { color: var(--terracotta); }
+  @media (max-width: 900px) {
+    .cover, .section, .doc-footer, .outro { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .section-head { grid-template-columns: 1fr; gap: 0.5rem; }
+    .step { grid-template-columns: 1fr; gap: 1rem; }
+    .step-diagram { max-width: 280px; margin: 0 auto; }
+    .phase-banner { grid-template-columns: 1fr; gap: 0.5rem; }
+    .phase-letter { text-align: left; font-size: 3.5rem; }
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #1a1612; --paper-warm: #221d17; --paper-dark: #2a241c; --ink: #ebe3d0; --ink-soft: #b8a98a; --ink-faint: #7a6e58; --terracotta: #e8814a; --terracotta-deep: #c25a2a; --cobalt: #6a9aab; --sage: #a8b898; --warning: #e2884d; --rule: #3a3026; }
+    body { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"); }
+    .step-diagram { background: #f3ecdc !important; border-color: #c8b89a !important; }
+    .step-diagram .caption { color: #5a4d3a !important; }
+  }
+</style>
+</head>
+<body>
+
+<article class="doc">
+
+<header class="cover">
+  <div class="cover-marker"><span>Cascadeur · Lernreihe · Track 4</span><div class="ml"></div><span>Projekt 13 · v 1.0</span></div>
+  <h1>Stepped<br><em>Stylized</em>:<br>Anime-Look.</h1>
+  <p class="subtitle">Stil-Dimension öffnen. Realismus war Default in Tracks 1-3 und in Projekt 12+14. Hier wird der Workflow fundamental umgestellt: 24 fps statt 30 fps, Keyframe Reduction on Twos für 12 effektive fps, choppy Anime-Look wie Blue Eyed Samurai oder Puss in Boots 2. Plus: die Animation-Scripts-Toolbox als bisher nicht thematisierte Werkzeug-Sammlung.</p>
+  <div class="cover-meta">
+    <div class="mb"><span class="mb-label">Charakter</span><span>UE5-Manny</span></div>
+    <div class="mb"><span class="mb-label">Dauer</span><span>5-6 s · 24 fps</span></div>
+    <div class="mb"><span class="mb-label">Effektive fps</span><span>12 (on twos)</span></div>
+    <div class="mb"><span class="mb-label">Stil-Referenzen</span><span>Blue Eyed Samurai · Puss in Boots 2</span></div>
+    <div class="mb"><span class="mb-label">Neu</span><span>Animation Scripts · Keyframe Reduction</span></div>
+    <div class="mb"><span class="mb-label">Schritte</span><span>17</span></div>
+  </div>
+</header>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§1</div><div><div class="section-tag">Stil-Wechsel und Workflow-Inversion</div><h2 class="section-title">Realismus war <em>nicht der einzige Weg</em>.</h2></div></div>
+  <p class="lead">Zehn Brochüren realistische Animation, zwei Combat-Brochüren in Track 4 — alle bisher auf realistischen 30-fps-Game-Workflow ausgelegt. Diese Brochüre invertiert das. 24 fps Cinematic-Standard, Keyframe Reduction für choppy Anime-Look, Bezier statt Inbetweening, Bewusstes Reduzieren der Animation-Glätte.</p>
+  <p>Konkretes Szenario: Manny zeigt auf etwas, dann geht er zu der Stelle, mit der gezeigt wurde. Pointing-Action im Stand, gefolgt von einer kurzen Walk-Phase. 5-6 Sekunden, bei 24 fps. Nach Stepped-Transformation effektiv 12 fps — der klassische Anime-Look.</p>
+  <p>Drei Kernkonzepte: <strong>Bewusste Wahl zwischen Inbetweening und Bezier</strong> (Inbetweening für zyklische Bewegung, Bezier für Hold-Moving-Hold), <strong>Alt+F + Keyframe Reduction on Twos</strong> als Stepped-Transformations-Workflow, <strong>Animation Scripts Toolbox</strong> als bisher nicht thematisierte Sammlung von Commands für stylized Animation (Add Noise, Reverse Animation, Go to Origin).</p>
+  <div class="box box-why">
+    <div class="box-label">Warum Stepped/Stylized als eigener Workflow</div>
+    <p>Realistische Animation strebt nach maximaler Glätte — viele Inbetweening-Frames, sanfte Bezier-Kurven, AutoPhysics für physikalische Plausibilität. Stepped Animation strebt das Gegenteil an: bewusste Choppiness, harte Pose-Wechsel, weniger Frames sichtbar. Der Workflow ist nicht „realistische Animation mit weniger Smoothing" — er ist eine eigene Disziplin mit anderen Werkzeug-Entscheidungen. Wer Stepped-Animation mit dem Realismus-Mindset macht, bekommt weder das eine noch das andere.</p>
+  </div>
+  <div class="insight">
+    Walt Disney's „Snow White" (1937) wurde in 24 fps Full Animation produziert — jeder Frame gezeichnet, jeder zählt. Osamu Tezuka's Mushi Production hat in den 1960ern für Astro Boy (1963) eine andere Methode entwickelt: Limited Animation bei effektiv 8-12 fps, ursprünglich aus Budget-Gründen. Statt 24 Bilder pro Sekunde zu zeichnen wurden Posen länger gehalten, nur Schlüssel-Momente animiert. Was als Kompromiss begann, wurde zur künstlerischen Sprache — die choppy Bewegung wurde zum definierenden Stil-Element des Anime. Sechzig Jahre später kopieren Netflix-Produktionen wie „Blue Eyed Samurai" (2023) bewusst diesen Look, weil er einen Charakter hat, den volle 24 fps nicht haben. Stepped Animation in Cascadeur ist die digitale Implementierung dieser Tradition — wirtschaftliche Notwendigkeit, die zur stilistischen Wahl geworden ist.
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§2</div><div><div class="section-tag">Phase A · Konzept und FPS-Setup</div><h2 class="section-title">24 fps, <em>Pointing-Action</em>.</h2></div></div>
+  <div class="phase-banner stil"><div class="phase-letter">A</div><div><h4>Setup</h4><div class="phase-meta">FPS · Stil-Konzept · Animations-Plan</div><p>Bevor du animierst: Scene-FPS auf 24 setzen, Stil-Referenzen anschauen, Bewegungsplan festlegen. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">STIL-REFERENZEN · ANIME-LOOK</text>
+        <rect x="30" y="50" width="260" height="22" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+        <text x="40" y="64" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Blue Eyed Samurai</text>
+        <text x="280" y="64" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Netflix 2023</text>
+        <rect x="30" y="76" width="260" height="22" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+        <text x="40" y="90" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Puss in Boots: Last Wish</text>
+        <text x="280" y="90" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">DreamWorks 2022</text>
+        <rect x="30" y="102" width="260" height="22" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+        <text x="40" y="116" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Spider-Verse</text>
+        <text x="280" y="116" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Sony 2018+</text>
+        <rect x="30" y="128" width="260" height="22" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+        <text x="40" y="142" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Klassisches Anime</text>
+        <text x="280" y="142" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Mushi Production 1960er</text>
+        <rect x="30" y="154" width="260" height="22" fill="#b85528" opacity="0.15" stroke="#b85528" stroke-width="1.5"/>
+        <text x="40" y="168" font-family="DM Sans, sans-serif" font-size="10" font-weight="600" fill="#1f1a14">Effektiv: 8-12 fps</text>
+        <text x="280" y="168" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Limited Animation</text>
+        <text x="160" y="195" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Stepped-Look als bewusste Stil-Wahl, nicht Glätte-Defizit</text>
+      </svg>
+      <div class="caption">Stil-Referenzen für Stepped-Animation. Modernes Comeback klassischer Anime-Technik.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">01</span><span class="step-title">Stil-Referenzen verstehen</span></div>
+      <p>Vor dem Animieren: was ist überhaupt der Anime-Look, wie unterscheidet er sich vom Disney-Realismus?</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Blue Eyed Samurai</strong> (Netflix 2023) — Cinematic CGI-Animation mit bewusst stylisiertem 12-fps-Look. Im Tutorial direkt als Referenz genannt</li>
+        <li><strong>Puss in Boots: The Last Wish</strong> (DreamWorks 2022) — Stepped-CGI mit selektiver Choppiness, nicht durchgehend</li>
+        <li><strong>Spider-Verse</strong>-Reihe — Mix aus Stepped und Full Animation, oft Frame-für-Frame manuell ausgewählt</li>
+        <li><strong>Klassisches Anime</strong> — Mushi Production 1960er, Studio Ghibli, viele Folge-Studios</li>
+      </ul>
+      <p>Charakteristika: lange Pose-Holds (oft 4-6 Frames identisch), explosive Bewegungs-Übergänge zwischen den Holds, Body-Parts wechseln Pose ohne sichtbare Interpolation. Der Eindruck: jeder Frame ist eine Zeichnung, nicht ein Zwischenwert.</p>
+      <div class="insight">
+        Die Cascadeur-Devs haben in mehreren Tutorials explizit erwähnt, dass die Software „eher für Game-Animation" entwickelt wurde — also für die 30-fps-Realismus-Pipeline. Stepped-Animation in Cascadeur ist daher etwas „off-label". Es funktioniert, aber bewusst gegen den Mainstream-Use-Case. Wer Anime-Cinematics macht, kommt schneller mit dedizierten 2D-Tools (Toon Boom, OpenToonz) zum Ziel — Cascadeur ist sinnvoll wenn die Pipeline schon auf 3D ausgelegt ist und nur der finale Look stylized werden soll.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">SCENE-SETUP · 24 FPS</text>
+        <rect x="40" y="50" width="240" height="125" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Scene Settings</text>
+        <line x1="60" y1="80" x2="260" y2="80" stroke="#c8b89a" stroke-width="0.5"/>
+        <text x="60" y="100" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Frame Rate</text>
+        <text x="260" y="100" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">24 fps</text>
+        <text x="60" y="120" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Animation-Length</text>
+        <text x="260" y="120" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">120-144 Frames (5-6s)</text>
+        <text x="60" y="140" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Effektive fps</text>
+        <text x="260" y="140" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">12 (nach Stepped)</text>
+        <text x="60" y="160" font-family="DM Sans, sans-serif" font-size="10" fill="#c46b3a">Nicht: 30 fps Default</text>
+        <text x="260" y="160" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">Game-Standard</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">24 fps = Cinematic Standard · 30 fps = Game Standard</text>
+      </svg>
+      <div class="caption">Scene-FPS-Setup auf 24. Effektiv 12 fps nach Stepped-Reduction.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">02</span><span class="step-title">Scene auf 24 fps konfigurieren</span></div>
+      <p>Aus Tutorial direkt belegt: <em>„it's better to have 24 frame because it's cinematic things. It's not for games actually."</em></p>
+      <p>Setup in Cascadeur:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Neue Cascadeur-Scene öffnen</li>
+        <li>Scene Settings öffnen</li>
+        <li><strong>Frame Rate</strong> auf <strong>24 fps</strong> setzen (Default ist 30)</li>
+        <li>Animation-Length auf 120-144 Frames (5-6 Sekunden)</li>
+        <li>Manny laden — UE5-Mannequin oder Custom-Charakter</li>
+      </ol>
+      <p>Wichtig zu verstehen: nach der Stepped-Transformation in Phase D wird die effektive Frame-Rate halbiert auf 12 fps — jeder zweite Frame wird identisch zum vorigen. Das ist der Anime-Look. Wer auf 30 fps anfängt und dann Stepped macht, bekommt 15 effektive fps, was technisch näher an 16 fps Anime-Tradition liegt, aber den Cinematic-Standard verfehlt.</p>
+      <div class="box box-merk">
+        <div class="box-label">24 fps ist Pflicht, nicht Empfehlung</div>
+        <p>Für Cinematic-Anwendungen (Cutscenes, Film, Web-Animation) ist 24 fps der Standard. Wer für Games animiert (60 fps Gameplay), kann zwar Stepped-Animation produzieren, aber sie passt nicht zum Gameplay-Framerate. Stepped ist daher eine Cutscene-Technik, keine Gameplay-Technik. Bei UE5-Sequencer-Cutscenes: 24 fps wählen für Cinematic-Look.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">ANIMATIONS-PLAN · POINTING + WALK</text>
+        <line x1="20" y1="100" x2="300" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <rect x="20" y="93" width="40" height="14" fill="#284858" opacity="0.4"/>
+        <text x="40" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">Setup</text>
+        <text x="40" y="140" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#5a4d3a">F0-F15</text>
+        <rect x="60" y="93" width="40" height="14" fill="#b85528" opacity="0.5"/>
+        <text x="80" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">Pointing</text>
+        <text x="80" y="140" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#5a4d3a">F15-F45</text>
+        <text x="80" y="156" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#b85528">BEZIER</text>
+        <rect x="100" y="93" width="20" height="14" fill="#ede4d0" stroke="#1f1a14" stroke-width="0.5"/>
+        <text x="110" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#5a4d3a">Hold</text>
+        <rect x="120" y="93" width="120" height="14" fill="#8a9878" opacity="0.4"/>
+        <text x="180" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">Walk-Phase</text>
+        <text x="180" y="140" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#5a4d3a">F65-F125</text>
+        <text x="180" y="156" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#8a9878">INBETWEENING</text>
+        <rect x="240" y="93" width="50" height="14" fill="#284858" opacity="0.4"/>
+        <text x="265" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">Stand-Up</text>
+        <text x="265" y="140" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#5a4d3a">F125-F144</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Zwei Animations-Modi je nach Bewegungs-Charakter</text>
+      </svg>
+      <div class="caption">Animations-Plan. Bezier für Pointing, Inbetweening für Walk-Phase.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">03</span><span class="step-title">Animations-Plan · Pointing-Action + Walk</span></div>
+      <p>Konkrete Animation: Manny zeigt auf eine Stelle, hält die Geste kurz, geht dann dorthin. Aus dem Tutorial direkt: <em>„Kaski point on someone and after that go to talk with him."</em></p>
+      <p>Phasen-Struktur über 144 Frames (6 Sekunden bei 24 fps):</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>F0-F15 · Setup</strong>: Manny in Stand-Pose, neutral</li>
+        <li><strong>F15-F45 · Pointing</strong>: Arm hebt sich, zeigt auf eine Stelle vor sich. <strong>Bezier-Interpolation</strong></li>
+        <li><strong>F45-F65 · Hold</strong>: Pointing-Pose wird gehalten</li>
+        <li><strong>F65-F125 · Walk-Phase</strong>: Manny geht zum Ziel. <strong>Inbetweening</strong> für die zyklische Walk-Bewegung</li>
+        <li><strong>F125-F144 · Stand-Up</strong>: Manny stoppt am Ziel. <strong>Inbetweening</strong> für sanften Stopp</li>
+      </ul>
+      <p>Kritische Workflow-Entscheidung: Pointing-Action ist Hold-Moving-Hold (Pose halten, dann Bewegung, dann wieder Pose halten) — dafür ist Inbetweening ungeeignet. Walk-Phase ist zyklisch — dafür funktioniert Inbetweening hervorragend.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Inbetweening + Hold-Moving-Hold = Bug</div>
+        <p>Aus Tutorial direkt: <em>„inbetweening pretty badly works with the holding moving hold. It's better to use simple interpolation."</em> Inbetweening optimiert für organischen Fluss — wenn du eine statische Hold-Pose, dann Bewegung, dann wieder statische Pose willst, generiert Inbetweening unerwünschte Mikrobewegungen während der Hold-Phasen. Bezier hält statisch wenn Anker-Posen identisch sind. Daher: Pointing-Action mit Bezier, nicht Inbetweening.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§3</div><div><div class="section-tag">Phase B · Blocking-Strategie</div><h2 class="section-title">Bezier <em>oder</em> Inbetweening, gezielt.</h2></div></div>
+  <div class="phase-banner"><div class="phase-letter">B</div><div><h4>Blocking</h4><div class="phase-meta">Walk mit Inbetweening · Pointing mit Bezier · Fingers mit Bezier</div><p>Jede Bewegungs-Phase bekommt ihre eigene Interpolations-Methode. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">SETUP-POSE · NEUTRAL STAND</text>
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="160" cy="50" r="10" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="160" y1="60" x2="160" y2="115" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="152" y1="115" x2="168" y2="115" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="160" y1="78" x2="138" y2="105" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="138" y1="105" x2="135" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="160" y1="78" x2="182" y2="105" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="182" y1="105" x2="185" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="152" y1="115" x2="150" y2="145" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="150" y1="145" x2="148" y2="170" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="168" y1="115" x2="170" y2="145" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="170" y1="145" x2="172" y2="170" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="142" y1="170" x2="158" y2="170" stroke="#1f1a14" stroke-width="2.5"/>
+        <line x1="162" y1="170" x2="178" y2="170" stroke="#1f1a14" stroke-width="2.5"/>
+        <text x="160" y="195" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Neutral Stand · Frame 0 · Anker</text>
+      </svg>
+      <div class="caption">Setup-Pose. Neutral Stand wie Projekt 01, leicht entspannt.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">04</span><span class="step-title">Setup-Pose und Bezier für Pointing-Action</span></div>
+      <p>Auf Frame 0: Manny in Neutral-Stand-Pose. Beide Füße fixiert mit <kbd>R</kbd>. Arme entspannt seitlich am Körper.</p>
+      <p>Pointing-Pose auf Frame 30 (mittig in F15-F45):</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Rechter Arm hebt sich auf Schulterhöhe horizontal nach vorn</li>
+        <li>Hand-Geste: ausgestreckter Index-Finger, andere Finger leicht geschlossen</li>
+        <li>Body leichte Vorwärts-Lehnung als Anticipation</li>
+        <li>Pelvis und Beine unverändert (Stand bleibt)</li>
+        <li>Kopf leicht in Richtung des Zeigens gedreht</li>
+      </ul>
+      <p>Hold-Frames F45-F65: Pointing-Pose identisch kopiert (Ctrl+C → Ctrl+V auf F65). Damit ist die Hold-Phase definiert — Bezier zwischen identischen Anker-Posen ergibt Stillstand.</p>
+      <p>Wichtig: <strong>Bezier-Interpolation</strong> für diesen Bereich. Inbetweening würde Mikro-Bewegungen während der Hold-Phase generieren.</p>
+      <div class="box box-merk">
+        <div class="box-label">Bezier hält statisch bei identischen Posen</div>
+        <p>Wenn zwei Bezier-Keyframes identisch sind, ist die Interpolation dazwischen ebenfalls identisch — keine Bewegung. Das ist genau was wir für Hold-Phasen brauchen. Inbetweening kann das nicht garantieren, weil es eine eigene Bewegungs-Heuristik anwendet.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FINGER-POSE · POINTING INDEX</text>
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+        <ellipse cx="160" cy="100" rx="40" ry="55" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <text x="160" y="60" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Hand R</text>
+        <line x1="195" y1="92" x2="270" y2="92" stroke="#b85528" stroke-width="3"/>
+        <circle cx="275" cy="92" r="3" fill="#b85528"/>
+        <text x="275" y="80" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">Index</text>
+        <path d="M 195 105 Q 215 113, 205 122" stroke="#1f1a14" stroke-width="2" fill="none"/>
+        <path d="M 198 118 Q 218 126, 208 135" stroke="#1f1a14" stroke-width="2" fill="none"/>
+        <path d="M 200 130 Q 215 138, 205 145" stroke="#1f1a14" stroke-width="2" fill="none"/>
+        <text x="160" y="195" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Bezier statt Inbetweening · Finger zeigen klare Pose</text>
+      </svg>
+      <div class="caption">Pointing-Finger-Pose. Index ausgestreckt, andere Finger leicht geschlossen.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">05</span><span class="step-title">Finger-Pose mit Bezier statt Inbetweening</span></div>
+      <p>Aus Tutorial direkt: <em>„for fingers here I use also bezier because inbetweening doesn't work for fingers."</em></p>
+      <p>Pointing-Finger-Pose:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>AutoPosing Fingers aktivieren</li>
+        <li>Index-Finger ausstrecken: Box-Controller im Local Mode, alle drei Finger-Bones rotieren (Index ist Master-Controller — kontrolliert alle 5 Finger)</li>
+        <li>Aber wir wollen nur Index gestreckt, andere leicht geschlossen — daher: Index manuell rückwärts in Default-Pose, andere Finger leicht gebeugt</li>
+        <li>Alternative: AutoPosing deaktivieren, alle Finger via Box Controller manuell setzen</li>
+        <li>Daumen leicht eingeklappt (klassische Pointing-Geste)</li>
+      </ol>
+      <p>Interpolation: Bezier statt Inbetweening, gilt für die Finger-Bone-Tracks. In den Track-Properties Bezier explizit setzen.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Inbetweening + Fingers = Bug</div>
+        <p>Cascadeurs Inbetweening-Engine ist für ganzkörperliche organische Bewegung trainiert — Finger sind zu kleine, zu unabhängige Bewegungen. Inbetweening generiert merkwürdige Finger-Wackel-Bewegungen, weil es versucht, eine Physik für die Finger zu erfinden, die nicht existiert. Bezier ist hier sauberer: lineare Interpolation zwischen den manuell gesetzten Finger-Posen.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">WALK-PHASE · INBETWEENING</text>
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+        <g><text x="60" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">F65 · Start</text>
+        <circle cx="60" cy="75" r="6" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="60" y1="81" x2="60" y2="125" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="60" y1="125" x2="55" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="60" y1="125" x2="65" y2="170" stroke="#1f1a14" stroke-width="1.5"/></g>
+        <g><text x="160" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#8a9878">F95 · Mid-Walk</text>
+        <circle cx="160" cy="75" r="6" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="160" y1="81" x2="160" y2="125" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="160" y1="125" x2="145" y2="155" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="160" y1="125" x2="175" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="195" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#8a9878">Inbetweening</text></g>
+        <g><text x="260" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">F125 · End</text>
+        <circle cx="260" cy="75" r="6" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="260" y1="81" x2="260" y2="125" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="260" y1="125" x2="255" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="260" y1="125" x2="265" y2="170" stroke="#1f1a14" stroke-width="1.5"/></g>
+      </svg>
+      <div class="caption">Walk-Phase mit Inbetweening. Zyklische Bewegung, organischer Fluss.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">06</span><span class="step-title">Walk-Phase mit Inbetweening</span></div>
+      <p>Aus Tutorial direkt: <em>„I use the inbetweening for walking and stand up."</em> Walk ist zyklisch und organisch — perfekter Anwendungsfall für Inbetweening.</p>
+      <p>Workflow für Walk-Phase F65-F125:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Auf F65: Manny in Setup-Pose, aber Pelvis um 5cm tiefer (Anticipation für Walk)</li>
+        <li>Auf F125: Manny am Ziel-Punkt, Setup-Pose-ähnlich</li>
+        <li>Track-Interpolation auf <strong>Inbetweening</strong> für die Bein-Tracks und Pelvis-Track</li>
+        <li>Inbetweening generiert automatisch die zyklische Walk-Bewegung zwischen Start und Ende</li>
+        <li>Bei Bedarf: zusätzliche Walk-Anker bei F85 und F105 für mehr Kontrolle</li>
+      </ol>
+      <p>Stand-Up-Phase F125-F144: ebenfalls Inbetweening — sanfter Stop, leichtes Settle.</p>
+      <p>Wichtige Workflow-Disziplin: <strong>Track-spezifische Interpolation</strong>. Pelvis-Track und Bein-Tracks auf Inbetweening, Arm-Tracks und Finger-Tracks auf Bezier (von Pointing übernommen). Eine Cascadeur-Animation kann verschiedene Interpolations-Methoden pro Body-Part nutzen — kritische Eigenschaft für Stepped-Workflow.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase B</div>
+        <p>Pointing-Action zeigt sauberen Hold-Moving-Hold ohne Mikro-Wackeln. Walk-Phase zeigt zyklisches Walking ohne dass die Arme komisch werden (sie bleiben in der Pointing-Pose oder fallen langsam zurück). Finger bewegen sich nur in den Bezier-Frames, nicht zwischen ihnen. Animation läuft bei 24 fps glatt — noch nicht stepped, das kommt in Phase D.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§4</div><div><div class="section-tag">Phase C · Pointing-Posing-Detail</div><h2 class="section-title">Pointing als <em>narrative Geste</em>.</h2></div></div>
+  <div class="phase-banner stil"><div class="phase-letter">C</div><div><h4>Pointing-Detail</h4><div class="phase-meta">Body-Lehne · Hand-Detail · Kopf-Followthrough</div><p>Pointing ist nicht nur ausgestreckter Arm. Body, Kopf, Finger erzählen die Geste. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">BODY-LEHNUNG · ANTICIPATION</text>
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+        <g opacity="0.4"><text x="80" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Neutral</text>
+        <circle cx="80" cy="65" r="9" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="80" y1="74" x2="80" y2="130" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="80" y1="130" x2="80" y2="170" stroke="#1f1a14" stroke-width="1.5"/></g>
+        <text x="160" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#b85528">→</text>
+        <g><text x="240" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">Pointing</text>
+        <circle cx="245" cy="65" r="9" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="245" y1="74" x2="235" y2="130" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="235" y1="130" x2="240" y2="170" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="245" y1="85" x2="285" y2="80" stroke="#b85528" stroke-width="2.5"/>
+        <circle cx="290" cy="79" r="3" fill="#b85528"/>
+        <path d="M 235 75 L 250 78" stroke="#c46b3a" stroke-width="1.5" fill="none" stroke-dasharray="2,1"/></g>
+        <text x="160" y="195" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Body lehnt sich in Pointing-Richtung · Pelvis verschiebt sich</text>
+      </svg>
+      <div class="caption">Body-Lehnung als Pointing-Anticipation. Pelvis folgt der Geste.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">07</span><span class="step-title">Body-Lehnung in Pointing-Richtung</span></div>
+      <p>Pointing ist nicht nur ein ausgestreckter Arm — der ganze Körper unterstützt die Geste. Realistische und glaubwürdige Pointing-Posen haben:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Body-Lehne nach vorn</strong>: 5-10° Wirbelsäulen-Beugung in Pointing-Richtung</li>
+        <li><strong>Pelvis verschoben</strong>: 2-3 cm in Pointing-Richtung, als folge der Body-Lehne</li>
+        <li><strong>Schulter rotiert mit</strong>: rechte Schulter folgt dem Arm, etwa 10° Vorwärts-Rotation</li>
+        <li><strong>Gegenschulter zurück</strong>: linke Schulter minimal nach hinten als Counter-Balance</li>
+        <li><strong>Beine bleiben fix</strong>: Stand-Pose unverändert, Body-Lehne kommt aus Hüfte und Wirbelsäule</li>
+      </ul>
+      <p>Diese Body-Lehne erzeugt visuell die Wirkung, dass Manny mit seinem ganzen Wesen zeigt — nicht nur mit dem Arm. Bei Anime-Animation ist diese ganzkörperliche Beteiligung besonders wichtig, weil die einzelnen Frames stärker isoliert wahrgenommen werden (durch die Stepped-Choppiness).</p>
+      <div class="insight">
+        Im klassischen Anime der Mushi-Production-Tradition wird ein Pointing-Move oft als „dramatischer Akt" inszeniert — der Charakter wird in der Pointing-Pose für 4-8 Frames eingefroren, dann ein scharfer Cut zur nächsten Pose. Die Mikrobewegungen zwischen Posen werden weggelassen — was bleibt, sind „signature poses". Frank Frazetta hat dasselbe Prinzip für statische Illustrationen genutzt: jede Pose muss als isoliertes Bild lesbar sein. Wer Stepped-Animation macht, animiert nicht Bewegungs-Fluss, sondern eine Folge von Stand-Bildern.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">KOPF-FOLLOWTHROUGH</text>
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+        <g><text x="80" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">F15</text>
+        <circle cx="80" cy="75" r="9" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="80" y1="84" x2="80" y2="140" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="80" y1="95" x2="105" y2="105" stroke="#b85528" stroke-width="2"/></g>
+        <g><text x="160" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#c46b3a">F18 · Kopf rotiert</text>
+        <ellipse cx="160" cy="73" rx="9" ry="9" fill="none" stroke="#c46b3a" stroke-width="2"/>
+        <line x1="160" y1="84" x2="158" y2="140" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="158" y1="95" x2="195" y2="95" stroke="#b85528" stroke-width="2.5"/>
+        <circle cx="167" cy="71" r="1.5" fill="#c46b3a"/></g>
+        <g><text x="245" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">F30 · Voll</text>
+        <ellipse cx="245" cy="73" rx="9" ry="9" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="245" y1="84" x2="240" y2="140" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="243" y1="92" x2="280" y2="92" stroke="#b85528" stroke-width="2.5"/>
+        <circle cx="255" cy="71" r="1.5" fill="#1f1a14"/></g>
+        <text x="160" y="195" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Kopf reagiert 2-3 Frames nach Arm-Start · Leading Action</text>
+      </svg>
+      <div class="caption">Kopf-Followthrough. Kopf folgt dem Arm mit 2-3 Frames Versatz.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">08</span><span class="step-title">Kopf-Followthrough mit Frame-Versatz</span></div>
+      <p>Leading-Action-Pattern aus klassischer Animation (siehe Workflow-Referenz § 8): Body-Parts bewegen sich mit zeitlichem Versatz. Bei Pointing-Geste folgt der Kopf dem Arm mit ein paar Frames Verzögerung.</p>
+      <p>Konkrete Frame-Belegung:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>F15</strong>: Arm beginnt sich zu heben. Kopf noch in neutraler Position</li>
+        <li><strong>F18-F20</strong>: Kopf beginnt zu drehen, in Richtung des Zeigens</li>
+        <li><strong>F25-F28</strong>: Kopf-Rotation halb da</li>
+        <li><strong>F30</strong>: Kopf voll in Pointing-Richtung, Augen folgen Index-Finger</li>
+        <li>Während Hold F45-F65: Kopf bleibt in Pointing-Richtung</li>
+        <li>Während Walk-Phase F65+: Kopf rotiert zurück zur Lauf-Richtung</li>
+      </ul>
+      <p>Diese 3-Frame-Verzögerung ist subtil aber wichtig — sie macht die Animation lebendig statt mechanisch. Wenn Kopf und Arm gleichzeitig starten, sieht es aus wie ein Roboter. Mit Versatz wirkt es organisch.</p>
+      <p>Bei Stepped-Animation wird dieser Frame-Versatz besonders sichtbar — weil nur jedes zweite Frame gehalten wird, fallen die zeitlich versetzten Bewegungen klarer ins Auge. Eine subtile Animator-Disziplin, die im realistischen 30-fps-Workflow oft kaschiert wird, aber im Anime-Look ins Zentrum rückt.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">VALIDIERUNG · BLOCKING-PLAYBACK</text>
+        <rect x="40" y="50" width="240" height="125" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="60" y="72" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Pointing-Action</text>
+        <text x="260" y="72" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">Bezier · OK</text>
+        <text x="60" y="92" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Hold-Phase</text>
+        <text x="260" y="92" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">statisch · OK</text>
+        <text x="60" y="112" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Walk-Phase</text>
+        <text x="260" y="112" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">Inbetweening · OK</text>
+        <text x="60" y="132" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Finger-Pose</text>
+        <text x="260" y="132" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">Bezier · OK</text>
+        <text x="60" y="152" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Kopf-Versatz</text>
+        <text x="260" y="152" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9878">3 Frames · OK</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Glatte 24 fps Animation · noch nicht stepped</text>
+      </svg>
+      <div class="caption">Validierung nach Phase C. Glatte 24fps-Animation, bereit für Stepped-Pass.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">09</span><span class="step-title">Blocking validieren vor Stepped-Pass</span></div>
+      <p>Vor der Stepped-Transformation: die Animation muss als glatte 24-fps-Animation bereits funktionieren. Wenn sie hier nicht gut ist, wird Stepped es nicht retten — Stepped macht die Animation noch deutlicher sichtbar, also auch ihre Fehler.</p>
+      <p>Checkliste:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Pointing-Geste klar erkennbar — Arm hebt sich, Index zeigt</li>
+        <li>Hold-Phase statisch — keine ungewollten Mikro-Bewegungen</li>
+        <li>Walk-Phase zyklisch und natürlich — Beine wechseln sauber</li>
+        <li>Finger bleiben in Pointing-Form während Hold und Walk-Phase</li>
+        <li>Kopf-Followthrough sichtbar — 2-3 Frames Versatz zum Arm</li>
+        <li>Body-Lehne in Pointing-Richtung erkennbar</li>
+      </ul>
+      <p>Speichern als <code>projekt-13-stepped-blocking-v01.casc</code> — vor der Stepped-Transformation als Sicherheitskopie, weil das Reduzieren auf jedes zweite Frame irreversibel ist (ohne Undo).</p>
+      <div class="box box-merk">
+        <div class="box-label">Pre-Stepped als Backup-Snapshot</div>
+        <p>Stepped-Transformation ist destruktiv — die Original-Bezier/Inbetweening-Daten gehen verloren, weil alle Frames zu fixen Keyframes werden. Wenn du später entscheidest, dass du doch lieber die glatte Variante haben willst, brauchst du die Sicherheitskopie. Naming-Konvention: <code>v01-blocking</code> (vor Stepped), <code>v02-stepped</code> (nach Stepped).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§5</div><div><div class="section-tag">Phase D · Stepped-Transformation</div><h2 class="section-title">Alt+F, <em>Keyframe Reduction</em>, choppy.</h2></div></div>
+  <div class="phase-banner"><div class="phase-letter">D</div><div><h4>Stepped-Pass</h4><div class="phase-meta">Every-Frame-Keyframe · Keyframe Reduction · Validierung</div><p>Der definierende Schritt der Brochüre. Glatte 24fps wird zu choppy 12fps. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">ALT+F · EVERY FRAME KEYFRAME</text>
+        <text x="30" y="55" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Vor Alt+F:</text>
+        <line x1="80" y1="68" x2="290" y2="68" stroke="#c8b89a" stroke-width="1.5"/>
+        <circle cx="100" cy="68" r="3" fill="#1f1a14"/>
+        <text x="100" y="80" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#1f1a14">K</text>
+        <circle cx="150" cy="68" r="3" fill="#1f1a14"/>
+        <text x="150" y="80" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#1f1a14">K</text>
+        <circle cx="220" cy="68" r="3" fill="#1f1a14"/>
+        <text x="220" y="80" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#1f1a14">K</text>
+        <text x="270" y="65" font-family="JetBrains Mono, monospace" font-size="6" fill="#8a7d68">interp</text>
+        <text x="160" y="105" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#b85528">↓</text>
+        <text x="160" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">Alt+F</text>
+        <text x="30" y="135" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Nach Alt+F:</text>
+        <line x1="80" y1="148" x2="290" y2="148" stroke="#1f1a14" stroke-width="1.5"/>
+        <g><circle cx="85" cy="148" r="2.5" fill="#1f1a14"/><circle cx="95" cy="148" r="2.5" fill="#1f1a14"/><circle cx="105" cy="148" r="2.5" fill="#1f1a14"/><circle cx="115" cy="148" r="2.5" fill="#1f1a14"/><circle cx="125" cy="148" r="2.5" fill="#1f1a14"/><circle cx="135" cy="148" r="2.5" fill="#1f1a14"/><circle cx="145" cy="148" r="2.5" fill="#1f1a14"/><circle cx="155" cy="148" r="2.5" fill="#1f1a14"/><circle cx="165" cy="148" r="2.5" fill="#1f1a14"/><circle cx="175" cy="148" r="2.5" fill="#1f1a14"/><circle cx="185" cy="148" r="2.5" fill="#1f1a14"/><circle cx="195" cy="148" r="2.5" fill="#1f1a14"/><circle cx="205" cy="148" r="2.5" fill="#1f1a14"/><circle cx="215" cy="148" r="2.5" fill="#1f1a14"/><circle cx="225" cy="148" r="2.5" fill="#1f1a14"/><circle cx="235" cy="148" r="2.5" fill="#1f1a14"/><circle cx="245" cy="148" r="2.5" fill="#1f1a14"/><circle cx="255" cy="148" r="2.5" fill="#1f1a14"/></g>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Jedes Frame wird zum Keyframe · Bake-Vorbereitung</text>
+      </svg>
+      <div class="caption">Alt+F transformiert Interpolations-Frames zu echten Keyframes.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">10</span><span class="step-title">Alt+F · Every Frame Keyframe</span></div>
+      <p>Aus Tutorial direkt: <em>„select all your animation because we need every frame to be key frame, press alt f to make every frame key frame."</em></p>
+      <p>Workflow:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Gesamten Animations-Range auf der Timeline selektieren (F0 bis F144)</li>
+        <li>Alle Body-Controller selektieren (oder einfach <kbd>Ctrl+A</kbd> für alle)</li>
+        <li><kbd>Alt+F</kbd> drücken</li>
+        <li>Jedes Frame im selektierten Range wird zu einem expliziten Keyframe — die Interpolation wird gebakt</li>
+      </ol>
+      <p>Vorher: Keyframes an Frame 0, 15, 30, 65, 125, 144 (Bezier-Anker + Inbetweening-Marker). Zwischen ihnen interpolierte Frames. Nach Alt+F: jeder Frame von 0 bis 144 ist ein eigener Keyframe mit fixen Werten.</p>
+      <p>Das ist Voraussetzung für den nächsten Schritt — Keyframe Reduction kann nur auf echte Keyframes wirken, nicht auf Interpolations-Frames.</p>
+      <div class="shortcut-row"><span>Every Frame Keyframe:</span><kbd>Alt</kbd>+<kbd>F</kbd></div>
+      <div class="box box-stolper">
+        <div class="box-label">Alt+F ist destruktiv</div>
+        <p>Nach Alt+F sind die ursprünglichen Bezier- oder Inbetweening-Interpolationen weg — alle Werte sind als fixe Keyframes eingefroren. Wenn du jetzt einen Frame verschiebst, ändert das nicht mehr die ganze Kurve, sondern nur diesen einen Frame. Daher: Sicherheitskopie aus Schritt 09 ist Pflicht. Ohne Backup gibt es keinen Weg zurück zur glatten Animation.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">KEY FRAME REDUCTION · ON TWOS</text>
+        <rect x="40" y="50" width="240" height="120" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Commands → Animation Scripts</text>
+        <line x1="60" y1="80" x2="260" y2="80" stroke="#c8b89a" stroke-width="0.5"/>
+        <text x="60" y="100" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528" font-weight="600">→ Key Frame Reduction</text>
+        <text x="80" y="120" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">On Twos · jeder 2.</text>
+        <text x="80" y="138" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">On Threes · jeder 3.</text>
+        <text x="80" y="156" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">On Fours · jeder 4.</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">On Twos = klassisches Anime · 12 effektive fps</text>
+      </svg>
+      <div class="caption">Keyframe Reduction Commands. „On Twos" als klassische Anime-Wahl.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">11</span><span class="step-title">Keyframe Reduction · On Twos</span></div>
+      <p>Der Stepped-Pass selbst. Aus Tutorial direkt: <em>„go to the command animation scripts and key frame reduction. Press this on twos."</em></p>
+      <p>Workflow:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Gesamten Animations-Range selektiert lassen (nach Alt+F)</li>
+        <li><strong>Commands → Animation Scripts → Key Frame Reduction</strong></li>
+        <li>Dialog erscheint mit Optionen: On Twos, On Threes, On Fours</li>
+        <li><strong>On Twos</strong> wählen — jeder zweite Frame wird behalten, der dazwischen wird zum Duplikat des vorherigen</li>
+        <li>Cascadeur transformiert die Animation</li>
+      </ol>
+      <p>Effekt: bei 24 fps Animation entstehen effektiv 12 fps Anime-Look — jedes Frame-Paar (F0+F1, F2+F3, F4+F5, ...) zeigt dieselbe Pose. Die Bewegung springt von Pose zu Pose statt zu fließen.</p>
+      <p>Alternative Stufen:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>On Threes</strong>: jeder dritte Frame behalten. Bei 24 fps → 8 effektive fps. Extrem choppy, klassische 60er-Anime-Optik</li>
+        <li><strong>On Fours</strong>: jeder vierte Frame. 6 effektive fps. Sehr stilisiert, mehr Cartoon als Anime</li>
+        <li><strong>On Twos</strong>: Standard-Anime, ausgewogen zwischen Choppiness und Lesbarkeit</li>
+      </ul>
+      <p>Für die meisten Anime-Cinematic-Anwendungen ist On Twos die richtige Wahl. On Threes für extrem stilisierte Sequences (Bsp.: Action-Highlights in Studio Ghibli-Filmen).</p>
+      <div class="box box-merk">
+        <div class="box-label">Fix Interpolation Option</div>
+        <p>Aus Tutorial: im Reduction-Dialog gibt es eine „Fix Interpolation"-Option. Aus dem Beispiel im Tutorial wurde diese auf „false" gesetzt: <em>„false. set fix it interpolation. No, I don't need this."</em> Empfehlung: false lassen, sonst werden die Frames doppelt gebakt was unerwünschte Side-Effekte haben kann.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">VALIDIERUNG · ANIME-LOOK</text>
+        <line x1="20" y1="100" x2="300" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <g><circle cx="40" cy="100" r="3.5" fill="#1f1a14"/><circle cx="48" cy="100" r="2" fill="#8a7d68" opacity="0.5"/><circle cx="60" cy="100" r="3.5" fill="#1f1a14"/><circle cx="68" cy="100" r="2" fill="#8a7d68" opacity="0.5"/><circle cx="80" cy="100" r="3.5" fill="#1f1a14"/><circle cx="88" cy="100" r="2" fill="#8a7d68" opacity="0.5"/><circle cx="100" cy="100" r="3.5" fill="#1f1a14"/><circle cx="108" cy="100" r="2" fill="#8a7d68" opacity="0.5"/><circle cx="120" cy="100" r="3.5" fill="#1f1a14"/><circle cx="128" cy="100" r="2" fill="#8a7d68" opacity="0.5"/><circle cx="140" cy="100" r="3.5" fill="#1f1a14"/><circle cx="148" cy="100" r="2" fill="#8a7d68" opacity="0.5"/><circle cx="160" cy="100" r="3.5" fill="#1f1a14"/><circle cx="168" cy="100" r="2" fill="#8a7d68" opacity="0.5"/><circle cx="180" cy="100" r="3.5" fill="#1f1a14"/><circle cx="188" cy="100" r="2" fill="#8a7d68" opacity="0.5"/></g>
+        <text x="50" y="80" font-family="JetBrains Mono, monospace" font-size="8" fill="#1f1a14">K</text>
+        <text x="68" y="80" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7d68">=</text>
+        <text x="158" y="80" font-family="JetBrains Mono, monospace" font-size="8" fill="#1f1a14">K</text>
+        <text x="178" y="80" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7d68">=</text>
+        <text x="160" y="135" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Jeder zweite Frame identisch zum vorherigen</text>
+        <text x="160" y="155" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">— sichtbarer Stop-and-Go-Look beim Playback</text>
+      </svg>
+      <div class="caption">Stepped-Validierung. Frame-Paare mit identischen Werten.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">12</span><span class="step-title">Stepped-Pass validieren</span></div>
+      <p>Nach der Reduction: Playback im Viewport. Die Animation sollte jetzt deutlich choppy aussehen — Manny bewegt sich nicht in einem Fluss, sondern in einer Folge von gehaltenen Posen.</p>
+      <p>Checkliste:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Bei Playback: Bewegung wirkt stepped, nicht fließend</li>
+        <li>Pose-Holds wirken markanter — die Pointing-Pose ist deutlicher als „Pose" erkennbar</li>
+        <li>Walk-Phase: Beine wechseln in 12fps statt 24fps, leicht karikiert</li>
+        <li>Body-Lehne und Kopf-Versatz noch sichtbar — durch den Stepped-Look werden sie sogar betont</li>
+        <li>Finger bleiben in Pointing-Form über die Holds, wechseln nur sichtbar bei Pose-Wechseln</li>
+      </ul>
+      <p>Wenn die Animation in glatter Form gut war: Stepped-Version sollte stilistisch stark sein. Wenn schon die glatte Version Probleme hatte (z.B. Foot-Sliding): die werden im Stepped-Pass noch deutlicher.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Stepped verstärkt jeden Fehler</div>
+        <p>Realismus-Animation kaschiert subtile Probleme durch Glätte — kleine Foot-Drifts oder Pose-Imbalancen verschwinden zwischen den Frames. Stepped tut das Gegenteil: weil jede Pose länger gehalten wird, fallen ungewollte Mikro-Bewegungen oder schwache Posen sofort ins Auge. Wer Stepped-Animation macht, muss in Phase B-C besonders sauber arbeiten — der finale Pass deckt alles auf. Bei sichtbaren Problemen: zurück zur v01-Sicherheitskopie aus Schritt 09, dort fixen, dann erneut Stepped-Pass.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§6</div><div><div class="section-tag">Phase E · Animation Scripts Toolbox</div><h2 class="section-title">Add Noise, Reverse, <em>Go to Origin</em>.</h2></div></div>
+  <div class="phase-banner tools"><div class="phase-letter">E</div><div><h4>Animation Scripts</h4><div class="phase-meta">Bonus-Tools für stylized Animation</div><p>Animation Scripts sind eine bisher nicht thematisierte Toolbox. Drei nützliche Commands. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">ADD NOISE · SHAKE-EFFEKT</text>
+        <rect x="40" y="50" width="240" height="125" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="60" y="72" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Target-Typ</text>
+        <text x="260" y="72" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Position / Rotation / Scale</text>
+        <text x="60" y="92" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Achse</text>
+        <text x="260" y="92" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">X / Y / Z</text>
+        <text x="60" y="112" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Min/Max Wert</text>
+        <text x="260" y="112" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">z.B. -2 bis +2</text>
+        <text x="60" y="132" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Pro Frame</text>
+        <text x="260" y="132" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">unterschiedlicher Random</text>
+        <text x="60" y="155" font-family="DM Sans, sans-serif" font-size="10" fill="#c46b3a">Anwendung: Cam-Shake, Trembling</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Stylized Stress-Effekte ohne manuelle Keyframes</text>
+      </svg>
+      <div class="caption">Add Noise. Random-Werte auf Position/Rotation/Scale für Stress-Effekte.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">13</span><span class="step-title">Add Noise · Camera-Shake und Trembling</span></div>
+      <p>Aus Tutorial direkt: ein neues Werkzeug aus der Animation-Scripts-Sammlung. Add Noise erzeugt zufällige Werte auf einer Achse pro Frame — perfekt für Stress-Effekte, Camera-Shake, Trembling.</p>
+      <p>Workflow:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Zu animierendes Objekt selektieren (z.B. Camera, Kopf, ganzer Body)</li>
+        <li>Frame-Range auf Timeline selektieren</li>
+        <li><strong>Commands → Animation Scripts → Add Noise to Selected Object</strong></li>
+        <li>Dialog erscheint:
+          <ul>
+            <li><strong>Target Type</strong>: Position / Rotation / Scale</li>
+            <li><strong>Axis</strong>: X / Y / Z</li>
+            <li><strong>Min Value / Max Value</strong>: z.B. -2 bis +2 (Einheiten je nach Target-Typ)</li>
+          </ul>
+        </li>
+        <li>Apply — Cascadeur generiert pro Frame einen zufälligen Wert in dem Range</li>
+      </ol>
+      <p>Anwendungen für Anime-Stil:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Cam-Shake</strong>: bei Impact-Frames die Kamera kurz wackeln lassen</li>
+        <li><strong>Trembling</strong>: Body-Rotation Noise für Charakter in Angst/Anstrengung</li>
+        <li><strong>Stress-Pose</strong>: leichte Hand-Position-Noise wenn Charakter konzentriert ist</li>
+      </ul>
+      <p>Kombination mit Stepped: Add Noise vor Keyframe Reduction anwenden. Die Random-Werte werden dann auch on twos gestepped — ergibt einen choppy Shake, der besser zum Anime-Look passt als smoother Noise.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">REVERSE ANIMATION · TIMEWARP</text>
+        <line x1="20" y1="80" x2="300" y2="80" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="30" y="75" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Vorher</text>
+        <path d="M 80 80 L 100 70 L 120 75 L 150 60 L 180 65 L 220 55 L 260 60" stroke="#284858" stroke-width="2" fill="none"/>
+        <text x="160" y="120" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#b85528">↓</text>
+        <text x="160" y="115" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">Reverse</text>
+        <line x1="20" y1="150" x2="300" y2="150" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="30" y="145" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Nachher</text>
+        <path d="M 80 150 L 100 145 L 120 130 L 150 135 L 180 145 L 220 140 L 260 150" stroke="#b85528" stroke-width="2" fill="none"/>
+        <text x="160" y="185" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Zeitliche Umkehr · Sprung wird zur Landung umgekehrt</text>
+      </svg>
+      <div class="caption">Reverse Animation. Bewegungs-Ablauf in der Zeit umgekehrt.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">14</span><span class="step-title">Reverse Animation für Time-Warp-Effekte</span></div>
+      <p>Aus Tutorial direkt: <em>„cool thing. Why not check commands animation script reverse animation? you can reverse animation for time for some time warp effects."</em></p>
+      <p>Reverse Animation kehrt den Bewegungs-Ablauf um — was am Ende war, ist jetzt am Anfang. Anwendungen:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Aus einem Sprung wird eine Landung</strong>: zeitliche Umkehr bietet alternative Move-Variante</li>
+        <li><strong>Time-Reverse-VFX</strong>: in Anime üblich, Charakter scheint die Zeit zurückzudrehen</li>
+        <li><strong>Workflow-Trick</strong>: eine Animation bauen, dann reversen für die zurück-Variante</li>
+      </ul>
+      <p>Workflow:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Animations-Range selektieren</li>
+        <li>Body-Controller selektieren</li>
+        <li><strong>Commands → Animation Scripts → Reverse Animation</strong></li>
+        <li>Cascadeur tauscht die Keyframe-Reihenfolge</li>
+      </ol>
+      <p>Nicht für die Haupt-Animation dieser Brochüre genutzt — aber als Toolbox-Werkzeug wichtig zu kennen. Bei Cinematic-Sequenzen mit Time-Warp-Konzepten (Matrix-Style, Avengers-Endgame-Style) ist es essential.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">GO TO ORIGIN · PORTAL-EFFEKT</text>
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+        <g opacity="0.4"><text x="80" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">Original-Position</text>
+        <circle cx="80" cy="80" r="9" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+        <line x1="80" y1="89" x2="80" y2="170" stroke="#1f1a14" stroke-width="1.5"/></g>
+        <text x="160" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#b85528">→</text>
+        <g><text x="240" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">Welt-Origin</text>
+        <circle cx="240" cy="80" r="9" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="240" y1="89" x2="240" y2="170" stroke="#1f1a14" stroke-width="2"/>
+        <circle cx="240" cy="170" r="4" fill="#b85528"/></g>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Verschiebt Animation an Welt-Mittelpunkt · braucht Root Bone</text>
+      </svg>
+      <div class="caption">Go to Origin. Animation-Anfang wird auf Welt-Mittelpunkt verschoben.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">15</span><span class="step-title">Go to Origin für Portal-Effekte</span></div>
+      <p>Aus Tutorial direkt belegt: <em>„go to origin says shift animation on the selected frames so that it start from the scene origin. works only with the active root constraint."</em></p>
+      <p>Funktion: verschiebt die selektierten Frames so, dass die Animation am Welt-Mittelpunkt (0,0,0) startet. Voraussetzung: Charakter hat einen aktiven Root Bone mit Constraint.</p>
+      <p>Workflow:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Root Bone des Charakters im Outliner selektieren</li>
+        <li>Frame-Range selektieren (oder kompletten Bereich)</li>
+        <li><strong>Commands → Animation Scripts → Go to Origin</strong></li>
+        <li>Cascadeur verschiebt die ganze Animation, sodass sie am Welt-Origin beginnt</li>
+      </ol>
+      <p>Anwendung: <strong>Portal-Effekte</strong> — Manny erscheint plötzlich am Welt-Mittelpunkt, als ob er durch ein Portal gekommen wäre. Aus Tutorial: <em>„it's like you can create some portals for example."</em></p>
+      <p>Eher selten genutzt, aber als Werkzeug verfügbar. Wichtiger für komplexe Multi-Stage-Animationen, bei denen die räumliche Kontinuität neu gesetzt werden muss.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Manche Animation Scripts crashen Cascadeur</div>
+        <p>Tutorial-Author erwähnt explizit: <em>„Untwist animation just crash the cascador couple of times and remove step interpolation frames doesn't work at all."</em> Animation Scripts sind nicht alle stabil — Untwist Animation und Remove Step Interpolation Frames sind in Cascadeur 2026.1 entweder unzuverlässig oder funktionieren nicht. Vor jedem Animation-Scripts-Aufruf: Cascadeur-Szene speichern, weil Crashes ohne Recovery passieren können.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§7</div><div><div class="section-tag">Phase F · Export</div><h2 class="section-title">FBX für <em>Cinematic-Use</em>.</h2></div></div>
+  <div class="phase-banner"><div class="phase-letter">F</div><div><h4>Export</h4><div class="phase-meta">FBX bei 24 fps · UE5 Sequencer Cinematic</div><p>Stepped-Animation für UE5-Cinematics exportieren. <em>Zwei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FBX-EXPORT · 24 FPS BAKED</text>
+        <rect x="40" y="50" width="240" height="125" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="60" y="72" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">FbxUpAxis</text>
+        <text x="260" y="72" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Z</text>
+        <text x="60" y="92" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Frame Rate</text>
+        <text x="260" y="92" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">24 fps (Cinematic)</text>
+        <text x="60" y="112" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Bake Animation</text>
+        <text x="260" y="112" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">ENABLE</text>
+        <text x="60" y="132" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Frame Range</text>
+        <text x="260" y="132" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">0-144</text>
+        <text x="60" y="152" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Filename</text>
+        <text x="260" y="152" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">manny-pointing-stepped.fbx</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Bake Pflicht · sonst geht Stepped-Look verloren</text>
+      </svg>
+      <div class="caption">FBX-Export für Stepped-Animation. Bake Animation Pflicht.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">16</span><span class="step-title">FBX-Export bei 24 fps</span></div>
+      <p>Export-Dialog öffnen (File → Export FBX). Wichtige Settings für Stepped-Animation:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>FbxUpAxis</strong>: Z (für UE5)</li>
+        <li><strong>Frame Rate</strong>: 24 fps (entspricht Scene-Setting, Cinematic-Standard)</li>
+        <li><strong>Bake Animation</strong>: ENABLE — kritisch! Sonst geht der Stepped-Look beim Export verloren</li>
+        <li><strong>Frame Range</strong>: 0-144 (volle Animation)</li>
+        <li><strong>Filename</strong>: <code>manny-pointing-stepped-v01.fbx</code></li>
+      </ul>
+      <p>Bake Animation ist hier Pflicht, weil die Stepped-Charakteristik in den Keyframe-Werten kodiert ist (jeder zweite Frame ist identisch zum vorigen). Wenn nicht gebakt wird, könnte UE5 versuchen, die identischen Frames zu glätten oder anders zu interpretieren.</p>
+      <div class="box box-merk">
+        <div class="box-label">Stepped-Look ist in den Keyframe-Werten</div>
+        <p>Der Anime-Look entsteht durch die Folge identischer Frame-Paare, nicht durch eine separate „Stepped"-Eigenschaft im FBX. Daher: Bake ist Pflicht, weil dadurch alle Frames als separate Keys exportiert werden. Beim Import in UE5 erscheinen die Stepped-Frames als gebakte Animation Sequence — UE5 zeigt sie pixel-genau wie aus Cascadeur.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#284858">UE5 SEQUENCER · CINEMATIC TRACK</text>
+        <rect x="40" y="50" width="240" height="125" fill="#284858" opacity="0.1" stroke="#284858" stroke-width="1.5"/>
+        <text x="60" y="72" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Sequence Frame Rate</text>
+        <text x="260" y="72" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">24 fps (matching)</text>
+        <text x="60" y="92" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Animation Asset</text>
+        <text x="260" y="92" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Anim_Pointing_Stepped</text>
+        <text x="60" y="112" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Looping</text>
+        <text x="260" y="112" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">DISABLE (einmalig)</text>
+        <text x="60" y="132" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Camera Frame Rate</text>
+        <text x="260" y="132" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">24 fps</text>
+        <text x="60" y="152" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Render</text>
+        <text x="260" y="152" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Movie Render Queue</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">UE5-Sequencer bei matching 24 fps · Stepped-Look erhalten</text>
+      </svg>
+      <div class="caption">UE5-Integration. Sequencer bei 24 fps für Cinematic-Konsistenz.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">17</span><span class="step-title">UE5-Integration und Cinematic-Render</span></div>
+      <p>FBX in UE5 importieren. Target-Skeleton: SK_Mannequin. Animation Sequence wird angelegt als <code>Anim_Pointing_Stepped</code>.</p>
+      <p>UE5-Sequencer-Setup für Cinematic-Konsistenz:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Sequence Frame Rate</strong>: 24 fps (matching, sonst Mismatch-Probleme)</li>
+        <li><strong>Animation Asset</strong>: Stepped-Sequence auf Animation-Track platzieren</li>
+        <li><strong>Looping</strong>: DISABLE (Pointing-Action ist einmalig)</li>
+        <li><strong>Camera Frame Rate</strong>: 24 fps</li>
+        <li><strong>Render</strong>: Movie Render Queue (wie in Projekt 11) bei 24 fps</li>
+      </ul>
+      <p>Pipeline-Validierung: Stepped-Animation läuft in UE5 mit Anime-Look. Bewegung ist nicht glatt, sondern stepped wie in Cascadeur. Camera bei 24 fps verstärkt den Cinematic-Look.</p>
+      <p>Optional für volle Anime-Optik: Cel-Shading-Material auf Manny anwenden (UE5 Toon-Shader oder Custom-Material). Das ergibt einen 2D-Look auf 3D-Geometrie — die klassische Kombination für moderne Anime-CGI-Produktionen.</p>
+      <div class="box box-check">
+        <div class="box-label">Pipeline-Abschluss · Stepped-Workflow integriert</div>
+        <p>Du hast jetzt einen kompletten Stepped-Workflow von Cascadeur bis UE5. Verwendbar für: Cinematic-Cutscenes mit Anime-Charakter, Mixed-Style-Sequenzen (Stepped für Drama-Beats, glatt für Dialog), Game-Trailers mit stylized Look. Diese Brochüre ist die einzige in der Reihe, die einen kompletten Stil-Wechsel zeigt — alle anderen sind realistisch ausgelegt. Wenn du eine Stepped-Animation brauchst: diese Brochüre als Referenz, plus Backup der glatten Version für Iterations-Loops.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="outro">
+  <h2>Was du jetzt <em>kannst</em>.</h2>
+  <p class="intro">Track 4 hat jetzt drei Spezialisierungs-Brochüren — Combat (12), Waffen (14), Stilwechsel (13).</p>
+  <p>Du kannst jetzt zwischen Realismus und Stepped-Stylized bewusst wählen. Die Workflow-Inversionen hast du verinnerlicht: 24 fps statt 30 fps für Cinematic, Bezier statt Inbetweening für Hold-Moving-Hold, Inbetweening nur für zyklische Bewegung (Walk, Stand-Up), Fingers immer Bezier. Plus: die Animation-Scripts-Toolbox (Add Noise, Reverse Animation, Go to Origin, Keyframe Reduction) ist im Vokabular.</p>
+  <p>Was diese Brochüre besonders macht — sie ist die einzige in der Reihe, die einen <em>kompletten Stil-Wechsel</em> demonstriert. Alle anderen Brochüren erweitern das realistische Animations-Vokabular. Diese öffnet die Reihe für stylized Cinematic-Anwendungen. Wer narrative Cutscenes mit Anime-Look produzieren will (in UE5-Cinematics, in Cutscene-Filmen, in Mixed-Media-Animationen), hat jetzt den Workflow.</p>
+  <p>Limitation, die im Tutorial erwähnt wird und hier nicht umgangen werden kann: Scale-Manipulation für stretchy stylization (klassisches Cartoon-Squash-and-Stretch mit verlängerten Gliedmaßen) ist im Cascadeur-Rig nicht möglich. Für solche Effekte: zurück zu klassischen 2D-Tools oder Custom-Rigs in Maya/Blender mit Scale-Driven-Animation-Setup.</p>
+  <div class="next-up">
+    <div class="next-label">Nächste Brochüre (optional)</div>
+    <h3>Projekt 15 · <em>Creative Root Motion 2026.1</em></h3>
+    <p style="font-size: 0.92rem; margin: 0;">Letzte empfohlene Track-4-Brochüre. Cascadeurs 2026.1-spezifisches Generation-Feature: Animation aus Path + Style-Preset (walking, running, jumping, acrobatics). Reference-Mode kopiert Mixamo-Style. Idle-Generation. Eine neue Animation-Input-Methode neben Inbetweening und manuellem Posing.</p>
+  </div>
+</section>
+
+<footer class="doc-footer">
+  <div><span class="terracotta">Projekt 13 · v 1.0 · Stepped Stylized</span></div>
+  <div>17 Schritte · 6 Phasen</div>
+  <div>Cascadeur · Lernreihe · Track 4</div>
+</footer>
+
+</article>
+
+</body>
+</html>

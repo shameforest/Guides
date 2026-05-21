@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projekt 12 · Kick-Animation · Cascadeur-Lernreihe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3ecdc; --paper-warm: #ede4d0; --paper-dark: #e2d6b8;
+    --ink: #1f1a14; --ink-soft: #5a4d3a; --ink-faint: #8a7d68;
+    --terracotta: #b85528; --terracotta-deep: #7a3414;
+    --cobalt: #284858; --sage: #8a9878; --warning: #c46b3a; --rule: #c8b89a;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'DM Sans', -apple-system, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); font-size: 16px; line-height: 1.6; color: var(--ink); background: var(--paper); background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"); -webkit-font-smoothing: antialiased; }
+  .doc { max-width: 1100px; margin: 0 auto; }
+
+  .cover { padding: 3.5rem 5rem 2.5rem; border-bottom: 1px solid var(--rule); position: relative; overflow: hidden; }
+  .cover::before { content: ''; position: absolute; top: -10%; right: -8%; width: 50%; aspect-ratio: 1; background: radial-gradient(circle, rgba(184, 85, 40, 0.08) 0%, transparent 65%); border-radius: 50%; pointer-events: none; }
+  .cover-marker { display: flex; align-items: center; gap: 1.5rem; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 1.5rem; }
+  .cover-marker .ml { width: 60px; height: 1px; background: var(--terracotta); }
+  .cover h1 { font-family: var(--font-display); font-size: clamp(2.6rem, 5vw, 4.2rem); font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 50; line-height: 1.05; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 1.5rem; max-width: 18ch; }
+  .cover h1 em { font-style: italic; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); }
+  .cover .subtitle { font-family: var(--font-display); font-style: italic; font-size: 1.2rem; color: var(--ink-soft); max-width: 58ch; margin-bottom: 2rem; }
+  .cover-meta { display: flex; gap: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); flex-wrap: wrap; }
+  .mb { display: flex; flex-direction: column; gap: 0.2rem; }
+  .mb-label { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); }
+  .mb span:last-child { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: var(--ink); }
+
+  .section { padding: 3rem 5rem; border-bottom: 1px solid var(--rule); }
+  .section-head { display: grid; grid-template-columns: 80px 1fr; gap: 1.5rem; margin-bottom: 1.8rem; align-items: start; }
+  .section-num { font-family: var(--font-display); font-size: 2.8rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 1; }
+  .section-tag { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+  .section-title { font-family: var(--font-display); font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 400; line-height: 1.15; color: var(--ink); letter-spacing: -0.01em; max-width: 26ch; }
+  .section-title em { font-style: italic; font-weight: 300; color: var(--terracotta); font-variation-settings: 'opsz' 144, 'SOFT' 100; }
+  .section p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .section p.lead { font-family: var(--font-display); font-style: italic; font-size: 1.18rem; color: var(--ink-soft); margin-bottom: 1.5rem; max-width: 60ch; }
+
+  .phase-banner { display: grid; grid-template-columns: 110px 1fr; gap: 2rem; margin: 2rem 0 2.5rem; padding: 1.4rem 1.8rem; background: linear-gradient(90deg, rgba(184, 85, 40, 0.10), transparent); border-left: 4px solid var(--terracotta); align-items: center; }
+  .phase-letter { font-family: var(--font-display); font-size: 5rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); line-height: 0.85; text-align: center; }
+  .phase-banner h4 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; color: var(--ink); margin-bottom: 0.3rem; }
+  .phase-banner .phase-meta { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.5rem; }
+  .phase-banner p { font-size: 0.97rem; color: var(--ink); margin-bottom: 0; max-width: 65ch; }
+  .phase-banner em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .phase-banner.diag { background: linear-gradient(90deg, rgba(40, 72, 88, 0.10), transparent); border-left-color: var(--cobalt); }
+  .phase-banner.diag .phase-letter { color: var(--cobalt); }
+  .phase-banner.impact { background: linear-gradient(90deg, rgba(196, 107, 58, 0.13), transparent); border-left-color: var(--warning); }
+  .phase-banner.impact .phase-letter { color: var(--warning); }
+
+  .step { display: grid; grid-template-columns: 320px 1fr; gap: 1.8rem; margin: 1.6rem 0; padding: 1.6rem 1.8rem; background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; }
+  .step-diagram { background: #f3ecdc; border: 1px solid #c8b89a; border-radius: 6px; padding: 1rem 0.6rem 0.6rem; align-self: start; }
+  .step-diagram svg { width: 100%; height: auto; display: block; }
+  .step-diagram .caption { margin-top: 0.5rem; text-align: center; font-family: var(--font-display); font-style: italic; font-size: 0.82rem; color: var(--ink-soft); line-height: 1.4; }
+  .step-num-row { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 0.6rem; }
+  .step-num { font-family: var(--font-display); font-size: 1.8rem; font-weight: 300; font-style: italic; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); line-height: 1; }
+  .step-title { font-family: var(--font-display); font-size: 1.18rem; font-weight: 500; color: var(--ink); line-height: 1.25; }
+  .step p { font-size: 0.96rem; margin-bottom: 0.6rem; max-width: none; }
+  .step p:last-child { margin-bottom: 0; }
+  .step em { font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .shortcut-row { display: flex; flex-wrap: wrap; gap: 0.4rem 0.7rem; align-items: center; margin: 0.5rem 0 0.4rem; font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; color: var(--ink-soft); }
+  kbd { font-family: var(--font-mono); font-size: 0.78rem; background: var(--paper-warm); border: 1px solid var(--rule); border-radius: 3px; padding: 0.05rem 0.4rem; color: var(--ink); box-shadow: 0 1px 0 var(--rule); }
+
+  .box { margin: 1.4rem 0; padding: 1.1rem 1.3rem; border-radius: 0 4px 4px 0; max-width: none; }
+  .step .box { margin: 0.9rem 0 0.4rem; }
+  .box-label { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; margin-bottom: 0.4rem; }
+  .box-label::before { content: ''; width: 14px; height: 1.5px; background: currentColor; }
+  .box p { font-size: 0.93rem; margin-bottom: 0.4rem; }
+  .box p:last-child { margin-bottom: 0; }
+  .box-why { background: rgba(40, 72, 88, 0.10); border-left: 3px solid var(--cobalt); }
+  .box-why .box-label { color: var(--cobalt); }
+  .box-stolper { background: rgba(196, 107, 58, 0.13); border-left: 3px solid var(--warning); }
+  .box-stolper .box-label { color: var(--warning); }
+  .box-merk { background: rgba(184, 85, 40, 0.10); border-left: 3px solid var(--terracotta); }
+  .box-merk .box-label { color: var(--terracotta); }
+  .box-check { background: rgba(138, 152, 120, 0.18); border-left: 3px solid var(--sage); }
+  .box-check .box-label { color: var(--sage); }
+
+  .insight { margin: 1.4rem 0; padding: 1.1rem 1.3rem; background: var(--paper-warm); border: 1px dashed var(--rule); border-radius: 6px; font-family: var(--font-display); font-style: italic; font-size: 0.96rem; color: var(--ink-soft); max-width: 65ch; }
+  .insight::before { content: 'Randnotiz'; display: block; font-family: var(--font-mono); font-style: normal; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 0.4rem; }
+
+  .outro { padding: 3rem 5rem; background: linear-gradient(180deg, var(--paper), var(--paper-warm)); border-top: 2px solid var(--terracotta); }
+  .outro h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 3.5vw, 2.5rem); font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; color: var(--terracotta); margin-bottom: 1.2rem; max-width: 22ch; line-height: 1.1; }
+  .outro p { max-width: 65ch; margin-bottom: 0.9rem; }
+  .outro p.intro { font-family: var(--font-display); font-style: italic; font-size: 1.12rem; color: var(--ink-soft); margin-bottom: 1.4rem; }
+  .next-up { margin-top: 1.5rem; padding: 1.2rem 1.5rem; background: var(--paper); border-left: 4px solid var(--cobalt); border-radius: 0 4px 4px 0; }
+  .next-up .next-label { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cobalt); margin-bottom: 0.4rem; }
+  .next-up h3 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 500; color: var(--ink); margin-bottom: 0.5rem; }
+  .next-up h3 em { font-style: italic; color: var(--cobalt); }
+
+  .doc-footer { padding: 2.5rem 5rem; border-top: 2px solid var(--ink); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); display: flex; justify-content: space-between; }
+  .doc-footer .terracotta { color: var(--terracotta); }
+
+  @media (max-width: 900px) {
+    .cover, .section, .doc-footer, .outro { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .section-head { grid-template-columns: 1fr; gap: 0.5rem; }
+    .step { grid-template-columns: 1fr; gap: 1rem; }
+    .step-diagram { max-width: 280px; margin: 0 auto; }
+    .phase-banner { grid-template-columns: 1fr; gap: 0.5rem; }
+    .phase-letter { text-align: left; font-size: 3.5rem; }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #1a1612; --paper-warm: #221d17; --paper-dark: #2a241c; --ink: #ebe3d0; --ink-soft: #b8a98a; --ink-faint: #7a6e58; --terracotta: #e8814a; --terracotta-deep: #c25a2a; --cobalt: #6a9aab; --sage: #a8b898; --warning: #e2884d; --rule: #3a3026; }
+    body { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"); }
+    .step-diagram { background: #f3ecdc !important; border-color: #c8b89a !important; }
+    .step-diagram .caption { color: #5a4d3a !important; }
+  }
+</style>
+</head>
+<body>
+
+<article class="doc">
+
+<header class="cover">
+  <div class="cover-marker"><span>Cascadeur · Lernreihe · Track 4</span><div class="ml"></div><span>Projekt 12 · v 1.0</span></div>
+  <h1>Kick-<em>Animation</em>:<br>Foot-Sliding-Fix<br>und Impact.</h1>
+  <p class="subtitle">Front-Kick als erste Combat-Animation der Reihe. Reference-Workflow als Sub-Disziplin. Ghost-Mode als zentrales Diagnose-Werkzeug. Paste Into Interval und Tween Machine gegen Foot-Sliding. Impact-Frame-Exaggeration als künstlerisches Prinzip. Faustregel: IK auf Boden, FK/GR in der Luft.</p>
+  <div class="cover-meta">
+    <div class="mb"><span class="mb-label">Charakter</span><span>UE5-Manny</span></div>
+    <div class="mb"><span class="mb-label">Dauer</span><span>2.5 s · 75 Frames</span></div>
+    <div class="mb"><span class="mb-label">Hauptproblem</span><span>Foot-Sliding</span></div>
+    <div class="mb"><span class="mb-label">Neu</span><span>Ghost · Paste-Into-Interval · Impact-Exaggeration</span></div>
+    <div class="mb"><span class="mb-label">Pipeline-Ziel</span><span>UE5 Combat-Cutscenes</span></div>
+    <div class="mb"><span class="mb-label">Schritte</span><span>17</span></div>
+  </div>
+</header>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§1</div><div><div class="section-tag">Combat-Konzept und Bewegungs-Klasse</div><h2 class="section-title">Combat ist <em>nicht Lokomotion</em>.</h2></div></div>
+  <p class="lead">Alle bisherigen Bewegungs-Brochüren waren Lokomotion — Walk, Run, Jump, Hinsetzen. Combat ist eine eigene Bewegungs-Klasse mit anderer Charakteristik: explosive Bursts statt zyklischer Periodizität, klare Impact-Frames statt fließender Übergänge, Foot-Sliding als Hauptproblem statt Foot-Cycling.</p>
+  <p>Konkretes Szenario: ein Front-Kick. Manny startet aus stabiler Stand-Pose (Setup), zieht das hintere Bein hoch und beugt die Hüfte (Wind-Up), streckt das Bein explosiv nach vorn (Impact), zieht es zurück und kehrt zur Stand-Pose (Cool-Down). 2.5 Sekunden insgesamt, mit dem Impact-Frame als visuellem Höhepunkt.</p>
+  <p>Drei neue Werkzeuge ins Vokabular: <strong>Ghost Mode</strong> als Diagnose-Tool für Foot-Position zwischen Keyframes, <strong>Paste Into Interval</strong> (<kbd>Ctrl+Alt+V</kbd>) als Workflow für statische Bein-Phasen, <strong>Tween Machine</strong> auf Foot-Hold angewandt. Plus: zwei kanonische Combat-Prinzipien — Impact-Frame-Exaggeration und IK/FK-Wechsel je nach Bodenkontakt.</p>
+  <div class="box box-why">
+    <div class="box-label">Warum Foot-Sliding das Hauptproblem ist</div>
+    <p>Bei Walk/Run bewegt sich der Charakter durch den Raum — Foot-Sliding zwischen Bodenkontakten ist gewollte Bewegung. Bei Combat steht der Charakter <em>auf der Stelle</em> und nur ein Bein bewegt sich. Das Stand-Bein darf nicht driften — sonst sieht der Kick aus, als würde Manny auf Eis ausrutschen. Foot-Sliding wird hier vom akzeptierten Side-Effect zum primären Bug. Cascadeur's Standard-Interpolation generiert dieses Sliding automatisch, weil sie die ganzkörperliche Bewegung mit den Foot-Positionen mitrechnet. Manuelle Fixes sind nötig.</p>
+  </div>
+  <div class="insight">
+    Bruce Lee hat seinen berühmten „one-inch punch" gerade nicht aus dem Arm geschlagen — die Kraft kam aus der Hüft-Rotation, durch die Schulter, aus der Faust raus. Die ganze kinetische Kette war auf einen einzigen Impact-Frame fokussiert. Beim Animieren eines Kicks ist die Hüfte das wichtigste Element: sie rotiert vor dem Impact-Frame und verleiht dem Bein die Beschleunigung. Wer einen Kick aus dem Knie animiert, bekommt einen Tritt, der wie ein Spielzeug aussieht. Wer ihn aus der Hüfte animiert, bekommt Gewicht und Kraft. Eadweard Muybridge hat 1887 in seinem „Animal Locomotion" auch Boxer und Kämpfer fotografiert — die Bilder zeigen klar, wie die Hüfte vor dem Schlag rotiert, nicht der Arm.
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§2</div><div><div class="section-tag">Phase A · Reference und Konzept</div><h2 class="section-title">Erst <em>schauen</em>, dann animieren.</h2></div></div>
+  <div class="phase-banner diag"><div class="phase-letter">A</div><div><h4>Reference</h4><div class="phase-meta">Reference-Quelle · AE-Vorbereitung · Blocking-Plan</div><p>Bei Combat-Animation gilt: ohne Reference keine Glaubwürdigkeit. Reference-Stage als eigene Phase vor Cascadeur. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">REFERENCE-QUELLEN</text>
+        <rect x="30" y="50" width="260" height="22" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+        <text x="40" y="64" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Motion Actor Inc</text>
+        <text x="280" y="64" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">YouTube · Kampfkunst</text>
+        <rect x="30" y="76" width="260" height="22" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+        <text x="40" y="90" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Endless Reference</text>
+        <text x="280" y="90" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">YouTube · breit</text>
+        <rect x="30" y="102" width="260" height="22" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+        <text x="40" y="116" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Nat Hearn Martial Arts</text>
+        <text x="280" y="116" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Pose-Breakdowns</text>
+        <rect x="30" y="128" width="260" height="22" fill="#ede4d0" stroke="#1f1a14" stroke-width="1"/>
+        <text x="40" y="142" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Gamology</text>
+        <text x="280" y="142" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Game-Recreations</text>
+        <rect x="30" y="154" width="260" height="22" fill="#b85528" opacity="0.15" stroke="#b85528" stroke-width="1.5"/>
+        <text x="40" y="168" font-family="DM Sans, sans-serif" font-size="10" font-weight="600" fill="#1f1a14">Howard Wimshurst</text>
+        <text x="280" y="168" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Premium</text>
+        <text x="160" y="195" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Fünf Standard-Quellen für Combat-Reference</text>
+      </svg>
+      <div class="caption">Bewährte Reference-Quellen. Motion Actor Inc als Standard.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">01</span><span class="step-title">Reference suchen und analysieren</span></div>
+      <p>Vor Cascadeur: ein konkretes Reference-Video für den Front-Kick finden. Bewährte Quellen aus der Workflow-Referenz:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Motion Actor Inc</strong> (YouTube) — Kampfkunst-Bibliothek mit mehreren Kamerawinkeln pro Move</li>
+        <li><strong>Endless Reference</strong> (YouTube) — breite Action-Bibliothek</li>
+        <li><strong>Nat Hearn Martial Arts</strong> — analytische Pose-Breakdowns zeigen explizit, was vor dem Kick mit den Hüften passiert</li>
+        <li><strong>Gamology Samurai</strong> — Game-Moves real nachgestellt</li>
+        <li><strong>Howard Wimshurst</strong> (animationguild.com) — Premium Reference-Packs</li>
+      </ul>
+      <p>Beim Analysieren auf drei Sachen achten: <strong>Hüft-Rotation vor dem Kick</strong> (kommt zuerst), <strong>Foot-Rotation</strong> (Stand-Fuß rotiert oft nach innen während des Kicks), <strong>Impact-Dauer</strong> (in Reality oft nur 1-2 Frames).</p>
+      <div class="insight">
+        Frank Frazetta, der legendäre Fantasy-Illustrator, hat über Combat-Posen gesagt: „Der Moment vor dem Schlag ist wichtiger als der Schlag selbst." In seinen Conan-Bildern siehst du nie den Treffer — du siehst die Anticipation, den Wind-Up, die Spannung. Animation lernt von Illustration: die Wind-Up-Pose erzählt dem Zuschauer, was kommt. Der Impact ist die Erfüllung der Erwartung, die durch den Wind-Up erzeugt wurde.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">AE TIME REMAPPING · EXAGGERATION</text>
+        <text x="30" y="58" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Original</text>
+        <line x1="80" y1="55" x2="290" y2="55" stroke="#1f1a14" stroke-width="1.5"/>
+        <rect x="80" y="48" width="60" height="14" fill="#284858" opacity="0.4"/>
+        <text x="110" y="58" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">Wind-Up</text>
+        <rect x="140" y="48" width="20" height="14" fill="#b85528" opacity="0.5"/>
+        <text x="150" y="58" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">I</text>
+        <rect x="160" y="48" width="130" height="14" fill="#284858" opacity="0.4"/>
+        <text x="225" y="58" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">Cool-Down</text>
+        <text x="160" y="90" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b85528">↓</text>
+        <text x="30" y="115" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">Exaggeriert</text>
+        <line x1="80" y1="112" x2="290" y2="112" stroke="#1f1a14" stroke-width="1.5"/>
+        <rect x="80" y="105" width="30" height="14" fill="#284858" opacity="0.4"/>
+        <text x="95" y="115" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#1f1a14">W-U</text>
+        <rect x="110" y="105" width="60" height="14" fill="#b85528" opacity="0.6"/>
+        <text x="140" y="115" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#f3ecdc">IMPACT</text>
+        <rect x="170" y="105" width="120" height="14" fill="#284858" opacity="0.4"/>
+        <text x="230" y="115" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">Cool-Down</text>
+        <text x="160" y="150" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Wind-Up komprimieren · Impact verlängern</text>
+        <text x="160" y="170" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">— Animation lebt von Exaggeration</text>
+      </svg>
+      <div class="caption">Reference-Exaggeration in After Effects vor Cascadeur-Import.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">02</span><span class="step-title">Reference in After Effects exaggerieren</span></div>
+      <p>Reference-Video in After Effects laden. <strong>Time Remapping</strong> aktivieren (Layer-Right-Click → Time → Enable Time Remapping). Drei Anpassungen:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Wind-Up komprimieren</strong>: die Anticipation-Phase um etwa 30% kürzen. Schneller bedeutet impulsiver</li>
+        <li><strong>Impact-Frame verlängern</strong>: aus 1-2 Frames werden 3-4 Frames. Sichtbarkeit über physikalische Korrektheit</li>
+        <li><strong>Cool-Down lassen</strong>: die Recovery-Phase bleibt etwa wie in der Reference</li>
+      </ul>
+      <p>Bearbeitetes Reference-Video als MP4 exportieren. Das ist die finale Reference für Cascadeur — nicht das Original. Animation ist Exaggeration; eine 1:1-Übernahme der Reality wirkt am Bildschirm flach.</p>
+      <div class="box box-merk">
+        <div class="box-label">Reference-Sticking ist temporär</div>
+        <p>An die Reference klebt man nur in kritischen Frames — Wind-Up-Peak, Impact-Frame, Cool-Down-Settle. Zwischen diesen Frames ist Polish frei. Wer 1:1 nach Reference animiert, bekommt eine Mocap-Imitation, kein Animation-Werk. Die Reference ist Krücke, keine Kette.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">BLOCKING-PLAN · 4 SCHLÜSSEL-POSEN</text>
+        <line x1="20" y1="100" x2="300" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <rect x="20" y="93" width="30" height="14" fill="#284858" opacity="0.5"/>
+        <text x="35" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">Setup</text>
+        <text x="35" y="140" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#5a4d3a">F0-F10</text>
+        <rect x="50" y="93" width="40" height="14" fill="#c46b3a" opacity="0.5"/>
+        <text x="70" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#c46b3a">Wind-Up</text>
+        <text x="70" y="140" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#5a4d3a">F10-F25</text>
+        <rect x="90" y="93" width="20" height="14" fill="#b85528" opacity="0.7" stroke="#b85528" stroke-width="1.2"/>
+        <text x="100" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528" font-weight="600">IMPACT</text>
+        <text x="100" y="140" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#5a4d3a">F25-F35</text>
+        <rect x="110" y="93" width="60" height="14" fill="#284858" opacity="0.4"/>
+        <text x="140" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">Retract</text>
+        <text x="140" y="140" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#5a4d3a">F35-F50</text>
+        <rect x="170" y="93" width="80" height="14" fill="#284858" opacity="0.4"/>
+        <text x="210" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">Cool-Down</text>
+        <text x="210" y="140" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#5a4d3a">F50-F75</text>
+        <text x="160" y="170" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">75 Frames · 2.5 s bei 30 fps</text>
+        <text x="160" y="187" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Asymmetrisches Timing · Impact als visueller Anker</text>
+      </svg>
+      <div class="caption">Blocking-Plan: vier Phasen, asymmetrisches Timing.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">03</span><span class="step-title">Blocking-Plan mit vier Schlüssel-Posen</span></div>
+      <p>75 Frames bei 30 fps = 2.5 Sekunden. Vier Schlüssel-Posen mit asymmetrischem Timing:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>F0-F10 · Setup</strong>: stabile Combat-Stand-Pose, Fäuste hoch, leichte Knie-Beugung, Gewicht gleichmäßig</li>
+        <li><strong>F15 · Wind-Up</strong>: Hüfte beginnt zu rotieren, Kick-Bein hochgezogen, Knie gebeugt</li>
+        <li><strong>F25 · Impact</strong>: Bein voll gestreckt nach vorn, Hüfte maximal rotiert, Stand-Fuß leicht nach innen rotiert</li>
+        <li><strong>F40 · Retract</strong>: Kick-Bein wird zurückgezogen, ähnlich zu Wind-Up aber gespiegelt</li>
+        <li><strong>F75 · Cool-Down/Settle</strong>: zurück zur Setup-Pose, leichte Atmung als Settle</li>
+      </ul>
+      <p>Asymmetrisches Timing — Wind-Up und Impact sind kürzer (Beschleunigung), Cool-Down ist länger (Settle).</p>
+      <div class="box box-stolper">
+        <div class="box-label">Symmetrisches Timing wirkt mechanisch</div>
+        <p>Wenn Wind-Up = Impact = Cool-Down (gleiche Frame-Längen), wirkt der Kick wie ein Roboter-Move ohne Charakter. Asymmetrie ist das, was Animation von Mocap unterscheidet: Wind-Up schnell, Impact gehalten, Cool-Down ausgedehnt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§3</div><div><div class="section-tag">Phase B · Blocking</div><h2 class="section-title">Vier Anker, <em>klares Spacing</em>.</h2></div></div>
+  <div class="phase-banner"><div class="phase-letter">B</div><div><h4>Blocking</h4><div class="phase-meta">Setup · Wind-Up · Impact · Cool-Down</div><p>Vier Anker-Posen setzen — keine Inbetweening dazwischen, sondern Bezier. Inbetweening kommt nicht gut mit Hold-Moving-Hold zurecht. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="160" cy="40" r="10" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="160" y1="50" x2="160" y2="115" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="152" y1="115" x2="168" y2="115" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="160" y1="68" x2="138" y2="85" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="138" y1="85" x2="142" y2="105" stroke="#1f1a14" stroke-width="2"/>
+        <circle cx="140" cy="108" r="4" fill="#b85528"/>
+        <line x1="160" y1="68" x2="182" y2="85" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="182" y1="85" x2="178" y2="105" stroke="#1f1a14" stroke-width="2"/>
+        <circle cx="180" cy="108" r="4" fill="#b85528"/>
+        <line x1="152" y1="115" x2="148" y2="145" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="148" y1="145" x2="146" y2="170" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="168" y1="115" x2="172" y2="145" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="172" y1="145" x2="174" y2="170" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="140" y1="170" x2="155" y2="170" stroke="#1f1a14" stroke-width="2.5"/>
+        <line x1="165" y1="170" x2="180" y2="170" stroke="#1f1a14" stroke-width="2.5"/>
+        <text x="160" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">F0 · COMBAT STANCE</text>
+      </svg>
+      <div class="caption">Setup-Pose: Fäuste in Garde, Knie leicht gebeugt, Gewicht balanciert.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">04</span><span class="step-title">Anker — Setup-Pose (Frame 0)</span></div>
+      <p>Manny in Combat-Stand-Pose. Drei Charakteristika unterscheiden sie von der Idle-Pose aus Projekt 01:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Fäuste in Garde-Position</strong>: beide Hände auf Brusthöhe, leichte Faust-Pose. Hand-AutoPosing aktiv für Faust-Form</li>
+        <li><strong>Knie leicht gebeugt</strong>: ca. 15-20°. Pelvis 3-5 cm tiefer als Idle, bereit für Bewegung</li>
+        <li><strong>Stance leicht versetzt</strong>: linker Fuß minimal vor dem anderen (orthodox stance — rechtes Bein kickt)</li>
+      </ul>
+      <p>Beide Füße via <kbd>R</kbd> fixieren. Keyframe setzen. Speichern als <code>projekt-12-kick-v01.casc</code>.</p>
+      <div class="box box-merk">
+        <div class="box-label">Bezier statt Inbetweening</div>
+        <p>Wichtige Workflow-Entscheidung: bei Combat-Animation nicht Inbetweening verwenden, sondern Bezier-Interpolation. Inbetweening rechnet die ganze Bewegung als organischen Fluss — bei Kick brauchst du aber harte Holds vor und nach dem Impact. Bezier mit klar gesetzten Anker-Posen erlaubt diese Holds.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="160" cy="50" r="10" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="160" y1="60" x2="158" y2="115" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="150" y1="115" x2="166" y2="115" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="160" y1="78" x2="135" y2="95" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="135" y1="95" x2="125" y2="115" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="160" y1="78" x2="185" y2="95" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="185" y1="95" x2="195" y2="115" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="150" y1="115" x2="148" y2="145" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="148" y1="145" x2="146" y2="170" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="140" y1="170" x2="155" y2="170" stroke="#1f1a14" stroke-width="2.5"/>
+        <line x1="166" y1="115" x2="195" y2="130" stroke="#b85528" stroke-width="2.5"/>
+        <line x1="195" y1="130" x2="200" y2="150" stroke="#b85528" stroke-width="2.5"/>
+        <circle cx="202" cy="153" r="3" fill="#b85528"/>
+        <path d="M 155 110 Q 175 100, 185 110" stroke="#b85528" stroke-width="1.5" fill="none" stroke-dasharray="2,1"/>
+        <text x="195" y="105" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">HIP ROT</text>
+        <text x="160" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">F15 · WIND-UP</text>
+      </svg>
+      <div class="caption">Wind-Up: Hüfte rotiert nach vorn, Kick-Bein hochgezogen.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">05</span><span class="step-title">Anker — Wind-Up-Pose (Frame 15)</span></div>
+      <p>Frame 15. Anticipation-Phase. Drei Bewegungs-Komponenten gleichzeitig:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Hüfte rotiert</strong>: Pelvis um Y-Achse ca. 15-20° nach vorn — das ist die Hauptkraft-Quelle, kommt VOR dem Bein</li>
+        <li><strong>Kick-Bein hochgezogen</strong>: Knie auf Hüfthöhe, Fuß angewinkelt unter dem Knie. Im <strong>FK-Mode</strong> (Bein ist in der Luft)</li>
+        <li><strong>Stand-Bein leicht gebeugt</strong>: bleibt im <strong>IK-Mode</strong> (Bodenkontakt). Knie federt minimal</li>
+        <li><strong>Arme als Counter</strong>: leicht nach hinten/unten, balancieren die Vorwärts-Bewegung</li>
+      </ul>
+      <p>Keyframe setzen. Stand-Fuß bleibt mit <kbd>R</kbd> fixiert.</p>
+      <div class="shortcut-row"><span>Fixation:</span><kbd>R</kbd><span>FK/IK Switch:</span><span>Properties-Panel rechts</span></div>
+      <div class="box box-merk">
+        <div class="box-label">Hüfte führt das Bein</div>
+        <p>Der kanonische Fehler bei Kick-Animation: nur das Bein animieren, ohne Pelvis-Rotation. Das ergibt einen Tritt aus dem Knie — physikalisch schwach. Richtig: Pelvis rotiert zuerst, das Bein folgt der Hüft-Rotation. Im Wind-Up-Frame sollte die Pelvis-Rotation schon halb da sein, im Impact-Frame voll.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="120" cy="50" r="10" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="120" y1="60" x2="125" y2="115" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="118" y1="115" x2="132" y2="115" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="122" y1="78" x2="98" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="98" y1="100" x2="92" y2="125" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="122" y1="78" x2="142" y2="92" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="142" y1="92" x2="148" y2="115" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="118" y1="115" x2="115" y2="145" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="115" y1="145" x2="113" y2="170" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="105" y1="170" x2="120" y2="170" stroke="#1f1a14" stroke-width="2.5"/>
+        <line x1="132" y1="115" x2="200" y2="115" stroke="#b85528" stroke-width="3"/>
+        <line x1="200" y1="115" x2="255" y2="118" stroke="#b85528" stroke-width="3"/>
+        <circle cx="258" cy="118" r="5" fill="#b85528" stroke="#1f1a14" stroke-width="1"/>
+        <line x1="262" y1="118" x2="280" y2="118" stroke="#b85528" stroke-width="1.5" stroke-dasharray="2,1"/>
+        <path d="M 280 110 L 290 118 L 280 126 z" fill="#b85528"/>
+        <text x="160" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">F25 · IMPACT · FULLY EXTENDED</text>
+      </svg>
+      <div class="caption">Impact: Bein voll gestreckt, Hüfte maximal rotiert.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">06</span><span class="step-title">Anker — Impact (F25) und Cool-Down (F75)</span></div>
+      <p>Frame 25 · Impact:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Kick-Bein voll gestreckt</strong>: horizontal nach vorn, Fuß auf Höhe der ursprünglichen Hüfte. <strong>FK-Mode</strong></li>
+        <li><strong>Pelvis maximal rotiert</strong>: 25-30° um Y-Achse</li>
+        <li><strong>Stand-Fuß rotiert leicht nach innen</strong>: 5-10° um Pelvis-Pivot. Stand-Bein bleibt IK</li>
+        <li><strong>Body leicht versetzt</strong>: durch Pelvis-Rotation ist der Oberkörper minimal seitlich verschoben</li>
+        <li><strong>Arme balancierend</strong>: leicht ausgestreckt für Gleichgewicht</li>
+      </ul>
+      <p>Frame 40 · Retract: spiegelbildlich zum Wind-Up, aber etwas „weicher". Bein zieht zurück, Hüfte beginnt zurückzurotieren.</p>
+      <p>Frame 75 · Cool-Down: zurück zur Setup-Pose, fast identisch zu Frame 0, aber mit minimalem Settle (Pelvis 1 cm tiefer, leichte Body-Atmung).</p>
+      <p>Alle drei Keyframes setzen. Vier Schlüssel-Posen sind gesetzt.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase B</div>
+        <p>Play. Manny zeigt den Kick als groben Move. Foot-Sliding ist sichtbar — besonders am Stand-Fuß zwischen Wind-Up und Impact. Das ist das primäre Problem für Phase C-D.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§4</div><div><div class="section-tag">Phase C · Foot-Diagnose</div><h2 class="section-title">Ghost Mode als <em>Tracking-Tool</em>.</h2></div></div>
+  <div class="phase-banner diag"><div class="phase-letter">C</div><div><h4>Diagnose</h4><div class="phase-meta">Ghost Mode · Foot-Sliding identifizieren · IK/FK-Regel</div><p>Vor dem Cleanup: präzise diagnostizieren, wo und wieviel der Fuß driftet. Ghost Mode macht das sichtbar. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">GHOST MODE · KEYFRAMES NUR</text>
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+        <circle cx="160" cy="50" r="9" fill="none" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="160" y1="59" x2="160" y2="115" stroke="#1f1a14" stroke-width="2"/>
+        <line x1="155" y1="170" x2="165" y2="170" stroke="#b85528" stroke-width="3"/>
+        <g opacity="0.4">
+          <circle cx="100" cy="50" r="9" fill="none" stroke="#284858" stroke-width="1.5" stroke-dasharray="2,1"/>
+          <line x1="100" y1="59" x2="100" y2="115" stroke="#284858" stroke-width="1.5" stroke-dasharray="2,1"/>
+          <line x1="95" y1="170" x2="105" y2="170" stroke="#284858" stroke-width="2" stroke-dasharray="2,1"/>
+        </g>
+        <text x="100" y="190" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#284858">Ghost · F0</text>
+        <g opacity="0.4">
+          <circle cx="220" cy="50" r="9" fill="none" stroke="#c46b3a" stroke-width="1.5" stroke-dasharray="2,1"/>
+          <line x1="220" y1="59" x2="220" y2="115" stroke="#c46b3a" stroke-width="1.5" stroke-dasharray="2,1"/>
+          <line x1="215" y1="170" x2="225" y2="170" stroke="#c46b3a" stroke-width="2" stroke-dasharray="2,1"/>
+        </g>
+        <text x="220" y="190" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#c46b3a">Ghost · F25</text>
+        <text x="160" y="190" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">Aktuell · F15</text>
+      </svg>
+      <div class="caption">Ghost Mode mit Keyframes Only und Outline. Beide Nachbar-Keyframes sichtbar.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">07</span><span class="step-title">Ghost Mode aktivieren</span></div>
+      <p>Ghost Mode ist das wichtigste Diagnose-Werkzeug für Foot-Sliding. Aus dem Kick-Tutorial direkt belegt: „Ghost Mode is absolutely amazing".</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Ghost-Dots-Button im Viewport (kleines Drei-Punkte-Icon links unten)</li>
+        <li>Drei Sub-Modi: <strong>Previous</strong>, <strong>Next</strong>, <strong>Both Neighbors</strong></li>
+        <li><strong>Keyframes Only</strong> aktivieren — sonst zu unübersichtlich</li>
+        <li><strong>Outline-Mode</strong> aktivieren — Konturen statt Vollkörper</li>
+      </ol>
+      <p>Empfohlene Konfiguration für Combat-Diagnose: <em>Both Neighbors + Keyframes Only + Outline</em>. Du siehst gleichzeitig die vorherige und nächste Schlüssel-Pose als Outlines, dazwischen die aktuelle Pose deutlich. Foot-Position-Drift zwischen Keyframes wird sofort sichtbar.</p>
+      <div class="box box-merk">
+        <div class="box-label">Ghost Outline ist Outline, nicht Silhouette</div>
+        <p>Zwei verschiedene Modi werden manchmal verwechselt. <strong>Silhouette Mode</strong> macht den aktuellen Charakter zur Vollform-Silhouette (Pose-Readability-Check). <strong>Ghost Outline</strong> zeigt frühere/spätere Frames als Kontur-Linien. Für Foot-Sliding: Ghost Outline. Für Pose-Klarheit: Silhouette.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FOOT-SLIDING IDENTIFIZIEREN</text>
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="50" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Stand-Fuß-Trajektorie</text>
+        <path d="M 80 158 Q 110 152, 140 154 Q 170 156, 200 158 Q 230 155, 260 158" stroke="#c46b3a" stroke-width="2" fill="none"/>
+        <circle cx="80" cy="158" r="4" fill="#1f1a14"/>
+        <text x="80" y="178" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">F0</text>
+        <circle cx="140" cy="154" r="4" fill="#c46b3a"/>
+        <text x="140" y="178" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#c46b3a">F15</text>
+        <circle cx="200" cy="158" r="4" fill="#c46b3a"/>
+        <text x="200" y="178" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#c46b3a">F25</text>
+        <circle cx="260" cy="158" r="4" fill="#1f1a14"/>
+        <text x="260" y="178" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">F75</text>
+      </svg>
+      <div class="caption">Foot-Sliding sichtbar als Drift-Bahn. F15 und F25 driften 4-6 cm.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">08</span><span class="step-title">Foot-Sliding lokalisieren via Trajectory</span></div>
+      <p>Stand-Fuß-Controller selektieren. Trajectory aktivieren mit <kbd>\</kbd> (Backslash) für persistent. <em>Set Trajectory Interval</em> für ganzen Range.</p>
+      <p>Bei einem sauberen Kick sollte die Trajectory eine fast-statische Linie sein — der Stand-Fuß soll sich nicht bewegen. Bei Default-Cascadeur-Interpolation siehst du stattdessen eine subtile Drift-Bahn, weil die Bezier-Interpolation den Stand-Fuß minimal mit dem Pelvis mitzieht.</p>
+      <p>Drift-Quellen identifizieren:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Wind-Up-Phase (F0→F15)</strong>: Stand-Fuß driftet leicht, weil Pelvis-Rotation den IK-Solver beeinflusst</li>
+        <li><strong>Impact-Phase (F15→F25)</strong>: stärkster Drift hier, weil Pelvis voll rotiert</li>
+        <li><strong>Retract (F25→F40)</strong>: Drift zurück, aber nicht exakt zur Ursprungs-Position</li>
+        <li><strong>Cool-Down (F40→F75)</strong>: Settle bringt Fuß nah, aber nicht exakt zurück</li>
+      </ul>
+      <p>Wenn die Drift-Trajektorie mehr als 2-3 cm beträgt: Cleanup in Phase D nötig.</p>
+      <div class="shortcut-row"><span>Trajectory persistent:</span><kbd>\</kbd></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">IK / FK / GR · PHASE-REGEL</text>
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+        <rect x="20" y="50" width="130" height="60" fill="#8a9878" opacity="0.3" stroke="#8a9878" stroke-width="1.5"/>
+        <text x="85" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a" font-weight="600">FUSS AM BODEN</text>
+        <text x="85" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">IK Mode</text>
+        <text x="85" y="100" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#5a4d3a">Stand-Fuß durchgehend</text>
+        <rect x="170" y="50" width="130" height="60" fill="#c46b3a" opacity="0.2" stroke="#c46b3a" stroke-width="1.5"/>
+        <text x="235" y="68" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a" font-weight="600">FUSS IN DER LUFT</text>
+        <text x="235" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">FK / GR Mode</text>
+        <text x="235" y="100" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#c46b3a">Kick-Bein F15-F40</text>
+        <text x="160" y="135" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">Kanonische Combat-Regel</text>
+        <text x="160" y="152" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#5a4d3a">— gilt für alle Combat-Animationen</text>
+      </svg>
+      <div class="caption">IK/FK-Faustregel: Boden = IK, Luft = FK oder GR.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">09</span><span class="step-title">IK/FK-Faustregel umsetzen</span></div>
+      <p>Aus dem Tutorial direkt belegt: <em>„When your foot is on the ground, keep it in IK mode."</em> Diese Regel ist kanonisch für jede Combat-Animation:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Stand-Fuß über alle 75 Frames</strong>: IK-Mode. Bodenkontakt heißt IK</li>
+        <li><strong>Kick-Bein F0-F10 und F50-F75</strong>: IK-Mode (auch am Boden)</li>
+        <li><strong>Kick-Bein F10-F50</strong>: in der Luft → FK oder GR. „In many cases, forward global kinematic in cascador works better"</li>
+      </ul>
+      <p>Mode-Wechsel: Bein-Controller selektieren, im Properties-Panel rechts „IK/FK/GR" wählen. Anzeige am Controller: keine Buchstaben = IK, „FK" = Forward Kinematics, „GR" = Global Rotation.</p>
+      <p>Diese Mode-Wechsel sind <em>keine</em> Anker-Posen-Änderung — sie sind eine Interpolations-Methoden-Wahl, die pro Frame gesetzt wird. Beim Mode-Wechsel bleibt die Pose visuell gleich, aber die Berechnungs-Methode für die Zwischen-Frames ändert sich.</p>
+      <div class="box box-stolper">
+        <div class="box-label">FK in der Luft, weil IK reagiert auf Boden</div>
+        <p>IK-Solver versuchen, den Fuß am Boden zu halten — wenn das Bein aber gerade durch die Luft schwingt, ist das die falsche Annahme. FK rechnet einfach Schulter-Knie-Fuß ohne Boden-Constraint, was bei Luft-Bewegungen sauberer ist. GR (Global Rotation) ist eine Variante, die in Cascadeur oft die besten Ergebnisse für Combat liefert.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§5</div><div><div class="section-tag">Phase D · Foot-Cleanup</div><h2 class="section-title">Paste Into Interval und <em>Tween Machine</em>.</h2></div></div>
+  <div class="phase-banner"><div class="phase-letter">D</div><div><h4>Foot-Cleanup</h4><div class="phase-meta">Paste Into Interval · Tween Machine · Anti-Slide-Workflow</div><p>Zwei zentrale Workflows um Foot-Sliding zu beseitigen. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">PASTE INTO INTERVAL · CTRL+ALT+V</text>
+        <line x1="30" y1="100" x2="290" y2="100" stroke="#1f1a14" stroke-width="2"/>
+        <rect x="40" y="93" width="6" height="14" fill="#1f1a14"/>
+        <text x="43" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">F0</text>
+        <text x="43" y="138" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#5a4d3a">Source</text>
+        <path d="M 60 100 Q 100 70, 140 95" stroke="#b85528" stroke-width="1.5" fill="none" stroke-dasharray="2,1"/>
+        <text x="100" y="60" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">Ctrl+C</text>
+        <rect x="155" y="93" width="80" height="14" fill="#b85528" opacity="0.4" stroke="#b85528" stroke-width="1.2"/>
+        <text x="195" y="84" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">Ctrl+Alt+V</text>
+        <text x="160" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">F10</text>
+        <text x="225" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#b85528">F20</text>
+        <text x="195" y="155" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">F0-Stand-Fuß in F10-F20 einpasten</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Stand-Fuß bleibt statisch · kein Drift</text>
+      </svg>
+      <div class="caption">Paste Into Interval: F0-Pose über ganzes Intervall verteilen.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">10</span><span class="step-title">Paste Into Interval für Stand-Fuß</span></div>
+      <p>Erstes Werkzeug gegen Foot-Sliding. Stand-Fuß-Controller selektieren auf Frame 0 (saubere IK-Pose). <kbd>Ctrl+C</kbd> kopiert. Dann zwischen F10 und F20 das Intervall auf der Timeline auswählen, <kbd>Ctrl+Alt+V</kbd> drückt — die F0-Pose wird in das ganze Intervall als Keyframes eingefügt.</p>
+      <p>Effekt: der Stand-Fuß bekommt auf jedem Frame im Intervall die exakt gleiche Pose wie F0 — kein Drift mehr.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Fix Interpolation on Change Interval deaktivieren</div>
+        <p>Default-Setting: aktiviert. Beim Paste Into Interval werden die Frames automatisch auf Fixed Interpolation (grüne Timeline) gebakt — die Bezier-Charakteristik geht verloren. Lösung aus dem Tutorial: <strong>vor Paste Into Interval</strong> die Option in den Settings deaktivieren. Nach <kbd>Ctrl+Z</kbd>, dann erneut <kbd>Ctrl+Alt+V</kbd> — jetzt werden nur die Keyframes gesetzt, Interpolation bleibt Bezier.</p>
+      </div>
+      <p>Anwendung für diesen Kick: Paste Into Interval für Stand-Fuß-Pose von F0 in die Intervalle F0-F15, F15-F25, F25-F40, F40-F75. Stand-Fuß ist über die ganze Animation statisch.</p>
+      <div class="shortcut-row"><span>Paste Into Interval:</span><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>V</kbd></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">TWEEN MACHINE · −1 / +1</text>
+        <rect x="40" y="50" width="240" height="120" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="160" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Tween Machine · Global Mode</text>
+        <line x1="60" y1="80" x2="260" y2="80" stroke="#c8b89a" stroke-width="0.5"/>
+        <text x="60" y="100" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">−1</text>
+        <text x="100" y="100" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">= Pose zum vorigen Keyframe</text>
+        <text x="60" y="120" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">+1</text>
+        <text x="100" y="120" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">= Pose zum nächsten Keyframe</text>
+        <text x="60" y="140" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">0</text>
+        <text x="100" y="140" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">= aktueller Frame unverändert</text>
+        <text x="60" y="160" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">±0.5</text>
+        <text x="100" y="160" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">= halber Schritt zu Nachbar</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Alternative zu Paste Into Interval · gradueller</text>
+      </svg>
+      <div class="caption">Tween Machine Werte. Hotkeys G (zu vorig) und L (zu nächstem).</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">11</span><span class="step-title">Tween Machine als Alternative</span></div>
+      <p>Aus dem Tutorial belegt: zweiter Workflow für Foot-Hold. Tween Machine erlaubt graduelles Heranziehen einer Pose zur Nachbar-Keyframe-Pose.</p>
+      <p>Anwendung am Stand-Fuß: auf Frame 12 gehen (Mid-Frame zwischen F0 und F15), Stand-Fuß-Controller selektieren, Tween Machine öffnen, Global Mode wählen, Wert auf <strong>−1</strong> setzen. Die F12-Pose wird zur F0-Pose hingezogen — der Fuß ist exakt da wo er bei F0 war.</p>
+      <p>Pro/Contra vs Paste Into Interval:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Tween Machine −1</strong>: einzelner Frame, präzise Kontrolle, gradueller Übergang möglich (z.B. −0.5 für „halb-statisch")</li>
+        <li><strong>Paste Into Interval</strong>: ganzer Range auf einmal, schneller bei vielen Frames, harte Statik</li>
+      </ul>
+      <p>Für diesen Kick: <em>Paste Into Interval</em> für die Hauptintervalle, <em>Tween Machine</em> für einzelne problematische Frames zwischen den Anker-Posen.</p>
+      <div class="shortcut-row"><span>Tween Machine:</span><kbd>G</kbd> (zu vorig) · <kbd>L</kbd> (zu nächstem)</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">ANTI-SLIDE WORKFLOW</text>
+        <text x="30" y="55" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">1.</text>
+        <text x="45" y="55" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Stand-Fuß IK auf F0 sauber setzen</text>
+        <text x="30" y="78" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">2.</text>
+        <text x="45" y="78" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Trajectory persistent — Drift sichtbar</text>
+        <text x="30" y="101" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">3.</text>
+        <text x="45" y="101" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Paste Into Interval für große Bereiche</text>
+        <text x="30" y="124" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">4.</text>
+        <text x="45" y="124" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Tween Machine für Einzel-Frames</text>
+        <text x="30" y="147" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">5.</text>
+        <text x="45" y="147" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Ghost Mode prüfen — Foot stabil</text>
+        <text x="30" y="170" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">6.</text>
+        <text x="45" y="170" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Iterieren bis Trajectory statisch</text>
+      </svg>
+      <div class="caption">Sechs-Schritte-Workflow zum Anti-Foot-Sliding.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">12</span><span class="step-title">Anti-Slide-Workflow iterativ anwenden</span></div>
+      <p>Vollständiger Workflow gegen Foot-Sliding, kombiniert aus Schritt 07-11:</p>
+      <ol style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li>Stand-Fuß IK auf F0 sauber setzen (Anker-Pose)</li>
+        <li>Trajectory persistent mit <kbd>\</kbd> aktivieren — Drift sichtbar machen</li>
+        <li>Paste Into Interval für die großen Bereiche (F0-F15, F15-F25, etc.)</li>
+        <li>Tween Machine für problematische Einzel-Frames mit <kbd>G</kbd> oder <kbd>L</kbd></li>
+        <li>Ghost Mode mit Outline — Foot-Position zwischen Keyframes visuell prüfen</li>
+        <li>Iterieren bis die Trajectory eine fast-statische Linie ist</li>
+      </ol>
+      <p>Erwartete Iterations-Anzahl: 2-3 Durchläufe. Nicht erwarten, dass es im ersten Anlauf perfekt ist — Foot-Sliding kann an mehreren Stellen gleichzeitig auftreten, jede braucht ihre eigene Korrektur.</p>
+      <div class="box box-check">
+        <div class="box-label">Validierung Phase D</div>
+        <p>Trajectory des Stand-Fußes ist eine fast-statische Linie. Ghost Outlines zeigen den Fuß zwischen Keyframes nicht verschoben. Play-Modus zeigt einen sauberen Kick ohne sichtbares Sliding. Kick-Bein bewegt sich frei, Stand-Bein steht stabil.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§6</div><div><div class="section-tag">Phase E · Impact-Exaggeration</div><h2 class="section-title">Wind-Up komprimieren, <em>Impact verlängern</em>.</h2></div></div>
+  <div class="phase-banner impact"><div class="phase-letter">E</div><div><h4>Exaggeration</h4><div class="phase-meta">Timing-Manipulation · Impact-Hold · animatorische Wirkung</div><p>Aus dem realistischen Kick wird ein animations-wirksamer Kick durch Timing-Manipulation. <em>Zwei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">VORHER / NACHHER · TIMING</text>
+        <text x="20" y="60" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4d3a">Reality</text>
+        <line x1="80" y1="58" x2="290" y2="58" stroke="#1f1a14" stroke-width="1.2"/>
+        <rect x="80" y="51" width="80" height="14" fill="#284858" opacity="0.4"/>
+        <text x="120" y="61" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">Wind-Up</text>
+        <rect x="160" y="51" width="8" height="14" fill="#b85528" opacity="0.7"/>
+        <text x="164" y="48" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#b85528">1F</text>
+        <rect x="168" y="51" width="120" height="14" fill="#284858" opacity="0.4"/>
+        <text x="220" y="61" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">Cool-Down</text>
+        <text x="160" y="95" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b85528">↓</text>
+        <text x="20" y="120" font-family="JetBrains Mono, monospace" font-size="8" fill="#b85528">Animation</text>
+        <line x1="80" y1="118" x2="290" y2="118" stroke="#1f1a14" stroke-width="1.5"/>
+        <rect x="80" y="111" width="50" height="14" fill="#284858" opacity="0.4"/>
+        <text x="105" y="121" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">Wind-Up</text>
+        <rect x="130" y="111" width="35" height="14" fill="#b85528" opacity="0.7" stroke="#b85528" stroke-width="1"/>
+        <text x="147" y="121" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#f3ecdc">4F</text>
+        <rect x="165" y="111" width="125" height="14" fill="#284858" opacity="0.4"/>
+        <text x="227" y="121" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#1f1a14">Cool-Down</text>
+        <text x="160" y="160" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Wind-Up kürzer · Impact 4x länger</text>
+        <text x="160" y="180" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Reality: 1 Frame · Animation: 4 Frames</text>
+      </svg>
+      <div class="caption">Vorher/Nachher-Vergleich. Aus 1 Reality-Frame werden 4 Animation-Frames.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">13</span><span class="step-title">Impact-Frame verlängern · 1 zu 4</span></div>
+      <p>Aus dem Tutorial direkt belegt: <em>„If I see on the reference it's impact frame is two frame when leg stretched even maybe one frame. But I decided to make it more — prolong it more. And that's why in my final animation impact frame is four frame."</em></p>
+      <p>Konkrete Anpassung am Blocking aus Phase B:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Wind-Up komprimieren</strong>: F0-F15 bleiben, aber die Bewegung in F10-F15 wird steiler (Tween Machine +0.7 auf F12 zieht zur Impact-Pose) — Beschleunigung sichtbar</li>
+        <li><strong>Impact-Hold ausdehnen</strong>: bei F25 (Impact) eine kopierte Pose auf F26, F27, F28 setzen. <kbd>Shift+Middle-Click-Drag</kbd> dupliziert den F25-Keyframe auf die nächsten 3 Frames. Vier identische Impact-Frames in Folge</li>
+        <li><strong>Cool-Down lassen</strong>: F25-F75 bleiben unverändert</li>
+      </ul>
+      <p>Effekt: der Impact „klebt" für vier Frames in der gleichen Pose. Visuell wird der Treffer für 133 ms gehalten — genug Zeit für den Zuschauer, ihn wahrzunehmen.</p>
+      <div class="insight">
+        Disney's „12 Prinzipien der Animation" (Ollie Johnston und Frank Thomas, 1981) listen <em>Squash and Stretch</em> und <em>Slow In / Slow Out</em> als getrennte Prinzipien — aber bei Combat-Animation verschmelzen sie zur Impact-Frame-Verlängerung. Der Impact ist das physische Equivalent von „Stretch": der Moment maximaler Spannung, gehalten über mehrere Frames. Slow In zur Anticipation, Slow Out zum Settle. Wer in Cascadeur einen Kick animiert, der diese Prinzipien auf 75 Frames runter-komprimiert, ist näher an klassischer 2D-Animation als an realistischer Mocap.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">BODY-SETTLE NACH IMPACT</text>
+        <line x1="20" y1="170" x2="300" y2="170" stroke="#1f1a14" stroke-width="1.5"/>
+        <g>
+          <circle cx="80" cy="50" r="9" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="80" y1="59" x2="80" y2="115" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="80" y="190" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">F30</text>
+        </g>
+        <text x="125" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b85528">→</text>
+        <g>
+          <circle cx="170" cy="55" r="9" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="170" y1="64" x2="170" y2="118" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="170" y="190" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">F45</text>
+          <text x="170" y="40" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#b85528">Body 5cm</text>
+          <text x="170" y="30" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="8" fill="#b85528">tiefer</text>
+        </g>
+        <text x="215" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b85528">→</text>
+        <g>
+          <circle cx="260" cy="50" r="9" fill="none" stroke="#1f1a14" stroke-width="1.5"/>
+          <line x1="260" y1="59" x2="260" y2="115" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="260" y="190" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a4d3a">F75</text>
+        </g>
+      </svg>
+      <div class="caption">Body-Settle als Überschwingen nach Impact, vor Cool-Down-Endpose.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">14</span><span class="step-title">Body-Settle nach Impact</span></div>
+      <p>Detail-Polish nach Impact-Verlängerung. Nach dem Impact-Hold (F25-F28) und bevor die Cool-Down-Pose bei F75 erreicht wird: kleines Über-Schwingen einbauen.</p>
+      <p>Bei F45 (etwa in der Mitte zwischen Retract und Cool-Down): Pelvis um 3-5 cm absenken, leichte Beinbeugung. Der Körper „fällt" minimal nach dem expliziten Wind-Up und Impact, weil die Hüft-Rotation Energie abgegeben hat. Bei F60 dann zurück zur normalen Höhe.</p>
+      <p>Effekt: Animation wirkt weniger wie ein Roboter-Loop, mehr wie ein menschlicher Body mit Gewicht und Trägheit. Ist auch eine Form von Secondary Motion — der Körper reagiert auf die explosive Aktion, statt sie nur auszuführen.</p>
+      <div class="box box-merk">
+        <div class="box-label">Settle ist subtiler als Anticipation</div>
+        <p>Anticipation (Wind-Up) ist gut sichtbar — der Charakter „lädt sich auf" vor dem Move. Settle ist subtiler — kleine Mikrobewegungen nach der Aktion, oft nur 2-5 cm. Wer Settle übertreibt, lässt den Charakter wie betrunken aussehen. Wer es weglässt, lässt ihn wie eine starre Spielfigur aussehen. Die Balance liegt bei minimaler, aber sichtbarer Mitschwingung.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><div class="section-num">§7</div><div><div class="section-tag">Phase F · Physics und Export</div><h2 class="section-title">AutoPhysics für <em>Combat</em>, FBX, UE5.</h2></div></div>
+  <div class="phase-banner"><div class="phase-letter">F</div><div><h4>Physics + Export</h4><div class="phase-meta">AutoPhysics Combat-Filter · FBX-Export · UE5-Integration</div><p>Pipeline-Abschluss. Combat hat eigene Physics-Filter-Konstellation. <em>Drei Schritte.</em></p></div></div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">AUTOPHYSICS · COMBAT-FILTER</text>
+        <rect x="40" y="50" width="240" height="125" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="60" y="72" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Physics Character</text>
+        <text x="260" y="72" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">100</text>
+        <text x="60" y="92" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Smooth Trajectory</text>
+        <text x="260" y="92" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~15 (niedrig)</text>
+        <text x="60" y="112" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Smooth Rotation</text>
+        <text x="260" y="112" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~15 (niedrig)</text>
+        <text x="60" y="132" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Compensation Motion</text>
+        <text x="260" y="132" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~30</text>
+        <text x="60" y="152" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Secondary Motion</text>
+        <text x="260" y="152" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">~40 (moderat)</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Combat braucht niedrige Smooth-Werte</text>
+      </svg>
+      <div class="caption">AutoPhysics Filter-Werte für Combat. Smooth-Werte explizit niedrig.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">15</span><span class="step-title">AutoPhysics mit Combat-Filter</span></div>
+      <p>AutoPhysics-Filter für Combat unterscheiden sich von Walk/Run. Standard-Smoothing macht den Kick weich und unimpaktvoll — das Gegenteil von gewünscht.</p>
+      <p>Empfohlene Werte (im Physics-Settings-Panel):</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Physics Character</strong>: 100 (voller Effekt für Body-Plausibilität)</li>
+        <li><strong>Smooth Trajectory</strong>: ~15 (niedrig — Impact bleibt scharf, nicht verschmiert)</li>
+        <li><strong>Smooth Rotation</strong>: ~15 (niedrig — Hip-Rotation bleibt explosiv)</li>
+        <li><strong>Compensation Motion</strong>: ~30 (moderat — Body kompensiert Pelvis-Rotation)</li>
+        <li><strong>Secondary Motion</strong>: ~40 (moderat — leichtes Mitschwingen ohne Cartoony-Effekt)</li>
+      </ul>
+      <p>Workflow: Ghost-Vorschau aktivieren (Physics-Ghost). Filter-Werte anpassen bis das Ghost-Ergebnis plausibel aussieht — Impact bleibt scharf, Stand-Fuß bleibt stabil, kein übertriebenes Body-Wackeln. Dann <strong>Snap to Physics</strong> drücken, um das Ergebnis als finale Animation zu übernehmen.</p>
+      <div class="box box-stolper">
+        <div class="box-label">Hohe Smooth-Werte ruinieren den Impact</div>
+        <p>Standard-Smooth-Trajectory liegt oft bei 50-70. Bei Combat killt das den Impact-Moment — die explosive Bewegung wird zur Welle verschmiert. Für Kick und ähnliche Combat-Moves: Smooth-Werte deutlich runter (15-25). Lieber weniger physikalisch korrekt, dafür visuell schlagkräftig.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#b85528">FBX-EXPORT · COMBAT</text>
+        <rect x="40" y="50" width="240" height="120" fill="#f3ecdc" stroke="#1f1a14" stroke-width="1.5"/>
+        <text x="60" y="72" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">FbxUpAxis</text>
+        <text x="260" y="72" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">Z (für UE5)</text>
+        <text x="60" y="92" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Filetype</text>
+        <text x="260" y="92" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">FBX binär</text>
+        <text x="60" y="112" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Bake animation</text>
+        <text x="260" y="112" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">ENABLED</text>
+        <text x="60" y="132" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Blend shapes</text>
+        <text x="260" y="132" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">DISABLED</text>
+        <text x="60" y="152" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Frame range</text>
+        <text x="260" y="152" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">0-75 (volle Kick)</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">Filename: manny-kick-front-v01.fbx</text>
+      </svg>
+      <div class="caption">FBX-Export-Settings für Combat. Z-Achse Pflicht für UE5.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">16</span><span class="step-title">FBX-Export für UE5</span></div>
+      <p>Export-Dialog öffnen (File → Export FBX). Wichtige Settings:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>FbxUpAxis</strong>: Z (Pflicht für UE5)</li>
+        <li><strong>Filetype</strong>: FBX binär (nicht ASCII)</li>
+        <li><strong>Bake animation</strong>: enabled</li>
+        <li><strong>Blend shapes</strong>: disabled (Manny hat keine, würde Error verursachen)</li>
+        <li><strong>Frame range</strong>: 0-75 (volle Kick-Animation)</li>
+        <li><strong>Filename</strong>: <code>manny-kick-front-v01.fbx</code></li>
+      </ul>
+      <p>Vor dem Export: prüfen ob alle Objekte einzigartige Namen haben (aus Quicktips-Tutorial: Duplicate-Names verursachen Export-Errors).</p>
+      <div class="box box-merk">
+        <div class="box-label">Combat-FBX in der Library benennen</div>
+        <p>Bei Combat-Animationen ist Library-Organisation kritisch. Benennungs-Konvention: <code>charakter-action-variant-version.fbx</code>. Beispiele: <code>manny-kick-front-v01.fbx</code>, <code>manny-kick-roundhouse-v01.fbx</code>, <code>manny-punch-jab-v01.fbx</code>. Bei einem mittleren Game-Projekt sammelst du schnell 20-50 Combat-Animationen — Naming-Disziplin spart Stunden Sucherei.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-diagram">
+      <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+        <text x="160" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em" fill="#284858">UE5 · ANIMATION SEQUENCE</text>
+        <rect x="40" y="50" width="240" height="125" fill="#284858" opacity="0.1" stroke="#284858" stroke-width="1.5"/>
+        <text x="60" y="72" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Import-Target</text>
+        <text x="260" y="72" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#b85528">SK_Mannequin</text>
+        <text x="60" y="92" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Asset-Name</text>
+        <text x="260" y="92" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Anim_Kick_Front_Manny</text>
+        <text x="60" y="112" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Enable Root Motion</text>
+        <text x="260" y="112" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">DISABLE</text>
+        <text x="60" y="132" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Looping</text>
+        <text x="260" y="132" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#c46b3a">DISABLE</text>
+        <text x="60" y="152" font-family="DM Sans, sans-serif" font-size="10" fill="#1f1a14">Test</text>
+        <text x="260" y="152" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9" fill="#5a4d3a">Animation Preview</text>
+        <text x="160" y="190" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="9" fill="#5a4d3a">In-Place Combat · keine räumliche Bewegung</text>
+      </svg>
+      <div class="caption">UE5-Integration. Combat ist in-place, kein Root Motion.</div>
+    </div>
+    <div>
+      <div class="step-num-row"><span class="step-num">17</span><span class="step-title">UE5-Integration und Validierung</span></div>
+      <p>FBX in UE5 importieren. Target-Skeleton: SK_Mannequin. Animation Sequence wird angelegt als <code>Anim_Kick_Front_Manny</code>.</p>
+      <p>Wichtige Settings nach Import:</p>
+      <ul style="margin: 0.4rem 0 0.7rem 1.3rem; font-size: 0.94rem;">
+        <li><strong>Enable Root Motion</strong>: DISABLE (Combat ist in-place, kein räumlicher Move)</li>
+        <li><strong>Looping</strong>: DISABLE (einmaliger Move, kein Cycle)</li>
+        <li><strong>Animation Preview</strong>: doppelklicken zum Testen — Animation läuft 75 Frames lang ab, Charakter bleibt am Spot</li>
+      </ul>
+      <p>Pipeline-Validierung: Kick spielt in UE5 sauber ab, Stand-Fuß bleibt fest auf dem Boden, Impact-Moment ist klar sichtbar, kein Foot-Sliding mehr. Pipeline geschlossen — von Reference über Cascadeur bis UE5-Asset.</p>
+      <div class="box box-check">
+        <div class="box-label">Pipeline-Abschluss</div>
+        <p>Du hast jetzt eine wiederverwendbare Combat-Animation in der Library. Verwendung in einer Cutscene: per Drag-and-Drop auf den Animation-Track im Sequencer, am gewünschten Frame platzieren. Bei Combat-Cutscenes mit mehreren Moves: mehrere Combat-Sequences hintereinander, oder per UE5-Crossfade ineinander. Dieselbe Pipeline wie in Projekt 11 erlernt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="outro">
+  <h2>Was du jetzt <em>kannst</em>.</h2>
+  <p class="intro">Track 4 hat begonnen — die erste Combat-Brochüre ist im Inventar.</p>
+  <p>Du hast den ersten Kick gebaut und dabei drei portable Werkzeuge gelernt: Ghost Mode als Diagnose-Tool (funktioniert bei jeder Animation, nicht nur Combat), Paste Into Interval als Anti-Sliding-Workflow (anwendbar überall wo etwas statisch bleiben soll während drumherum Bewegung ist), Tween Machine in Combat-Kontext (graduelle Pose-Holds). Plus: die Impact-Frame-Exaggeration als animatorisches Prinzip — Reality 1 Frame, Animation 4 Frames.</p>
+  <p>Die IK/FK-Faustregel ist kanonisch für jede Combat-Animation: Boden = IK, Luft = FK oder GR. Diese Regel wirst du in jeder zukünftigen Combat-Brochüre wieder anwenden — bei Punch, bei Sword-Swing, bei Roundhouse-Kick.</p>
+  <p>Die AutoPhysics-Filter für Combat (niedrige Smooth-Werte, moderate Secondary Motion) sind ebenfalls portabel. Bei jeder Action mit klaren Impact-Frames willst du Smooth-Werte deutlich runter, um den scharfen Hit zu erhalten.</p>
+  <div class="next-up">
+    <div class="next-label">Nächste Brochüre</div>
+    <h3>Projekt 14 · <em>Props und Sword-Constraints</em></h3>
+    <p style="font-size: 0.92rem; margin: 0;">Logische Fortsetzung der Combat-Pipeline: derselbe Kick-Workflow, aber jetzt mit Waffe in der Hand. Drei Props-Attach-Methoden im Vergleich, Sword-Constraints mit Enforce-FK-Interpolation, Composite Center of Mass für AutoPhysics mit Waffen. Game-Cutscene-Pflicht-Pipeline.</p>
+  </div>
+</section>
+
+<footer class="doc-footer">
+  <div><span class="terracotta">Projekt 12 · v 1.0 · Combat-Basics</span></div>
+  <div>17 Schritte · 6 Phasen</div>
+  <div>Cascadeur · Lernreihe · Track 4</div>
+</footer>
+
+</article>
+
+</body>
+</html>
