@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cascadeur-Lernreihe · Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3ecdc;
+    --paper-warm: #ede4d0;
+    --paper-dark: #e2d6b8;
+    --ink: #1f1a14;
+    --ink-soft: #5a4d3a;
+    --ink-faint: #8a7d68;
+    --terracotta: #b85528;
+    --terracotta-deep: #7a3414;
+    --cobalt: #284858;
+    --sage: #8a9878;
+    --warning: #c46b3a;
+    --rule: #c8b89a;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'DM Sans', -apple-system, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+    color: var(--ink); background: var(--paper);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  .doc { max-width: 1400px; margin: 0 auto; }
+
+  /* HERO */
+  .hero {
+    padding: 4rem 5rem 3rem;
+    border-bottom: 2px solid var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -20%; right: -10%; width: 60%; aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(184, 85, 40, 0.10) 0%, transparent 65%);
+    border-radius: 50%; pointer-events: none;
+  }
+  .hero-marker {
+    display: flex; align-items: center; gap: 1.5rem;
+    font-family: var(--font-mono); font-size: 0.78rem;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--terracotta); margin-bottom: 1.5rem;
+  }
+  .hero-marker .ml { width: 80px; height: 1px; background: var(--terracotta); }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 6vw, 5.5rem); font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 50;
+    line-height: 1.0; letter-spacing: -0.02em;
+    color: var(--ink); margin-bottom: 1.5rem; max-width: 16ch;
+  }
+  .hero h1 em {
+    font-style: italic; font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    color: var(--terracotta);
+  }
+  .hero .subtitle {
+    font-family: var(--font-display); font-style: italic;
+    font-size: 1.35rem; color: var(--ink-soft);
+    max-width: 60ch; margin-bottom: 2.5rem;
+  }
+  .hero-stats {
+    display: flex; gap: 3rem; padding-top: 1.8rem;
+    border-top: 1px solid var(--rule); flex-wrap: wrap;
+  }
+  .stat { display: flex; flex-direction: column; gap: 0.3rem; }
+  .stat-label {
+    font-family: var(--font-mono); font-size: 0.68rem;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint);
+  }
+  .stat-value {
+    font-family: var(--font-display); font-size: 1.8rem; font-weight: 400;
+    color: var(--ink); font-variation-settings: 'opsz' 144, 'SOFT' 50;
+  }
+  .stat-value em { font-style: italic; color: var(--terracotta); font-variation-settings: 'opsz' 144, 'SOFT' 100; }
+
+  /* TRACK-NAVIGATION */
+  .track-nav {
+    padding: 1.5rem 5rem;
+    background: var(--paper-warm);
+    border-bottom: 1px solid var(--rule);
+    display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center;
+    position: sticky; top: 0; z-index: 10;
+    backdrop-filter: blur(8px);
+    background: rgba(237, 228, 208, 0.95);
+  }
+  .track-nav-label {
+    font-family: var(--font-mono); font-size: 0.72rem;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint);
+    margin-right: 0.5rem;
+  }
+  .track-nav a {
+    font-family: var(--font-mono); font-size: 0.78rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink); text-decoration: none;
+    padding: 0.4rem 0.9rem; border: 1px solid var(--rule);
+    border-radius: 3px; transition: all 0.2s ease;
+  }
+  .track-nav a:hover {
+    background: var(--terracotta); color: var(--paper); border-color: var(--terracotta);
+  }
+
+  /* TRACK SECTION */
+  .track-section { padding: 3rem 5rem; border-bottom: 1px solid var(--rule); }
+  .track-head {
+    display: grid; grid-template-columns: 100px 1fr;
+    gap: 2rem; margin-bottom: 2.5rem; align-items: end;
+    padding-bottom: 1.2rem; border-bottom: 2px solid var(--ink);
+  }
+  .track-num {
+    font-family: var(--font-display); font-size: 4rem; font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic;
+    line-height: 1;
+  }
+  .track-tag {
+    font-family: var(--font-mono); font-size: 0.75rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .track-title {
+    font-family: var(--font-display); font-size: clamp(2rem, 3.5vw, 2.8rem);
+    font-weight: 400; line-height: 1.1; color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .track-title em {
+    font-style: italic; font-weight: 300;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  }
+  .track-description {
+    font-family: var(--font-display); font-style: italic;
+    font-size: 1.1rem; color: var(--ink-soft);
+    max-width: 70ch; margin-top: 0.5rem;
+  }
+
+  /* Track-spezifische Farben */
+  .track-1 .track-num, .track-1 .track-tag, .track-1 .track-title em { color: var(--cobalt); }
+  .track-1 .card { border-top: 4px solid var(--cobalt); }
+  .track-1 .card .project-num { color: var(--cobalt); }
+  .track-1 .card-button { background: var(--cobalt); }
+  .track-1 .card-button:hover { background: #1a3340; }
+
+  .track-2 .track-num, .track-2 .track-tag, .track-2 .track-title em { color: var(--terracotta); }
+  .track-2 .card { border-top: 4px solid var(--terracotta); }
+  .track-2 .card .project-num { color: var(--terracotta); }
+  .track-2 .card-button { background: var(--terracotta); }
+  .track-2 .card-button:hover { background: var(--terracotta-deep); }
+
+  .track-3 .track-num, .track-3 .track-tag, .track-3 .track-title em { color: var(--sage); }
+  .track-3 .card { border-top: 4px solid var(--sage); }
+  .track-3 .card .project-num { color: var(--sage); }
+  .track-3 .card-button { background: #6c7c5c; }
+  .track-3 .card-button:hover { background: #56644a; }
+
+  .track-4 .track-num, .track-4 .track-tag, .track-4 .track-title em { color: var(--warning); }
+  .track-4 .card { border-top: 4px solid var(--warning); }
+  .track-4 .card .project-num { color: var(--warning); }
+  .track-4 .card-button { background: var(--warning); }
+  .track-4 .card-button:hover { background: #a3552a; }
+
+  /* CARD GRID */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 1.8rem;
+  }
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 1.8rem 1.8rem 1.6rem;
+    display: flex; flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(31, 26, 20, 0.10);
+  }
+  .card-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 1rem; margin-bottom: 0.8rem;
+  }
+  .project-num {
+    font-family: var(--font-display); font-size: 2.6rem;
+    font-weight: 300; font-style: italic;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    line-height: 1;
+  }
+  .project-badge {
+    font-family: var(--font-mono); font-size: 0.66rem;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--ink-faint);
+    padding: 0.3rem 0.6rem; border: 1px solid var(--rule); border-radius: 3px;
+  }
+  .card-title {
+    font-family: var(--font-display); font-size: 1.35rem;
+    font-weight: 500; line-height: 1.2; color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+  .card-title em {
+    font-style: italic; font-weight: 400;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  }
+  .card-desc {
+    font-family: var(--font-display); font-style: italic;
+    font-size: 0.97rem; color: var(--ink-soft);
+    line-height: 1.5; margin-bottom: 1.2rem;
+    flex-grow: 1;
+  }
+  .card-meta {
+    display: flex; gap: 0.8rem; flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+    font-family: var(--font-mono); font-size: 0.7rem;
+    color: var(--ink-faint);
+  }
+  .card-meta span {
+    padding: 0.2rem 0.5rem;
+    background: var(--paper-warm);
+    border-radius: 3px;
+  }
+  .card-button {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.2rem;
+    color: var(--paper);
+    text-decoration: none;
+    font-family: var(--font-mono); font-size: 0.78rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+    margin-bottom: 1.2rem;
+  }
+  .card-button::after {
+    content: '→'; font-size: 1rem;
+  }
+  .card-tutorials {
+    border-top: 1px dashed var(--rule);
+    padding-top: 1rem;
+  }
+  .tutorials-label {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: var(--font-mono); font-size: 0.66rem;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.7rem;
+  }
+  .tutorials-label::before {
+    content: ''; width: 14px; height: 1.5px; background: currentColor;
+  }
+  .tutorial-list {
+    list-style: none; display: flex; flex-direction: column; gap: 0.4rem;
+  }
+  .tutorial-list a {
+    display: flex; align-items: baseline; gap: 0.6rem;
+    font-size: 0.88rem;
+    color: var(--ink);
+    text-decoration: none;
+    padding: 0.4rem 0.6rem;
+    border-radius: 3px;
+    background: var(--paper-warm);
+    transition: background 0.15s ease;
+    line-height: 1.35;
+  }
+  .tutorial-list a:hover {
+    background: var(--paper-dark);
+    color: var(--terracotta);
+  }
+  .tutorial-list .stars {
+    font-family: var(--font-mono); font-size: 0.7rem;
+    color: var(--terracotta);
+    flex-shrink: 0;
+    min-width: 2.4em;
+  }
+  .tutorial-list .tutorial-title { flex-grow: 1; }
+  .tutorial-list .ext-icon {
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    flex-shrink: 0;
+  }
+
+  /* FOOTER */
+  .footer {
+    padding: 3rem 5rem 4rem;
+    background: linear-gradient(180deg, var(--paper), var(--paper-warm));
+    border-top: 2px solid var(--ink);
+  }
+  .footer-grid {
+    display: grid; grid-template-columns: 2fr 1fr 1fr;
+    gap: 3rem;
+  }
+  .footer h3 {
+    font-family: var(--font-display); font-size: 1.3rem;
+    font-weight: 500; color: var(--ink); margin-bottom: 0.7rem;
+  }
+  .footer p {
+    font-size: 0.94rem; color: var(--ink-soft);
+    margin-bottom: 0.7rem; max-width: 50ch;
+  }
+  .footer ul { list-style: none; }
+  .footer ul li {
+    font-family: var(--font-mono); font-size: 0.78rem;
+    color: var(--ink-soft); padding: 0.25rem 0;
+  }
+  .footer .legend-stars {
+    color: var(--terracotta); font-weight: 600;
+    display: inline-block; min-width: 2.4em;
+  }
+  .footer-bottom {
+    margin-top: 2.5rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    font-family: var(--font-mono); font-size: 0.72rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-bottom .terracotta { color: var(--terracotta); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .hero, .track-nav, .track-section, .footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .track-head { grid-template-columns: 1fr; gap: 0.5rem; }
+    .track-num { font-size: 2.8rem; }
+    .cards-grid { grid-template-columns: 1fr; gap: 1.2rem; }
+    .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .hero-stats { gap: 1.5rem; }
+  }
+
+  /* DARK MODE */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #1a1612; --paper-warm: #221d17; --paper-dark: #2a241c;
+      --ink: #ebe3d0; --ink-soft: #b8a98a; --ink-faint: #7a6e58;
+      --terracotta: #e8814a; --terracotta-deep: #c25a2a;
+      --cobalt: #6a9aab; --sage: #a8b898; --warning: #e2884d; --rule: #3a3026;
+    }
+    body { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"); }
+    .track-nav { background: rgba(34, 29, 23, 0.95); }
+    .card-button { color: var(--paper); }
+  }
+</style>
+</head>
+<body>
+
+<div class="doc">
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-marker">
+    <span>Cascadeur · Lernreihe · Index</span>
+    <div class="ml"></div>
+    <span>16 Brochüren · 4 Tracks</span>
+  </div>
+  <h1>Cascadeur-<em>Curriculum</em><br>vollständig.</h1>
+  <p class="subtitle">Vom ersten Idle bis zur Profi-Reference-Disziplin. Sechzehn HTML-Brochüren, geordnet in vier Tracks. Pro Aufgabe: Brochüre öffnen plus die wichtigsten Cascadeur-Tutorial-Videos zur Vertiefung.</p>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-label">Brochüren</span><span class="stat-value">16</span></div>
+    <div class="stat"><span class="stat-label">Tracks</span><span class="stat-value">4</span></div>
+    <div class="stat"><span class="stat-label">Tutorial-Links</span><span class="stat-value">~60</span></div>
+    <div class="stat"><span class="stat-label">Pipeline-Ziel</span><span class="stat-value"><em>UE5</em></span></div>
+  </div>
+</header>
+
+<!-- TRACK-NAVIGATION -->
+<nav class="track-nav">
+  <span class="track-nav-label">Schnell-Sprung</span>
+  <a href="#track-1">Track 1 · Fundament</a>
+  <a href="#track-2">Track 2 · Vokabular</a>
+  <a href="#track-3">Track 3 · Pipeline</a>
+  <a href="#track-4">Track 4 · Spezialisierung</a>
+</nav>
+
+<!-- TRACK 1 -->
+<section class="track-section track-1" id="track-1">
+  <div class="track-head">
+    <div class="track-num">01</div>
+    <div>
+      <div class="track-tag">Track 1</div>
+      <h2 class="track-title"><em>Fundament</em></h2>
+      <p class="track-description">Erste Animation, Walk-Cycle, Sitting. Was Cascadeur überhaupt ist und wie es bedient wird.</p>
+    </div>
+  </div>
+
+  <div class="cards-grid">
+
+    <!-- Projekt 01 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="project-num">01</span>
+        <span class="project-badge">First Steps</span>
+      </div>
+      <h3 class="card-title">First Animation · <em>Idle Pose</em></h3>
+      <p class="card-desc">Cascadeur-Erstkontakt. UI-Vokabular, Box-/Point-Controller, AutoPosing, erste Pose, Keyframe setzen.</p>
+      <div class="card-meta"><span>UI-Basics</span><span>Posing</span><span>Keyframes</span></div>
+      <a class="card-button" href="https://shameforest.github.io/Guides/cascadeur1.html">Brochüre öffnen</a>
+      <div class="card-tutorials">
+        <div class="tutorials-label">Begleitende Tutorials</div>
+        <ul class="tutorial-list">
+          <li><a href="https://cascadeur.com/tutor/getstarted1" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Get Started in Cascadeur</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/how-to-use-control-picker" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Control Picker</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/timeline" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Timeline-Grundlagen</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/customisingviewport" target="_blank" rel="noopener"><span class="stars">★</span><span class="tutorial-title">Viewport anpassen</span><span class="ext-icon">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Projekt 02 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="project-num">02</span>
+        <span class="project-badge">Inbetweening Entrée</span>
+      </div>
+      <h3 class="card-title">Wave · <em>AI Inbetweening</em></h3>
+      <p class="card-desc">Eine Wink-Geste als Einstieg in die Inbetweening-Engine. Zwei Posen, automatisch verbunden.</p>
+      <div class="card-meta"><span>Inbetweening</span><span>AI-Generation</span></div>
+      <a class="card-button" href="https://shameforest.github.io/Guides/cascadeur2.html">Brochüre öffnen</a>
+      <div class="card-tutorials">
+        <div class="tutorials-label">Begleitende Tutorials</div>
+        <ul class="tutorial-list">
+          <li><a href="https://cascadeur.com/tutor/betterinbetweening" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Better Inbetweening</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/combineinbetweening" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Combining Inbetweening with Classic Interpolation</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/keysandinterpolation" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Keys and Interpolation</span><span class="ext-icon">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Projekt 03 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="project-num">03</span>
+        <span class="project-badge">Walk-Cycle</span>
+      </div>
+      <h3 class="card-title">Walk · <em>Lokomotion</em></h3>
+      <p class="card-desc">Klassischer Walk-Cycle. Foot-Pattern, Pelvis-Pfad, Arm-Schwung. Erste zyklische Animation.</p>
+      <div class="card-meta"><span>Walk-Cycle</span><span>Lokomotion</span><span>FK/IK</span></div>
+      <a class="card-button" href="https://shameforest.github.io/Guides/cascadeur3.html">Brochüre öffnen</a>
+      <div class="card-tutorials">
+        <div class="tutorials-label">Begleitende Tutorials</div>
+        <ul class="tutorial-list">
+          <li><a href="https://cascadeur.com/tutor/walkcycle" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Walkcycle Tutorial</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/creatingarootcontroller" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Root Controller erstellen</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/uelocomotion" target="_blank" rel="noopener"><span class="stars">★</span><span class="tutorial-title">UE5 Locomotion</span><span class="ext-icon">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Projekt 04 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="project-num">04</span>
+        <span class="project-badge">Environment</span>
+      </div>
+      <h3 class="card-title">Sitting · <em>Stuhl-Setup</em></h3>
+      <p class="card-desc">Erste Charakter-Environment-Interaktion. Hinsetzen auf Stuhl mit Fulcrum-Punkten.</p>
+      <div class="card-meta"><span>Fulcrums</span><span>Environment</span><span>Sit-Pose</span></div>
+      <a class="card-button" href="https://shameforest.github.io/Guides/cascadeur4.html">Brochüre öffnen</a>
+      <div class="card-tutorials">
+        <div class="tutorials-label">Begleitende Tutorials</div>
+        <ul class="tutorial-list">
+          <li><a href="https://cascadeur.com/tutor/interactwithenvironment" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Interact with Environment</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/fulcrum1" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">All You Need to Know about Fulcrum Points</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/using-ragdoll-physics" target="_blank" rel="noopener"><span class="stars">★</span><span class="tutorial-title">Using Ragdoll Physics</span><span class="ext-icon">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TRACK 2 -->
+<section class="track-section track-2" id="track-2">
+  <div class="track-head">
+    <div class="track-num">02</div>
+    <div>
+      <div class="track-tag">Track 2</div>
+      <h2 class="track-title"><em>Vokabular</em></h2>
+      <p class="track-description">Constraint-Vertiefung, Inbetweening als Hauptthema, AutoPhysics, Hands &amp; Fingers. Cascadeur-Sprache lernen.</p>
+    </div>
+  </div>
+
+  <div class="cards-grid">
+
+    <!-- Projekt 05 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="project-num">05</span>
+        <span class="project-badge">Constraints</span>
+      </div>
+      <h3 class="card-title">Sitting · <em>Constraints</em></h3>
+      <p class="card-desc">Vertiefung der Stuhl-Pose mit Point Constraints. Erste Constraint-Vokabel-Stufe.</p>
+      <div class="card-meta"><span>Point Constraints</span><span>Stabilisierung</span></div>
+      <a class="card-button" href="https://shameforest.github.io/Guides/cascadeur5.html">Brochüre öffnen</a>
+      <div class="card-tutorials">
+        <div class="tutorials-label">Begleitende Tutorials</div>
+        <ul class="tutorial-list">
+          <li><a href="https://cascadeur.com/tutor/interactwithenvironment" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Interact with Environment</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/characterinteractionwithragdoll" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Character Interaction with Ragdoll</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/creatingaddons" target="_blank" rel="noopener"><span class="stars">★</span><span class="tutorial-title">Creating Add-ons</span><span class="ext-icon">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Projekt 06 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="project-num">06</span>
+        <span class="project-badge">Hauptthema</span>
+      </div>
+      <h3 class="card-title">Inbetweening · <em>vertieft</em></h3>
+      <p class="card-desc">Inbetweening als Hauptdisziplin. Iterative Verfeinerung in vier Stufen. Bezier-Kombination.</p>
+      <div class="card-meta"><span>AI Inbetweening</span><span>Workflow-Kern</span></div>
+      <a class="card-button" href="https://shameforest.github.io/Guides/cascadeur6.html">Brochüre öffnen</a>
+      <div class="card-tutorials">
+        <div class="tutorials-label">Begleitende Tutorials</div>
+        <ul class="tutorial-list">
+          <li><a href="https://cascadeur.com/tutor/betterinbetweening" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Better Inbetweening</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/combineinbetweening" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Combining Inbetweening with Classic Interpolation</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/keysandinterpolation" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Keys and Interpolation</span><span class="ext-icon">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Projekt 07 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="project-num">07</span>
+        <span class="project-badge">Physics</span>
+      </div>
+      <h3 class="card-title">AutoPhysics · <em>3-Pass</em></h3>
+      <p class="card-desc">Physik-Pipeline. Drei Pässe (Physics-only, Filter, Final). Physics-Filter-Vokabular.</p>
+      <div class="card-meta"><span>AutoPhysics</span><span>Filter</span><span>Snap to Physics</span></div>
+      <a class="card-button" href="https://shameforest.github.io/Guides/cascadeur7.html">Brochüre öffnen</a>
+      <div class="card-tutorials">
+        <div class="tutorials-label">Begleitende Tutorials</div>
+        <ul class="tutorial-list">
+          <li><a href="https://cascadeur.com/tutor/physicspipeline2025" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Physics Pipeline | AutoPhysics</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/autophysics-sliders-simplified-workflow" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">AutoPhysics Sliders Workflow</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/fulcrum1" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Fulcrum Points</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/rigidbodymass" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Rigid Body Mass</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/separationofmotion" target="_blank" rel="noopener"><span class="stars">★</span><span class="tutorial-title">Separation of Motion</span><span class="ext-icon">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Projekt 08 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="project-num">08</span>
+        <span class="project-badge">Detail-Posing</span>
+      </div>
+      <h3 class="card-title">Hands &amp; <em>Fingers</em></h3>
+      <p class="card-desc">Hand-AutoPosing, Finger-Detail, Faust-/Greif-Posen, Thumb-Kontrolle. Subtile Animation.</p>
+      <div class="card-meta"><span>AutoPosing Fingers</span><span>Hand-Detail</span></div>
+      <a class="card-button" href="https://shameforest.github.io/Guides/cascadeur8.html">Brochüre öffnen</a>
+      <div class="card-tutorials">
+        <div class="tutorials-label">Begleitende Tutorials</div>
+        <ul class="tutorial-list">
+          <li><a href="https://cascadeur.com/tutor/autoposingforfingers" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">AutoPosing for Fingers</span><span class="ext-icon">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TRACK 3 -->
+<section class="track-section track-3" id="track-3">
+  <div class="track-head">
+    <div class="track-num">03</div>
+    <div>
+      <div class="track-tag">Track 3</div>
+      <h2 class="track-title"><em>Pipeline</em></h2>
+      <p class="track-description">Mocap-Cleanup, Custom-Charakter aus Blender, UE5-Sequencer-Composite. Cascadeur in die Praxis-Pipeline.</p>
+    </div>
+  </div>
+
+  <div class="cards-grid">
+
+    <!-- Projekt 09 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="project-num">09</span>
+        <span class="project-badge">QuickMagic + Mocap</span>
+      </div>
+      <h3 class="card-title">Mocap-<em>Cleanup</em></h3>
+      <p class="card-desc">QuickMagic-Mocap-Pipeline. Splitting, Cleanup, Limb-Twists, Interval Edit Mode. Sieben Lektionen umfasst.</p>
+      <div class="card-meta"><span>Mocap</span><span>QuickMagic</span><span>Cleanup</span></div>
+      <a class="card-button" href="https://shameforest.github.io/Guides/cascadeur9.html">Brochüre öffnen</a>
+      <div class="card-tutorials">
+        <div class="tutorials-label">Begleitende Tutorials</div>
+        <ul class="tutorial-list">
+          <li><a href="https://cascadeur.com/tutor/mocapcleanupcourse01" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Mocap Cleanup Course 01</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/mocapcleanupcourse02" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Mocap Cleanup Course 02</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/animation-unbaking-mocap-cleanup" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Animation Unbaking · Mocap Cleanup</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/splittinganimation" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Splitting Animation</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/quickmagicmocapediting" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">QuickMagic Mocap Editing</span><span class="ext-icon">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Projekt 10 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="project-num">10</span>
+        <span class="project-badge">Blender-Pipeline</span>
+      </div>
+      <h3 class="card-title">Custom Charakter · <em>Blender</em></h3>
+      <p class="card-desc">Custom-Charakter aus Blender via Auto-Rig Pro / Rigify. Quick Rigging Tool. Retargeting.</p>
+      <div class="card-meta"><span>Blender</span><span>Auto-Rig Pro</span><span>Retargeting</span></div>
+      <a class="card-button" href="https://shameforest.github.io/Guides/cascadeur10.html">Brochüre öffnen</a>
+      <div class="card-tutorials">
+        <div class="tutorials-label">Begleitende Tutorials</div>
+        <ul class="tutorial-list">
+          <li><a href="https://cascadeur.com/tutor/blender-to-cacadeur" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Blender to Cascadeur</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/custom-character-rig" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Custom Character Rig</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/characterriggingcompleteguide" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Character Rigging Complete Guide</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/animation-retargeting1" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Animation Retargeting</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/accurigtocascadeur" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">AccuRIG to Cascadeur</span><span class="ext-icon">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Projekt 11 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="project-num">11</span>
+        <span class="project-badge">UE5-Integration</span>
+      </div>
+      <h3 class="card-title">UE5 · <em>Composite</em></h3>
+      <p class="card-desc">UE5-Sequencer-Composite, Live Link, Multi-Character-Scenes. Cinematic-Pipeline-Abschluss.</p>
+      <div class="card-meta"><span>UE5 Sequencer</span><span>Live Link</span><span>Cinematic</span></div>
+      <a class="card-button" href="https://shameforest.github.io/Guides/cascadeur11.html">Brochüre öffnen</a>
+      <div class="card-tutorials">
+        <div class="tutorials-label">Begleitende Tutorials</div>
+        <ul class="tutorial-list">
+          <li><a href="https://cascadeur.com/tutor/improvinglivelink" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Improved Live Link with UE5</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/ue5-live-link" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">UE5 Live Link</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/uelocomotion" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">UE5 Locomotion</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/2andmorecharacters" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Two and More Characters</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/betterscenelinking" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Better Scene Linking</span><span class="ext-icon">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TRACK 4 -->
+<section class="track-section track-4" id="track-4">
+  <div class="track-head">
+    <div class="track-num">04</div>
+    <div>
+      <div class="track-tag">Track 4</div>
+      <h2 class="track-title"><em>Spezialisierung</em></h2>
+      <p class="track-description">Combat, Stilwechsel, Waffen, generative Animation, Reference-Disziplin. Profi-Werkzeuge.</p>
+    </div>
+  </div>
+
+  <div class="cards-grid">
+
+    <!-- Projekt 12 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="project-num">12</span>
+        <span class="project-badge">Combat</span>
+      </div>
+      <h3 class="card-title">Kick · <em>Combat-Basics</em></h3>
+      <p class="card-desc">Front-Kick. Foot-Sliding-Fix, Ghost Mode, Paste Into Interval, Impact-Exaggeration. IK/FK-Regel.</p>
+      <div class="card-meta"><span>Combat</span><span>Ghost Mode</span><span>Impact</span></div>
+      <a class="card-button" href="https://shameforest.github.io/Guides/cascadeur12.html">Brochüre öffnen</a>
+      <div class="card-tutorials">
+        <div class="tutorials-label">Begleitende Tutorials</div>
+        <ul class="tutorial-list">
+          <li><a href="https://cascadeur.com/tutor/fightsequence2" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Fight Sequence 2</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/improvinganimation" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Improving Animation</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/rooffighttimelapse" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Roof Fight Timelapse</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/taichianimationfeedback" target="_blank" rel="noopener"><span class="stars">★</span><span class="tutorial-title">Tai Chi Animation Feedback</span><span class="ext-icon">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Projekt 13 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="project-num">13</span>
+        <span class="project-badge">Stil-Wechsel</span>
+      </div>
+      <h3 class="card-title">Stepped · <em>Anime-Look</em></h3>
+      <p class="card-desc">24 fps Cinematic-Workflow. Keyframe Reduction on Twos für 12 effektive fps. Animation Scripts Toolbox.</p>
+      <div class="card-meta"><span>24 fps</span><span>Stepped</span><span>Anime</span></div>
+      <a class="card-button" href="https://shameforest.github.io/Guides/cascadeur13.html">Brochüre öffnen</a>
+      <div class="card-tutorials">
+        <div class="tutorials-label">Begleitende Tutorials</div>
+        <ul class="tutorial-list">
+          <li><a href="https://cascadeur.com/tutor/addnoisescript" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Add Noise · Animation Scripts</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/scriptingintro" target="_blank" rel="noopener"><span class="stars">★</span><span class="tutorial-title">Scripting Intro</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/animatewithpython" target="_blank" rel="noopener"><span class="stars">★</span><span class="tutorial-title">Animate with Python</span><span class="ext-icon">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Projekt 14 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="project-num">14</span>
+        <span class="project-badge">Waffen-Pipeline</span>
+      </div>
+      <h3 class="card-title">Props &amp; <em>Sword</em></h3>
+      <p class="card-desc">Drei Props-Attach-Methoden. Sword-Constraints, Enforce FK Interpolation, Composite CoM.</p>
+      <div class="card-meta"><span>Sword</span><span>Constraints</span><span>Composite CoM</span></div>
+      <a class="card-button" href="https://shameforest.github.io/Guides/cascadeur14.html">Brochüre öffnen</a>
+      <div class="card-tutorials">
+        <div class="tutorials-label">Begleitende Tutorials</div>
+        <ul class="tutorial-list">
+          <li><a href="https://cascadeur.com/tutor/workingwithweapons" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Working with Weapons</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/riggingpropsmocapcleanup01" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Rigging Props · Mocap Cleanup</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/swinginganimations" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Swinging Animations</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/collisionmeshes" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Collision Meshes</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/rigidbodymass" target="_blank" rel="noopener"><span class="stars">★</span><span class="tutorial-title">Rigid Body Mass</span><span class="ext-icon">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Projekt 15 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="project-num">15</span>
+        <span class="project-badge">2026.1 Generation</span>
+      </div>
+      <h3 class="card-title">Root Motion · <em>Diffusion</em></h3>
+      <p class="card-desc">Diffusions-Model. Walking, Running, Jumping, Acrobatics. Reference Mode mit Mixamo-Style.</p>
+      <div class="card-meta"><span>Root Motion</span><span>Diffusion</span><span>2026.1</span></div>
+      <a class="card-button" href="https://shameforest.github.io/Guides/cascadeur15.html">Brochüre öffnen</a>
+      <div class="card-tutorials">
+        <div class="tutorials-label">Begleitende Tutorials</div>
+        <ul class="tutorial-list">
+          <li><a href="https://cascadeur.com/tutor/rootmotiontutorial01" target="_blank" rel="noopener"><span class="stars">★★★</span><span class="tutorial-title">Generate Creative Animations · Root Motion</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/creatingarootcontroller" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Creating a Root Controller</span><span class="ext-icon">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Projekt 16 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="project-num">16</span>
+        <span class="project-badge">Workflow-Reflexion</span>
+      </div>
+      <h3 class="card-title">References · <em>Disziplin</em></h3>
+      <p class="card-desc">Meta-thematisch: Reference-Stage als Pipeline-Phase. Quellen, After Effects Time Remapping.</p>
+      <div class="card-meta"><span>References</span><span>Workflow</span><span>After Effects</span></div>
+      <a class="card-button" href="https://shameforest.github.io/Guides/cascadeur16.html">Brochüre öffnen</a>
+      <div class="card-tutorials">
+        <div class="tutorials-label">Begleitende Tutorials</div>
+        <ul class="tutorial-list">
+          <li><a href="https://cascadeur.com/tutor/improvinganimation" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Improving Animation</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/taichianimationfeedback" target="_blank" rel="noopener"><span class="stars">★★</span><span class="tutorial-title">Tai Chi Animation Feedback</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/parkourtimelapse" target="_blank" rel="noopener"><span class="stars">★</span><span class="tutorial-title">Parkour Timelapse</span><span class="ext-icon">↗</span></a></li>
+          <li><a href="https://cascadeur.com/tutor/rooffighttimelapse" target="_blank" rel="noopener"><span class="stars">★</span><span class="tutorial-title">Roof Fight Timelapse</span><span class="ext-icon">↗</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <h3>Über diese Lernreihe</h3>
+      <p>Sechzehn HTML-Brochüren, geordnet in vier Tracks. Vom ersten Idle bis zur Profi-Reference-Disziplin. Jede Brochüre ist eigenständig als Nachschlagewerk konzipiert — bei aktuellem Animations-Projekt die passende Brochüre aufrufen, plus die begleitenden Cascadeur-Tutorial-Videos.</p>
+      <p>Pipeline-Verankerung: UE5-Manny primär, Custom-Charakter via Blender Auto-Rig Pro. QuickMagic-Mocap. UE5 Sequencer als Cinematic-Ziel.</p>
+    </div>
+    <div>
+      <h3>Stern-Legende</h3>
+      <ul>
+        <li><span class="legend-stars">★★★</span>Direkte Quelle, Pflicht</li>
+        <li><span class="legend-stars">★★</span>Stark zugehörig</li>
+        <li><span class="legend-stars">★</span>Thematische Ergänzung</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Externe Links</h3>
+      <ul>
+        <li><a href="https://cascadeur.com/tutor" target="_blank" rel="noopener" style="color: var(--terracotta); text-decoration: none;">cascadeur.com/tutor ↗</a></li>
+        <li><a href="https://cascadeur.com/help" target="_blank" rel="noopener" style="color: var(--terracotta); text-decoration: none;">Cascadeur Documentation ↗</a></li>
+        <li><a href="https://www.youtube.com/channel/UCwF6yYbIFJmB5ynAkzq9Psg" target="_blank" rel="noopener" style="color: var(--terracotta); text-decoration: none;">Cascadeur YouTube ↗</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="terracotta">Cascadeur-Lernreihe · Index · v 1.0</span>
+    <span>16 Brochüren · 4 Tracks · komplett</span>
+    <span>Stand: Mai 2026</span>
+  </div>
+</footer>
+
+</div>
+
+</body>
+</html>
