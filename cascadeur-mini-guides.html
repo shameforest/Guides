@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cascadeur Mini-Guides · 10 × 30 Minuten</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f3ecdc; --paper-warm: #ede4d0; --paper-dark: #e2d6b8;
+    --ink: #1f1a14; --ink-soft: #5a4d3a; --ink-faint: #8a7d68;
+    --terracotta: #b85528; --terracotta-deep: #7a3414;
+    --cobalt: #284858; --sage: #8a9878; --warning: #c46b3a; --rule: #c8b89a;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'DM Sans', -apple-system, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); font-size: 16px; line-height: 1.6; color: var(--ink); background: var(--paper); background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"); -webkit-font-smoothing: antialiased; min-height: 100vh; }
+  .doc { max-width: 1100px; margin: 0 auto; }
+
+  /* HERO */
+  .hero { padding: 3.5rem 4rem 2.5rem; border-bottom: 2px solid var(--ink); position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -10%; right: -8%; width: 50%; aspect-ratio: 1; background: radial-gradient(circle, rgba(184, 85, 40, 0.10) 0%, transparent 65%); border-radius: 50%; pointer-events: none; }
+  .hero-marker { display: flex; align-items: center; gap: 1.5rem; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 1.5rem; }
+  .hero-marker .ml { width: 60px; height: 1px; background: var(--terracotta); }
+  .hero h1 { font-family: var(--font-display); font-size: clamp(2.6rem, 5vw, 4.2rem); font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 50; line-height: 1.05; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 1.2rem; max-width: 16ch; }
+  .hero h1 em { font-style: italic; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; color: var(--terracotta); }
+  .hero .subtitle { font-family: var(--font-display); font-style: italic; font-size: 1.2rem; color: var(--ink-soft); max-width: 62ch; margin-bottom: 2rem; }
+  .difficulty-overview { display: flex; gap: 1.2rem; padding: 1.4rem 0 0; border-top: 1px solid var(--rule); flex-wrap: wrap; }
+  .diff-stat { display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 1rem; background: var(--paper-warm); border-radius: 4px; border-left: 4px solid; }
+  .diff-stat.anfänger { border-left-color: var(--sage); }
+  .diff-stat.mittel { border-left-color: var(--cobalt); }
+  .diff-stat.fortgeschritten { border-left-color: var(--warning); }
+  .diff-stat-count { font-family: var(--font-display); font-size: 1.6rem; font-weight: 400; font-style: italic; }
+  .diff-stat.anfänger .diff-stat-count { color: var(--sage); }
+  .diff-stat.mittel .diff-stat-count { color: var(--cobalt); }
+  .diff-stat.fortgeschritten .diff-stat-count { color: var(--warning); }
+  .diff-stat-label { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+
+  /* QUICK NAV */
+  .quicknav { padding: 1.2rem 4rem; background: var(--paper-warm); border-bottom: 1px solid var(--rule); position: sticky; top: 0; z-index: 10; backdrop-filter: blur(8px); background: rgba(237, 228, 208, 0.95); display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+  .quicknav-label { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); margin-right: 0.5rem; }
+  .quicknav a { font-family: var(--font-mono); font-size: 0.74rem; padding: 0.3rem 0.6rem; border: 1px solid var(--rule); border-radius: 3px; color: var(--ink); text-decoration: none; transition: all 0.15s ease; min-width: 2.4em; text-align: center; }
+  .quicknav a:hover { background: var(--terracotta); color: var(--paper); border-color: var(--terracotta); }
+
+  /* TASK */
+  .task { padding: 2.5rem 4rem; border-bottom: 1px solid var(--rule); }
+  .task-head { display: grid; grid-template-columns: 90px 1fr auto; gap: 1.5rem; align-items: start; margin-bottom: 1.5rem; }
+  .task-num { font-family: var(--font-display); font-size: 3.2rem; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; font-style: italic; line-height: 0.9; }
+  .task.anfänger .task-num { color: var(--sage); }
+  .task.mittel .task-num { color: var(--cobalt); }
+  .task.fortgeschritten .task-num { color: var(--warning); }
+  .task-title-block { display: flex; flex-direction: column; gap: 0.3rem; }
+  .task-pretitle { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; }
+  .task.anfänger .task-pretitle { color: var(--sage); }
+  .task.mittel .task-pretitle { color: var(--cobalt); }
+  .task.fortgeschritten .task-pretitle { color: var(--warning); }
+  .task-title { font-family: var(--font-display); font-size: clamp(1.5rem, 2.5vw, 2rem); font-weight: 400; line-height: 1.1; color: var(--ink); letter-spacing: -0.01em; max-width: 28ch; }
+  .task-title em { font-style: italic; font-weight: 300; font-variation-settings: 'opsz' 144, 'SOFT' 100; }
+  .task.anfänger .task-title em { color: var(--sage); }
+  .task.mittel .task-title em { color: var(--cobalt); }
+  .task.fortgeschritten .task-title em { color: var(--warning); }
+  .task-meta { display: flex; flex-direction: column; gap: 0.4rem; align-items: flex-end; }
+  .task-badge { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; padding: 0.3rem 0.7rem; border-radius: 3px; font-weight: 600; }
+  .task.anfänger .task-badge.diff { background: rgba(138, 152, 120, 0.25); color: var(--sage); }
+  .task.mittel .task-badge.diff { background: rgba(40, 72, 88, 0.18); color: var(--cobalt); }
+  .task.fortgeschritten .task-badge.diff { background: rgba(196, 107, 58, 0.22); color: var(--warning); }
+  .task-badge.time { background: var(--paper-warm); color: var(--ink-soft); border: 1px solid var(--rule); }
+
+  .task-intro { font-family: var(--font-display); font-style: italic; font-size: 1.05rem; color: var(--ink-soft); max-width: 65ch; margin-bottom: 1.4rem; }
+  .task-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.5rem; }
+  .info-block { background: var(--paper-warm); padding: 1rem 1.2rem; border-radius: 4px; border-left: 3px solid var(--rule); }
+  .info-block-label { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.4rem; }
+  .info-block-content { font-size: 0.92rem; color: var(--ink); }
+  .info-block-content a { color: var(--terracotta); text-decoration: none; border-bottom: 1px dotted var(--terracotta); }
+  .info-block-content a:hover { color: var(--terracotta-deep); }
+  .tool-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.3rem; }
+  .tool-tag { font-family: var(--font-mono); font-size: 0.74rem; padding: 0.2rem 0.5rem; background: var(--paper); border: 1px solid var(--rule); border-radius: 3px; color: var(--ink); }
+
+  .steps-section { margin-bottom: 1.4rem; }
+  .steps-label { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink); margin-bottom: 0.8rem; font-weight: 600; }
+  .steps-label::before { content: ''; width: 16px; height: 2px; background: currentColor; }
+  .task.anfänger .steps-label { color: var(--sage); }
+  .task.mittel .steps-label { color: var(--cobalt); }
+  .task.fortgeschritten .steps-label { color: var(--warning); }
+  .steps-list { list-style: none; counter-reset: step-counter; }
+  .steps-list li { counter-increment: step-counter; padding: 0.6rem 0 0.6rem 2.6rem; position: relative; border-bottom: 1px dashed var(--rule); font-size: 0.95rem; line-height: 1.5; }
+  .steps-list li:last-child { border-bottom: none; }
+  .steps-list li::before { content: counter(step-counter); position: absolute; left: 0; top: 0.6rem; font-family: var(--font-mono); font-size: 0.78rem; font-weight: 600; width: 1.8rem; height: 1.8rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+  .task.anfänger .steps-list li::before { background: rgba(138, 152, 120, 0.25); color: var(--sage); }
+  .task.mittel .steps-list li::before { background: rgba(40, 72, 88, 0.18); color: var(--cobalt); }
+  .task.fortgeschritten .steps-list li::before { background: rgba(196, 107, 58, 0.22); color: var(--warning); }
+  .steps-list strong { font-weight: 600; }
+  kbd { font-family: var(--font-mono); font-size: 0.78rem; background: var(--paper-warm); border: 1px solid var(--rule); border-radius: 3px; padding: 0.05rem 0.4rem; color: var(--ink); box-shadow: 0 1px 0 var(--rule); }
+
+  .check-box, .trap-box, .bonus-box { margin-top: 1.2rem; padding: 1rem 1.2rem; border-radius: 0 4px 4px 0; }
+  .check-box { background: rgba(138, 152, 120, 0.18); border-left: 3px solid var(--sage); }
+  .trap-box { background: rgba(196, 107, 58, 0.13); border-left: 3px solid var(--warning); }
+  .bonus-box { background: rgba(184, 85, 40, 0.10); border-left: 3px solid var(--terracotta); }
+  .box-label-inline { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; margin-bottom: 0.4rem; }
+  .box-label-inline::before { content: ''; width: 14px; height: 1.5px; background: currentColor; }
+  .check-box .box-label-inline { color: var(--sage); }
+  .trap-box .box-label-inline { color: var(--warning); }
+  .bonus-box .box-label-inline { color: var(--terracotta); }
+  .check-box p, .trap-box p, .bonus-box p { font-size: 0.92rem; line-height: 1.5; }
+
+  /* FOOTER */
+  .footer { padding: 3rem 4rem; background: linear-gradient(180deg, var(--paper), var(--paper-warm)); border-top: 2px solid var(--ink); }
+  .footer h3 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 500; color: var(--ink); margin-bottom: 1rem; }
+  .footer h3 em { font-style: italic; color: var(--terracotta); font-variation-settings: 'opsz' 144, 'SOFT' 100; }
+  .footer p { font-size: 0.95rem; color: var(--ink-soft); margin-bottom: 0.8rem; max-width: 65ch; }
+  .footer-link { display: inline-block; margin-top: 0.8rem; padding: 0.7rem 1.2rem; background: var(--terracotta); color: var(--paper); text-decoration: none; font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; border-radius: 4px; transition: background 0.2s ease; }
+  .footer-link:hover { background: var(--terracotta-deep); }
+  .footer-bottom { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+  .footer-bottom .terracotta { color: var(--terracotta); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .hero, .quicknav, .task, .footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .task-head { grid-template-columns: 1fr; gap: 0.6rem; }
+    .task-meta { flex-direction: row; align-items: center; }
+    .task-info-grid { grid-template-columns: 1fr; gap: 0.8rem; }
+    .difficulty-overview { gap: 0.8rem; }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #1a1612; --paper-warm: #221d17; --paper-dark: #2a241c; --ink: #ebe3d0; --ink-soft: #b8a98a; --ink-faint: #7a6e58; --terracotta: #e8814a; --terracotta-deep: #c25a2a; --cobalt: #6a9aab; --sage: #a8b898; --warning: #e2884d; --rule: #3a3026; }
+    body { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"); }
+    .quicknav { background: rgba(34, 29, 23, 0.95); }
+    .footer-link { color: var(--paper); }
+  }
+</style>
+</head>
+<body>
+
+<div class="doc">
+
+<header class="hero">
+  <div class="hero-marker">
+    <span>Cascadeur · Bonus-Reihe</span>
+    <div class="ml"></div>
+    <span>10 Mini-Guides · 30 Minuten each</span>
+  </div>
+  <h1>30-Minuten-<em>Übungen</em>.</h1>
+  <p class="subtitle">Zehn kompakte Mini-Guides, die das Brochüren-Vokabular in halbe-Stunden-Übungen herunterbrechen. Von Atmen-Animation bis Diffusion-Generation. Eine pro Tag, oder alle in einer Woche.</p>
+  <div class="difficulty-overview">
+    <div class="diff-stat anfänger"><span class="diff-stat-count">3</span><span class="diff-stat-label">Anfänger · 01-03</span></div>
+    <div class="diff-stat mittel"><span class="diff-stat-count">4</span><span class="diff-stat-label">Mittel · 04-07</span></div>
+    <div class="diff-stat fortgeschritten"><span class="diff-stat-count">3</span><span class="diff-stat-label">Fortgeschritten · 08-10</span></div>
+  </div>
+</header>
+
+<nav class="quicknav">
+  <span class="quicknav-label">Schnell-Sprung</span>
+  <a href="#m01">01</a>
+  <a href="#m02">02</a>
+  <a href="#m03">03</a>
+  <a href="#m04">04</a>
+  <a href="#m05">05</a>
+  <a href="#m06">06</a>
+  <a href="#m07">07</a>
+  <a href="#m08">08</a>
+  <a href="#m09">09</a>
+  <a href="#m10">10</a>
+</nav>
+
+<!-- TASK 01 -->
+<section class="task anfänger" id="m01">
+  <div class="task-head">
+    <div class="task-num">01</div>
+    <div class="task-title-block">
+      <span class="task-pretitle">Pelvis · Atmung · Loop</span>
+      <h2 class="task-title">Idle <em>atmen</em></h2>
+    </div>
+    <div class="task-meta">
+      <span class="task-badge diff">Anfänger</span>
+      <span class="task-badge time">⏱ 30 min</span>
+    </div>
+  </div>
+  <p class="task-intro">Erste Animation der Reihe — der einfachste mögliche Loop. Manny atmet sichtbar, ohne dass sich die Beine bewegen. Lehrt Pelvis-Kontrolle und Keyframe-Setting in seiner pursten Form.</p>
+
+  <div class="task-info-grid">
+    <div class="info-block">
+      <div class="info-block-label">Brochüre-Bezug</div>
+      <div class="info-block-content"><a href="https://shameforest.github.io/Guides/cascadeur1.html">Projekt 01 · First Animation</a></div>
+    </div>
+    <div class="info-block">
+      <div class="info-block-label">Tool-Fokus</div>
+      <div class="tool-tags"><span class="tool-tag">Box Controller</span><span class="tool-tag">Keyframes</span><span class="tool-tag">Foot-Fixation</span></div>
+    </div>
+  </div>
+
+  <div class="steps-section">
+    <div class="steps-label">Workflow</div>
+    <ol class="steps-list">
+      <li>UE5-Manny laden, in Default-Idle-Pose. Animation auf 120 Frames (4 Sekunden bei 30 fps).</li>
+      <li>Beide Füße selektieren, <kbd>R</kbd> drücken — Foot-Fixation aktiv.</li>
+      <li>Auf F0: Pelvis-Box-Controller selektieren, Keyframe setzen (Y-Default-Höhe).</li>
+      <li>Auf F30: Pelvis um <strong>1 cm nach oben</strong> verschieben (Einatmen-Peak). Keyframe.</li>
+      <li>Auf F60: zurück zur Default-Höhe. Keyframe.</li>
+      <li>Auf F90: Pelvis um <strong>0.5 cm nach unten</strong> (vollständig ausgeatmet). Keyframe.</li>
+      <li>Auf F120: zurück zur Default-Höhe (Loop-Start). Keyframe.</li>
+    </ol>
+  </div>
+
+  <div class="check-box">
+    <div class="box-label-inline">Erfolgs-Check</div>
+    <p>Playback im Loop-Modus. Atmung subtil sichtbar, Beine bleiben stabil am Boden, kein sichtbares Foot-Sliding. Brust hebt und senkt sich rhythmisch.</p>
+  </div>
+  <div class="trap-box">
+    <div class="box-label-inline">Stolperfalle</div>
+    <p>Pelvis-Verschiebung zu groß (3 cm oder mehr) lässt Manny wie aufgepumpt wirken. Realistische Atmung ist subtil — 1 cm reicht. Wer es sichtbarer haben will: leichte Schulter-Rotation als Sekundär-Bewegung einbauen, statt Pelvis stärker zu bewegen.</p>
+  </div>
+</section>
+
+<!-- TASK 02 -->
+<section class="task anfänger" id="m02">
+  <div class="task-head">
+    <div class="task-num">02</div>
+    <div class="task-title-block">
+      <span class="task-pretitle">Bezier · Body-Sympathy</span>
+      <h2 class="task-title">Wave mit <em>Bounce</em></h2>
+    </div>
+    <div class="task-meta">
+      <span class="task-badge diff">Anfänger</span>
+      <span class="task-badge time">⏱ 30 min</span>
+    </div>
+  </div>
+  <p class="task-intro">Hand-Winken mit Body-Sympathy-Motion. Lehrt, dass keine Bewegung isoliert ist — wenn die Hand winkt, schwingt der Body subtil mit. Klassisches Animation-Prinzip.</p>
+
+  <div class="task-info-grid">
+    <div class="info-block">
+      <div class="info-block-label">Brochüre-Bezug</div>
+      <div class="info-block-content"><a href="https://shameforest.github.io/Guides/cascadeur2.html">Projekt 02 · Wave</a></div>
+    </div>
+    <div class="info-block">
+      <div class="info-block-label">Tool-Fokus</div>
+      <div class="tool-tags"><span class="tool-tag">Bezier</span><span class="tool-tag">AutoPosing</span><span class="tool-tag">Sympathy Motion</span></div>
+    </div>
+  </div>
+
+  <div class="steps-section">
+    <div class="steps-label">Workflow</div>
+    <ol class="steps-list">
+      <li>Manny in Idle. 75 Frames Animations-Range (2.5 Sekunden).</li>
+      <li>F0: Default-Idle, beide Füße <kbd>R</kbd>-fixiert. Keyframe.</li>
+      <li>F15: rechter Arm hebt sich auf Schulter-Höhe. Pelvis 1° um Y-Achse rotiert (Sympathy). Keyframe.</li>
+      <li>F25: Hand nach rechts geschwenkt. Schulter folgt minimal. Keyframe.</li>
+      <li>F35: Hand nach links geschwenkt. Pelvis Counter-Rotation. Keyframe.</li>
+      <li>F45: Hand wieder rechts. Keyframe.</li>
+      <li>F75: Arm fällt zurück zur Idle-Pose. Pelvis-Default. Keyframe.</li>
+    </ol>
+  </div>
+
+  <div class="check-box">
+    <div class="box-label-inline">Erfolgs-Check</div>
+    <p>Hand-Wink klar sichtbar mit mindestens 2 Schwüngen. Body schwingt subtil mit — nicht statisch wie ein Roboter, nicht übertrieben wie ein Tanz.</p>
+  </div>
+  <div class="bonus-box">
+    <div class="box-label-inline">Bonus-Variation</div>
+    <p>Als zweiten Pass: AI Inbetweening aktivieren, dieselben Keyframes auf weniger Anker reduzieren (nur F0, F25, F45, F75). Cascadeur generiert die Zwischen-Bewegung. Vergleich der beiden Versionen zeigt den Charakter-Unterschied zwischen manuellem Bezier und Inbetweening.</p>
+  </div>
+</section>
+
+<!-- TASK 03 -->
+<section class="task anfänger" id="m03">
+  <div class="task-head">
+    <div class="task-num">03</div>
+    <div class="task-title-block">
+      <span class="task-pretitle">IK/FK · Foot-Contact</span>
+      <h2 class="task-title">Ein <em>Schritt</em> nach vorn</h2>
+    </div>
+    <div class="task-meta">
+      <span class="task-badge diff">Anfänger</span>
+      <span class="task-badge time">⏱ 30 min</span>
+    </div>
+  </div>
+  <p class="task-intro">Statt einen vollen Walk-Cycle zu bauen, nur einen einzigen Schritt. Komprimiert den Walk-Workflow auf das Minimum — und macht sichtbar, dass jeder Walk eine Folge solcher Einzelschritte ist.</p>
+
+  <div class="task-info-grid">
+    <div class="info-block">
+      <div class="info-block-label">Brochüre-Bezug</div>
+      <div class="info-block-content"><a href="https://shameforest.github.io/Guides/cascadeur3.html">Projekt 03 · Walk</a></div>
+    </div>
+    <div class="info-block">
+      <div class="info-block-label">Tool-Fokus</div>
+      <div class="tool-tags"><span class="tool-tag">IK/FK</span><span class="tool-tag">Foot-Contact</span><span class="tool-tag">Pelvis-Pfad</span></div>
+    </div>
+  </div>
+
+  <div class="steps-section">
+    <div class="steps-label">Workflow</div>
+    <ol class="steps-list">
+      <li>Manny in Stand-Pose, leichte Knie-Beugung. 60 Frames Animations-Range.</li>
+      <li>F0: Stand-Pose. Beide Füße IK, <kbd>R</kbd>-fixiert. Keyframe.</li>
+      <li>F10: rechtes Bein hebt sich an, Knie gebeugt. Wechsel auf <strong>FK</strong> für rechtes Bein. Pelvis 5 cm nach hinten verlagert (Gewicht aufs linke Bein). Keyframe.</li>
+      <li>F25: rechter Fuß in Vorwärts-Position, kurz vor Bodenkontakt. Pelvis beginnt sich vorzubeugen. Keyframe.</li>
+      <li>F30: rechter Fuß setzt auf, Wechsel zurück auf <strong>IK</strong>. <kbd>R</kbd>-Fixation für rechten Fuß. Keyframe.</li>
+      <li>F45: linkes Bein folgt nach, zieht heran. Pelvis verlagert sich nach vorn. Keyframe.</li>
+      <li>F60: beide Füße nebeneinander, Stand-Pose vorne. Keyframe.</li>
+    </ol>
+  </div>
+
+  <div class="check-box">
+    <div class="box-label-inline">Erfolgs-Check</div>
+    <p>Manny macht einen sichtbaren Schritt nach vorn. Pelvis-Trajectory zeigt eine klare Vorwärts-Bewegung. Stand-Fuß bleibt während F0-F30 stabil, dann ablösen.</p>
+  </div>
+</section>
+
+<!-- TASK 04 -->
+<section class="task mittel" id="m04">
+  <div class="task-head">
+    <div class="task-num">04</div>
+    <div class="task-title-block">
+      <span class="task-pretitle">Pelvis-Tiefe · AutoPhysics</span>
+      <h2 class="task-title">Hocke <em>und auf</em></h2>
+    </div>
+    <div class="task-meta">
+      <span class="task-badge diff">Mittel</span>
+      <span class="task-badge time">⏱ 30 min</span>
+    </div>
+  </div>
+  <p class="task-intro">In die Hocke gehen, kurz halten, wieder aufstehen. Klassische Gewichts-Verlagerungs-Übung. Erster AutoPhysics-Pass für Plausibilität.</p>
+
+  <div class="task-info-grid">
+    <div class="info-block">
+      <div class="info-block-label">Brochüre-Bezug</div>
+      <div class="info-block-content"><a href="https://shameforest.github.io/Guides/cascadeur7.html">Projekt 07 · AutoPhysics</a></div>
+    </div>
+    <div class="info-block">
+      <div class="info-block-label">Tool-Fokus</div>
+      <div class="tool-tags"><span class="tool-tag">Pelvis-Tiefe</span><span class="tool-tag">AutoPhysics</span><span class="tool-tag">Knie-Coordination</span></div>
+    </div>
+  </div>
+
+  <div class="steps-section">
+    <div class="steps-label">Workflow</div>
+    <ol class="steps-list">
+      <li>Manny in Stand-Pose. 90 Frames. Beide Füße IK + <kbd>R</kbd>-fixiert.</li>
+      <li>F0: Stand. Keyframe.</li>
+      <li>F25: Hocke. Pelvis 30-35 cm tiefer, Knie auf ca. 90° gebeugt, Body leicht vorgeneigt für Balance. Keyframe.</li>
+      <li>F40: Hocke gehalten (F25 kopieren). Keyframe.</li>
+      <li>F70: zurück zur Stand-Pose. Knie-Streckung mit Pelvis-Anstieg synchronisiert. Keyframe.</li>
+      <li>F90: leichter Settle, 0.5 cm Pelvis-Dip (Atmung nach Anstrengung). Keyframe.</li>
+      <li>Center of Mass selektieren, Physics Tab → Physics-Ghost aktivieren → Physics Character 80, Smooth Trajectory 40. Snap to Physics.</li>
+    </ol>
+  </div>
+
+  <div class="check-box">
+    <div class="box-label-inline">Erfolgs-Check</div>
+    <p>Hocke wirkt gravitations-plausibel, kein „Schwebe-Effekt". Pelvis-Pfad ist ballistisch. Foot bleibt stabil am Boden.</p>
+  </div>
+  <div class="trap-box">
+    <div class="box-label-inline">Stolperfalle</div>
+    <p>Knie und Pelvis-Höhe müssen koordiniert sein. Wenn Pelvis 30 cm tiefer geht aber Knie nur 60° gebeugt sind, kollidieren Oberschenkel und Unterschenkel mathematisch. Lösung: in Hocke-Pose erst Pelvis tiefer setzen, dann Knie-Beugung anpassen bis Beine plausibel aussehen.</p>
+  </div>
+</section>
+
+<!-- TASK 05 -->
+<section class="task mittel" id="m05">
+  <div class="task-head">
+    <div class="task-num">05</div>
+    <div class="task-title-block">
+      <span class="task-pretitle">Combat-Mini · Impact-Hold</span>
+      <h2 class="task-title">Front-<em>Punch</em></h2>
+    </div>
+    <div class="task-meta">
+      <span class="task-badge diff">Mittel</span>
+      <span class="task-badge time">⏱ 30 min</span>
+    </div>
+  </div>
+  <p class="task-intro">Combat-Animation komprimiert auf ihre Essenz: Wind-Up, Impact-Hold, Recovery. Kürzer als der Kick aus Projekt 12, aber dieselben Prinzipien.</p>
+
+  <div class="task-info-grid">
+    <div class="info-block">
+      <div class="info-block-label">Brochüre-Bezug</div>
+      <div class="info-block-content"><a href="https://shameforest.github.io/Guides/cascadeur12.html">Projekt 12 · Kick</a></div>
+    </div>
+    <div class="info-block">
+      <div class="info-block-label">Tool-Fokus</div>
+      <div class="tool-tags"><span class="tool-tag">Ghost Mode</span><span class="tool-tag">Impact-Hold</span><span class="tool-tag">Hip-Rotation</span></div>
+    </div>
+  </div>
+
+  <div class="steps-section">
+    <div class="steps-label">Workflow</div>
+    <ol class="steps-list">
+      <li>Manny in Combat-Stand-Pose (Fäuste in Garde). 50 Frames.</li>
+      <li>F0: Garde-Pose. Beide Füße IK + <kbd>R</kbd>. Keyframe.</li>
+      <li>F8: Wind-Up — rechte Faust zurück zur Hüfte, Pelvis 10° rotiert. Keyframe.</li>
+      <li>F18: Impact — rechte Faust gestreckt nach vorn, Pelvis 25° rotiert, Body leicht vorgeneigt. Keyframe.</li>
+      <li>F19: Impact-Frame kopieren (Shift+Middle-Click-Drag des F18-Keyframes auf F19). Hold-Frame.</li>
+      <li>F35: Retract — Faust zieht zurück, Pelvis dreht zurück. Keyframe.</li>
+      <li>F50: zurück zur Garde-Pose. Keyframe.</li>
+      <li>Ghost Mode aktivieren (Both Neighbors + Outline) — Foot-Drift zwischen F0 und F18 prüfen. Falls Drift: Paste Into Interval für Stand-Fuß F0-F18.</li>
+    </ol>
+  </div>
+
+  <div class="check-box">
+    <div class="box-label-inline">Erfolgs-Check</div>
+    <p>Wind-Up ist sichtbar, Impact-Frame klar erkennbar (Faust vollständig gestreckt), Recovery natürlich. Hüft-Rotation als Power-Quelle erkennbar — die Hüfte führt, der Arm folgt.</p>
+  </div>
+  <div class="bonus-box">
+    <div class="box-label-inline">Bonus-Variation</div>
+    <p>Linke Hand-Pose für Counter-Balance: bei F18 leicht zurück gezogen als Gegen-Gewicht. Ohne Counter-Balance wirkt der Punch unbalanciert.</p>
+  </div>
+</section>
+
+<!-- TASK 06 -->
+<section class="task mittel" id="m06">
+  <div class="task-head">
+    <div class="task-num">06</div>
+    <div class="task-title-block">
+      <span class="task-pretitle">AutoPosing Fingers · Object-Greif</span>
+      <h2 class="task-title">Würfel <em>greifen</em></h2>
+    </div>
+    <div class="task-meta">
+      <span class="task-badge diff">Mittel</span>
+      <span class="task-badge time">⏱ 30 min</span>
+    </div>
+  </div>
+  <p class="task-intro">Hand-Detail-Übung: AutoPosing Fingers nutzen um eine Greif-Pose zu bauen. Würfel als Stellvertreter für jeden Greif-Object — Schwertgriff, Tasse, Flasche, Werkzeug.</p>
+
+  <div class="task-info-grid">
+    <div class="info-block">
+      <div class="info-block-label">Brochüre-Bezug</div>
+      <div class="info-block-content"><a href="https://shameforest.github.io/Guides/cascadeur8.html">Projekt 08 · Hands</a> · <a href="https://shameforest.github.io/Guides/cascadeur14.html">Projekt 14 · Props</a></div>
+    </div>
+    <div class="info-block">
+      <div class="info-block-label">Tool-Fokus</div>
+      <div class="tool-tags"><span class="tool-tag">AutoPosing Fingers</span><span class="tool-tag">Hand-Detail</span><span class="tool-tag">Box Controller</span></div>
+    </div>
+  </div>
+
+  <div class="steps-section">
+    <div class="steps-label">Workflow</div>
+    <ol class="steps-list">
+      <li>Manny in Idle. Cube-Primitive in Scene erstellen, Größe ca. 8 cm Kantenlänge (Faust-Größe).</li>
+      <li>Cube auf Bauchhöhe vor Manny positionieren, ca. 30 cm vor der rechten Hand.</li>
+      <li>F0: Idle-Pose. Keyframe.</li>
+      <li>F20: rechte Hand nähert sich Cube. Hand-IK-Controller direkt am Cube positionieren, Finger noch gestreckt. Keyframe.</li>
+      <li>F25: <strong>AutoPosing Fingers</strong> aktivieren — Finger schließen sich automatisch um den Cube.</li>
+      <li>F25: Daumen manuell mit Box Controller anpassen — über den anderen Fingern, nicht parallel (siehe Projekt 14 Sword-Grip-Pattern).</li>
+      <li>F45: Hand mit Cube anheben (Cube als Parent oder einfacher Constraint). Keyframe.</li>
+    </ol>
+  </div>
+
+  <div class="check-box">
+    <div class="box-label-inline">Erfolgs-Check</div>
+    <p>Finger umschließen den Würfel plausibel, kein Mesh-Penetration. Daumen liegt über den anderen Fingern (klassischer Greif-Pattern). Beim Anheben bleibt der Würfel in der Hand.</p>
+  </div>
+  <div class="trap-box">
+    <div class="box-label-inline">Stolperfalle</div>
+    <p>AutoPosing Fingers schließt alle Finger gleich — bei Würfel sieht das gut aus, bei dünneren Objects (Schwertgriff, Stift) wirkt es unnatürlich. Für dünne Objects: AutoPosing nutzen als Start, dann Index- und Mittelfinger manuell stärker bewegen.</p>
+  </div>
+</section>
+
+<!-- TASK 07 -->
+<section class="task mittel" id="m07">
+  <div class="task-head">
+    <div class="task-num">07</div>
+    <div class="task-title-block">
+      <span class="task-pretitle">Mocap-Cleanup · Anti-Sliding</span>
+      <h2 class="task-title">Mocap-<em>Slide</em> fixen</h2>
+    </div>
+    <div class="task-meta">
+      <span class="task-badge diff">Mittel</span>
+      <span class="task-badge time">⏱ 30 min</span>
+    </div>
+  </div>
+  <p class="task-intro">Existierenden Mocap-Clip nehmen (Mixamo-Walk reicht), das übliche Foot-Sliding identifizieren und mit Paste Into Interval + Tween Machine fixen. Diagnostische Übung.</p>
+
+  <div class="task-info-grid">
+    <div class="info-block">
+      <div class="info-block-label">Brochüre-Bezug</div>
+      <div class="info-block-content"><a href="https://shameforest.github.io/Guides/cascadeur9.html">Projekt 09 · Mocap</a> · <a href="https://shameforest.github.io/Guides/cascadeur12.html">Projekt 12 · Anti-Slide</a></div>
+    </div>
+    <div class="info-block">
+      <div class="info-block-label">Tool-Fokus</div>
+      <div class="tool-tags"><span class="tool-tag">Trajectory</span><span class="tool-tag">Paste Into Interval</span><span class="tool-tag">Tween Machine</span></div>
+    </div>
+  </div>
+
+  <div class="steps-section">
+    <div class="steps-label">Workflow</div>
+    <ol class="steps-list">
+      <li>Mixamo-Walk-Cycle laden (oder QuickMagic-Clip aus eigener Library). 60-90 Frames.</li>
+      <li>Rechten Foot-Controller selektieren, <kbd>\</kbd> für persistent Trajectory.</li>
+      <li>Drift-Phasen identifizieren: wo bewegt sich der Fuß, wenn er am Boden sein soll?</li>
+      <li>Erste Drift-Phase auswählen (z.B. F10-F20). Foot-Pose von F10 mit <kbd>Ctrl+C</kbd> kopieren.</li>
+      <li>Frame-Range F10-F20 auf Timeline selektieren. <kbd>Ctrl+Alt+V</kbd> (Paste Into Interval). <em>Vorher</em> Fix-Interpolation-Setting deaktivieren.</li>
+      <li>Zweite Drift-Phase: einzelne problematische Frames mit Tween Machine <kbd>G</kbd> (zu vorigem) korrigieren.</li>
+      <li>Trajectory erneut prüfen — Linie sollte in Bodenphasen jetzt fast-statisch sein.</li>
+    </ol>
+  </div>
+
+  <div class="check-box">
+    <div class="box-label-inline">Erfolgs-Check</div>
+    <p>Foot-Trajectory ist in Bodenphasen eine fast-statische Linie. Beim Playback ist kein „Eis-Effekt" mehr sichtbar — Fuß steht stabil, wenn er stehen soll.</p>
+  </div>
+</section>
+
+<!-- TASK 08 -->
+<section class="task fortgeschritten" id="m08">
+  <div class="task-head">
+    <div class="task-num">08</div>
+    <div class="task-title-block">
+      <span class="task-pretitle">Weapon-Constraint · Enforce FK</span>
+      <h2 class="task-title">Schwert <em>schwingen</em></h2>
+    </div>
+    <div class="task-meta">
+      <span class="task-badge diff">Fortgeschritten</span>
+      <span class="task-badge time">⏱ 30 min</span>
+    </div>
+  </div>
+  <p class="task-intro">Schwert in Hand bekommen, horizontaler Schwung ausführen. Komprimiert die Sword-Brochüre auf den Kern-Workflow.</p>
+
+  <div class="task-info-grid">
+    <div class="info-block">
+      <div class="info-block-label">Brochüre-Bezug</div>
+      <div class="info-block-content"><a href="https://shameforest.github.io/Guides/cascadeur14.html">Projekt 14 · Sword</a></div>
+    </div>
+    <div class="info-block">
+      <div class="info-block-label">Tool-Fokus</div>
+      <div class="tool-tags"><span class="tool-tag">Point Constraint</span><span class="tool-tag">Enforce FK Interpolation</span><span class="tool-tag">Local Mode</span></div>
+    </div>
+  </div>
+
+  <div class="steps-section">
+    <div class="steps-label">Workflow</div>
+    <ol class="steps-list">
+      <li>Sword-Asset importieren (oder Cube als Substitute — schmal und länglich). 60 Frames.</li>
+      <li>Sword nahe rechter Hand positionieren. Quick Rigging Tool: Sword in „Weapon R"-Slot draggen, Add Rig Elements, Generate Rig.</li>
+      <li>Point-Mode aktivieren. Drei Hand-Points + Sword-Point selektieren. <strong>Commands → Constraints → Points</strong>. Sword als Driver.</li>
+      <li>Sword im Outliner selektieren → Object Properties → Point IKFK Settings → <strong>Enforce FK Interpolation</strong>.</li>
+      <li>F0: Schwert in Mittel-Hochlage links. Keyframe.</li>
+      <li>F25: Schwert mittig (Impact-Position). Hüfte rotiert. Keyframe.</li>
+      <li>F50: Schwert rechts ausgeschwungen, Body folgt. Keyframe.</li>
+      <li>Constraint-Range für F0-F60 auf der Timeline aktivieren (kompletter Range).</li>
+    </ol>
+  </div>
+
+  <div class="check-box">
+    <div class="box-label-inline">Erfolgs-Check</div>
+    <p>Schwert bleibt durch den gesamten Schwung in der Hand. Kein „Fliegen". Hüft-Rotation ist Power-Quelle, Arm folgt mit.</p>
+  </div>
+  <div class="trap-box">
+    <div class="box-label-inline">Stolperfalle</div>
+    <p>Wenn Schwert beim Playback fliegt: Enforce FK Interpolation nicht aktiviert. Wenn nur in einzelnen Frames fliegt: Constraint nicht für Inbetween-Frames aktiviert — Frame-Range vor Constraint-Toggle markieren.</p>
+  </div>
+</section>
+
+<!-- TASK 09 -->
+<section class="task fortgeschritten" id="m09">
+  <div class="task-head">
+    <div class="task-num">09</div>
+    <div class="task-title-block">
+      <span class="task-pretitle">2026.1 · Diffusion-Generation</span>
+      <h2 class="task-title">Acrobatic <em>generieren</em></h2>
+    </div>
+    <div class="task-meta">
+      <span class="task-badge diff">Fortgeschritten</span>
+      <span class="task-badge time">⏱ 30 min</span>
+    </div>
+  </div>
+  <p class="task-intro">Cascadeurs Diffusions-Model nutzen, um eine kreative Animation zu generieren. Style: Acrobatics. Force: 0 (volle Freiheit). Workflow: Generate, prüfen, ggf. erneut.</p>
+
+  <div class="task-info-grid">
+    <div class="info-block">
+      <div class="info-block-label">Brochüre-Bezug</div>
+      <div class="info-block-content"><a href="https://shameforest.github.io/Guides/cascadeur15.html">Projekt 15 · Root Motion</a></div>
+    </div>
+    <div class="info-block">
+      <div class="info-block-label">Tool-Fokus</div>
+      <div class="tool-tags"><span class="tool-tag">Root Motion Tab</span><span class="tool-tag">Acrobatics Style</span><span class="tool-tag">Toggle Root Motion</span></div>
+    </div>
+  </div>
+
+  <div class="steps-section">
+    <div class="steps-label">Workflow</div>
+    <ol class="steps-list">
+      <li>Cascadeur <strong>2026.1</strong> öffnen (Pflicht-Version). Manny laden. 90 Frames.</li>
+      <li>F0: Stand-Pose am Welt-Origin. Keyframe.</li>
+      <li>F90: Pelvis 4 Meter nach vorn verschoben, Stand-Pose. Keyframe.</li>
+      <li>Scene Settings → Root Motion Tab öffnen. Style: <strong>Acrobatics</strong>. Key Frame Force: 0. Reference Mode: OFF.</li>
+      <li><strong>Toggle Root Motion ON</strong>. Cascadeur generiert (5-60 Sekunden, je nach GPU).</li>
+      <li>Playback. Generation prüfen — Acrobatic-Move wie Salto oder Schraube sollte sichtbar sein.</li>
+      <li>Wenn gefällt: <strong>SOFORT</strong> speichern (<kbd>Ctrl+S</kbd>). Nicht reproduzierbar!</li>
+      <li>Wenn nicht gefällt: <kbd>Ctrl+Z</kbd> bis vor Generation, Toggle erneut. Bis zu 5 Versuche.</li>
+    </ol>
+  </div>
+
+  <div class="check-box">
+    <div class="box-label-inline">Erfolgs-Check</div>
+    <p>Acrobatic-Animation ist generiert und gespeichert. Manny springt/salto/dreht sich auf dem Weg von F0 zu F90. Style ist erkennbar akrobatisch, nicht nur Walking.</p>
+  </div>
+  <div class="bonus-box">
+    <div class="box-label-inline">Bonus-Variation</div>
+    <p>Drei Speicher-Slots: derselbe Path mit Walking, Running, Jumping. Vergleich der vier Stile (inkl. Acrobatics) zeigt, wie unterschiedlich das Diffusions-Model auf Style-Wahl reagiert.</p>
+  </div>
+</section>
+
+<!-- TASK 10 -->
+<section class="task fortgeschritten" id="m10">
+  <div class="task-head">
+    <div class="task-num">10</div>
+    <div class="task-title-block">
+      <span class="task-pretitle">Stepped-Pass · Anime-Look</span>
+      <h2 class="task-title">In <em>Anime</em> umwandeln</h2>
+    </div>
+    <div class="task-meta">
+      <span class="task-badge diff">Fortgeschritten</span>
+      <span class="task-badge time">⏱ 30 min</span>
+    </div>
+  </div>
+  <p class="task-intro">Existierende glatte Animation in Stepped Anime-Look umwandeln. Nutzt die Animation aus Aufgabe 09 (Acrobatic Root Motion) oder eigene Animation aus früheren Brochüren. Bewusster Stil-Wechsel als finale Übung.</p>
+
+  <div class="task-info-grid">
+    <div class="info-block">
+      <div class="info-block-label">Brochüre-Bezug</div>
+      <div class="info-block-content"><a href="https://shameforest.github.io/Guides/cascadeur13.html">Projekt 13 · Stepped</a></div>
+    </div>
+    <div class="info-block">
+      <div class="info-block-label">Tool-Fokus</div>
+      <div class="tool-tags"><span class="tool-tag">24 fps</span><span class="tool-tag">Alt+F</span><span class="tool-tag">Keyframe Reduction</span></div>
+    </div>
+  </div>
+
+  <div class="steps-section">
+    <div class="steps-label">Workflow</div>
+    <ol class="steps-list">
+      <li>Bestehende Animation öffnen (aus Aufgabe 09 oder anderer). <strong>Backup speichern als v01-pre-stepped.casc</strong> — destruktiver Workflow!</li>
+      <li>Scene Settings: Frame Rate auf <strong>24 fps</strong> (auch wenn die Animation in 30 fps gemacht wurde, für Cinematic-Look ändern).</li>
+      <li>Gesamten Animations-Range auf Timeline selektieren (Shift+Click oder Marquee).</li>
+      <li>Alle Body-Controller selektieren (<kbd>Ctrl+A</kbd>).</li>
+      <li><kbd>Alt+F</kbd> drücken — jeder Frame wird zu echtem Keyframe (Bake der Interpolation).</li>
+      <li>Range immer noch selektiert: <strong>Commands → Animation Scripts → Keyframe Reduction → On Twos</strong>. Fix Interpolation: false.</li>
+      <li>Cascadeur transformiert. Playback prüfen — choppy Anime-Look sollte sichtbar sein.</li>
+      <li>Speichern als v02-stepped.casc.</li>
+    </ol>
+  </div>
+
+  <div class="check-box">
+    <div class="box-label-inline">Erfolgs-Check</div>
+    <p>Animation läuft im Stepped-Look ab — Bewegung ist nicht mehr fließend, sondern springt von Pose zu Pose. Jedes Frame-Paar zeigt dieselbe Pose (effektiv 12 fps statt 24 fps).</p>
+  </div>
+  <div class="trap-box">
+    <div class="box-label-inline">Stolperfalle</div>
+    <p>Wer ohne v01-Backup arbeitet und mit dem Ergebnis unzufrieden ist, hat keinen Weg zurück. Alt+F ist destruktiv. Vor jedem Stepped-Pass: Sicherheitskopie als separate Datei. Falls die Animation Probleme zeigt (Foot-Sliding wird sichtbarer im Stepped-Look), zurück zu v01, dort fixen, dann erneut Stepped-Pass.</p>
+  </div>
+  <div class="bonus-box">
+    <div class="box-label-inline">Bonus-Variation</div>
+    <p>Statt On Twos: On Threes (8 effektive fps) für extrem stilisierten 60er-Jahre-Anime-Look. Vergleich der drei Versionen (24 fps glatt / 12 fps stepped / 8 fps stepped) zeigt die Bandbreite stylized Animation.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <h3>Nach den <em>10 Übungen</em></h3>
+  <p>Wer alle zehn Mini-Guides durchhat, kennt das Cascadeur-Werkzeug-Vokabular in seiner Anwendungs-Form. Die Übungen sind Querschnitt durch die Brochüren-Reihe — keine ersetzt eine Brochüre, aber jede macht eine Kern-Disziplin in halbe-Stunde anwendbar.</p>
+  <p>Empfehlung für Wiederholung: Aufgabe 1-3 sind Aufwärm-Übungen, die du jederzeit als „Cascadeur-Sprache wachhalten"-Pattern wiederholen kannst. Aufgabe 4-7 sind die Pipeline-Übungen, die du bei neuen Projekten anwendest. Aufgabe 8-10 sind die Profi-Werkzeuge — die nutzt du nur, wenn du sie für ein konkretes Projekt brauchst.</p>
+  <a class="footer-link" href="https://shameforest.github.io/Guides/index.html">← Zurück zum Index</a>
+  <div class="footer-bottom">
+    <span class="terracotta">Mini-Guides · v 1.0 · 10 × 30 Minuten</span>
+    <span>3 Anfänger · 4 Mittel · 3 Fortgeschritten</span>
+    <span>Cascadeur · Lernreihe · Bonus</span>
+  </div>
+</footer>
+
+</div>
+
+</body>
+</html>
