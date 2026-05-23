@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cascadeur Mini-Atelier v2 · Teil I (01–05)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,30..100;1,9..144,300..900,30..100&family=Inter+Tight:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #e8dcc0;
+    --paper-light: #efe6d2;
+    --paper-warm: #ddcfae;
+    --paper-deep: #cab98e;
+    --ink-black: #0a0703;
+    --ink: #15100a;
+    --ink-soft: #3d3324;
+    --ink-fade: #6b5d44;
+    --ink-mute: #9b8c70;
+    --terracotta: #a8421a;
+    --terracotta-deep: #5e1e08;
+    --terracotta-glow: #c9572a;
+    --sage: #5a7350;
+    --sage-deep: #2c3d24;
+    --cobalt: #18394d;
+    --cobalt-deep: #082030;
+    --amber: #a85820;
+    --amber-deep: #5a2a08;
+    --rule: #a89274;
+    --display: 'Fraunces', 'Times New Roman', serif;
+    --sans: 'Inter Tight', -apple-system, system-ui, sans-serif;
+    --mono: 'JetBrains Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    font-size: 16.5px; line-height: 1.55;
+    color: var(--ink);
+    background: var(--paper);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(168, 66, 26, 0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 100% 100%, rgba(24, 57, 77, 0.04) 0%, transparent 60%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0 0.04 0 0 0 0.10 0'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>");
+  }
+  ::selection { background: var(--terracotta); color: var(--paper-light); }
+  .doc { max-width: 1480px; margin: 0 auto; }
+
+  /* =====================
+     COVER
+  ===================== */
+  .cover {
+    padding: 4.5rem 6rem 3.5rem;
+    border-bottom: 2px solid var(--ink-black);
+    position: relative; overflow: hidden;
+    background:
+      linear-gradient(180deg, transparent 0%, rgba(220, 200, 160, 0.15) 100%);
+  }
+  .cover-band {
+    display: flex; justify-content: space-between;
+    padding-bottom: 1.5rem; border-bottom: 1px solid var(--rule);
+    font-family: var(--mono); font-size: 0.72rem;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--ink-soft); position: relative; z-index: 2;
+  }
+  .cover-band-left { display: flex; align-items: center; gap: 1.2rem; }
+  .dot {
+    width: 8px; height: 8px; background: var(--terracotta);
+    border-radius: 50%; animation: pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.55; transform: scale(1.5); }
+  }
+
+  .cover-main {
+    margin-top: 4rem;
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 5rem;
+    align-items: end; position: relative; z-index: 2;
+  }
+  .cover-eyebrow {
+    font-family: var(--mono); font-size: 0.78rem;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--terracotta); margin-bottom: 1.8rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .cover-eyebrow::after {
+    content: ''; height: 1px; flex: 1;
+    background: linear-gradient(90deg, var(--terracotta), transparent);
+  }
+  .cover h1 {
+    font-family: var(--display);
+    font-size: clamp(4rem, 10vw, 9rem); font-weight: 200;
+    font-variation-settings: 'opsz' 144, 'SOFT' 30;
+    line-height: 0.83; letter-spacing: -0.035em;
+    color: var(--ink-black);
+  }
+  .cover h1 em {
+    font-style: italic; font-weight: 200;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    color: var(--terracotta);
+  }
+  .cover-tagline {
+    font-family: var(--display); font-style: italic; font-weight: 300;
+    font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+    line-height: 1.45; color: var(--ink-soft);
+  }
+  .cover-tagline em { color: var(--terracotta); font-style: italic; }
+
+  .cover-byline {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    display: flex; gap: 3rem; flex-wrap: wrap;
+    font-family: var(--mono); font-size: 0.7rem;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-fade);
+  }
+  .cover-byline b { color: var(--ink-black); }
+
+  /* =====================
+     PART-OPENER
+  ===================== */
+  .part-opener {
+    padding: 4rem 6rem;
+    background: var(--ink-black);
+    color: var(--paper);
+    position: relative;
+    border-bottom: 2px solid var(--terracotta);
+  }
+  .part-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 4rem; align-items: end; }
+  .part-marker {
+    font-family: var(--mono); font-size: 0.72rem;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--terracotta-glow); margin-bottom: 1rem;
+  }
+  .part-title {
+    font-family: var(--display);
+    font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 200;
+    font-variation-settings: 'opsz' 144, 'SOFT' 50;
+    line-height: 0.95; letter-spacing: -0.025em;
+  }
+  .part-title em {
+    font-style: italic; font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    color: var(--terracotta-glow);
+  }
+  .part-desc {
+    font-family: var(--display); font-style: italic;
+    font-size: 1.05rem; line-height: 1.5;
+    color: var(--paper-warm);
+    max-width: 28ch;
+  }
+
+  /* =====================
+     LESSON
+  ===================== */
+  .lesson {
+    padding: 5rem 6rem;
+    border-bottom: 2px solid var(--ink-black);
+    position: relative;
+  }
+  .lesson:nth-child(even) {
+    background: var(--paper-light);
+  }
+
+  /* Lesson-Header */
+  .lesson-head {
+    display: grid; grid-template-columns: 180px 1fr auto;
+    gap: 2.5rem; align-items: start;
+    padding-bottom: 2rem; margin-bottom: 3rem;
+    border-bottom: 2px solid var(--ink);
+    position: relative;
+  }
+  .lesson-num {
+    font-family: var(--display);
+    font-size: 11rem; font-weight: 150;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    font-style: italic;
+    line-height: 0.75; letter-spacing: -0.06em;
+    color: var(--ink-black);
+    position: relative;
+  }
+  .lesson.beg .lesson-num { color: var(--sage); }
+  .lesson.mid .lesson-num { color: var(--cobalt); }
+  .lesson.adv .lesson-num { color: var(--amber); }
+  .lesson-num::after {
+    content: attr(data-shadow);
+    position: absolute; top: 6px; left: 6px;
+    color: transparent; -webkit-text-stroke: 1.5px currentColor;
+    opacity: 0.18; z-index: -1;
+  }
+
+  .lesson-title-block { padding-top: 1.8rem; }
+  .lesson-kicker {
+    font-family: var(--mono); font-size: 0.7rem;
+    letter-spacing: 0.26em; text-transform: uppercase;
+    color: var(--ink-fade); margin-bottom: 1rem;
+    display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+  }
+  .lesson-kicker b {
+    color: var(--ink-black); font-weight: 600;
+    padding-left: 1rem; border-left: 2px solid var(--rule);
+  }
+  .lesson-title {
+    font-family: var(--display);
+    font-size: clamp(2.8rem, 5vw, 4.5rem);
+    font-weight: 250; line-height: 0.95;
+    letter-spacing: -0.03em;
+    font-variation-settings: 'opsz' 144, 'SOFT' 50;
+    color: var(--ink-black);
+  }
+  .lesson-title em {
+    font-style: italic; font-weight: 250;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  }
+  .lesson.beg .lesson-title em { color: var(--sage); }
+  .lesson.mid .lesson-title em { color: var(--cobalt); }
+  .lesson.adv .lesson-title em { color: var(--amber); }
+
+  .lesson-meta {
+    display: flex; flex-direction: column; gap: 0.6rem;
+    padding-top: 1.5rem;
+  }
+  .meta-pill {
+    font-family: var(--mono); font-size: 0.66rem;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    padding: 0.55rem 1.1rem; font-weight: 600;
+    border: 1.5px solid;
+    text-align: center; white-space: nowrap;
+  }
+  .lesson.beg .meta-pill.diff { background: var(--sage); color: var(--paper-light); border-color: var(--sage); }
+  .lesson.mid .meta-pill.diff { background: var(--cobalt); color: var(--paper-light); border-color: var(--cobalt); }
+  .lesson.adv .meta-pill.diff { background: var(--amber); color: var(--paper-light); border-color: var(--amber); }
+  .meta-pill.time { background: transparent; color: var(--ink-black); border-color: var(--ink-soft); }
+
+  /* Lead with Drop-Cap */
+  .lesson-lead {
+    font-family: var(--display); font-style: italic; font-weight: 300;
+    font-size: clamp(1.3rem, 1.8vw, 1.6rem);
+    line-height: 1.4; color: var(--ink-soft);
+    margin-bottom: 3.5rem; max-width: 50ch;
+    position: relative;
+  }
+  .drop-cap {
+    font-family: var(--display); font-size: 5.5rem; font-weight: 200;
+    font-style: italic; font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    float: left; line-height: 0.8; padding-right: 0.7rem; padding-top: 0.3rem;
+    color: var(--terracotta);
+  }
+
+  /* =====================
+     STAGE (Hero-SVG)
+  ===================== */
+  .stage {
+    margin-bottom: 3.5rem;
+    background: var(--paper-light);
+    border: 2px solid var(--ink-black);
+    position: relative;
+    box-shadow: 10px 10px 0 var(--ink-black);
+  }
+  .lesson:nth-child(even) .stage { background: var(--paper); }
+  .stage-label {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--rule);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 0.66rem;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    background: var(--ink-black); color: var(--paper-light);
+  }
+  .stage-label .ref {
+    color: var(--terracotta-glow); font-weight: 600;
+  }
+  .stage-canvas {
+    width: 100%;
+    aspect-ratio: 21/9;
+    padding: 2rem;
+    background:
+      linear-gradient(180deg, var(--paper-light) 0%, var(--paper) 100%);
+    position: relative;
+  }
+  .lesson:nth-child(even) .stage-canvas {
+    background: linear-gradient(180deg, var(--paper) 0%, var(--paper-warm) 100%);
+  }
+  .stage-canvas svg { width: 100%; height: 100%; display: block; }
+  .stage-caption {
+    padding: 1.2rem 1.5rem;
+    border-top: 1px solid var(--rule);
+    display: grid; grid-template-columns: auto 1fr; gap: 1.5rem;
+    align-items: start;
+  }
+  .stage-caption-tag {
+    font-family: var(--mono); font-size: 0.66rem;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--terracotta); font-weight: 700;
+    padding: 0.3rem 0.5rem;
+    border: 1px solid var(--terracotta);
+  }
+  .stage-caption-text {
+    font-family: var(--display); font-style: italic; font-weight: 300;
+    font-size: 1rem; line-height: 1.45; color: var(--ink);
+  }
+  .stage-caption-text strong { font-weight: 600; font-style: normal; }
+
+  /* =====================
+     CONTENT GRID
+  ===================== */
+  .content-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 3.5rem;
+  }
+
+  /* Workflow */
+  .workflow-pane h3 {
+    font-family: var(--mono); font-size: 0.72rem;
+    letter-spacing: 0.26em; text-transform: uppercase;
+    color: var(--ink-black); font-weight: 700;
+    padding-bottom: 0.8rem; margin-bottom: 1rem;
+    border-bottom: 2px solid var(--ink-black);
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .workflow-pane h3 em {
+    font-family: var(--display); font-size: 1.7rem; font-weight: 250;
+    font-style: italic; color: var(--terracotta);
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    letter-spacing: -0.02em;
+  }
+  .step-row {
+    display: grid; grid-template-columns: 56px 1fr;
+    gap: 1.5rem; padding: 1.1rem 0;
+    border-bottom: 1px dashed var(--rule);
+    align-items: start;
+  }
+  .step-row:last-child { border-bottom: none; }
+  .step-row-num {
+    font-family: var(--display); font-size: 1.7rem;
+    font-weight: 300; font-style: italic;
+    font-variation-settings: 'opsz' 144, 'SOFT' 80;
+    border-top: 2px solid;
+    padding-top: 0.4rem; line-height: 1;
+  }
+  .lesson.beg .step-row-num { color: var(--sage); border-color: var(--sage); }
+  .lesson.mid .step-row-num { color: var(--cobalt); border-color: var(--cobalt); }
+  .lesson.adv .step-row-num { color: var(--amber); border-color: var(--amber); }
+  .step-row-text { font-size: 0.96rem; line-height: 1.55; }
+  .step-row-text strong { font-weight: 700; color: var(--ink-black); }
+  .step-row-text em { font-style: italic; color: var(--ink-soft); }
+  kbd {
+    font-family: var(--mono); font-size: 0.78rem; font-weight: 500;
+    background: var(--ink-black); color: var(--paper-light);
+    padding: 0.1rem 0.45rem; border-radius: 2px;
+    border: 1.5px solid var(--ink-black);
+    box-shadow: 0 2px 0 var(--ink-soft);
+    display: inline-block; margin: 0 1px;
+  }
+
+  /* Side Pane (Info + Callouts) */
+  .side-pane { display: flex; flex-direction: column; gap: 1.2rem; }
+  .info-tile {
+    padding: 1.2rem 1.4rem;
+    background: var(--paper);
+    border: 1.5px solid var(--ink-black);
+    position: relative;
+  }
+  .lesson:nth-child(even) .info-tile { background: var(--paper-light); }
+  .info-tile::before {
+    content: ''; position: absolute; top: -1.5px; left: -1.5px;
+    width: 30px; height: 3px; background: var(--terracotta);
+  }
+  .info-tile-label {
+    font-family: var(--mono); font-size: 0.62rem;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--ink-fade); margin-bottom: 0.5rem;
+  }
+  .info-tile-content { font-size: 0.94rem; }
+  .info-tile-content a {
+    color: var(--terracotta); text-decoration: none;
+    font-weight: 600;
+    background-image: linear-gradient(transparent 70%, rgba(168,66,26,0.25) 70%);
+  }
+  .info-tile-content a:hover {
+    background: var(--terracotta); color: var(--paper-light);
+  }
+  .tool-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; }
+  .tool-chip {
+    font-family: var(--mono); font-size: 0.68rem;
+    padding: 0.25rem 0.55rem; font-weight: 500;
+    border: 1px solid var(--ink); color: var(--ink);
+  }
+
+  .callout {
+    padding: 1.3rem 1.5rem 1.3rem 2rem;
+    background: var(--paper);
+    border-left: 5px solid;
+    position: relative;
+  }
+  .lesson:nth-child(even) .callout { background: var(--paper-light); }
+  .callout.check { border-left-color: var(--sage); }
+  .callout.trap { border-left-color: var(--amber); }
+  .callout.bonus { border-left-color: var(--terracotta); }
+  .callout-eyebrow {
+    font-family: var(--mono); font-size: 0.66rem;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    font-weight: 700; margin-bottom: 0.6rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .callout.check .callout-eyebrow { color: var(--sage-deep); }
+  .callout.trap .callout-eyebrow { color: var(--amber-deep); }
+  .callout.bonus .callout-eyebrow { color: var(--terracotta-deep); }
+  .callout-text { font-size: 0.95rem; line-height: 1.55; }
+  .callout-text strong { font-weight: 700; }
+
+  /* =====================
+     FOOTER
+  ===================== */
+  .footer {
+    padding: 5rem 6rem 4rem;
+    background: var(--ink-black);
+    color: var(--paper-light);
+  }
+  .footer h2 {
+    font-family: var(--display); font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 200; line-height: 1; letter-spacing: -0.025em;
+    font-variation-settings: 'opsz' 144, 'SOFT' 60;
+    margin-bottom: 1.5rem; max-width: 25ch;
+  }
+  .footer h2 em {
+    font-style: italic; color: var(--terracotta-glow);
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  }
+  .footer p {
+    max-width: 56ch; margin-bottom: 1rem;
+    color: var(--paper-warm); font-size: 1rem; line-height: 1.6;
+  }
+  .footer-link {
+    display: inline-block; margin-top: 1.5rem; padding: 1.1rem 2.5rem;
+    background: var(--terracotta); color: var(--paper-light);
+    font-family: var(--mono); font-size: 0.78rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    text-decoration: none; font-weight: 600;
+    border: 2px solid var(--terracotta);
+    transition: all 0.2s ease;
+  }
+  .footer-link:hover { background: transparent; color: var(--terracotta-glow); border-color: var(--terracotta-glow); }
+  .footer-meta {
+    margin-top: 3rem; padding-top: 1.5rem;
+    border-top: 1px solid rgba(239, 230, 210, 0.18);
+    display: flex; gap: 2rem; flex-wrap: wrap;
+    font-family: var(--mono); font-size: 0.68rem;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+
+  @media (max-width: 1100px) {
+    .cover, .part-opener, .lesson, .footer { padding-left: 2rem; padding-right: 2rem; }
+    .lesson-head { grid-template-columns: 1fr; gap: 0.5rem; }
+    .lesson-num { font-size: 7rem; }
+    .content-grid { grid-template-columns: 1fr; }
+    .cover-main { grid-template-columns: 1fr; gap: 2rem; }
+    .part-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="doc">
+
+<!-- ============== COVER ============== -->
+<header class="cover">
+  <div class="cover-band">
+    <div class="cover-band-left">
+      <div class="dot"></div>
+      <span>Cascadeur · Bonus-Atelier</span>
+      <span>—</span>
+      <span>Field-Manual Edition</span>
+    </div>
+    <div>Teil I · Aufgaben 01–05 · v 2.0</div>
+  </div>
+
+  <div class="cover-main">
+    <div>
+      <div class="cover-eyebrow">Mini-Atelier · Animation-Werkzeuge in 30 Minuten</div>
+      <h1>Werk-<em>stunden</em>.</h1>
+    </div>
+    <div>
+      <p class="cover-tagline">Zehn Übungen. Jede in <em>einer halben Stunde</em>. Mit anatomischen Posen, Action-Lines und Storyboard-Annotation — wie eine Animation-Studio-Field-Reference.</p>
+    </div>
+  </div>
+
+  <div class="cover-byline">
+    <span><b>Teil I</b> · Aufgaben 01–05</span>
+    <span><b>3</b> Anfänger</span>
+    <span><b>2</b> Mittel</span>
+    <span><b>2.5 h</b> Total</span>
+    <span><b>Anschluss:</b> Teil II für 06–10</span>
+  </div>
+</header>
+
+<!-- ============== PART-OPENER · BEGINNER ============== -->
+<section class="part-opener">
+  <div class="part-grid">
+    <div>
+      <div class="part-marker">Stufe I · Anfänger · Lektionen 01–03</div>
+      <h2 class="part-title">Das <em>Atom</em><br>der Bewegung.</h2>
+    </div>
+    <p class="part-desc">Pelvis, Bezier, Schritt-Mechanik. Drei Übungen, die das absolute Fundament jeder weiteren Animation legen — wenn diese drei sitzen, sitzen sie für immer.</p>
+  </div>
+</section>
+
+<!-- ============== LESSON 01 ============== -->
+<section class="lesson beg" id="m01">
+  <div class="lesson-head">
+    <div class="lesson-num" data-shadow="01">01</div>
+    <div class="lesson-title-block">
+      <div class="lesson-kicker"><span>Stufe I · Lektion 01</span><b>Pelvis · Atmung · Endlos-Loop</b></div>
+      <h2 class="lesson-title">Idle <em>atmen</em></h2>
+    </div>
+    <div class="lesson-meta">
+      <span class="meta-pill diff">Anfänger</span>
+      <span class="meta-pill time">30 Minuten</span>
+    </div>
+  </div>
+
+  <p class="lesson-lead"><span class="drop-cap">D</span>er einfachste Loop. Manny atmet sichtbar — Beine ruhen, Pelvis hebt und senkt sich. Lehrt Pelvis-Kontrolle und Keyframe-Setting in seiner pursten Form. Das Atomare der Animation.</p>
+
+  <div class="stage">
+    <div class="stage-label"><span>Atemzyklus · 5 Schlüssel-Frames · Pelvis-Y-Modulation</span><span class="ref">REF · ATM-01</span></div>
+    <div class="stage-canvas">
+      <svg viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="bodyShadow01" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+            <feOffset dx="3" dy="5" result="off"/>
+            <feComponentTransfer><feFuncA type="linear" slope="0.25"/></feComponentTransfer>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <radialGradient id="groundShadow01" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#15100a" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#15100a" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Wellen-Hintergrund (Atem-Profil) -->
+        <path d="M 50 80 Q 200 60, 350 65 Q 500 70, 650 75 Q 800 80, 950 80 Q 1100 78, 1150 80" stroke="#a8421a" stroke-width="1.5" fill="none" opacity="0.55"/>
+        <text x="60" y="55" font-family="JetBrains Mono" font-size="11" fill="#a8421a" letter-spacing="2" font-weight="600">PELVIS-Y · ATEM-PROFIL</text>
+        <text x="1130" y="55" font-family="JetBrains Mono" font-size="9" fill="#a8421a" text-anchor="end" opacity="0.7">F0 → F120</text>
+
+        <!-- Bodenlinie -->
+        <line x1="40" y1="410" x2="1160" y2="410" stroke="#15100a" stroke-width="2"/>
+        <!-- Boden-Hatching -->
+        <g stroke="#15100a" stroke-width="0.5" opacity="0.35">
+          <line x1="40" y1="415" x2="60" y2="430"/><line x1="80" y1="415" x2="100" y2="430"/>
+          <line x1="120" y1="415" x2="140" y2="430"/><line x1="160" y1="415" x2="180" y2="430"/>
+          <line x1="200" y1="415" x2="220" y2="430"/><line x1="240" y1="415" x2="260" y2="430"/>
+          <line x1="280" y1="415" x2="300" y2="430"/><line x1="320" y1="415" x2="340" y2="430"/>
+          <line x1="360" y1="415" x2="380" y2="430"/><line x1="400" y1="415" x2="420" y2="430"/>
+          <line x1="440" y1="415" x2="460" y2="430"/><line x1="480" y1="415" x2="500" y2="430"/>
+          <line x1="520" y1="415" x2="540" y2="430"/><line x1="560" y1="415" x2="580" y2="430"/>
+          <line x1="600" y1="415" x2="620" y2="430"/><line x1="640" y1="415" x2="660" y2="430"/>
+          <line x1="680" y1="415" x2="700" y2="430"/><line x1="720" y1="415" x2="740" y2="430"/>
+          <line x1="760" y1="415" x2="780" y2="430"/><line x1="800" y1="415" x2="820" y2="430"/>
+          <line x1="840" y1="415" x2="860" y2="430"/><line x1="880" y1="415" x2="900" y2="430"/>
+          <line x1="920" y1="415" x2="940" y2="430"/><line x1="960" y1="415" x2="980" y2="430"/>
+          <line x1="1000" y1="415" x2="1020" y2="430"/><line x1="1040" y1="415" x2="1060" y2="430"/>
+          <line x1="1080" y1="415" x2="1100" y2="430"/><line x1="1120" y1="415" x2="1140" y2="430"/>
+        </g>
+
+        <!-- FIGURE TEMPLATE: anatomisch, mit Volumen, gefüllt -->
+        <!-- F0 - Default -->
+        <g transform="translate(150,0)" filter="url(#bodyShadow01)">
+          <ellipse cx="0" cy="408" rx="32" ry="4" fill="url(#groundShadow01)"/>
+          <!-- Kopf -->
+          <ellipse cx="0" cy="135" rx="18" ry="22" fill="#15100a"/>
+          <!-- Hals -->
+          <path d="M -7 156 L 7 156 L 9 168 L -9 168 Z" fill="#15100a"/>
+          <!-- Schultern + Rumpf -->
+          <path d="M -28 175 Q -32 200, -28 240 L -22 290 L -18 335 L 18 335 L 22 290 L 28 240 Q 32 200, 28 175 Z" fill="#15100a"/>
+          <!-- Arme - Volumen via stroke-width -->
+          <line x1="-26" y1="180" x2="-36" y2="225" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="-36" y1="225" x2="-38" y2="280" stroke="#15100a" stroke-width="10" stroke-linecap="round"/>
+          <line x1="-38" y1="280" x2="-36" y2="325" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="26" y1="180" x2="36" y2="225" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="36" y1="225" x2="38" y2="280" stroke="#15100a" stroke-width="10" stroke-linecap="round"/>
+          <line x1="38" y1="280" x2="36" y2="325" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <!-- Pelvis-Marker (Punkt am Bauchnabel) -->
+          <circle cx="0" cy="270" r="5" fill="#a8421a" stroke="#15100a" stroke-width="1"/>
+          <!-- Beine -->
+          <line x1="-12" y1="335" x2="-13" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-13" y1="375" x2="-14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="12" y1="335" x2="13" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="13" y1="375" x2="14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <!-- Füße -->
+          <ellipse cx="-18" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="18" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <!-- Frame-Label -->
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#15100a" font-weight="600">F0</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#3d3324">Default</text>
+        </g>
+
+        <!-- F30 - Pelvis +1cm (höher) -->
+        <g transform="translate(370,-8)" filter="url(#bodyShadow01)">
+          <ellipse cx="0" cy="416" rx="32" ry="4" fill="url(#groundShadow01)"/>
+          <ellipse cx="0" cy="135" rx="18" ry="22" fill="#15100a"/>
+          <path d="M -7 156 L 7 156 L 9 168 L -9 168 Z" fill="#15100a"/>
+          <path d="M -28 175 Q -32 200, -28 240 L -22 290 L -18 335 L 18 335 L 22 290 L 28 240 Q 32 200, 28 175 Z" fill="#15100a"/>
+          <line x1="-26" y1="180" x2="-36" y2="225" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="-36" y1="225" x2="-38" y2="280" stroke="#15100a" stroke-width="10" stroke-linecap="round"/>
+          <line x1="-38" y1="280" x2="-36" y2="328" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="26" y1="180" x2="36" y2="225" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="36" y1="225" x2="38" y2="280" stroke="#15100a" stroke-width="10" stroke-linecap="round"/>
+          <line x1="38" y1="280" x2="36" y2="328" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <circle cx="0" cy="270" r="6" fill="#a8421a" stroke="#15100a" stroke-width="1.2"/>
+          <line x1="-12" y1="335" x2="-13" y2="378" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-13" y1="378" x2="-14" y2="418" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="12" y1="335" x2="13" y2="378" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="13" y1="378" x2="14" y2="418" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-18" cy="418" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="18" cy="418" rx="14" ry="4" fill="#0a0703"/>
+          <!-- Up-Arrow Pelvis Marker -->
+          <path d="M 48 270 L 48 250 M 44 254 L 48 250 L 52 254" stroke="#a8421a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <text x="58" y="273" font-family="JetBrains Mono" font-size="10" fill="#a8421a" font-weight="600">+1cm</text>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#a8421a" font-weight="700">F30</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#a8421a">Einatmen-Peak</text>
+        </g>
+
+        <!-- F60 - Default -->
+        <g transform="translate(600,0)" filter="url(#bodyShadow01)">
+          <ellipse cx="0" cy="408" rx="32" ry="4" fill="url(#groundShadow01)"/>
+          <ellipse cx="0" cy="135" rx="18" ry="22" fill="#15100a"/>
+          <path d="M -7 156 L 7 156 L 9 168 L -9 168 Z" fill="#15100a"/>
+          <path d="M -28 175 Q -32 200, -28 240 L -22 290 L -18 335 L 18 335 L 22 290 L 28 240 Q 32 200, 28 175 Z" fill="#15100a"/>
+          <line x1="-26" y1="180" x2="-36" y2="225" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="-36" y1="225" x2="-38" y2="280" stroke="#15100a" stroke-width="10" stroke-linecap="round"/>
+          <line x1="-38" y1="280" x2="-36" y2="325" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="26" y1="180" x2="36" y2="225" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="36" y1="225" x2="38" y2="280" stroke="#15100a" stroke-width="10" stroke-linecap="round"/>
+          <line x1="38" y1="280" x2="36" y2="325" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <circle cx="0" cy="270" r="5" fill="#a8421a" stroke="#15100a" stroke-width="1"/>
+          <line x1="-12" y1="335" x2="-13" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-13" y1="375" x2="-14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="12" y1="335" x2="13" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="13" y1="375" x2="14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-18" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="18" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#15100a" font-weight="600">F60</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#3d3324">Neutral</text>
+        </g>
+
+        <!-- F90 - Pelvis -0.5cm -->
+        <g transform="translate(830,4)" filter="url(#bodyShadow01)">
+          <ellipse cx="0" cy="404" rx="32" ry="4" fill="url(#groundShadow01)"/>
+          <ellipse cx="0" cy="135" rx="18" ry="22" fill="#15100a"/>
+          <path d="M -7 156 L 7 156 L 9 168 L -9 168 Z" fill="#15100a"/>
+          <path d="M -28 175 Q -32 200, -28 240 L -22 290 L -18 335 L 18 335 L 22 290 L 28 240 Q 32 200, 28 175 Z" fill="#15100a"/>
+          <line x1="-26" y1="180" x2="-36" y2="225" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="-36" y1="225" x2="-38" y2="280" stroke="#15100a" stroke-width="10" stroke-linecap="round"/>
+          <line x1="-38" y1="280" x2="-36" y2="323" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="26" y1="180" x2="36" y2="225" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="36" y1="225" x2="38" y2="280" stroke="#15100a" stroke-width="10" stroke-linecap="round"/>
+          <line x1="38" y1="280" x2="36" y2="323" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <circle cx="0" cy="270" r="5" fill="#5a7350" stroke="#15100a" stroke-width="1"/>
+          <line x1="-12" y1="335" x2="-13" y2="373" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-13" y1="373" x2="-14" y2="406" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="12" y1="335" x2="13" y2="373" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="13" y1="373" x2="14" y2="406" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-18" cy="406" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="18" cy="406" rx="14" ry="4" fill="#0a0703"/>
+          <path d="M 48 270 L 48 290 M 44 286 L 48 290 L 52 286" stroke="#5a7350" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <text x="58" y="275" font-family="JetBrains Mono" font-size="10" fill="#5a7350" font-weight="600">-0.5cm</text>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#5a7350" font-weight="700">F90</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#5a7350">Ausatmen-Tief</text>
+        </g>
+
+        <!-- F120 - Loop -->
+        <g transform="translate(1060,0)" filter="url(#bodyShadow01)">
+          <ellipse cx="0" cy="408" rx="32" ry="4" fill="url(#groundShadow01)"/>
+          <ellipse cx="0" cy="135" rx="18" ry="22" fill="#15100a"/>
+          <path d="M -7 156 L 7 156 L 9 168 L -9 168 Z" fill="#15100a"/>
+          <path d="M -28 175 Q -32 200, -28 240 L -22 290 L -18 335 L 18 335 L 22 290 L 28 240 Q 32 200, 28 175 Z" fill="#15100a"/>
+          <line x1="-26" y1="180" x2="-36" y2="225" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="-36" y1="225" x2="-38" y2="280" stroke="#15100a" stroke-width="10" stroke-linecap="round"/>
+          <line x1="-38" y1="280" x2="-36" y2="325" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="26" y1="180" x2="36" y2="225" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="36" y1="225" x2="38" y2="280" stroke="#15100a" stroke-width="10" stroke-linecap="round"/>
+          <line x1="38" y1="280" x2="36" y2="325" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <circle cx="0" cy="270" r="5" fill="#a8421a" stroke="#15100a" stroke-width="1"/>
+          <line x1="-12" y1="335" x2="-13" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-13" y1="375" x2="-14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="12" y1="335" x2="13" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="13" y1="375" x2="14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-18" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="18" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <!-- Loop-Arrow -->
+          <path d="M 50 380 Q 70 360, 78 340" stroke="#a8421a" stroke-width="1.5" fill="none"/>
+          <path d="M 76 343 L 78 340 L 81 344" stroke="#a8421a" stroke-width="1.5" fill="none"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#15100a" font-weight="600">F120</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#3d3324">Loop-Start</text>
+        </g>
+
+        <!-- Verbindungs-Kurve (Pelvis-Trajectory Top) -->
+        <path d="M 150 270 Q 260 263, 370 262 Q 485 268, 600 270 Q 715 272, 830 274 Q 940 272, 1060 270" stroke="#a8421a" stroke-width="0.8" stroke-dasharray="3,2.5" fill="none" opacity="0.6"/>
+
+      </svg>
+    </div>
+    <div class="stage-caption">
+      <span class="stage-caption-tag">Fig. 01</span>
+      <p class="stage-caption-text">Fünf Schlüssel-Frames eines vollen Atemzyklus. Der <strong>Pelvis-Marker</strong> (orangener Punkt) zeigt die Vertikal-Modulation: hoch bei F30 (Einatmen), neutral bei F0/F60/F120, tief bei F90 (Ausatmen). Atem-Profil-Welle oben dokumentiert die Sinus-artige Pelvis-Y-Kurve über die 120 Frames.</p>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="workflow-pane">
+      <h3><span>Workflow</span><em>7 Schritte</em></h3>
+      <div class="step-row"><div class="step-row-num">01</div><div class="step-row-text">UE5-Manny laden. Animations-Range <strong>120 Frames</strong> (4 s bei 30 fps).</div></div>
+      <div class="step-row"><div class="step-row-num">02</div><div class="step-row-text">Beide Füße selektieren, <kbd>R</kbd> drücken — Foot-Fixation aktiv.</div></div>
+      <div class="step-row"><div class="step-row-num">03</div><div class="step-row-text"><strong>F0:</strong> Pelvis-Box-Controller, Keyframe an Default-Höhe.</div></div>
+      <div class="step-row"><div class="step-row-num">04</div><div class="step-row-text"><strong>F30:</strong> Pelvis <strong>+1 cm</strong> (Einatmen-Peak). Keyframe.</div></div>
+      <div class="step-row"><div class="step-row-num">05</div><div class="step-row-text"><strong>F60:</strong> zurück zur Default-Höhe. Keyframe.</div></div>
+      <div class="step-row"><div class="step-row-num">06</div><div class="step-row-text"><strong>F90:</strong> Pelvis <strong>−0,5 cm</strong> (vollständig ausgeatmet). Keyframe.</div></div>
+      <div class="step-row"><div class="step-row-num">07</div><div class="step-row-text"><strong>F120:</strong> zurück zur Default-Höhe — schließt den Loop.</div></div>
+    </div>
+
+    <div class="side-pane">
+      <div class="info-tile">
+        <div class="info-tile-label">Brochüre-Bezug</div>
+        <div class="info-tile-content"><a href="https://shameforest.github.io/Guides/cascadeur1.html">Projekt 01 · First Animation</a></div>
+      </div>
+      <div class="info-tile">
+        <div class="info-tile-label">Werkzeuge</div>
+        <div class="info-tile-content"><div class="tool-chips"><span class="tool-chip">Box Controller</span><span class="tool-chip">Keyframes</span><span class="tool-chip">R · Fix</span></div></div>
+      </div>
+      <div class="callout check">
+        <div class="callout-eyebrow">Erfolgs-Check</div>
+        <div class="callout-text">Playback im Loop. Atmung subtil sichtbar. Beine bleiben stabil. Brust hebt und senkt sich rhythmisch — wie schlafendes Lebewesen, nicht wie eine Maschine.</div>
+      </div>
+      <div class="callout trap">
+        <div class="callout-eyebrow">Stolperfalle</div>
+        <div class="callout-text">Pelvis-Verschiebung zu groß (3 cm+) lässt Manny <em>aufgepumpt</em> wirken. 1 cm reicht. Wer es sichtbarer haben will: leichte Schulter-Rotation als Sekundär-Bewegung, statt Pelvis stärker zu bewegen.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== LESSON 02 ============== -->
+<section class="lesson beg" id="m02">
+  <div class="lesson-head">
+    <div class="lesson-num" data-shadow="02">02</div>
+    <div class="lesson-title-block">
+      <div class="lesson-kicker"><span>Stufe I · Lektion 02</span><b>Bezier · Body-Sympathy · Arc</b></div>
+      <h2 class="lesson-title">Wave mit <em>Bounce</em></h2>
+    </div>
+    <div class="lesson-meta">
+      <span class="meta-pill diff">Anfänger</span>
+      <span class="meta-pill time">30 Minuten</span>
+    </div>
+  </div>
+
+  <p class="lesson-lead"><span class="drop-cap">H</span>and-Winken mit Body-Sympathy-Motion. Wenn die Hand winkt, schwingt der Body subtil mit — keine Bewegung ist isoliert. Klassisches Animations-Prinzip in seiner kürzesten Form.</p>
+
+  <div class="stage">
+    <div class="stage-label"><span>Wink-Sequenz · Hand-Arc + Body-Counter-Rotation</span><span class="ref">REF · WAV-02</span></div>
+    <div class="stage-canvas">
+      <svg viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="bodyShadow02" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+            <feOffset dx="3" dy="5" result="off"/>
+            <feComponentTransfer><feFuncA type="linear" slope="0.25"/></feComponentTransfer>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <radialGradient id="groundShadow02" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#15100a" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#15100a" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <line x1="40" y1="410" x2="1160" y2="410" stroke="#15100a" stroke-width="2"/>
+        <g stroke="#15100a" stroke-width="0.5" opacity="0.35">
+          <line x1="60" y1="415" x2="80" y2="430"/><line x1="120" y1="415" x2="140" y2="430"/>
+          <line x1="180" y1="415" x2="200" y2="430"/><line x1="240" y1="415" x2="260" y2="430"/>
+          <line x1="300" y1="415" x2="320" y2="430"/><line x1="360" y1="415" x2="380" y2="430"/>
+          <line x1="420" y1="415" x2="440" y2="430"/><line x1="480" y1="415" x2="500" y2="430"/>
+          <line x1="540" y1="415" x2="560" y2="430"/><line x1="600" y1="415" x2="620" y2="430"/>
+          <line x1="660" y1="415" x2="680" y2="430"/><line x1="720" y1="415" x2="740" y2="430"/>
+          <line x1="780" y1="415" x2="800" y2="430"/><line x1="840" y1="415" x2="860" y2="430"/>
+          <line x1="900" y1="415" x2="920" y2="430"/><line x1="960" y1="415" x2="980" y2="430"/>
+          <line x1="1020" y1="415" x2="1040" y2="430"/><line x1="1080" y1="415" x2="1100" y2="430"/>
+        </g>
+
+        <!-- Hand-Arc-Trajectory (rote Kurve über Köpfen) -->
+        <path d="M 130 280 Q 240 145, 360 70 Q 480 90, 590 65 Q 700 95, 820 70 Q 940 75, 1060 280" stroke="#a8421a" stroke-width="1.5" fill="none" stroke-dasharray="4,3" opacity="0.65"/>
+        <text x="600" y="55" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#a8421a" font-weight="600" letter-spacing="2">HAND-TRAJEKTORIE · ARC</text>
+
+        <!-- F0 - Idle -->
+        <g transform="translate(150,0)" filter="url(#bodyShadow02)">
+          <ellipse cx="0" cy="408" rx="30" ry="4" fill="url(#groundShadow02)"/>
+          <ellipse cx="0" cy="135" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -6 156 L 6 156 L 8 168 L -8 168 Z" fill="#15100a"/>
+          <path d="M -27 175 Q -30 200, -27 240 L -22 290 L -18 335 L 18 335 L 22 290 L 27 240 Q 30 200, 27 175 Z" fill="#15100a"/>
+          <line x1="-25" y1="180" x2="-32" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-32" y1="225" x2="-34" y2="280" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="25" y1="180" x2="32" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="32" y1="225" x2="34" y2="280" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="-12" y1="335" x2="-13" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-13" y1="375" x2="-14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="12" y1="335" x2="13" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="13" y1="375" x2="14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-18" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="18" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#15100a" font-weight="600">F0</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#3d3324">Idle</text>
+        </g>
+
+        <!-- F15 - Arm hebt sich (Anticipation) -->
+        <g transform="translate(340,0)" filter="url(#bodyShadow02)">
+          <ellipse cx="0" cy="408" rx="30" ry="4" fill="url(#groundShadow02)"/>
+          <ellipse cx="2" cy="135" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -4 156 L 8 156 L 10 168 L -6 168 Z" fill="#15100a"/>
+          <path d="M -27 175 Q -30 200, -25 240 L -20 290 L -17 335 L 19 335 L 24 290 L 29 240 Q 32 200, 29 175 Z" fill="#15100a"/>
+          <line x1="-25" y1="180" x2="-32" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-32" y1="225" x2="-34" y2="280" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <!-- Rechter Arm hoch -->
+          <line x1="27" y1="180" x2="50" y2="160" stroke="#a8421a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="50" y1="160" x2="65" y2="125" stroke="#a8421a" stroke-width="9" stroke-linecap="round"/>
+          <ellipse cx="65" cy="120" rx="7" ry="7" fill="#a8421a"/>
+          <line x1="-12" y1="335" x2="-13" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-13" y1="375" x2="-14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="12" y1="335" x2="13" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="13" y1="375" x2="14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-18" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="18" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <!-- Pelvis rot indicator -->
+          <path d="M -22 300 Q -10 295, 5 298" stroke="#a8421a" stroke-width="1.5" fill="none"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#a8421a" font-weight="700">F15</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#a8421a">Anticipation</text>
+        </g>
+
+        <!-- F25 - Hand rechts -->
+        <g transform="translate(540,0)" filter="url(#bodyShadow02)">
+          <ellipse cx="0" cy="408" rx="30" ry="4" fill="url(#groundShadow02)"/>
+          <ellipse cx="4" cy="135" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -2 156 L 10 156 L 12 168 L -4 168 Z" fill="#15100a"/>
+          <path d="M -25 175 Q -28 200, -22 240 L -18 290 L -15 335 L 21 335 L 26 290 L 31 240 Q 34 200, 31 175 Z" fill="#15100a"/>
+          <line x1="-23" y1="180" x2="-30" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-30" y1="225" x2="-32" y2="280" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <!-- Hand rechts oben -->
+          <line x1="29" y1="180" x2="58" y2="140" stroke="#a8421a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="58" y1="140" x2="85" y2="105" stroke="#a8421a" stroke-width="9" stroke-linecap="round"/>
+          <ellipse cx="88" cy="100" rx="8" ry="8" fill="#a8421a"/>
+          <line x1="-10" y1="335" x2="-13" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-13" y1="375" x2="-14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="14" y1="335" x2="15" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="15" y1="375" x2="16" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-16" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="20" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#15100a" font-weight="600">F25</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#3d3324">Schwung →</text>
+        </g>
+
+        <!-- F35 - Hand links -->
+        <g transform="translate(740,0)" filter="url(#bodyShadow02)">
+          <ellipse cx="0" cy="408" rx="30" ry="4" fill="url(#groundShadow02)"/>
+          <ellipse cx="-4" cy="135" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -10 156 L 2 156 L 4 168 L -12 168 Z" fill="#15100a"/>
+          <path d="M -31 175 Q -34 200, -31 240 L -26 290 L -21 335 L 15 335 L 18 290 L 22 240 Q 28 200, 25 175 Z" fill="#15100a"/>
+          <line x1="-29" y1="180" x2="-36" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-36" y1="225" x2="-38" y2="280" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <!-- Hand links oben (winkt rüber) -->
+          <line x1="23" y1="180" x2="20" y2="135" stroke="#a8421a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="20" y1="135" x2="-5" y2="105" stroke="#a8421a" stroke-width="9" stroke-linecap="round"/>
+          <ellipse cx="-8" cy="103" rx="8" ry="8" fill="#a8421a"/>
+          <line x1="-16" y1="335" x2="-19" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-19" y1="375" x2="-20" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="8" y1="335" x2="9" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="9" y1="375" x2="10" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-22" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="14" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#15100a" font-weight="600">F35</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#3d3324">← Schwung</text>
+        </g>
+
+        <!-- F45 - rechts wieder -->
+        <g transform="translate(940,0)" filter="url(#bodyShadow02)">
+          <ellipse cx="0" cy="408" rx="30" ry="4" fill="url(#groundShadow02)"/>
+          <ellipse cx="4" cy="135" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -2 156 L 10 156 L 12 168 L -4 168 Z" fill="#15100a"/>
+          <path d="M -25 175 Q -28 200, -22 240 L -18 290 L -15 335 L 21 335 L 26 290 L 31 240 Q 34 200, 31 175 Z" fill="#15100a"/>
+          <line x1="-23" y1="180" x2="-30" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-30" y1="225" x2="-32" y2="280" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="29" y1="180" x2="58" y2="140" stroke="#a8421a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="58" y1="140" x2="85" y2="105" stroke="#a8421a" stroke-width="9" stroke-linecap="round"/>
+          <ellipse cx="88" cy="100" rx="8" ry="8" fill="#a8421a"/>
+          <line x1="-10" y1="335" x2="-13" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-13" y1="375" x2="-14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="14" y1="335" x2="15" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="15" y1="375" x2="16" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-16" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="20" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#15100a" font-weight="600">F45</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#3d3324">Schwung →</text>
+        </g>
+
+      </svg>
+    </div>
+    <div class="stage-caption">
+      <span class="stage-caption-tag">Fig. 02</span>
+      <p class="stage-caption-text">Wink-Sequenz mit Hand-Arc (rote Trajektorie). Der Arm ist farblich abgehoben um zu zeigen: <strong>er ist die führende Body-Part</strong>. Pelvis-Linie deutet Counter-Rotation an. Sehe die Sympathy-Motion: bei F15 lehnt der Body leicht nach links, bei F25 ist die ganze Achse rechts-orientiert, bei F35 spiegel-verkehrt.</p>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="workflow-pane">
+      <h3><span>Workflow</span><em>7 Schritte</em></h3>
+      <div class="step-row"><div class="step-row-num">01</div><div class="step-row-text">Manny in Idle. <strong>75 Frames</strong> Range (2.5 s).</div></div>
+      <div class="step-row"><div class="step-row-num">02</div><div class="step-row-text"><strong>F0:</strong> Default-Idle, beide Füße <kbd>R</kbd>-fixiert.</div></div>
+      <div class="step-row"><div class="step-row-num">03</div><div class="step-row-text"><strong>F15:</strong> rechter Arm hebt sich auf Schulter-Höhe. Pelvis <strong>1° Y-Rotation</strong> (Sympathy).</div></div>
+      <div class="step-row"><div class="step-row-num">04</div><div class="step-row-text"><strong>F25:</strong> Hand nach rechts geschwenkt. Schulter folgt minimal.</div></div>
+      <div class="step-row"><div class="step-row-num">05</div><div class="step-row-text"><strong>F35:</strong> Hand nach links geschwenkt. Pelvis Counter-Rotation.</div></div>
+      <div class="step-row"><div class="step-row-num">06</div><div class="step-row-text"><strong>F45:</strong> Hand wieder rechts.</div></div>
+      <div class="step-row"><div class="step-row-num">07</div><div class="step-row-text"><strong>F75:</strong> Arm fällt zurück zur Idle-Pose, Pelvis-Default.</div></div>
+    </div>
+
+    <div class="side-pane">
+      <div class="info-tile">
+        <div class="info-tile-label">Brochüre-Bezug</div>
+        <div class="info-tile-content"><a href="https://shameforest.github.io/Guides/cascadeur2.html">Projekt 02 · Wave</a></div>
+      </div>
+      <div class="info-tile">
+        <div class="info-tile-label">Werkzeuge</div>
+        <div class="info-tile-content"><div class="tool-chips"><span class="tool-chip">Bezier</span><span class="tool-chip">AutoPosing</span><span class="tool-chip">Sympathy</span></div></div>
+      </div>
+      <div class="callout check">
+        <div class="callout-eyebrow">Erfolgs-Check</div>
+        <div class="callout-text">Hand-Wink klar sichtbar mit mindestens 2 Schwüngen. Body schwingt subtil mit — nicht statisch wie ein Roboter, nicht übertrieben wie ein Tanz.</div>
+      </div>
+      <div class="callout bonus">
+        <div class="callout-eyebrow">Bonus-Variation</div>
+        <div class="callout-text">Zweiter Pass: AI Inbetweening, Keyframes nur auf <strong>F0, F25, F45, F75</strong> reduzieren. Cascadeur generiert die Zwischen-Bewegung. Vergleich zeigt Charakter-Unterschied Bezier ↔ Inbetweening.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== LESSON 03 ============== -->
+<section class="lesson beg" id="m03">
+  <div class="lesson-head">
+    <div class="lesson-num" data-shadow="03">03</div>
+    <div class="lesson-title-block">
+      <div class="lesson-kicker"><span>Stufe I · Lektion 03</span><b>IK ↔ FK · Foot-Contact · Pelvis-Pfad</b></div>
+      <h2 class="lesson-title">Ein <em>Schritt</em><br>nach vorn</h2>
+    </div>
+    <div class="lesson-meta">
+      <span class="meta-pill diff">Anfänger</span>
+      <span class="meta-pill time">30 Minuten</span>
+    </div>
+  </div>
+
+  <p class="lesson-lead"><span class="drop-cap">N</span>icht der ganze Walk-Cycle. Nur ein einziger Schritt. Komprimiert den Walk-Workflow auf das Minimum und macht sichtbar, dass jeder Walk eine Folge solcher Einzelschritte ist.</p>
+
+  <div class="stage">
+    <div class="stage-label"><span>Schritt-Mechanik · IK/FK-Wechsel pro Phase</span><span class="ref">REF · STP-03</span></div>
+    <div class="stage-canvas">
+      <svg viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="bodyShadow03" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+            <feOffset dx="3" dy="5" result="off"/>
+            <feComponentTransfer><feFuncA type="linear" slope="0.25"/></feComponentTransfer>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <radialGradient id="groundShadow03" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#15100a" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#15100a" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <line x1="40" y1="410" x2="1160" y2="410" stroke="#15100a" stroke-width="2"/>
+        <g stroke="#15100a" stroke-width="0.5" opacity="0.35">
+          <line x1="60" y1="415" x2="80" y2="430"/><line x1="160" y1="415" x2="180" y2="430"/>
+          <line x1="260" y1="415" x2="280" y2="430"/><line x1="360" y1="415" x2="380" y2="430"/>
+          <line x1="460" y1="415" x2="480" y2="430"/><line x1="560" y1="415" x2="580" y2="430"/>
+          <line x1="660" y1="415" x2="680" y2="430"/><line x1="760" y1="415" x2="780" y2="430"/>
+          <line x1="860" y1="415" x2="880" y2="430"/><line x1="960" y1="415" x2="980" y2="430"/>
+          <line x1="1060" y1="415" x2="1080" y2="430"/><line x1="1120" y1="415" x2="1140" y2="430"/>
+        </g>
+
+        <!-- Pelvis-Pfad-Linie -->
+        <path d="M 150 275 Q 280 280, 410 282 Q 540 280, 670 278 Q 800 275, 920 272 Q 1010 272, 1060 273" stroke="#a8421a" stroke-width="1.5" fill="none" stroke-dasharray="4,3" opacity="0.6"/>
+        <text x="600" y="55" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#a8421a" font-weight="600" letter-spacing="2">PELVIS-PFAD · VORWÄRTS</text>
+        <path d="M 1050 250 L 1080 250 M 1075 246 L 1080 250 L 1075 254" stroke="#a8421a" stroke-width="1.5" fill="none"/>
+
+        <!-- F0 - Stand -->
+        <g transform="translate(150,0)" filter="url(#bodyShadow03)">
+          <ellipse cx="0" cy="408" rx="28" ry="4" fill="url(#groundShadow03)"/>
+          <ellipse cx="0" cy="135" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -6 156 L 6 156 L 8 168 L -8 168 Z" fill="#15100a"/>
+          <path d="M -26 175 Q -29 200, -26 240 L -22 290 L -18 335 L 18 335 L 22 290 L 26 240 Q 29 200, 26 175 Z" fill="#15100a"/>
+          <line x1="-24" y1="180" x2="-30" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-30" y1="225" x2="-32" y2="270" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="24" y1="180" x2="30" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="30" y1="225" x2="32" y2="270" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="-12" y1="335" x2="-13" y2="375" stroke="#5a7350" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-13" y1="375" x2="-14" y2="410" stroke="#5a7350" stroke-width="12" stroke-linecap="round"/>
+          <line x1="12" y1="335" x2="13" y2="375" stroke="#5a7350" stroke-width="14" stroke-linecap="round"/>
+          <line x1="13" y1="375" x2="14" y2="410" stroke="#5a7350" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-18" cy="410" rx="14" ry="4" fill="#2c3d24"/>
+          <ellipse cx="18" cy="410" rx="14" ry="4" fill="#2c3d24"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#15100a" font-weight="600">F0</text>
+          <text x="0" y="465" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5a7350" font-weight="600">IK · IK</text>
+        </g>
+
+        <!-- F10 - rechtes Bein hoch -->
+        <g transform="translate(330,0)" filter="url(#bodyShadow03)">
+          <ellipse cx="-5" cy="408" rx="20" ry="4" fill="url(#groundShadow03)"/>
+          <ellipse cx="-2" cy="135" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -8 156 L 4 156 L 6 168 L -10 168 Z" fill="#15100a"/>
+          <path d="M -28 175 Q -31 200, -28 240 L -24 290 L -20 335 L 16 335 L 20 290 L 24 240 Q 27 200, 24 175 Z" fill="#15100a"/>
+          <line x1="-26" y1="180" x2="-32" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-32" y1="225" x2="-34" y2="270" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="22" y1="180" x2="28" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="28" y1="225" x2="30" y2="270" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <!-- Linkes Bein (am Boden, grün/IK) -->
+          <line x1="-14" y1="335" x2="-18" y2="375" stroke="#5a7350" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-18" y1="375" x2="-20" y2="410" stroke="#5a7350" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-22" cy="410" rx="14" ry="4" fill="#2c3d24"/>
+          <!-- Rechtes Bein hochgehoben (rot/FK) -->
+          <line x1="10" y1="335" x2="22" y2="360" stroke="#a8421a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="22" y1="360" x2="35" y2="390" stroke="#a8421a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="38" cy="390" rx="14" ry="4" fill="#5e1e08" transform="rotate(15 38 390)"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#a8421a" font-weight="700">F10</text>
+          <text x="0" y="465" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a8421a" font-weight="600">IK · FK</text>
+        </g>
+
+        <!-- F25 - rechter Fuß vorn (Luftphase) -->
+        <g transform="translate(530,0)" filter="url(#bodyShadow03)">
+          <ellipse cx="-5" cy="408" rx="20" ry="4" fill="url(#groundShadow03)"/>
+          <ellipse cx="-2" cy="135" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -8 156 L 4 156 L 6 168 L -10 168 Z" fill="#15100a"/>
+          <path d="M -28 175 Q -31 200, -28 240 L -24 290 L -20 335 L 16 335 L 20 290 L 24 240 Q 27 200, 24 175 Z" fill="#15100a"/>
+          <line x1="-26" y1="180" x2="-32" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-32" y1="225" x2="-34" y2="270" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="22" y1="180" x2="28" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="28" y1="225" x2="30" y2="270" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <!-- Linkes Bein am Boden -->
+          <line x1="-14" y1="335" x2="-18" y2="375" stroke="#5a7350" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-18" y1="375" x2="-20" y2="410" stroke="#5a7350" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-22" cy="410" rx="14" ry="4" fill="#2c3d24"/>
+          <!-- Rechtes Bein nach vorn ausgestreckt (FK) -->
+          <line x1="10" y1="335" x2="38" y2="365" stroke="#a8421a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="38" y1="365" x2="62" y2="400" stroke="#a8421a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="66" cy="402" rx="14" ry="4" fill="#5e1e08" transform="rotate(10 66 402)"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#a8421a" font-weight="700">F25</text>
+          <text x="0" y="465" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a8421a" font-weight="600">IK · FK</text>
+        </g>
+
+        <!-- F30 - Boden-Kontakt -->
+        <g transform="translate(730,0)" filter="url(#bodyShadow03)">
+          <ellipse cx="5" cy="408" rx="22" ry="4" fill="url(#groundShadow03)"/>
+          <ellipse cx="2" cy="135" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -4 156 L 8 156 L 10 168 L -6 168 Z" fill="#15100a"/>
+          <path d="M -22 175 Q -25 200, -22 240 L -18 290 L -14 335 L 22 335 L 26 290 L 30 240 Q 33 200, 30 175 Z" fill="#15100a"/>
+          <line x1="-20" y1="180" x2="-26" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-26" y1="225" x2="-28" y2="270" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="28" y1="180" x2="34" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="34" y1="225" x2="36" y2="270" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <!-- Linkes Bein noch hinten am Boden -->
+          <line x1="-10" y1="335" x2="-22" y2="375" stroke="#5a7350" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-22" y1="375" x2="-26" y2="410" stroke="#5a7350" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-28" cy="410" rx="14" ry="4" fill="#2c3d24"/>
+          <!-- Rechtes Bein vorne am Boden (NEU IK) -->
+          <line x1="18" y1="335" x2="28" y2="375" stroke="#5a7350" stroke-width="14" stroke-linecap="round"/>
+          <line x1="28" y1="375" x2="32" y2="410" stroke="#5a7350" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="34" cy="410" rx="14" ry="4" fill="#2c3d24"/>
+          <!-- Switch indicator -->
+          <text x="60" y="378" font-family="JetBrains Mono" font-size="8" fill="#5a7350" font-weight="600">→ IK</text>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#5a7350" font-weight="700">F30</text>
+          <text x="0" y="465" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5a7350" font-weight="600">IK · IK</text>
+        </g>
+
+        <!-- F60 - Stand vorn -->
+        <g transform="translate(960,0)" filter="url(#bodyShadow03)">
+          <ellipse cx="0" cy="408" rx="28" ry="4" fill="url(#groundShadow03)"/>
+          <ellipse cx="0" cy="135" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -6 156 L 6 156 L 8 168 L -8 168 Z" fill="#15100a"/>
+          <path d="M -26 175 Q -29 200, -26 240 L -22 290 L -18 335 L 18 335 L 22 290 L 26 240 Q 29 200, 26 175 Z" fill="#15100a"/>
+          <line x1="-24" y1="180" x2="-30" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-30" y1="225" x2="-32" y2="270" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="24" y1="180" x2="30" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="30" y1="225" x2="32" y2="270" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="-12" y1="335" x2="-13" y2="375" stroke="#5a7350" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-13" y1="375" x2="-14" y2="410" stroke="#5a7350" stroke-width="12" stroke-linecap="round"/>
+          <line x1="12" y1="335" x2="13" y2="375" stroke="#5a7350" stroke-width="14" stroke-linecap="round"/>
+          <line x1="13" y1="375" x2="14" y2="410" stroke="#5a7350" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-18" cy="410" rx="14" ry="4" fill="#2c3d24"/>
+          <ellipse cx="18" cy="410" rx="14" ry="4" fill="#2c3d24"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#15100a" font-weight="600">F60</text>
+          <text x="0" y="465" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5a7350" font-weight="600">IK · IK</text>
+        </g>
+
+        <!-- IK/FK Legende -->
+        <g transform="translate(40,80)">
+          <rect x="0" y="0" width="14" height="14" fill="#5a7350"/>
+          <text x="20" y="11" font-family="JetBrains Mono" font-size="9" fill="#15100a">IK · Bodenkontakt</text>
+          <rect x="0" y="20" width="14" height="14" fill="#a8421a"/>
+          <text x="20" y="31" font-family="JetBrains Mono" font-size="9" fill="#15100a">FK · Luftphase</text>
+        </g>
+
+      </svg>
+    </div>
+    <div class="stage-caption">
+      <span class="stage-caption-tag">Fig. 03</span>
+      <p class="stage-caption-text">Schritt-Sequenz mit IK/FK-Farbcodierung. <strong>Grünes Bein = am Boden (IK)</strong>. <strong>Rotes Bein = in der Luft (FK)</strong>. Bei F30 wechselt das rechte Bein zurück von FK auf IK — der Moment des Bodenkontakts. Pelvis-Pfad zeigt deutliche Vorwärts-Bewegung über die 60 Frames.</p>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="workflow-pane">
+      <h3><span>Workflow</span><em>7 Schritte</em></h3>
+      <div class="step-row"><div class="step-row-num">01</div><div class="step-row-text">Manny in Stand-Pose, leichte Knie-Beugung. <strong>60 Frames</strong>.</div></div>
+      <div class="step-row"><div class="step-row-num">02</div><div class="step-row-text"><strong>F0:</strong> Stand. Beide Füße IK, <kbd>R</kbd>-fixiert.</div></div>
+      <div class="step-row"><div class="step-row-num">03</div><div class="step-row-text"><strong>F10:</strong> rechtes Bein hebt sich, Knie gebeugt. Wechsel auf <strong>FK</strong>. Pelvis 5 cm zurück.</div></div>
+      <div class="step-row"><div class="step-row-num">04</div><div class="step-row-text"><strong>F25:</strong> rechter Fuß in Vorwärts-Position, kurz vor Bodenkontakt.</div></div>
+      <div class="step-row"><div class="step-row-num">05</div><div class="step-row-text"><strong>F30:</strong> rechter Fuß setzt auf — zurück auf <strong>IK</strong>, <kbd>R</kbd>-Fixation.</div></div>
+      <div class="step-row"><div class="step-row-num">06</div><div class="step-row-text"><strong>F45:</strong> linkes Bein folgt, zieht heran. Pelvis nach vorn.</div></div>
+      <div class="step-row"><div class="step-row-num">07</div><div class="step-row-text"><strong>F60:</strong> beide Füße nebeneinander, Stand vorne.</div></div>
+    </div>
+
+    <div class="side-pane">
+      <div class="info-tile">
+        <div class="info-tile-label">Brochüre-Bezug</div>
+        <div class="info-tile-content"><a href="https://shameforest.github.io/Guides/cascadeur3.html">Projekt 03 · Walk</a></div>
+      </div>
+      <div class="info-tile">
+        <div class="info-tile-label">Werkzeuge</div>
+        <div class="info-tile-content"><div class="tool-chips"><span class="tool-chip">IK / FK</span><span class="tool-chip">Foot-Contact</span><span class="tool-chip">Pelvis-Pfad</span></div></div>
+      </div>
+      <div class="callout check">
+        <div class="callout-eyebrow">Erfolgs-Check</div>
+        <div class="callout-text">Manny macht einen sichtbaren Schritt nach vorn. Pelvis-Trajectory zeigt klare Vorwärts-Bewegung. Stand-Fuß bleibt während F0–F30 stabil, dann ablösen.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PART-OPENER · MITTEL ============== -->
+<section class="part-opener">
+  <div class="part-grid">
+    <div>
+      <div class="part-marker">Stufe II · Mittel · Lektionen 04–05</div>
+      <h2 class="part-title">Gewicht <em>&amp;</em><br>Impact.</h2>
+    </div>
+    <p class="part-desc">Hocke mit Physik-Pass. Punch mit Impact-Hold. Die Stufe wo Bewegung Konsequenzen bekommt — Schwerkraft, Trägheit, Kraft.</p>
+  </div>
+</section>
+
+<!-- ============== LESSON 04 ============== -->
+<section class="lesson mid" id="m04">
+  <div class="lesson-head">
+    <div class="lesson-num" data-shadow="04">04</div>
+    <div class="lesson-title-block">
+      <div class="lesson-kicker"><span>Stufe II · Lektion 04</span><b>Pelvis-Tiefe · AutoPhysics-Pass</b></div>
+      <h2 class="lesson-title">Hocke <em>und auf</em></h2>
+    </div>
+    <div class="lesson-meta">
+      <span class="meta-pill diff">Mittel</span>
+      <span class="meta-pill time">30 Minuten</span>
+    </div>
+  </div>
+
+  <p class="lesson-lead"><span class="drop-cap">G</span>ravitations-Übung. Hocke gehen, halten, aufstehen. Erster AutoPhysics-Pass für Plausibilität — die Physik darf hier mitsprechen und korrigiert was die Posen vergessen.</p>
+
+  <div class="stage">
+    <div class="stage-label"><span>Pelvis-Y-Profil · Stand → Hocke → Stand → Settle</span><span class="ref">REF · SQT-04</span></div>
+    <div class="stage-canvas">
+      <svg viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="bodyShadow04" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+            <feOffset dx="3" dy="5" result="off"/>
+            <feComponentTransfer><feFuncA type="linear" slope="0.25"/></feComponentTransfer>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <radialGradient id="groundShadow04" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#15100a" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#15100a" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <line x1="40" y1="410" x2="1160" y2="410" stroke="#15100a" stroke-width="2"/>
+        <g stroke="#15100a" stroke-width="0.5" opacity="0.35">
+          <line x1="60" y1="415" x2="80" y2="430"/><line x1="140" y1="415" x2="160" y2="430"/>
+          <line x1="220" y1="415" x2="240" y2="430"/><line x1="300" y1="415" x2="320" y2="430"/>
+          <line x1="380" y1="415" x2="400" y2="430"/><line x1="460" y1="415" x2="480" y2="430"/>
+          <line x1="540" y1="415" x2="560" y2="430"/><line x1="620" y1="415" x2="640" y2="430"/>
+          <line x1="700" y1="415" x2="720" y2="430"/><line x1="780" y1="415" x2="800" y2="430"/>
+          <line x1="860" y1="415" x2="880" y2="430"/><line x1="940" y1="415" x2="960" y2="430"/>
+          <line x1="1020" y1="415" x2="1040" y2="430"/><line x1="1100" y1="415" x2="1120" y2="430"/>
+        </g>
+
+        <!-- Pelvis-Y-Kurve -->
+        <path d="M 150 275 Q 240 280, 360 340 L 540 340 Q 680 320, 800 275 Q 920 280, 1040 277" stroke="#18394d" stroke-width="2.5" fill="none"/>
+        <text x="600" y="55" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#18394d" font-weight="600" letter-spacing="2">PELVIS-Y · GRAVITATIONS-PROFIL</text>
+
+        <!-- F0 - Stand -->
+        <g transform="translate(150,0)" filter="url(#bodyShadow04)">
+          <ellipse cx="0" cy="408" rx="28" ry="4" fill="url(#groundShadow04)"/>
+          <ellipse cx="0" cy="135" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -6 156 L 6 156 L 8 168 L -8 168 Z" fill="#15100a"/>
+          <path d="M -26 175 Q -29 200, -26 240 L -22 290 L -18 335 L 18 335 L 22 290 L 26 240 Q 29 200, 26 175 Z" fill="#15100a"/>
+          <line x1="-24" y1="180" x2="-30" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-30" y1="225" x2="-32" y2="280" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="24" y1="180" x2="30" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="30" y1="225" x2="32" y2="280" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <circle cx="0" cy="275" r="6" fill="#18394d" stroke="#15100a" stroke-width="1.2"/>
+          <line x1="-12" y1="335" x2="-13" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-13" y1="375" x2="-14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="12" y1="335" x2="13" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="13" y1="375" x2="14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-18" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="18" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#15100a" font-weight="600">F0</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#3d3324">Stand</text>
+        </g>
+
+        <!-- F25 - Hocke (Pelvis 60px tiefer, Knie gebeugt) -->
+        <g transform="translate(390,0)" filter="url(#bodyShadow04)">
+          <ellipse cx="0" cy="408" rx="38" ry="4" fill="url(#groundShadow04)"/>
+          <ellipse cx="2" cy="200" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -4 221 L 8 221 L 10 232 L -6 232 Z" fill="#15100a"/>
+          <path d="M -23 240 Q -26 260, -23 290 L -20 335 L -17 365 L 19 365 L 22 335 L 25 290 Q 28 260, 25 240 Z" fill="#15100a"/>
+          <!-- Arme vor Knien -->
+          <line x1="-21" y1="245" x2="-28" y2="285" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-28" y1="285" x2="-15" y2="320" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="25" y1="245" x2="32" y2="285" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="32" y1="285" x2="20" y2="320" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <circle cx="2" cy="340" r="7" fill="#18394d" stroke="#15100a" stroke-width="1.5"/>
+          <!-- Gebeugte Beine -->
+          <line x1="-12" y1="365" x2="-26" y2="385" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-26" y1="385" x2="-18" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="14" y1="365" x2="28" y2="385" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="28" y1="385" x2="20" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-22" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="24" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <!-- Down-Arrow -->
+          <path d="M 60 275 L 60 335 M 55 330 L 60 335 L 65 330" stroke="#18394d" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <text x="80" y="310" font-family="JetBrains Mono" font-size="10" fill="#18394d" font-weight="600">−30 cm</text>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#18394d" font-weight="700">F25</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#18394d">Hocke</text>
+        </g>
+
+        <!-- F40 - Hocke gehalten -->
+        <g transform="translate(620,0)" filter="url(#bodyShadow04)">
+          <ellipse cx="0" cy="408" rx="38" ry="4" fill="url(#groundShadow04)"/>
+          <ellipse cx="2" cy="200" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -4 221 L 8 221 L 10 232 L -6 232 Z" fill="#15100a"/>
+          <path d="M -23 240 Q -26 260, -23 290 L -20 335 L -17 365 L 19 365 L 22 335 L 25 290 Q 28 260, 25 240 Z" fill="#15100a"/>
+          <line x1="-21" y1="245" x2="-28" y2="285" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-28" y1="285" x2="-15" y2="320" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="25" y1="245" x2="32" y2="285" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="32" y1="285" x2="20" y2="320" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <circle cx="2" cy="340" r="7" fill="#18394d" stroke="#15100a" stroke-width="1.5"/>
+          <line x1="-12" y1="365" x2="-26" y2="385" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-26" y1="385" x2="-18" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="14" y1="365" x2="28" y2="385" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="28" y1="385" x2="20" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-22" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="24" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#18394d" font-weight="700">F40</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#18394d">Hold</text>
+        </g>
+
+        <!-- F70 - Stand -->
+        <g transform="translate(840,0)" filter="url(#bodyShadow04)">
+          <ellipse cx="0" cy="408" rx="28" ry="4" fill="url(#groundShadow04)"/>
+          <ellipse cx="0" cy="135" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -6 156 L 6 156 L 8 168 L -8 168 Z" fill="#15100a"/>
+          <path d="M -26 175 Q -29 200, -26 240 L -22 290 L -18 335 L 18 335 L 22 290 L 26 240 Q 29 200, 26 175 Z" fill="#15100a"/>
+          <line x1="-24" y1="180" x2="-30" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-30" y1="225" x2="-32" y2="280" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="24" y1="180" x2="30" y2="225" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="30" y1="225" x2="32" y2="280" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <circle cx="0" cy="275" r="6" fill="#18394d" stroke="#15100a" stroke-width="1.2"/>
+          <line x1="-12" y1="335" x2="-13" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-13" y1="375" x2="-14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="12" y1="335" x2="13" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="13" y1="375" x2="14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-18" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="18" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#15100a" font-weight="600">F70</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#3d3324">Stand</text>
+        </g>
+
+        <!-- F90 - Settle -->
+        <g transform="translate(1050,2)" filter="url(#bodyShadow04)">
+          <ellipse cx="0" cy="410" rx="28" ry="4" fill="url(#groundShadow04)"/>
+          <ellipse cx="0" cy="137" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -6 158 L 6 158 L 8 170 L -8 170 Z" fill="#15100a"/>
+          <path d="M -26 177 Q -29 202, -26 242 L -22 292 L -18 337 L 18 337 L 22 292 L 26 242 Q 29 202, 26 177 Z" fill="#15100a"/>
+          <line x1="-24" y1="182" x2="-30" y2="227" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-30" y1="227" x2="-32" y2="282" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <line x1="24" y1="182" x2="30" y2="227" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="30" y1="227" x2="32" y2="282" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <circle cx="0" cy="277" r="6" fill="#5a7350" stroke="#15100a" stroke-width="1.2"/>
+          <line x1="-12" y1="337" x2="-13" y2="377" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-13" y1="377" x2="-14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="12" y1="337" x2="13" y2="377" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="13" y1="377" x2="14" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-18" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="18" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#5a7350" font-weight="700">F90</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#5a7350">Settle</text>
+        </g>
+
+        <!-- Key-Marker auf Kurve -->
+        <circle cx="150" cy="275" r="4" fill="#18394d"/>
+        <circle cx="390" cy="340" r="4" fill="#18394d"/>
+        <circle cx="620" cy="340" r="4" fill="#18394d"/>
+        <circle cx="840" cy="275" r="4" fill="#18394d"/>
+        <circle cx="1050" cy="278" r="4" fill="#5a7350"/>
+
+      </svg>
+    </div>
+    <div class="stage-caption">
+      <span class="stage-caption-tag">Fig. 04</span>
+      <p class="stage-caption-text">Pelvis-Y-Profil über 90 Frames. Stand (F0) → Hocke (F25–F40, gehalten) → Stand (F70) → leichter Settle (F90). Die blaue Kurve zeigt das gravitations-plausible Sinken und Steigen. Der <strong>Pelvis-Marker</strong> sinkt mit, die Beine beugen synchron. Bei Hocke ist Body leicht vorgeneigt — Balance-Korrektur.</p>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="workflow-pane">
+      <h3><span>Workflow</span><em>7 Schritte</em></h3>
+      <div class="step-row"><div class="step-row-num">01</div><div class="step-row-text">Manny in Stand. <strong>90 Frames</strong>. Beide Füße IK + <kbd>R</kbd>-fixiert.</div></div>
+      <div class="step-row"><div class="step-row-num">02</div><div class="step-row-text"><strong>F0:</strong> Stand.</div></div>
+      <div class="step-row"><div class="step-row-num">03</div><div class="step-row-text"><strong>F25:</strong> Hocke. Pelvis <strong>−30 cm</strong>, Knie ~90°, Body leicht vorgeneigt.</div></div>
+      <div class="step-row"><div class="step-row-num">04</div><div class="step-row-text"><strong>F40:</strong> Hocke gehalten (F25 kopieren).</div></div>
+      <div class="step-row"><div class="step-row-num">05</div><div class="step-row-text"><strong>F70:</strong> zurück zur Stand. Knie-Streckung mit Pelvis-Anstieg synchron.</div></div>
+      <div class="step-row"><div class="step-row-num">06</div><div class="step-row-text"><strong>F90:</strong> leichter Settle, 0.5 cm Pelvis-Dip.</div></div>
+      <div class="step-row"><div class="step-row-num">07</div><div class="step-row-text">Center of Mass → Physics Tab → Physics Character <strong>80</strong>, Smooth Trajectory <strong>40</strong> → Snap to Physics.</div></div>
+    </div>
+
+    <div class="side-pane">
+      <div class="info-tile">
+        <div class="info-tile-label">Brochüre-Bezug</div>
+        <div class="info-tile-content"><a href="https://shameforest.github.io/Guides/cascadeur7.html">Projekt 07 · AutoPhysics</a></div>
+      </div>
+      <div class="info-tile">
+        <div class="info-tile-label">Werkzeuge</div>
+        <div class="info-tile-content"><div class="tool-chips"><span class="tool-chip">Pelvis</span><span class="tool-chip">AutoPhysics</span><span class="tool-chip">Knie-Coord.</span></div></div>
+      </div>
+      <div class="callout check">
+        <div class="callout-eyebrow">Erfolgs-Check</div>
+        <div class="callout-text">Hocke gravitations-plausibel, kein „Schwebe-Effekt". Pelvis-Pfad ballistisch. Foot bleibt stabil am Boden.</div>
+      </div>
+      <div class="callout trap">
+        <div class="callout-eyebrow">Stolperfalle</div>
+        <div class="callout-text">Knie und Pelvis-Höhe müssen koordiniert sein. Pelvis 30 cm tiefer + Knie nur 60° = Ober- und Unterschenkel kollidieren. Lösung: erst Pelvis senken, dann Knie-Beugung anpassen.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== LESSON 05 ============== -->
+<section class="lesson mid" id="m05">
+  <div class="lesson-head">
+    <div class="lesson-num" data-shadow="05">05</div>
+    <div class="lesson-title-block">
+      <div class="lesson-kicker"><span>Stufe II · Lektion 05</span><b>Wind-Up · Impact-Hold · Hip-Drive</b></div>
+      <h2 class="lesson-title">Front-<em>Punch</em></h2>
+    </div>
+    <div class="lesson-meta">
+      <span class="meta-pill diff">Mittel</span>
+      <span class="meta-pill time">30 Minuten</span>
+    </div>
+  </div>
+
+  <p class="lesson-lead"><span class="drop-cap">C</span>ombat-Animation komprimiert auf ihre Essenz. Wind-Up, Impact-Hold, Recovery. Kürzer als der Kick aus Projekt 12, aber dieselben Prinzipien: <em>die Hüfte führt, die Faust folgt</em>.</p>
+
+  <div class="stage">
+    <div class="stage-label"><span>Punch-Sequenz · Hip-Drive + Impact-Strahlen</span><span class="ref">REF · PCH-05</span></div>
+    <div class="stage-canvas">
+      <svg viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="bodyShadow05" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+            <feOffset dx="3" dy="5" result="off"/>
+            <feComponentTransfer><feFuncA type="linear" slope="0.25"/></feComponentTransfer>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <radialGradient id="groundShadow05" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#15100a" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#15100a" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="impactBurst" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#a8421a" stop-opacity="0.9"/>
+            <stop offset="60%" stop-color="#a8421a" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#a8421a" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <line x1="40" y1="410" x2="1160" y2="410" stroke="#15100a" stroke-width="2"/>
+        <g stroke="#15100a" stroke-width="0.5" opacity="0.35">
+          <line x1="60" y1="415" x2="80" y2="430"/><line x1="160" y1="415" x2="180" y2="430"/>
+          <line x1="260" y1="415" x2="280" y2="430"/><line x1="360" y1="415" x2="380" y2="430"/>
+          <line x1="460" y1="415" x2="480" y2="430"/><line x1="560" y1="415" x2="580" y2="430"/>
+          <line x1="660" y1="415" x2="680" y2="430"/><line x1="760" y1="415" x2="780" y2="430"/>
+          <line x1="860" y1="415" x2="880" y2="430"/><line x1="960" y1="415" x2="980" y2="430"/>
+          <line x1="1060" y1="415" x2="1080" y2="430"/><line x1="1120" y1="415" x2="1140" y2="430"/>
+        </g>
+
+        <!-- Hip-Drive Action-Line -->
+        <path d="M 200 290 Q 400 285, 580 220 L 620 200" stroke="#a8421a" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.8"/>
+        <path d="M 614 198 L 620 200 L 615 206" stroke="#a8421a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <text x="380" y="195" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#a8421a" font-weight="600" letter-spacing="2">HIP-DRIVE → FAUST</text>
+
+        <!-- F0 - Garde -->
+        <g transform="translate(140,0)" filter="url(#bodyShadow05)">
+          <ellipse cx="0" cy="408" rx="28" ry="4" fill="url(#groundShadow05)"/>
+          <ellipse cx="0" cy="135" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -6 156 L 6 156 L 8 168 L -8 168 Z" fill="#15100a"/>
+          <path d="M -26 175 Q -29 200, -26 240 L -22 290 L -18 335 L 18 335 L 22 290 L 26 240 Q 29 200, 26 175 Z" fill="#15100a"/>
+          <!-- Beide Fäuste in Garde -->
+          <line x1="-24" y1="180" x2="-22" y2="215" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-22" y1="215" x2="-15" y2="190" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <ellipse cx="-13" cy="188" rx="6" ry="6" fill="#15100a"/>
+          <line x1="24" y1="180" x2="22" y2="215" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="22" y1="215" x2="15" y2="190" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <ellipse cx="13" cy="188" rx="6" ry="6" fill="#15100a"/>
+          <line x1="-12" y1="335" x2="-15" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-15" y1="375" x2="-18" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="12" y1="335" x2="15" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="15" y1="375" x2="18" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-22" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="22" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#15100a" font-weight="600">F0</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#3d3324">Garde</text>
+        </g>
+
+        <!-- F8 - Wind-Up -->
+        <g transform="translate(360,0)" filter="url(#bodyShadow05)">
+          <ellipse cx="0" cy="408" rx="28" ry="4" fill="url(#groundShadow05)"/>
+          <ellipse cx="4" cy="135" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -2 156 L 10 156 L 12 168 L -4 168 Z" fill="#15100a"/>
+          <!-- Body leicht rotiert -->
+          <path d="M -22 175 Q -25 200, -22 240 L -18 290 L -14 335 L 22 335 L 26 290 L 30 240 Q 33 200, 30 175 Z" fill="#15100a"/>
+          <line x1="-20" y1="180" x2="-22" y2="215" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-22" y1="215" x2="-12" y2="190" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <ellipse cx="-10" cy="188" rx="6" ry="6" fill="#15100a"/>
+          <!-- Wind-Up rechte Faust zurück -->
+          <line x1="28" y1="180" x2="20" y2="220" stroke="#a8421a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="20" y1="220" x2="-3" y2="240" stroke="#a8421a" stroke-width="9" stroke-linecap="round"/>
+          <ellipse cx="-7" cy="241" rx="7" ry="7" fill="#a8421a"/>
+          <line x1="-10" y1="335" x2="-15" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-15" y1="375" x2="-20" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="14" y1="335" x2="17" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="17" y1="375" x2="20" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-24" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="24" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <!-- Hip-Rotation Indicator -->
+          <path d="M -18 300 Q -2 295, 14 298" stroke="#a8421a" stroke-width="1.5" fill="none"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#a8421a" font-weight="700">F8</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#a8421a">Wind-Up</text>
+        </g>
+
+        <!-- F18 - IMPACT! -->
+        <g transform="translate(630,0)" filter="url(#bodyShadow05)">
+          <ellipse cx="0" cy="408" rx="32" ry="4" fill="url(#groundShadow05)"/>
+          <ellipse cx="-2" cy="135" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -8 156 L 4 156 L 6 168 L -10 168 Z" fill="#15100a"/>
+          <!-- Body stark rotiert + nach vorne gelehnt -->
+          <path d="M -30 175 Q -33 200, -28 240 L -22 290 L -18 335 L 24 335 L 26 290 L 24 240 Q 22 200, 18 175 Z" fill="#15100a"/>
+          <line x1="-28" y1="180" x2="-28" y2="220" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-28" y1="220" x2="-18" y2="195" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <ellipse cx="-16" cy="193" rx="6" ry="6" fill="#15100a"/>
+          <!-- Rechte Faust vorn ausgestreckt -->
+          <line x1="18" y1="180" x2="50" y2="180" stroke="#a8421a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="50" y1="180" x2="85" y2="180" stroke="#a8421a" stroke-width="9" stroke-linecap="round"/>
+          <!-- IMPACT BURST -->
+          <circle cx="100" cy="180" r="20" fill="url(#impactBurst)"/>
+          <ellipse cx="95" cy="180" rx="9" ry="9" fill="#a8421a" stroke="#15100a" stroke-width="1.5"/>
+          <!-- Impact-Strahlen -->
+          <line x1="115" y1="170" x2="128" y2="160" stroke="#a8421a" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="118" y1="180" x2="135" y2="180" stroke="#a8421a" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="115" y1="190" x2="128" y2="200" stroke="#a8421a" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="108" y1="195" x2="115" y2="208" stroke="#a8421a" stroke-width="2" stroke-linecap="round"/>
+          <line x1="108" y1="165" x2="115" y2="152" stroke="#a8421a" stroke-width="2" stroke-linecap="round"/>
+          <line x1="-12" y1="335" x2="-17" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-17" y1="375" x2="-22" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="18" y1="335" x2="22" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="22" y1="375" x2="25" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-26" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="29" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="15" fill="#a8421a" font-weight="800">F18</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="12" fill="#a8421a" font-weight="600">IMPACT</text>
+        </g>
+
+        <!-- F19 - Impact-Hold (ghosted) -->
+        <g transform="translate(870,0)" opacity="0.55">
+          <ellipse cx="0" cy="408" rx="32" ry="4" fill="url(#groundShadow05)"/>
+          <ellipse cx="-2" cy="135" rx="17" ry="21" fill="none" stroke="#15100a" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <path d="M -30 175 Q -33 200, -28 240 L -22 290 L -18 335 L 24 335 L 26 290 L 24 240 Q 22 200, 18 175 Z" fill="none" stroke="#15100a" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <line x1="18" y1="180" x2="85" y2="180" stroke="#a8421a" stroke-width="9" stroke-linecap="round" stroke-dasharray="3,2"/>
+          <ellipse cx="95" cy="180" rx="8" ry="8" fill="none" stroke="#a8421a" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#a8421a" font-weight="700" opacity="1.5">F19</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#3d3324" opacity="1.5">Hold</text>
+        </g>
+
+        <!-- F50 - Recovery -->
+        <g transform="translate(1060,0)" filter="url(#bodyShadow05)">
+          <ellipse cx="0" cy="408" rx="28" ry="4" fill="url(#groundShadow05)"/>
+          <ellipse cx="0" cy="135" rx="17" ry="21" fill="#15100a"/>
+          <path d="M -6 156 L 6 156 L 8 168 L -8 168 Z" fill="#15100a"/>
+          <path d="M -26 175 Q -29 200, -26 240 L -22 290 L -18 335 L 18 335 L 22 290 L 26 240 Q 29 200, 26 175 Z" fill="#15100a"/>
+          <line x1="-24" y1="180" x2="-22" y2="215" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="-22" y1="215" x2="-15" y2="190" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <ellipse cx="-13" cy="188" rx="6" ry="6" fill="#15100a"/>
+          <line x1="24" y1="180" x2="22" y2="215" stroke="#15100a" stroke-width="11" stroke-linecap="round"/>
+          <line x1="22" y1="215" x2="15" y2="190" stroke="#15100a" stroke-width="9" stroke-linecap="round"/>
+          <ellipse cx="13" cy="188" rx="6" ry="6" fill="#15100a"/>
+          <line x1="-12" y1="335" x2="-15" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="-15" y1="375" x2="-18" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <line x1="12" y1="335" x2="15" y2="375" stroke="#15100a" stroke-width="14" stroke-linecap="round"/>
+          <line x1="15" y1="375" x2="18" y2="410" stroke="#15100a" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="-22" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <ellipse cx="22" cy="410" rx="14" ry="4" fill="#0a0703"/>
+          <text x="0" y="448" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#15100a" font-weight="600">F50</text>
+          <text x="0" y="465" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="11" fill="#3d3324">Recovery</text>
+        </g>
+
+      </svg>
+    </div>
+    <div class="stage-caption">
+      <span class="stage-caption-tag">Fig. 05</span>
+      <p class="stage-caption-text">Punch-Sequenz mit Impact-Burst bei F18 — der visualisierte Treffer-Moment mit Strahlen-Effekt. F19 ist als <strong>gestricheltes Ghost</strong> daneben: derselbe Frame nochmal, der Hold-Effekt. Die rote <strong>Hip-Drive-Linie</strong> oben zeigt den Kraft-Pfad von Hüfte zu Faust — Combat-Animation ist Body-Animation, nicht Arm-Animation.</p>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="workflow-pane">
+      <h3><span>Workflow</span><em>8 Schritte</em></h3>
+      <div class="step-row"><div class="step-row-num">01</div><div class="step-row-text">Manny in Combat-Stand (Fäuste in Garde). <strong>50 Frames</strong>.</div></div>
+      <div class="step-row"><div class="step-row-num">02</div><div class="step-row-text"><strong>F0:</strong> Garde. Beide Füße IK + <kbd>R</kbd>.</div></div>
+      <div class="step-row"><div class="step-row-num">03</div><div class="step-row-text"><strong>F8:</strong> Wind-Up — rechte Faust zurück zur Hüfte, Pelvis 10° rotiert.</div></div>
+      <div class="step-row"><div class="step-row-num">04</div><div class="step-row-text"><strong>F18:</strong> Impact — Faust vorn, Pelvis 25° rotiert, Body leicht vorgeneigt.</div></div>
+      <div class="step-row"><div class="step-row-num">05</div><div class="step-row-text"><strong>F19:</strong> Impact-Frame kopieren — <kbd>Shift</kbd>+<kbd>MMB</kbd>-Drag. Hold-Frame.</div></div>
+      <div class="step-row"><div class="step-row-num">06</div><div class="step-row-text"><strong>F35:</strong> Retract — Faust zurück, Pelvis dreht zurück.</div></div>
+      <div class="step-row"><div class="step-row-num">07</div><div class="step-row-text"><strong>F50:</strong> zurück zur Garde.</div></div>
+      <div class="step-row"><div class="step-row-num">08</div><div class="step-row-text">Ghost Mode (Both Neighbors + Outline). Foot-Drift F0–F18 prüfen. Bei Drift: Paste Into Interval.</div></div>
+    </div>
+
+    <div class="side-pane">
+      <div class="info-tile">
+        <div class="info-tile-label">Brochüre-Bezug</div>
+        <div class="info-tile-content"><a href="https://shameforest.github.io/Guides/cascadeur12.html">Projekt 12 · Kick</a></div>
+      </div>
+      <div class="info-tile">
+        <div class="info-tile-label">Werkzeuge</div>
+        <div class="info-tile-content"><div class="tool-chips"><span class="tool-chip">Ghost Mode</span><span class="tool-chip">Impact-Hold</span><span class="tool-chip">Hip-Rotation</span></div></div>
+      </div>
+      <div class="callout check">
+        <div class="callout-eyebrow">Erfolgs-Check</div>
+        <div class="callout-text">Wind-Up sichtbar. Impact-Frame klar erkennbar. Recovery natürlich. <strong>Hüft-Rotation als Power-Quelle</strong> erkennbar — die Hüfte führt, der Arm folgt.</div>
+      </div>
+      <div class="callout bonus">
+        <div class="callout-eyebrow">Bonus-Variation</div>
+        <div class="callout-text">Linke Hand-Pose für Counter-Balance: bei F18 leicht zurück als Gegen-Gewicht. Ohne Counter-Balance wirkt der Punch unbalanciert.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer class="footer">
+  <h2>Teil I <em>abgeschlossen</em>.</h2>
+  <p>Fünf Übungen liegen hinter dir — das Fundament steht. Pelvis-Kontrolle, Bezier-Kurven, Schritt-Mechanik mit IK/FK, Gravitation mit Physik, Combat-Impact. Wenn diese fünf sitzen, sitzen die Grundpfeiler jeder weiteren Animation.</p>
+  <p><strong>Teil II</strong> kommt als separate Datei mit Aufgaben 06–10: Greif-Anatomie, Mocap-Slide-Fix, Sword-Constraint, Diffusions-Generation, Stepped-Transform. In der gleichen Visualisierungs-Qualität — anatomische Posen, Action-Lines, Storyboard-Annotation.</p>
+  <a class="footer-link" href="https://shameforest.github.io/Guides/index.html">← Zurück zum Index</a>
+  <div class="footer-meta">
+    <span style="color: var(--terracotta-glow);">Mini-Atelier v2 · Teil I (01–05)</span>
+    <span>Mai 2026</span>
+    <span>Cascadeur Lernreihe · Field-Manual</span>
+  </div>
+</footer>
+
+</div>
+
+</body>
+</html>
