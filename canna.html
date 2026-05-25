@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Zitronenpflanze — Super Lemon Haze Anbau-Brochüre · Mai 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-1: #1a0e08;
+  --bg-2: #2a160d;
+  --bg-3: #3a1f13;
+  --paper: #f3e8d2;
+  --paper-dim: #d9c9ab;
+  --paper-soft: #b6a382;
+  --gold: #e8b931;
+  --gold-bright: #f5cb44;
+  --gold-deep: #b88a1d;
+  --rule: #5a3a22;
+  --highlight-bg: #f1c543;
+  --highlight-text: #2a160d;
+  --red-strip: #8a2a1a;
+  --green-leaf: #6b8e3e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(232,185,49,0.06), transparent 40%),
+    radial-gradient(ellipse at 80% 100%, rgba(138,42,26,0.10), transparent 50%),
+    linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-3) 100%);
+  background-attachment: fixed;
+  color: var(--paper);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 21px;
+  line-height: 1.65;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* subtle noise texture */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background-image:
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.012) 0 2px, transparent 2px 7px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ===== TOP NAV STRIP ===== */
+.top-strip {
+  background: #000;
+  border-top: 3px solid var(--red-strip);
+  border-bottom: 1px solid var(--rule);
+  padding: 14px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+}
+.top-strip .left { color: var(--red-strip); font-weight: 700; }
+.top-strip .center { color: var(--gold); font-weight: 500; }
+.top-strip .right { color: var(--paper-soft); }
+
+/* ===== LAYOUT ===== */
+.page {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 80px 40px 120px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ===== HERO ===== */
+.eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: 40px;
+  font-weight: 500;
+}
+.eyebrow::before { content: "›  "; color: var(--gold); }
+
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: clamp(48px, 7vw, 92px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  text-align: center;
+  margin-bottom: 32px;
+  color: var(--paper);
+}
+.hero-title .gold-italic {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--gold);
+  text-shadow: 0 0 40px rgba(232,185,49,0.25);
+}
+
+.hero-lead {
+  max-width: 640px;
+  margin: 0 auto 80px;
+  text-align: center;
+  font-size: 22px;
+  line-height: 1.55;
+  color: var(--paper-dim);
+  font-family: 'EB Garamond', serif;
+}
+
+/* ===== HERO ILLUSTRATION ===== */
+.hero-illu {
+  margin: 60px auto 80px;
+  width: 220px;
+  height: 220px;
+  display: block;
+  filter: drop-shadow(0 0 30px rgba(232,185,49,0.15));
+}
+
+/* ===== BEFUND CARDS ===== */
+.befund {
+  background: linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.30));
+  border-left: 3px solid var(--gold);
+  padding: 40px 48px 42px;
+  margin: 0 0 48px;
+  border-radius: 2px;
+  position: relative;
+}
+
+.befund-tag {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 500;
+  margin-bottom: 18px;
+  display: block;
+}
+.befund-tag::before { content: "›  "; }
+
+.befund-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: clamp(30px, 4vw, 42px);
+  line-height: 1.12;
+  color: var(--paper);
+  margin-bottom: 22px;
+  letter-spacing: -0.005em;
+}
+
+.befund-body {
+  font-size: 20px;
+  line-height: 1.65;
+  color: var(--paper-dim);
+}
+
+.befund-body p + p { margin-top: 14px; }
+
+/* ===== HIGHLIGHT TOKEN ===== */
+.hl {
+  display: inline-block;
+  background: var(--highlight-bg);
+  color: var(--highlight-text);
+  padding: 1px 10px 3px;
+  margin: 0 2px;
+  border-radius: 3px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.86em;
+  letter-spacing: 0.01em;
+  vertical-align: 0.05em;
+  white-space: nowrap;
+}
+
+.gold {
+  color: var(--gold);
+  font-weight: 500;
+}
+.gold-italic-inline {
+  color: var(--gold);
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* ===== SECTION DIVIDER ===== */
+.section-break {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 90px 0 70px;
+  gap: 24px;
+}
+.section-break .rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--rule), transparent);
+}
+.section-break .mark {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--gold);
+  font-size: 24px;
+}
+
+/* ===== INLINE ILLUSTRATIONS ===== */
+.illu-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin: 38px 0 8px;
+  padding: 24px 12px 12px;
+}
+.illu-step {
+  text-align: center;
+}
+.illu-step svg {
+  width: 80px;
+  height: 80px;
+  display: block;
+  margin: 0 auto 12px;
+}
+.illu-step .label {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.illu-step .when {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  color: var(--paper-soft);
+  font-size: 15px;
+  margin-top: 4px;
+}
+
+/* ===== TIMELINE ===== */
+.timeline {
+  margin: 24px 0 8px;
+  border-left: 2px dashed var(--gold-deep);
+  padding-left: 28px;
+}
+.timeline-item {
+  margin-bottom: 22px;
+  position: relative;
+}
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -36px;
+  top: 10px;
+  width: 12px;
+  height: 12px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(232,185,49,0.15);
+}
+.timeline-date {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+.timeline-what {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 23px;
+  color: var(--paper);
+  line-height: 1.3;
+}
+.timeline-note {
+  font-style: italic;
+  color: var(--paper-soft);
+  font-size: 17px;
+  margin-top: 3px;
+}
+
+/* ===== TWO-COLUMN MINI ===== */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-top: 24px;
+}
+.two-col .mini {
+  background: rgba(0,0,0,0.22);
+  padding: 22px 24px;
+  border-top: 2px solid var(--gold);
+  border-radius: 2px;
+}
+.two-col .mini h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 22px;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.two-col .mini p {
+  font-size: 18px;
+  color: var(--paper-dim);
+  line-height: 1.5;
+}
+
+/* ===== WARNING CARD ===== */
+.warn {
+  background: linear-gradient(180deg, rgba(138,42,26,0.16), rgba(138,42,26,0.06));
+  border-left: 3px solid var(--red-strip);
+  padding: 32px 40px;
+  margin: 56px 0;
+  border-radius: 2px;
+}
+.warn-tag {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #e87a5a;
+  margin-bottom: 12px;
+}
+.warn-tag::before { content: "⚠  "; }
+.warn-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 28px;
+  color: var(--paper);
+  margin-bottom: 12px;
+}
+.warn-body {
+  font-size: 19px;
+  color: var(--paper-dim);
+  line-height: 1.55;
+}
+
+/* ===== BIG QUOTE ===== */
+.quote {
+  text-align: center;
+  margin: 110px auto 80px;
+  max-width: 780px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(28px, 3.8vw, 40px);
+  line-height: 1.25;
+  color: var(--gold);
+  letter-spacing: -0.005em;
+}
+.quote .nonitalic {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--paper);
+}
+
+/* ===== SOURCES ===== */
+.sources {
+  text-align: center;
+  margin-top: 100px;
+  padding-top: 50px;
+  border-top: 1px solid var(--rule);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--paper-soft);
+  line-height: 1.8;
+}
+.sources b { color: var(--gold); font-weight: 500; }
+
+/* ===== WEATHER STRIP ===== */
+.weather-strip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin: 30px 0 6px;
+  padding: 18px 4px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.wday {
+  text-align: center;
+}
+.wday .d {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper-soft);
+}
+.wday .t {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--gold);
+  margin-top: 4px;
+}
+.wday .t .deg { font-size: 17px; color: var(--paper-soft); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 720px) {
+  .page { padding: 50px 22px 80px; }
+  body { font-size: 19px; }
+  .top-strip { flex-direction: column; gap: 6px; text-align: center; font-size: 11px; padding: 12px 20px; }
+  .befund { padding: 30px 26px 32px; }
+  .befund-body { font-size: 19px; }
+  .illu-row { grid-template-columns: repeat(2, 1fr); }
+  .two-col { grid-template-columns: 1fr; }
+  .weather-strip { grid-template-columns: repeat(5, 1fr); gap: 4px; }
+  .wday .t { font-size: 19px; }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.befund, .quote, .warn { animation: fadeUp 0.8s ease-out both; }
+.befund:nth-of-type(1) { animation-delay: 0.05s; }
+.befund:nth-of-type(2) { animation-delay: 0.10s; }
+.befund:nth-of-type(3) { animation-delay: 0.15s; }
+.befund:nth-of-type(4) { animation-delay: 0.20s; }
+.befund:nth-of-type(5) { animation-delay: 0.25s; }
+.befund:nth-of-type(6) { animation-delay: 0.30s; }
+.befund:nth-of-type(7) { animation-delay: 0.35s; }
+.befund:nth-of-type(8) { animation-delay: 0.40s; }
+</style>
+</head>
+<body>
+
+<!-- TOP STRIP -->
+<div class="top-strip">
+  <span class="left">› DIE ZITRONENPFLANZE</span>
+  <span class="center">SUPER LEMON HAZE · DIREKTSAAT · FOLIENTUNNEL</span>
+  <span class="right">MAI 2026 · ANBAUPLAN</span>
+</div>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="eyebrow">WAS DU JETZT WIRKLICH WISSEN MUSST · DIE SAISON IN EINER SEITE</div>
+
+  <h1 class="hero-title">
+    Die Saat ist <span class="gold-italic">gelegt</span>.<br>
+    Jetzt beginnt das <span class="gold-italic">Warten</span>.
+  </h1>
+
+  <p class="hero-lead">
+    Zwei Samen, ein Folientunnel, eine Direktsaat im Freiland. In den
+    nächsten fünf Monaten wirst du nicht viel tun müssen — aber das Wenige musst
+    du richtig tun. Das hier ist dein Kalender, dein Gießplan und dein Frühwarnsystem.
+  </p>
+
+  <!-- HERO ILLUSTRATION: lemon with cannabis leaf -->
+  <svg class="hero-illu" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="lemonG" cx="40%" cy="35%" r="65%">
+        <stop offset="0%" stop-color="#f9d96a"/>
+        <stop offset="60%" stop-color="#e8b931"/>
+        <stop offset="100%" stop-color="#a87c1c"/>
+      </radialGradient>
+      <radialGradient id="leafG" cx="50%" cy="50%" r="60%">
+        <stop offset="0%" stop-color="#8eab52"/>
+        <stop offset="100%" stop-color="#4d6929"/>
+      </radialGradient>
+    </defs>
+    <!-- Lemon body -->
+    <ellipse cx="110" cy="120" rx="78" ry="62" fill="url(#lemonG)" opacity="0.95"/>
+    <ellipse cx="92" cy="100" rx="22" ry="14" fill="#fbe18a" opacity="0.55"/>
+    <!-- Lemon ends (nubs) -->
+    <ellipse cx="35" cy="120" rx="9" ry="6" fill="#c79620"/>
+    <ellipse cx="185" cy="120" rx="9" ry="6" fill="#c79620"/>
+    <!-- Cannabis leaf overlay (stylized 7-finger leaf) -->
+    <g transform="translate(110,72) scale(0.85)" fill="url(#leafG)" stroke="#3a5320" stroke-width="1">
+      <!-- center leaflet -->
+      <path d="M0,0 C-6,-30 -3,-55 0,-72 C3,-55 6,-30 0,0 Z"/>
+      <!-- upper side leaflets -->
+      <path d="M0,0 C-18,-22 -28,-40 -32,-58 C-20,-50 -8,-30 0,-5 Z"/>
+      <path d="M0,0 C18,-22 28,-40 32,-58 C20,-50 8,-30 0,-5 Z"/>
+      <!-- middle side -->
+      <path d="M0,0 C-26,-12 -42,-22 -50,-38 C-34,-32 -16,-18 -2,-4 Z"/>
+      <path d="M0,0 C26,-12 42,-22 50,-38 C34,-32 16,-18 2,-4 Z"/>
+      <!-- lower side -->
+      <path d="M0,0 C-22,8 -38,4 -48,-10 C-32,-6 -16,-2 -3,2 Z"/>
+      <path d="M0,0 C22,8 38,4 48,-10 C32,-6 16,-2 3,2 Z"/>
+      <!-- stem -->
+      <line x1="0" y1="0" x2="0" y2="18" stroke="#3a5320" stroke-width="2"/>
+    </g>
+    <!-- decorative sparkle -->
+    <circle cx="160" cy="80" r="2" fill="#f5cb44"/>
+    <circle cx="55" cy="160" r="1.5" fill="#f5cb44"/>
+    <circle cx="180" cy="155" r="1.5" fill="#f5cb44"/>
+  </svg>
+
+  <!-- ===== BEFUND 1: SORTENPROFIL ===== -->
+  <div class="befund">
+    <span class="befund-tag">BEFUND 1</span>
+    <h2 class="befund-title">Was du gepflanzt hast.</h2>
+    <div class="befund-body">
+      <p>
+        <span class="gold">Super Lemon Haze</span> von Green House Seed Co. / Strain
+        Hunters — die <em>photoperiodische</em> Originalgenetik aus
+        <em>Lemon Skunk × Super Silver Haze</em>. Verteilung: <span class="hl">70 % Sativa</span>
+        / 30 % Indica. Laut Tütchen <span class="hl">26,33 % THC</span>, CBD 0,21 %,
+        CBN 1,15 %. Mehrfacher High-Times-Cup-Sieger.
+      </p>
+      <p>
+        Photoperiodisch heißt: die Pflanze blüht nicht nach Alter, sondern nach
+        Lichtzyklus. Solange die Nächte kurz sind, wächst sie nur — Stamm, Blätter,
+        Höhe. Outdoor wird sie <span class="hl">150–220 cm</span>, baumartig mit
+        Weihnachtsbaum-Struktur. Sie liebt Wärme und Sonne, mediterranes Klima —
+        und genau deshalb ist dein <span class="gold">Folientunnel die richtige Wahl</span>.
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== BEFUND 2: WANN DU DEN ERSTEN SPROSS SIEHST ===== -->
+  <div class="befund">
+    <span class="befund-tag">BEFUND 2</span>
+    <h2 class="befund-title">Wann du den ersten Spross siehst.</h2>
+    <div class="befund-body">
+      <p>
+        Die Keimung dauert in der Regel <span class="hl">2 bis 7 Tage</span>.
+        Der Samen schickt erst eine Pfahlwurzel nach unten, dann brechen die beiden
+        Keimblätter — rund, glatt, noch ohne Cannabis-typische Form — durch die Erde.
+      </p>
+      <p>
+        Bei deiner Aussaat am <em>25. Mai</em> heißt das: Erster sichtbarer Spross
+        zwischen <span class="hl">27. Mai und 1. Juni 2026</span>. Die ersten
+        gezackten, „echten" Blätter folgen rund <span class="gold">7 bis 14 Tage später</span>.
+      </p>
+    </div>
+
+    <!-- GROWTH STAGES ILLUSTRATION -->
+    <div class="illu-row">
+      <div class="illu-step">
+        <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="40" cy="62" rx="28" ry="4" fill="#3a1f13" opacity="0.6"/>
+          <ellipse cx="40" cy="48" rx="9" ry="11" fill="#8a6432" stroke="#5a3a22" stroke-width="1.5"/>
+          <path d="M40,50 Q42,55 45,58" stroke="#f5e8c8" stroke-width="1.5" fill="none"/>
+        </svg>
+        <div class="label">Samen</div>
+        <div class="when">25. Mai</div>
+      </div>
+      <div class="illu-step">
+        <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="40" cy="62" rx="28" ry="4" fill="#3a1f13" opacity="0.6"/>
+          <line x1="40" y1="60" x2="40" y2="42" stroke="#6b8e3e" stroke-width="2.2"/>
+          <ellipse cx="33" cy="40" rx="6" ry="4" fill="#8eab52" transform="rotate(-25 33 40)"/>
+          <ellipse cx="47" cy="40" rx="6" ry="4" fill="#8eab52" transform="rotate(25 47 40)"/>
+        </svg>
+        <div class="label">Sämling</div>
+        <div class="when">Anf. Juni</div>
+      </div>
+      <div class="illu-step">
+        <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="40" cy="68" rx="28" ry="4" fill="#3a1f13" opacity="0.6"/>
+          <line x1="40" y1="68" x2="40" y2="20" stroke="#6b8e3e" stroke-width="2.8"/>
+          <!-- fan leaves -->
+          <g fill="#6b8e3e">
+            <path d="M40,55 Q22,52 16,40 Q30,48 40,55 Z"/>
+            <path d="M40,55 Q58,52 64,40 Q50,48 40,55 Z"/>
+            <path d="M40,40 Q22,36 14,22 Q30,32 40,40 Z"/>
+            <path d="M40,40 Q58,36 66,22 Q50,32 40,40 Z"/>
+            <path d="M40,28 Q32,18 30,8 Q38,18 40,28 Z"/>
+            <path d="M40,28 Q48,18 50,8 Q42,18 40,28 Z"/>
+          </g>
+        </svg>
+        <div class="label">Wachstum</div>
+        <div class="when">Juni–Juli</div>
+      </div>
+      <div class="illu-step">
+        <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="40" cy="70" rx="28" ry="4" fill="#3a1f13" opacity="0.6"/>
+          <line x1="40" y1="70" x2="40" y2="14" stroke="#6b8e3e" stroke-width="3"/>
+          <g fill="#6b8e3e">
+            <path d="M40,58 Q20,54 12,42 Q28,50 40,58 Z"/>
+            <path d="M40,58 Q60,54 68,42 Q52,50 40,58 Z"/>
+            <path d="M40,40 Q24,36 16,24 Q30,32 40,40 Z"/>
+            <path d="M40,40 Q56,36 64,24 Q50,32 40,40 Z"/>
+          </g>
+          <!-- cola buds -->
+          <ellipse cx="40" cy="14" rx="6" ry="9" fill="#a8b85a"/>
+          <ellipse cx="40" cy="14" rx="3" ry="4" fill="#e8b931" opacity="0.6"/>
+          <ellipse cx="28" cy="32" rx="4" ry="6" fill="#a8b85a"/>
+          <ellipse cx="52" cy="32" rx="4" ry="6" fill="#a8b85a"/>
+        </svg>
+        <div class="label">Blüte</div>
+        <div class="when">ab Aug.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== BEFUND 3: WANN ERNTE ===== -->
+  <div class="befund">
+    <span class="befund-tag">BEFUND 3</span>
+    <h2 class="befund-title">Wann du erntest.</h2>
+    <div class="befund-body">
+      <p>
+        Photoperiodisch bedeutet: die Blüte startet, wenn die Nächte lang genug
+        sind. In Mitteleuropa passiert das <span class="gold">ab Mitte August</span>,
+        wenn die Sonne unter 13,5 Stunden täglich sinkt. Die Blütezeit dauert dann
+        <span class="hl">9 bis 10 Wochen</span>.
+      </p>
+      <p>
+        Realistischer Erntezeitpunkt für deinen Mai-Start:
+        <span class="hl">Mitte bis Ende Oktober 2026</span>. Im Folientunnel
+        gewinnst du dabei ein paar Tage gegenüber Freiland, weil die Pflanzen
+        vor Nachtfrost und Herbstregen geschützt sind.
+      </p>
+      <p style="margin-top:14px;">
+        <em>Kein Trick verkürzt das.</em> Egal wann du säst — auch eine zweite
+        SLH-Saat in zwei Wochen wird zur <span class="gold">selben Zeit ernten</span>,
+        nur kleiner. Photoperiode ist Tageslicht, nicht Pflanzenalter.
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== BEFUND 4: FOLIENTUNNEL-HITZE ===== -->
+  <div class="befund">
+    <span class="befund-tag">BEFUND 4</span>
+    <h2 class="befund-title">Der Folientunnel — Vorteil und Falle zugleich.</h2>
+    <div class="befund-body">
+      <p>
+        Der Tunnel ist für Super Lemon Haze ein <span class="gold">Geschenk</span>:
+        sie liebt mediterrane Wärme, geschützte Lagen, lange Tage. Im Folientunnel
+        bekommst du ein paar Grad mehr, schnellere Keimung, früheren Blütestart
+        und schimmelfreie Herbsttage.
+      </p>
+      <p style="margin-top:12px;">
+        Aber die Plastikfolie ist tückisch. An einem sonnigen Maitag mit
+        <span class="hl">25 °C</span> draußen können es im geschlossenen Tunnel
+        leicht <span class="hl">über 40 °C</span> werden. Sämlinge verbrennen
+        bei dieser Hitze innerhalb von Stunden.
+      </p>
+      <p style="margin-top:12px;">
+        <span class="gold">Regel:</span> Ab 22 °C Außentemperatur tagsüber
+        lüften — Türen oder Seitenwände öffnen. Nachts darfst du schließen,
+        wenn die Nachttemperatur unter 12 °C fällt. Im Hochsommer den Tunnel
+        komplett offen lassen, sonst wird er zur Sauna.
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== SECTION BREAK ===== -->
+  <div class="section-break">
+    <div class="rule"></div>
+    <span class="mark">~ Pflege ~</span>
+    <div class="rule"></div>
+  </div>
+
+  <!-- ===== BEFUND: DIREKTSAAT ===== -->
+  <div class="befund">
+    <span class="befund-tag">BEFUND 5</span>
+    <h2 class="befund-title">Direktsaat — die Wurzel entscheidet alles.</h2>
+    <div class="befund-body">
+      <p>
+        Du hast direkt ins Freiland gesät, nicht in den Topf. Das ist die
+        Entscheidung der ernsthaften Outdoor-Grower — und sie ist <span class="gold">richtig
+        für eine Sativa wie SLH</span>. Im Topf stößt die Pfahlwurzel an die Wand,
+        krümmt sich, das gesamte Wurzelsystem bleibt eingeschränkt. Beim späteren
+        Umzug entsteht Transplant-Schock, manche Pflanzen erholen sich davon nie.
+      </p>
+      <p>
+        Direkt im Boden kann die Pfahlwurzel ungestört <span class="hl">meterweit</span>
+        nach unten. Genau das ergibt die Outdoor-Giganten von 2 m und mehr —
+        was bei SLH durchaus realistisch ist. Du tauschst Kontrolle gegen
+        Wachstumspotenzial. Bei dieser Sorte: gut investiert.
+      </p>
+      <p style="margin-top:14px;">
+        Der <em>Preis</em> dieser Entscheidung: du bist an deine Bodenmischung
+        gebunden. Kein Umtopfen, kein Substratwechsel. Was jetzt im Boden ist,
+        bleibt drin. Siehe nächste Sektion.
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== BEFUND 6: GIESSEN ===== -->
+  <div class="befund">
+    <span class="befund-tag">BEFUND 6</span>
+    <h2 class="befund-title">Gießen — weniger ist mehr, gleichmäßig ist alles.</h2>
+    <div class="befund-body">
+      <p>
+        Die häufigste Todesursache junger Pflanzen ist <em>nicht</em> Trockenheit, sondern
+        Überwässerung. Wurzeln brauchen Sauerstoff. Faustregel: Erst gießen, wenn die
+        obersten <span class="hl">2–3 cm</span> trocken sind.
+      </p>
+      <p style="margin-top:12px;">
+        <span class="gold">Kokos-spezifisch:</span> Deine Kokos-Erde-Mischung
+        speichert Wasser gut, lässt aber Überschuss schnell ablaufen — fast
+        unmöglich, sie zu „ertränken". Wenn sie aber komplett austrocknet, wird
+        Kokos hydrophob: das Wasser perlt erst ab. Lösung: in <em>kleinen Portionen</em>
+        gießen, kurz einsickern lassen, nächste Portion. Nach 2–3 Durchgängen
+        nimmt sie Wasser wieder normal auf.
+      </p>
+
+      <div class="two-col">
+        <div class="mini">
+          <h4>Sämling (Wo. 1–2)</h4>
+          <p>Sprühflasche. Erde nur leicht feucht. <strong>~100–200 ml</strong>,
+          alle 2–3 Tage prüfen.</p>
+        </div>
+        <div class="mini">
+          <h4>Wachstum (Wo. 3–12)</h4>
+          <p>Durchdringend gießen, alle <strong>2–3 Tage</strong>.
+          Steigt von 0,5 L auf 2 L pro Pflanze.</p>
+        </div>
+        <div class="mini">
+          <h4>Blüte (ab Aug.)</h4>
+          <p>Höchster Durst. Alle 2–3 Tage,
+          <strong>2–4 L</strong> pro Pflanze.</p>
+        </div>
+        <div class="mini">
+          <h4>Tunnel-Hitze</h4>
+          <p>Bei 30 °C+ jeden Morgen Erde fühlen.
+          Im Hochsommer evtl. <strong>täglich</strong>.</p>
+        </div>
+      </div>
+
+      <p style="margin-top:24px;">
+        Gieße morgens, niemals in die pralle Mittagssonne. Wasser direkt an die
+        Erde, nicht über die Blätter — sonst Schimmel und Brennglas-Effekt.
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== BEFUND 7: DÜNGEN ===== -->
+  <div class="befund">
+    <span class="befund-tag">BEFUND 7</span>
+    <h2 class="befund-title">Düngen — Geduld ist Trumpf.</h2>
+    <div class="befund-body">
+      <p>
+        Die ersten <span class="hl">3 Wochen kein Dünger</span>. Der Samen
+        trägt seinen eigenen Vorrat, und vorgedüngte Erde reicht bis weit in
+        die Wachstumsphase. Zu früh düngen = verbrannte Wurzeln.
+      </p>
+
+      <div class="timeline" style="margin-top:18px;">
+        <div class="timeline-item">
+          <div class="timeline-date">Woche 1–3 · bis 15. Juni</div>
+          <div class="timeline-what">Nur Wasser.</div>
+          <div class="timeline-note">Die Pflanze baut Wurzeln. Mehr braucht sie nicht.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Woche 4–10 · Mitte Juni – Mitte August</div>
+          <div class="timeline-what">Wachstumsdünger (NPK ~ hoch in N).</div>
+          <div class="timeline-note">Erst halbe Dosis, dann steigern. Alle 7–10 Tage.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Ab Mitte August · Blütebeginn</div>
+          <div class="timeline-what">Wechsel auf Blütedünger (mehr P + K).</div>
+          <div class="timeline-note">1 × pro Woche, mit jeder zweiten Gießrunde.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">2 Wochen vor Ernte · Anf. Oktober</div>
+          <div class="timeline-what">Spülen. Nur klares Wasser.</div>
+          <div class="timeline-note">So bekommen die Blüten ihren sauberen Geschmack.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SUBSTRAT-INFO ===== -->
+  <div class="warn" style="background: linear-gradient(180deg, rgba(107,142,62,0.16), rgba(107,142,62,0.06)); border-left-color: var(--green-leaf);">
+    <div class="warn-tag" style="color: #a8c46a;">SUBSTRAT · ENTWARNUNG</div>
+    <div class="warn-title">Kokosfaser ist ideal — du bist gut aufgestellt.</div>
+    <div class="warn-body">
+      Dein Substrat ist <span class="gold">Plagron Cocos Brix</span> —
+      dehydrierte Kokosfaser, kein Torf. Plagron ist eine der führenden
+      Marken im Cannabis-Anbau, und Kokosfaser ist eines der besten Medien
+      für diese Pflanze überhaupt.
+      <br><br>
+      <span class="gold">Warum das gut ist:</span> Der pH-Wert von Kokos liegt
+      bei <span class="hl">5,8–6,5</span> — also direkt im idealen Bereich für
+      Cannabis. Sehr gute Drainage bei gleichzeitig hoher Wasserspeicherung.
+      Wurzeln bekommen mehr Sauerstoff als in reiner Erde, sie wachsen
+      schneller und kräftiger.
+      <br><br>
+      <span class="gold">Worauf du trotzdem achten solltest:</span> Reine
+      Kokosfaser bringt <em>keine Nährstoffe</em> mit — deshalb hast du ja
+      mit Gartenerde gemischt, das war richtig. Aber das heißt auch:
+      Düngephase beginnt eher früher als später (siehe BEFUND 7).
+    </div>
+  </div>
+
+  <!-- ===== BEFUND 8: KALENDER ===== -->
+  <div class="befund">
+    <span class="befund-tag">BEFUND 8</span>
+    <h2 class="befund-title">Die Daten, die du im Auge behalten musst.</h2>
+    <div class="befund-body">
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-date">25. Mai 2026 · heute</div>
+          <div class="timeline-what">Direktsaat im Folientunnel.</div>
+          <div class="timeline-note">Erde leicht feucht halten. Folie tagsüber öffnen — bei 32 °C wird's drinnen sonst zu heiß.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">27. Mai – 1. Juni</div>
+          <div class="timeline-what">Erste Keimblätter sichtbar.</div>
+          <div class="timeline-note">Wenn nach 10 Tagen nichts kommt: vermutlich nicht gekeimt — Backup-Saat im Topf einplanen.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Anfang Juni</div>
+          <div class="timeline-what">Erste echte (gezackte) Blätter.</div>
+          <div class="timeline-note">Blattfarbe sollte sattgrün sein. Blass/gelblich nach 3+ Wochen = Nährstoffhunger (Kokos zehrt schnell), nicht pH.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Mitte Juni</div>
+          <div class="timeline-what">Erste leichte Düngung möglich.</div>
+          <div class="timeline-note">Halbe Dosis Wachstumsdünger. Nur wenn die Pflanze gesund aussieht.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Ende Juli</div>
+          <div class="timeline-what">Vorblüte. Höhe checken, Pflanze stützen.</div>
+          <div class="timeline-note">Falls zu hoch oder zu wild: LST (Low-Stress-Training) — Äste sanft nach außen binden.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Mitte August</div>
+          <div class="timeline-what">Blüte beginnt (Photoperiode kippt).</div>
+          <div class="timeline-note">Dünger wechseln: Wachstum → Blüte (mehr P + K). Pflanze massiv stützen.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">September</div>
+          <div class="timeline-what">Hauptblüte. Feuchtigkeit beobachten.</div>
+          <div class="timeline-note">Botrytis-Risiko bei feuchten Nächten. Tunnel tagsüber lüften, nachts schließen.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Anfang Oktober</div>
+          <div class="timeline-what">Letzte 2 Wochen: nur Wasser, kein Dünger.</div>
+          <div class="timeline-note">Spülen. Trichome mit Juwelierlupe prüfen (milchig-trüb = bald reif).</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Mitte–Ende Oktober</div>
+          <div class="timeline-what">Ernte.</div>
+          <div class="timeline-note">20–30 % bernsteinfarbene Trichome = ideal für Sativa. Früher schneiden für klares High.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Oktober–November</div>
+          <div class="timeline-what">10–14 Tage trocknen.</div>
+          <div class="timeline-note">18–22 °C, 60–70 % Luftfeuchte, dunkel, belüftet.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Ab Dezember</div>
+          <div class="timeline-what">Mindestens 4 Wochen curen (Gläser).</div>
+          <div class="timeline-note">Erst dann zeigt SLH ihr volles Zitronenaroma.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== BIG QUOTE ===== -->
+  <div class="quote">
+    <span class="nonitalic">Die Pflanze hat ihren eigenen Takt.</span><br>
+    Du folgst ihm — <span class="nonitalic">nicht andersrum.</span>
+  </div>
+
+  <!-- ===== SOURCES ===== -->
+  <div class="sources">
+    Quellen: Green House Seed Co. · Strain Hunters · Royal Queen Seeds · Sensi Seeds<br>
+    · Hanf-Magazin 2026 · CannaConnection · WeedSeedsExpress · Open-Meteo 25.05.2026<br>
+    · Tütchen-Daten: THC 26,33 % · CBD 0,21 % · CBN 1,15 %
+  </div>
+
+</div>
+
+</body>
+</html>
