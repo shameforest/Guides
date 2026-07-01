@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audio-Referenz — Stimme auf Profi-Niveau</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EFF1EC;
+    --panel:#FBFCF9;
+    --ink:#181B20;
+    --ink-soft:#565C64;
+    --line:#D4D8CF;
+    --line-strong:#B7BCB1;
+    --signal:#DE531B;
+    --signal-tint:#F7E6DB;
+    --data:#0C6C70;
+    --data-tint:#DEEBE9;
+    --shadow:0 1px 0 rgba(24,27,32,.04), 0 8px 24px -18px rgba(24,27,32,.35);
+    --disp:'Space Grotesk',system-ui,sans-serif;
+    --body:'Inter',system-ui,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:var(--body);font-size:16px;line-height:1.55;
+    padding:clamp(18px,5vw,64px) clamp(16px,5vw,32px);
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:64px 64px;background-position:-1px -1px;
+  }
+  .wrap{max-width:920px;margin:0 auto;}
+
+  /* ---- header ---- */
+  header{margin-bottom:44px;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.28em;color:var(--signal);text-transform:uppercase;}
+  h1{font-family:var(--disp);font-weight:700;font-size:clamp(34px,7vw,60px);line-height:.98;letter-spacing:-.02em;margin:.28em 0 .18em;}
+  h1 em{font-style:normal;color:var(--signal);}
+  .lede{font-size:clamp(16px,2.4vw,19px);color:var(--ink-soft);max-width:46ch;}
+  .legend{margin-top:22px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:10px;font-size:12.5px;color:var(--ink-soft);line-height:1.5;}
+  .legend b{color:var(--ink);font-weight:600;}
+  .v{font-family:var(--mono);font-weight:500;font-size:.88em;color:var(--data);background:var(--data-tint);padding:.08em .42em;border-radius:5px;white-space:nowrap;}
+
+  /* ---- section frame ---- */
+  section{margin:40px 0;}
+  .sechead{display:flex;align-items:baseline;gap:14px;margin-bottom:18px;padding-bottom:10px;border-bottom:1.5px solid var(--ink);}
+  .num{font-family:var(--mono);font-weight:700;font-size:13px;color:var(--signal);letter-spacing:.05em;padding-top:3px;}
+  .sechead h2{font-family:var(--disp);font-weight:600;font-size:clamp(20px,3.4vw,26px);letter-spacing:-.01em;margin:0;flex:1;}
+  .sechead .tag{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.12em;white-space:nowrap;}
+
+  /* ---- generic lists ---- */
+  ul.checks{list-style:none;margin:0;padding:0;}
+  ul.checks li{position:relative;padding:9px 0 9px 30px;border-bottom:1px dashed var(--line);}
+  ul.checks li:last-child{border-bottom:none;}
+  ul.checks li::before{content:"";position:absolute;left:4px;top:15px;width:9px;height:9px;border:2px solid var(--signal);border-radius:2px;}
+  ul.checks li b{font-weight:600;}
+  .muted{color:var(--ink-soft);}
+
+  /* ---- tool cards ---- */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 16px 14px;box-shadow:var(--shadow);display:flex;flex-direction:column;}
+  .card h3{font-family:var(--disp);font-weight:600;font-size:16.5px;margin:0 0 2px;}
+  .card .kicker{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--data);margin-bottom:9px;}
+  .card p{font-size:13.5px;color:var(--ink-soft);margin:0 0 12px;flex:1;line-height:1.5;}
+  .card a{margin-top:auto;font-family:var(--mono);font-size:12px;font-weight:500;color:var(--signal);text-decoration:none;border-bottom:1.5px solid var(--signal-tint);padding-bottom:1px;word-break:break-all;transition:border-color .15s;}
+  .card a:hover{border-color:var(--signal);}
+  .card.owned{background:linear-gradient(180deg,#fff, #FAF6F2);border-color:var(--signal-tint);}
+  .card.owned .kicker{color:var(--signal);}
+  .alt{font-size:12.5px;color:var(--ink-soft);margin-top:12px;font-family:var(--mono);}
+
+  /* ---- numbered steps ---- */
+  ol.steps{list-style:none;margin:0;padding:0;counter-reset:s;}
+  ol.steps li{position:relative;padding:11px 0 11px 44px;border-bottom:1px solid var(--line);counter-increment:s;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(s);position:absolute;left:0;top:11px;width:28px;height:28px;background:var(--ink);color:#fff;font-family:var(--mono);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;border-radius:7px;}
+  ol.steps li b{font-weight:600;}
+  ol.steps li .sub{display:block;font-size:13px;color:var(--ink-soft);margin-top:3px;}
+
+  .callout{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--data);border-radius:0 10px 10px 0;padding:12px 16px;margin-top:14px;font-size:13.5px;color:var(--ink-soft);}
+  .callout b{color:var(--ink);}
+
+  /* ---- signal chain (signature) ---- */
+  .chainwrap{background:var(--ink);border-radius:16px;padding:26px clamp(16px,4vw,30px) 30px;margin-top:8px;color:#fff;}
+  .chainwrap .chlabel{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#8B9199;margin-bottom:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;}
+  .chainwrap .chlabel .hot{color:var(--signal);}
+  .chain{position:relative;display:flex;align-items:stretch;gap:10px;flex-wrap:wrap;}
+  .chain::before{content:"";position:absolute;left:8px;right:8px;top:29px;height:2px;background:repeating-linear-gradient(90deg,#3A3F46 0 8px,transparent 8px 14px);z-index:0;}
+  .pulse{position:absolute;top:24px;left:0;width:12px;height:12px;border-radius:50%;background:var(--signal);box-shadow:0 0 12px 2px rgba(222,83,27,.8);z-index:1;animation:flow 5.5s linear infinite;}
+  @keyframes flow{0%{left:0;opacity:0}4%{opacity:1}96%{opacity:1}100%{left:100%;opacity:0}}
+  .mod{position:relative;z-index:2;flex:1 1 96px;min-width:88px;background:#22262C;border:1px solid #343941;border-radius:9px;padding:12px 10px 11px;text-align:center;}
+  .mod .mi{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.1em;color:#7B818A;text-transform:uppercase;}
+  .mod .mt{font-family:var(--disp);font-weight:600;font-size:14px;margin-top:4px;line-height:1.1;}
+  .mod .mv{font-family:var(--mono);font-size:10px;color:#9DA3AC;margin-top:5px;line-height:1.3;}
+  .mod.key{background:var(--signal);border-color:var(--signal);}
+  .mod.key .mi{color:#fff;opacity:.85;}
+  .mod.key .mt{color:#fff;}
+  .mod.key .mv{color:#fff;opacity:.92;}
+  .mod.io{flex:0 0 auto;min-width:64px;background:transparent;border:1px dashed #454B54;}
+  .mod.io .mt{color:#B7BCC3;}
+  .chainnote{font-family:var(--mono);font-size:11.5px;color:#8B9199;margin-top:18px;text-align:center;}
+  .chainnote b{color:var(--signal);font-weight:700;}
+
+  /* ---- knackig ingredients ---- */
+  .ingr{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;}
+  .chip{font-family:var(--mono);font-size:12.5px;font-weight:500;padding:8px 13px;border:1.5px solid var(--line-strong);border-radius:100px;background:var(--panel);}
+  .chip.hot{background:var(--signal);color:#fff;border-color:var(--signal);font-weight:700;}
+  .keyline{font-size:15px;padding:14px 18px;background:var(--signal-tint);border-radius:10px;}
+  .keyline b{font-weight:600;}
+
+  /* ---- reality panel ---- */
+  .reality{background:var(--panel);border:1.5px solid var(--ink);border-radius:14px;padding:22px clamp(16px,4vw,26px);position:relative;}
+  .reality .rl{position:absolute;top:-11px;left:20px;background:var(--ink);color:#fff;font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.18em;padding:4px 11px;border-radius:6px;}
+  .reality p{margin:.5em 0;}
+  .reality .conf{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);}
+  .flip{margin-top:12px;padding-left:18px;border-left:2px solid var(--data);}
+  .flip .fl{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--data);}
+
+  /* ---- do 3 things ---- */
+  .three{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}
+  .tcell{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow);}
+  .tcell .tn{font-family:var(--disp);font-weight:700;font-size:34px;color:var(--signal);line-height:1;}
+  .tcell h4{font-family:var(--disp);font-weight:600;font-size:15px;margin:8px 0 4px;}
+  .tcell p{margin:0;font-size:13px;color:var(--ink-soft);}
+
+  footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--ink-soft);line-height:1.6;}
+
+  a.inl{color:var(--signal);text-decoration:none;border-bottom:1px solid var(--signal-tint);}
+  a.inl:hover{border-color:var(--signal);}
+
+  @media (max-width:560px){
+    body{background-size:44px 44px;}
+    .chain::before,.pulse{display:none;}
+    .chain{flex-direction:column;gap:6px;}
+    .mod{flex:1 1 auto;display:flex;align-items:center;gap:10px;text-align:left;}
+    .mod .mt{margin-top:0;}
+    .mod .mv{margin-top:0;margin-left:auto;text-align:right;}
+    .mod:not(:last-child)::after{content:"↓";position:absolute;bottom:-11px;left:50%;transform:translateX(-50%);color:#5A616A;font-size:12px;z-index:3;}
+    .mod.io{align-self:flex-start;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .pulse{animation:none;left:0;}
+  }
+  @media print{
+    body{background:#fff;padding:0;}
+    .card,.tcell,.reality,.callout,.legend{box-shadow:none;}
+    .chainwrap{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Audio-Referenz</div>
+    <h1>Von gut zu <em>knackig</em></h1>
+    <p class="lede">Dein Setup, Schritt für Schritt: DJI Mic Mini → DaVinci Resolve Studio. Zum Offenlassen beim Schneiden.</p>
+    <div class="legend">
+      <b><span class="v">mono</span> = konkret einzustellender Wert.</b> &nbsp;Menüpfade &amp; Tool-Features sind aus aktueller Doku abgerufen; Frequenz-, Ratio- und LUFS-Werte sind gängige Praxis-Startwerte — nach Ohr justieren, nicht als Dogma lesen.
+    </div>
+  </header>
+
+  <!-- 0 -->
+  <section>
+    <div class="sechead"><span class="num">00</span><h2>Vor Resolve: die Aufnahme</h2><span class="tag">wichtiger als jedes Plugin</span></div>
+    <ul class="checks">
+      <li><b>Mikro so nah &amp; konstant wie möglich</b> — Richtung Kinn/Hals statt Brustmitte. Größter Einzelhebel bei einem Lavalier (bessere SNR, weniger Raum).</li>
+      <li><b>Noise Cancelling</b> im leisen Raum auf <span class="v">Aus</span>, maximal <span class="v">Basic</span> — <span class="v">Strong</span> nie fürs Studio. Sauber aufnehmen gibt der Nachbearbeitung mehr Spielraum.</li>
+      <li><b>Automatic Limiting</b> <span class="v">an</span> (Standard) — verhindert Clipping.</li>
+      <li><b>Pegel</b> so, dass die lautesten Spitzen bei <span class="v">-12 bis -6 dB</span> landen, nicht am Anschlag.</li>
+      <li><b>Nicht stapeln:</b> nur <b>eine</b> Rausch-Entfernungsstufe in der ganzen Kette (nicht DJI-NC + NVIDIA + Adobe + Resolve gleichzeitig — doppelt angewandt arbeitet der Effekt fehlerhaft).</li>
+    </ul>
+  </section>
+
+  <!-- 1 -->
+  <section>
+    <div class="sechead"><span class="num">01</span><h2>Tools im Überblick</h2><span class="tag">kostenlos</span></div>
+    <div class="cards">
+      <div class="card">
+        <div class="kicker">Nachbearbeitung · Web</div>
+        <h3>Adobe Podcast<br>Enhance Speech</h3>
+        <p>Bestes One-Click-KI-Tool. Rekonstruiert eine studioartige Präsenz (nicht nur Filter). Gratis: <span class="v">1 h/Tag</span>, <span class="v">30-Min-Dateien</span>. Browser, nichts installieren.</p>
+        <a href="https://podcast.adobe.com/en/enhance" target="_blank" rel="noopener">podcast.adobe.com/en/enhance</a>
+      </div>
+      <div class="card">
+        <div class="kicker">Echtzeit · Streaming</div>
+        <h3>NVIDIA Broadcast</h3>
+        <p>Rauschen &amp; Raumhall live entfernen, „Studio Voice". Ideal fürs Streaming (als Mikro in OBS wählen). Gratis, braucht <span class="v">RTX 2060+</span>, nur Windows.</p>
+        <a href="https://www.nvidia.com/en-us/geforce/broadcasting/broadcast-app/" target="_blank" rel="noopener">nvidia.com → Broadcast App</a>
+      </div>
+      <div class="card owned">
+        <div class="kicker">Hast du bereits</div>
+        <h3>DaVinci Resolve<br>Studio</h3>
+        <p>AI Audio Assistant (1 Klick) <b>und</b> die volle Fairlight-Kette inkl. Voice Isolation, Dialogue Leveler, Exciter. Siehe Weg A &amp; B unten.</p>
+        <a href="https://www.blackmagicdesign.com/products/davinciresolve" target="_blank" rel="noopener">blackmagicdesign.com → Resolve</a>
+      </div>
+    </div>
+    <div class="alt">Alternativen bei Bedarf: Auphonic (auto-Loudness, ~2 h/Monat gratis) · Krisp (Echtzeit, eingeschränkte Gratis-Stufe).</div>
+  </section>
+
+  <!-- 2 -->
+  <section>
+    <div class="sechead"><span class="num">02</span><h2>Resolve · Weg A — AI Audio Assistant</h2><span class="tag">1 Klick · schnellster Weg</span></div>
+    <ol class="steps">
+      <li><b>Timeline duplizieren</b> als Sicherheitsnetz.<span class="sub">Im Media Pool rechtsklick → <span class="v">Duplicate Timeline</span>. Manche Einstellungen lassen sich schwer rückgängig machen.</span></li>
+      <li><b>Assistant starten.</b><span class="sub">Menü oben: <span class="v">Timeline → AI Tools → Audio Assistant</span>.</span></li>
+      <li><b>Ausliefer-Standard wählen:</b> <span class="v">YouTube</span>.<span class="sub">Pegelt &amp; mastert automatisch für die Plattform.</span></li>
+      <li><b>Anhören</b> und mit dem Original vergleichen.</li>
+    </ol>
+    <div class="callout"><b>Einordnung:</b> noch Beta, aber schon sehr gut. Am stärksten bei Timelines mit Dialog + Musik + SFX. Bei reiner Sprachspur nutzt du davon vor allem Leveling + De-Essing + EQ + Loudness — genau die „Pro"-Kette, automatisiert. Klingt es dir zu bearbeitet → Weg B.</div>
+  </section>
+
+  <!-- signal chain -->
+  <section>
+    <div class="sechead"><span class="num">—</span><h2>Die Reihenfolge</h2><span class="tag">erst säubern, dann formen</span></div>
+    <div class="chainwrap">
+      <div class="chlabel"><span>Signalfluss der manuellen Kette</span><span class="hot">◖ Exciter = dein fehlendes Teil</span></div>
+      <div class="chain">
+        <div class="pulse"></div>
+        <div class="mod io"><div class="mt">MIC</div></div>
+        <div class="mod"><div class="mi">opt.</div><div class="mt">Noise</div><div class="mv">nur falls nötig</div></div>
+        <div class="mod"><div class="mi">Ton</div><div class="mt">EQ</div><div class="mv">Präsenz + Air</div></div>
+        <div class="mod key"><div class="mi">Obertöne</div><div class="mt">Exciter</div><div class="mv">→ knackig</div></div>
+        <div class="mod"><div class="mi">Dichte</div><div class="mt">Komp.</div><div class="mv">4:1–6:1</div></div>
+        <div class="mod"><div class="mi">S-Laute</div><div class="mt">De-Ess</div><div class="mv">5–8 kHz</div></div>
+        <div class="mod"><div class="mi">Schutz</div><div class="mt">Limiter</div><div class="mv">-14 LUFS</div></div>
+        <div class="mod io"><div class="mt">OUT</div></div>
+      </div>
+      <div class="chainnote">EQ hebt nur an, was schon da ist — der <b>Exciter erzeugt neue Höhen-Obertöne</b>, die den „teuren" Glanz ausmachen.</div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section>
+    <div class="sechead"><span class="num">03</span><h2>Resolve · Weg B — manuelle Kette</h2><span class="tag">volle Kontrolle</span></div>
+    <ol class="steps">
+      <li><b>Fairlight-Seite öffnen.</b><span class="sub">Untere Leiste (Wellenform) oder <span class="v">Shift+7</span>.</span></li>
+      <li><b>Rauschen — nur falls nötig.</b><span class="sub">Voice Isolation mit <span class="v">Amount 50–80</span> (nicht 100), oder Dialogue Separator und Ambience leicht runter.</span></li>
+      <li><b>EQ (6-Band).</b><span class="sub">HPF <span class="v">~80 Hz</span> · Wärme <span class="v">+1–2 dB @ 150–250 Hz</span> · Präsenz <span class="v">+2–4 dB @ 4–6 kHz</span> · Air-Shelf <span class="v">+2–3 dB @ 10–12 kHz</span></span></li>
+      <li><b>Exciter</b> — das Knackige.<span class="sub">Im <span class="v">Dialogue Processor</span> (enthält De-Rumble, De-Pop, De-Ess, Comp, Expander, Exciter). Vorsichtig hochdrehen; zu viel klingt scharf. Alternativ <span class="v">Distortion</span> sehr dezent.</span></li>
+      <li><b>Kompressor</b> (Dynamics-Panel) — die Dichte/der Punch.<span class="sub">Ratio <span class="v">4:1–6:1</span> · Attack <span class="v">3–10 ms</span> (bewahrt Konsonanten) · Release <span class="v">50–200 ms</span> · Reduktion <span class="v">4–6 dB</span></span></li>
+      <li><b>De-Esser</b> bei scharfen Zischlauten.<span class="sub"><span class="v">~5–8 kHz</span>, so wenig wie möglich.</span></li>
+      <li><b>Limiter</b> am Ende — Sicherheit + Dichte.</li>
+      <li><b>Loudness normalisieren.</b><span class="sub">Clip rechtsklick → <span class="v">Normalize Audio Levels</span> → <span class="v">ITU-R BS.1770</span> → <span class="v">-14 LUFS</span> (YouTube-Referenz; für reine Sprache auch -16).</span></li>
+    </ol>
+    <div class="callout"><b>Zeitsparer:</b> Diese Kette in Resolve 20+ als <span class="v">Chain FX</span> speichern → per 1 Klick auf jede künftige Spur legen.</div>
+  </section>
+
+  <!-- 4 -->
+  <section>
+    <div class="sechead"><span class="num">04</span><h2>„Knackig" — die 5 Zutaten</h2></div>
+    <div class="ingr">
+      <span class="chip">Präsenz</span>
+      <span class="chip">Air</span>
+      <span class="chip hot">harmonische Anregung · Exciter</span>
+      <span class="chip">Dichte · Kompression</span>
+      <span class="chip">Trockenheit · kein Raum</span>
+    </div>
+    <p class="keyline"><b>Kernsatz:</b> EQ + Kompression allein machen den Ton <b>sauber</b>, aber nicht knackig. Wenn er „gut, aber flach" klingt, fehlt fast immer der <b>Exciter</b> — und mehr Kompressions-Dichte.</p>
+  </section>
+
+  <!-- 5 -->
+  <section>
+    <div class="sechead"><span class="num">05</span><h2>Die ehrliche Grenze</h2><span class="tag">Hardware</span></div>
+    <div class="reality">
+      <span class="rl">Realität</span>
+      <p>Ein <b>relevanter Teil</b> des „Profi-Knackig" kommt aus <b>Mikro + Platzierung</b>, nicht aus der Bearbeitung. Top-Talking-Heads nutzen ein Großmembran-Kondensator- oder Broadcast-Dynamikmikro <b>nah am Mund (~15 cm)</b>.</p>
+      <p>Das DJI Mic Mini ist <b>omnidirektional</b> → kein Proximity-Effekt (fehlender Tiefmitten-Körper), egal wie nah. Dazu: mehr Raum, kleinere Kapsel, weniger detaillierte Höhen.</p>
+      <p>Mit Exciter + EQ + Kompression holst du <b>den Großteil</b> des Weges — du kommst nah ran. Die letzten Prozent „teure Radio-Stimme" sind Hardware, kein Plugin.</p>
+      <div class="flip">
+        <div class="fl">Was das abschwächt</div>
+        <p style="margin:.4em 0 0"><b>a)</b> Lav näher tragen (Kinn/Hals) + Wärme per EQ (150–250 Hz) künstlich nachfüllen.<br>
+        <b>b)</b> Adobe Podcast <b>resynthetisiert</b> Präsenz statt nur zu filtern → kann knackiger klingen als EQ auf einem Lav. Preis: leicht „bearbeiteter" KI-Charakter, weniger Kontrolle.</p>
+      </div>
+      <div class="conf">Konfidenz dieser Einschätzung ~80 — akustische Einschätzung, nicht an deiner konkreten Aufnahme gemessen.</div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section>
+    <div class="sechead"><span class="num">06</span><h2>Wenn du nur 3 Dinge machst</h2><span class="tag">Reihenfolge zum Testen</span></div>
+    <div class="three">
+      <div class="tcell"><div class="tn">1</div><h4>Exciter dazu</h4><p>Im Dialogue Processor. Dein wahrscheinlich größter fehlender Hebel.</p></div>
+      <div class="tcell"><div class="tn">2</div><h4>Lav näher</h4><p>Konstanter, näherer Abstand zum Mund — vor der Bearbeitung.</p></div>
+      <div class="tcell"><div class="tn">3</div><h4>Adobe A/B</h4><p>Reicht's nicht? Dieselbe Aufnahme durch Adobe Podcast jagen und vergleichen.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    Referenz aus unserer Konversation · Werte sind Startpunkte, keine Regeln.<br>
+    Tool-Pfade &amp; -Features: aktuelle Doku (Blackmagic, Adobe, NVIDIA, DJI). Frequenz-/Ratio-/LUFS-Werte: Standard-Praxis.
+  </footer>
+
+</div>
+</body>
+</html>
