@@ -1,0 +1,1188 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body><title>Pi 5 Werkbank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: Werkbank-Bauanleitung – links eine Etappen-Schiene mit Fortschritt, rechts die Schritte als Arbeitskarten;
+   Zeichnungen im Stil technischer Zeichnungen (Linien in currentColor, Signalgelb nur für den einen Handgriff). */
+:root {
+  --bg: #0F1113;
+  --bg-muster: rgba(255,255,255,0.018);
+  --flaeche: #16191C;
+  --flaeche-2: #1C2024;
+  --linie: #2B3036;
+  --text: #ECECE4;
+  --leise: #A3A9AF;
+  --akzent: #FFE600;          /* Signalgelb – Fläche/Linie */
+  --akzent-text: #FFE600;     /* Signalgelb – als Schrift */
+  --akzent-linie: #FFE600;    /* Signalgelb – in Zeichnungen */
+  --auf-akzent: #111213;
+  --ok: #2BFF88;
+  --ok-text: #2BFF88;
+  --warn: #FFB020;
+  --schlecht: #FF5A68;
+  --pad: #FF8A3D;
+  --code-bg: #0B0C0E;
+  --schatten: 0 1px 0 rgba(255,255,255,0.04) inset, 0 12px 32px rgba(0,0,0,0.35);
+  --f-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --f-text: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --r: 10px;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #EEEDE6; --bg-muster: rgba(0,0,0,0.025); --flaeche: #FFFFFF; --flaeche-2: #F6F5F0; --linie: #D9D7CD;
+    --text: #16181B; --leise: #585D63; --akzent: #FFE600; --akzent-text: #7A6100; --akzent-linie: #A88A00; --auf-akzent: #111213;
+    --ok: #13A45A; --ok-text: #0B7A42; --warn: #B86E00; --schlecht: #C4283A; --pad: #D9621C; --code-bg: #15171A;
+    --schatten: 0 1px 2px rgba(0,0,0,0.06), 0 10px 24px rgba(20,20,10,0.08);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #EEEDE6; --bg-muster: rgba(0,0,0,0.025); --flaeche: #FFFFFF; --flaeche-2: #F6F5F0; --linie: #D9D7CD;
+  --text: #16181B; --leise: #585D63; --akzent: #FFE600; --akzent-text: #7A6100; --akzent-linie: #A88A00; --auf-akzent: #111213;
+  --ok: #13A45A; --ok-text: #0B7A42; --warn: #B86E00; --schlecht: #C4283A; --pad: #D9621C; --code-bg: #15171A;
+  --schatten: 0 1px 2px rgba(0,0,0,0.06), 0 10px 24px rgba(20,20,10,0.08);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
+body {
+  margin: 0; background-color: var(--bg); color: var(--text);
+  background-image: repeating-linear-gradient(45deg, var(--bg-muster) 0 2px, transparent 2px 6px);
+  font: 17px/1.6 var(--f-text);
+}
+a { color: var(--akzent-text); text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--akzent); outline-offset: 2px; border-radius: 4px; }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.05; text-wrap: balance; margin: 0; letter-spacing: 0.005em; }
+code, kbd { font-family: var(--f-mono); font-size: 0.88em; }
+p code, li code, td code { background: var(--flaeche-2); border: 1px solid var(--linie); padding: 0.05em 0.35em; border-radius: 5px; overflow-wrap: anywhere; }
+
+/* ---- Kopfleiste ---- */
+.kopf {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--linie);
+}
+.kopf-innen { max-width: 1320px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; gap: 16px; }
+.marke { font-family: var(--f-display); font-weight: 800; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; }
+.marke span { color: var(--akzent-text); }
+.fortschritt { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; }
+.balken { flex: 1; height: 8px; border-radius: 99px; background: var(--flaeche-2); border: 1px solid var(--linie); overflow: hidden; }
+.balken > i { display: block; height: 100%; width: 0; background: var(--akzent); transition: width .4s ease; }
+.zaehler { font-family: var(--f-mono); font-size: 13px; color: var(--leise); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.knopf {
+  font: 600 14px/1 var(--f-text); color: var(--text); background: var(--flaeche); border: 1px solid var(--linie);
+  border-radius: 8px; padding: 10px 14px; min-height: 44px; cursor: pointer; white-space: nowrap;
+}
+.knopf:hover { border-color: var(--leise); }
+.knopf[aria-pressed="true"] { background: var(--akzent); color: var(--auf-akzent); border-color: var(--akzent); }
+
+/* ---- Rahmen ---- */
+.rahmen { max-width: 1320px; margin: 0 auto; padding-inline: 20px; padding-block: 0 80px; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 40px; }
+@media (max-width: 980px) { .rahmen { grid-template-columns: minmax(0, 1fr); gap: 0; } .schiene { display: none; } }
+
+/* ---- Etappen-Schiene ---- */
+.schiene { position: sticky; top: 76px; align-self: start; padding-top: 28px; max-height: calc(100vh - 80px); overflow: auto; }
+.schiene ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.schiene a {
+  display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 10px; text-decoration: none;
+  color: var(--leise); padding: 8px 10px; border-radius: 8px; font-size: 15px; line-height: 1.25;
+}
+.schiene a:hover { background: var(--flaeche); color: var(--text); }
+.schiene a.aktiv { background: var(--flaeche); color: var(--text); box-shadow: inset 0 0 0 1px var(--linie); }
+.schiene .nr { font-family: var(--f-mono); font-size: 12px; color: var(--leise); }
+.schiene .stand { font-family: var(--f-mono); font-size: 12px; font-variant-numeric: tabular-nums; }
+.schiene a.fertig .stand { color: var(--ok-text); }
+.schiene .titel-klein { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--leise); margin: 0 0 10px 10px; }
+
+/* ---- Held ---- */
+.held { padding-block: 44px 20px; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 36px; align-items: start; }
+@media (max-width: 1180px) { .held { grid-template-columns: minmax(0, 1fr); } }
+.dach { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--akzent-text); margin: 0 0 12px; }
+.held h1 { font-size: clamp(44px, 6.2vw, 84px); overflow-wrap: anywhere; font-weight: 800; text-transform: uppercase; letter-spacing: 0.01em; }
+.held h1 em { font-style: normal; color: var(--akzent-text); }
+.held .unter { font-size: 19px; color: var(--leise); max-width: 58ch; margin: 16px 0 22px; }
+.fakten { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 22px; padding: 0; list-style: none; }
+.fakten li { font-family: var(--f-mono); font-size: 13px; padding: 7px 11px; border: 1px solid var(--linie); border-radius: 99px; background: var(--flaeche); }
+.fakten b { color: var(--akzent-text); font-weight: 600; }
+.zeichnung { color: var(--text); }
+.zeichnung svg { display: block; width: 100%; height: auto; }
+figure { margin: 0; }
+figcaption { font-size: 14px; color: var(--leise); margin-top: 8px; }
+
+/* ---- Werte-Karte ---- */
+.werte { background: var(--flaeche); border: 1px solid var(--linie); border-radius: 14px; padding: 20px; box-shadow: var(--schatten); }
+.werte h2 { font-size: 26px; text-transform: uppercase; letter-spacing: 0.03em; }
+.werte p { margin: 6px 0 14px; color: var(--leise); font-size: 15px; }
+.felder { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 520px) { .felder { grid-template-columns: minmax(0, 1fr); } }
+.feld label { display: block; font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.06em; color: var(--leise); margin-bottom: 4px; }
+.feld input {
+  width: 100%; font: 600 16px/1.2 var(--f-mono); color: var(--text); background: var(--bg); border: 1px solid var(--linie);
+  border-radius: 8px; padding: 11px 12px; min-height: 44px;
+}
+.feld input:focus { border-color: var(--akzent); outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--akzent) 35%, transparent); }
+.feld small { display: block; font-size: 12.5px; color: var(--leise); margin-top: 4px; }
+.legende { display: flex; flex-wrap: wrap; gap: 12px 18px; margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--linie); font-size: 13.5px; color: var(--leise); }
+.werte-zeile { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+
+/* ---- Marken [Q] [E] [A] ---- */
+.mk { display: inline-block; font: 600 11px/1 var(--f-mono); padding: 3px 5px; border-radius: 4px; vertical-align: 2px; margin-left: 3px; border: 1px solid; cursor: help; }
+.mk.q { color: var(--ok-text); border-color: color-mix(in srgb, var(--ok) 50%, transparent); }
+.mk.e { color: var(--leise); border-color: var(--linie); }
+.mk.a { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 55%, transparent); }
+
+/* ---- Etappen ---- */
+.etappe { padding-top: 56px; }
+.etappe-kopf { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: end; gap: 6px 18px; padding-bottom: 14px; border-bottom: 2px solid var(--text); margin-bottom: 22px; }
+.etappe-nr { font-family: var(--f-display); font-weight: 800; font-size: 76px; line-height: 0.8; color: transparent; -webkit-text-stroke: 1.5px var(--leise); }
+.etappe-kopf h2 { font-size: clamp(32px, 4vw, 46px); font-weight: 700; text-transform: uppercase; }
+.etappe-kopf .meta { font-family: var(--f-mono); font-size: 13px; color: var(--leise); text-align: right; white-space: nowrap; }
+.etappe-kopf .meta b { display: block; color: var(--text); font-size: 15px; }
+@media (max-width: 640px) { .etappe-nr { font-size: 56px; } .etappe-kopf { grid-template-columns: auto minmax(0,1fr); } .etappe-kopf .meta { grid-column: 1 / -1; text-align: left; } .etappe-kopf .meta b { display: inline; margin-right: 8px; } }
+.einleitung { max-width: 70ch; color: var(--leise); margin: 0 0 18px; }
+
+.schritt { background: var(--flaeche); border: 1px solid var(--linie); border-radius: 14px; padding: 22px 24px; margin-bottom: 16px; box-shadow: var(--schatten); transition: border-color .25s, opacity .25s; }
+.schritt.erledigt { border-color: color-mix(in srgb, var(--ok) 55%, var(--linie)); }
+.schritt-kopf { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 8px; }
+.schritt h3 { font-size: 28px; font-weight: 700; }
+.schritt h3 .sn { font-family: var(--f-mono); font-size: 14px; font-weight: 600; color: var(--akzent-text); display: block; letter-spacing: 0.08em; margin-bottom: 4px; }
+.haken { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; font-weight: 700; color: var(--leise); border: 1px solid var(--linie); border-radius: 99px; padding: 6px 12px 6px 8px; min-height: 44px; white-space: nowrap; user-select: none; background: var(--flaeche-2); }
+.haken input { appearance: none; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--leise); margin: 0; display: grid; place-content: center; cursor: pointer; }
+.haken input::after { content: ""; width: 10px; height: 6px; border-left: 2.5px solid var(--auf-akzent); border-bottom: 2.5px solid var(--auf-akzent); transform: rotate(-45deg) translate(1px, -1px); opacity: 0; }
+.haken input:checked { background: var(--ok); border-color: var(--ok); }
+.haken input:checked::after { opacity: 1; }
+.haken:has(input:checked) { color: var(--ok-text); border-color: color-mix(in srgb, var(--ok) 60%, transparent); }
+.schritt ol, .schritt ul { padding-left: 1.3em; margin: 8px 0; }
+.schritt li { margin: 5px 0; }
+.schritt li::marker { color: var(--akzent-text); font-family: var(--f-mono); font-weight: 600; }
+.schritt p { margin: 8px 0; max-width: 72ch; }
+.zwei { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 860px) { .zwei { grid-template-columns: minmax(0, 1fr); } }
+
+/* Prüfen / Wenn nicht */
+.pruef { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; margin-top: 14px; }
+@media (max-width: 720px) { .pruef { grid-template-columns: minmax(0, 1fr); } }
+.pruef > div { background: var(--flaeche-2); border: 1px solid var(--linie); border-radius: 10px; padding: 12px 14px; font-size: 15.5px; }
+.pruef .etikett { display: inline-flex; align-items: center; gap: 7px; font: 600 12px/1 var(--f-mono); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+.pruef .ok .etikett { color: var(--ok-text); }
+.pruef .nein .etikett { color: var(--schlecht); }
+.pruef .etikett svg { width: 16px; height: 16px; }
+.pruef p { margin: 0; }
+
+/* Befehle */
+.befehl { position: relative; margin: 12px 0; border-radius: 10px; background: var(--code-bg); border: 1px solid #262A2F; color: #E9E9E1; }
+.befehl .ort { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 8px 8px 14px; border-bottom: 1px solid #23272C; font: 600 11.5px/1 var(--f-mono); letter-spacing: 0.1em; text-transform: uppercase; color: #9097A0; }
+.befehl .ort .wo-pi { color: #FFE600; }
+.befehl .ort .wo-pc { color: #7FC8FF; }
+.befehl pre { margin: 0; padding: 14px 16px; overflow-x: auto; font: 14.5px/1.65 var(--f-mono); white-space: pre; }
+.befehl pre .ph { background: rgba(255,230,0,0.14); color: #FFE600; border-radius: 3px; padding: 0 2px; }
+.befehl pre .ph.leer { background: rgba(255,90,104,0.18); color: #FF8C96; }
+.befehl pre .kom { color: #7E858D; }
+.kopieren { font: 600 12px/1 var(--f-text); letter-spacing: 0.02em; color: #E9E9E1; background: #1E2226; border: 1px solid #343A40; border-radius: 6px; padding: 8px 10px; min-height: 36px; cursor: pointer; text-transform: none; }
+.kopieren:hover { border-color: #FFE600; }
+.kopieren.ok { color: #111; background: #2BFF88; border-color: #2BFF88; }
+
+/* Tabellen */
+.tabelle { overflow-x: auto; margin: 12px 0; border: 1px solid var(--linie); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--linie); vertical-align: top; }
+th { font: 600 12px/1.2 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--leise); background: var(--flaeche-2); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; color: var(--akzent-text); white-space: nowrap; }
+
+/* Material-Raster */
+.teile { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 14px 0; }
+.teil { background: var(--flaeche-2); border: 1px solid var(--linie); border-radius: 12px; padding: 14px; display: grid; gap: 6px; align-content: start; }
+.teil svg { width: 100%; height: 92px; color: var(--text); }
+.teil .tn { font-family: var(--f-mono); font-size: 12px; color: var(--akzent-text); }
+.teil b { font-size: 16px; line-height: 1.25; }
+.teil span { font-size: 13.5px; color: var(--leise); line-height: 1.4; }
+
+/* Imager-Assistent */
+.imager { background: var(--flaeche-2); border: 1px solid var(--linie); border-radius: 12px; overflow: hidden; }
+.imager-leiste { display: flex; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--linie); overflow-x: auto; }
+.imager-leiste span { flex: 0 0 auto; font: 600 12px/1 var(--f-mono); padding: 7px 10px; border-radius: 99px; border: 1px solid var(--linie); color: var(--leise); white-space: nowrap; }
+.imager-leiste span.an { background: var(--akzent); border-color: var(--akzent); color: var(--auf-akzent); }
+.imager-leiste span.fertig { color: var(--ok-text); border-color: color-mix(in srgb, var(--ok) 50%, transparent); }
+.imager-body { padding: 14px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 560px) { .imager-body { grid-template-columns: minmax(0, 1fr); } }
+.i-feld { border: 1px solid var(--linie); border-radius: 8px; padding: 9px 11px; background: var(--flaeche); }
+.i-feld small { display: block; font: 600 11px/1.2 var(--f-mono); letter-spacing: 0.06em; color: var(--leise); text-transform: uppercase; }
+.i-feld div { font: 600 15px/1.4 var(--f-mono); margin-top: 3px; overflow-wrap: anywhere; }
+.i-feld.wichtig { border-color: var(--akzent); }
+.schalter { display: inline-block; width: 30px; height: 17px; border-radius: 99px; background: var(--ok); vertical-align: -3px; margin-right: 6px; position: relative; }
+.schalter::after { content: ""; position: absolute; right: 2px; top: 2px; width: 13px; height: 13px; border-radius: 50%; background: #fff; }
+.schalter.aus { background: var(--linie); }
+.schalter.aus::after { right: auto; left: 2px; }
+
+/* Terminal */
+.terminal { background: #0A0B0C; border: 1px solid #262A2F; border-radius: 10px; overflow: hidden; color: #DADAD2; }
+.terminal .tl { display: flex; gap: 6px; padding: 10px 12px; border-bottom: 1px solid #22262A; }
+.terminal .tl i { width: 11px; height: 11px; border-radius: 50%; background: #3A3F45; }
+.terminal pre { margin: 0; padding: 14px 16px; font: 14px/1.7 var(--f-mono); overflow-x: auto; white-space: pre; }
+.terminal .p { color: #2BFF88; }
+.terminal .d { color: #7E858D; }
+.terminal .ph { color: #FFE600; }
+
+/* Hinweise */
+.notiz { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; background: color-mix(in srgb, var(--warn) 9%, var(--flaeche)); border: 1px solid color-mix(in srgb, var(--warn) 40%, var(--linie)); border-radius: 10px; padding: 12px 14px; margin: 12px 0; font-size: 15.5px; }
+.notiz svg { width: 22px; height: 22px; color: var(--warn); margin-top: 2px; }
+.notiz p { margin: 0; }
+
+.schritt .folge { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; padding: 0; margin: 10px 0 0; list-style: none; counter-reset: f; }
+.schritt .folge li { counter-increment: f; font-size: 14.5px; line-height: 1.45; background: var(--flaeche-2); border: 1px solid var(--linie); border-radius: 10px; padding: 10px 12px; margin: 0; }
+.schritt .folge li::before { content: counter(f); display: block; font: 700 13px/1 var(--f-mono); color: var(--akzent-text); margin-bottom: 6px; }
+@media (max-width: 1180px) { .schritt .folge { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .schritt .folge { grid-template-columns: minmax(0, 1fr); } }
+/* Abnahme */
+.abnahme td:first-child { font-weight: 700; }
+
+/* Fuß */
+.fuss { margin-top: 64px; padding-top: 22px; border-top: 2px solid var(--text); display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 30px; font-size: 14.5px; }
+@media (max-width: 800px) { .fuss { grid-template-columns: minmax(0,1fr); } }
+.fuss h2 { font-size: 26px; text-transform: uppercase; margin-bottom: 8px; }
+.fuss ol { padding-left: 1.4em; margin: 0; }
+.fuss li { margin: 4px 0; overflow-wrap: anywhere; color: var(--leise); }
+.fuss li b { color: var(--text); font-family: var(--f-mono); font-size: 12.5px; }
+.naechste { display: flex; flex-wrap: wrap; gap: 8px; }
+.naechste span { font-family: var(--f-mono); font-size: 13px; border: 1px dashed var(--linie); border-radius: 8px; padding: 8px 10px; color: var(--leise); }
+
+/* Handy: kompakte Etappenwahl */
+.handynav { display: none; }
+@media (max-width: 980px) { .handynav { display: block; margin-top: 18px; } .handynav select { width: 100%; font: 600 16px var(--f-text); padding: 12px; min-height: 48px; border-radius: 10px; background: var(--flaeche); color: var(--text); border: 1px solid var(--linie); } }
+@media (max-width: 640px) { .kopf-innen { gap: 10px; padding: 8px 14px; } .marke { font-size: 18px; } .rahmen { padding-inline: 16px; } .schritt { padding: 18px 16px; } .schritt-kopf { flex-direction: column; } .knopf.wach { display: none; } body { font-size: 16.5px; } }
+</style>
+
+<header class="kopf">
+  <div class="kopf-innen">
+    <div class="marke">Pi&nbsp;5 <span>Werkbank</span></div>
+    <div class="fortschritt" aria-live="polite">
+      <div class="balken" role="progressbar" aria-label="Fortschritt" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="balken"><i id="balken-fuell"></i></div>
+      <div class="zaehler" id="zaehler">0 von 0 erledigt</div>
+    </div>
+    <button class="knopf wach" id="wach" type="button" aria-pressed="false" title="Hält den Bildschirm an, solange die Seite offen ist">Bildschirm anlassen</button>
+  </div>
+</header>
+
+<div class="rahmen">
+  <nav class="schiene" aria-label="Etappen">
+    <p class="titel-klein">Etappen</p>
+    <ol id="schiene-liste"></ol>
+  </nav>
+
+  <main>
+    <!-- ================= HELD ================= -->
+    <section class="held" id="start">
+      <div>
+        <p class="dach">Modul M01 · Dashboard v2.8 · Stand 29.09.2026</p>
+        <h1>Raspberry Pi 5 <em>aufbauen</em></h1>
+        <p class="unter">Vom Karton bis zum Dashboard an der Wand: zusammenbauen, System aufspielen, Netz, Syncthing, Dashboard,
+          Tablets. Jeder Schritt mit Prüfpunkt – hake ab, was geschafft ist.</p>
+        <ul class="fakten">
+          <li><b>11</b> Etappen</li>
+          <li>≈ <b>2½ h</b>, davon 30 Min. Warten <span class="mk e" title="Erfahrungswert">E</span></li>
+          <li><b>0</b> Werkzeug extra</li>
+          <li>ohne Monitor &amp; Tastatur</li>
+        </ul>
+        <figure class="zeichnung">
+          <svg viewBox="0 0 640 380" role="img" aria-label="Draufsicht des Raspberry Pi 5 mit Active Cooler: Stiftleiste oben, Strom und zwei Micro-HDMI unten links, vier USB und LAN rechts, microSD-Schacht links an der Unterseite, Lüfterbuchse FAN oben rechts.">
+            <defs>
+              <marker id="h-pfeil" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
+              <pattern id="h-raster" width="16" height="16" patternUnits="userSpaceOnUse"><path d="M16 0 H0 V16" fill="none" stroke="currentColor" stroke-opacity="0.07"/></pattern>
+            </defs>
+            <rect x="0" y="0" width="640" height="380" fill="url(#h-raster)"/>
+            <!-- Platine -->
+            <rect x="150" y="80" width="340" height="224" rx="14" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="164" cy="94" r="6" fill="none" stroke="currentColor" stroke-opacity="0.6"/>
+            <circle cx="398" cy="94" r="6" fill="none" stroke="currentColor" stroke-opacity="0.6"/>
+            <circle cx="164" cy="290" r="6" fill="none" stroke="currentColor" stroke-opacity="0.6"/>
+            <circle cx="398" cy="290" r="6" fill="none" stroke="currentColor" stroke-opacity="0.6"/>
+            <!-- GPIO 2x20 -->
+            <g fill="currentColor" fill-opacity="0.75">
+              <rect x="186" y="84" width="200" height="20" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.6"/>
+            </g>
+            <g fill="currentColor" fill-opacity="0.6"><circle cx="192.0" cy="90" r="2.3"/><circle cx="192.0" cy="98" r="2.3"/><circle cx="201.8" cy="90" r="2.3"/><circle cx="201.8" cy="98" r="2.3"/><circle cx="211.6" cy="90" r="2.3"/><circle cx="211.6" cy="98" r="2.3"/><circle cx="221.4" cy="90" r="2.3"/><circle cx="221.4" cy="98" r="2.3"/><circle cx="231.2" cy="90" r="2.3"/><circle cx="231.2" cy="98" r="2.3"/><circle cx="241.0" cy="90" r="2.3"/><circle cx="241.0" cy="98" r="2.3"/><circle cx="250.8" cy="90" r="2.3"/><circle cx="250.8" cy="98" r="2.3"/><circle cx="260.6" cy="90" r="2.3"/><circle cx="260.6" cy="98" r="2.3"/><circle cx="270.4" cy="90" r="2.3"/><circle cx="270.4" cy="98" r="2.3"/><circle cx="280.2" cy="90" r="2.3"/><circle cx="280.2" cy="98" r="2.3"/><circle cx="290.0" cy="90" r="2.3"/><circle cx="290.0" cy="98" r="2.3"/><circle cx="299.8" cy="90" r="2.3"/><circle cx="299.8" cy="98" r="2.3"/><circle cx="309.6" cy="90" r="2.3"/><circle cx="309.6" cy="98" r="2.3"/><circle cx="319.4" cy="90" r="2.3"/><circle cx="319.4" cy="98" r="2.3"/><circle cx="329.2" cy="90" r="2.3"/><circle cx="329.2" cy="98" r="2.3"/><circle cx="339.0" cy="90" r="2.3"/><circle cx="339.0" cy="98" r="2.3"/><circle cx="348.8" cy="90" r="2.3"/><circle cx="348.8" cy="98" r="2.3"/><circle cx="358.6" cy="90" r="2.3"/><circle cx="358.6" cy="98" r="2.3"/><circle cx="368.4" cy="90" r="2.3"/><circle cx="368.4" cy="98" r="2.3"/><circle cx="378.2" cy="90" r="2.3"/><circle cx="378.2" cy="98" r="2.3"/></g>
+            <!-- Active Cooler -->
+            <rect x="196" y="126" width="170" height="130" rx="10" fill="none" stroke="currentColor" stroke-width="1.6"/>
+            <g stroke="currentColor" stroke-opacity="0.35">
+              <line x1="206" y1="138" x2="206" y2="244"/><line x1="216" y1="138" x2="216" y2="244"/><line x1="226" y1="138" x2="226" y2="244"/>
+              <line x1="336" y1="138" x2="336" y2="244"/><line x1="346" y1="138" x2="346" y2="244"/><line x1="356" y1="138" x2="356" y2="244"/>
+            </g>
+            <circle cx="281" cy="191" r="48" fill="none" stroke="var(--akzent-linie)" stroke-width="2.2"/>
+            <circle cx="281" cy="191" r="10" fill="var(--akzent-linie)"/>
+            <g stroke="var(--akzent-linie)" stroke-width="2" fill="none" stroke-linecap="round">
+              <path d="M281 181 C 300 170, 318 176, 324 186"/><path d="M291 191 C 302 210, 296 228, 286 234"/>
+              <path d="M281 201 C 262 212, 244 206, 238 196"/><path d="M271 191 C 260 172, 266 154, 276 148"/>
+            </g>
+            <circle cx="206" cy="136" r="5" fill="currentColor"/>
+            <circle cx="356" cy="246" r="5" fill="currentColor"/>
+            <!-- FAN-Buchse -->
+            <rect x="430" y="96" width="20" height="12" rx="2" fill="var(--akzent-linie)"/>
+            <path d="M366 150 C 400 150, 420 130, 438 108" fill="none" stroke="var(--akzent-linie)" stroke-width="2" stroke-dasharray="4 3"/>
+            <!-- USB/LAN rechts -->
+            <rect x="452" y="118" width="62" height="44" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+            <rect x="452" y="170" width="62" height="44" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+            <rect x="452" y="222" width="62" height="60" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+            <line x1="462" y1="140" x2="504" y2="140" stroke="currentColor" stroke-opacity="0.4"/>
+            <line x1="462" y1="192" x2="504" y2="192" stroke="currentColor" stroke-opacity="0.4"/>
+            <!-- unten: USB-C + 2x micro HDMI -->
+            <rect x="186" y="292" width="34" height="18" rx="6" fill="none" stroke="var(--akzent-linie)" stroke-width="2"/>
+            <rect x="238" y="294" width="30" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="282" y="294" width="30" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <!-- microSD links, Unterseite (gestrichelt) -->
+            <rect x="136" y="170" width="26" height="40" rx="3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <!-- Beschriftung -->
+            <g font-family="JetBrains Mono, monospace" font-size="12" fill="currentColor">
+              <text x="286" y="62" text-anchor="middle">Stiftleiste (GPIO)</text>
+              <line x1="286" y1="68" x2="286" y2="82" stroke="currentColor" marker-end="url(#h-pfeil)"/>
+              <text x="560" y="96" fill="var(--akzent-text)">FAN · 4-polig</text>
+              <line x1="556" y1="100" x2="454" y2="102" stroke="var(--akzent-text)" marker-end="url(#h-pfeil)"/>
+              <text x="560" y="150">2× USB 2</text>
+              <text x="560" y="198">2× USB 3</text>
+              <text x="560" y="256">LAN</text>
+              <line x1="556" y1="146" x2="518" y2="142" stroke="currentColor" marker-end="url(#h-pfeil)"/>
+              <line x1="556" y1="194" x2="518" y2="192" stroke="currentColor" marker-end="url(#h-pfeil)"/>
+              <line x1="556" y1="252" x2="518" y2="252" stroke="currentColor" marker-end="url(#h-pfeil)"/>
+              <text x="160" y="352" fill="var(--akzent-text)">USB-C · Strom 27 W</text>
+              <line x1="203" y1="338" x2="203" y2="314" stroke="var(--akzent-text)" marker-end="url(#h-pfeil)"/>
+              <text x="318" y="352">2× Micro-HDMI</text>
+              <line x1="296" y1="338" x2="280" y2="314" stroke="currentColor" marker-end="url(#h-pfeil)"/>
+              <text x="20" y="176">microSD</text>
+              <text x="20" y="192" fill-opacity="0.7">Unterseite</text>
+              <line x1="92" y1="186" x2="132" y2="190" stroke="currentColor" marker-end="url(#h-pfeil)"/>
+              <text x="281" y="282" text-anchor="middle" fill-opacity="0.8">Active Cooler</text>
+            </g>
+          </svg>
+          <figcaption>Draufsicht ohne Gehäusedeckel. Gelb: was du beim Aufbau anfasst – Lüfter, FAN-Buchse, Stromanschluss. Lage der FAN-Buchse ungefähr <span class="mk a" title="Annahme – am Gerät prüfen">A</span>: maßgeblich ist der Aufdruck „FAN“.</figcaption>
+        </figure>
+      </div>
+
+      <aside class="werte" aria-labelledby="werte-titel">
+        <h2 id="werte-titel">Deine Werte</h2>
+        <p>Einmal eintragen – alle Befehle auf dieser Seite übernehmen sie sofort. Gespeichert wird nur in diesem Browser.</p>
+        <div class="felder">
+          <div class="feld"><label for="w-USER">&lt;USER&gt; Benutzername</label><input id="w-USER" data-ph="USER" autocomplete="off" spellcheck="false" placeholder="z. B. shadow"><small>vergibst du im Imager</small></div>
+          <div class="feld"><label for="w-HOSTNAME">&lt;HOSTNAME&gt; Gerätename</label><input id="w-HOSTNAME" data-ph="HOSTNAME" autocomplete="off" spellcheck="false" value="dashboard"><small>Name im Heimnetz</small></div>
+          <div class="feld"><label for="w-PI-IP">&lt;PI-IP&gt; feste Adresse</label><input id="w-PI-IP" data-ph="PI-IP" inputmode="decimal" autocomplete="off" spellcheck="false" value="192.168.1.250"><small>legst du in Etappe 5 fest</small></div>
+          <div class="feld"><label for="w-ROUTER-IP">&lt;ROUTER-IP&gt; o2-Router</label><input id="w-ROUTER-IP" data-ph="ROUTER-IP" inputmode="decimal" autocomplete="off" spellcheck="false" value="192.168.1.1"><small>zeigt Etappe 5, Schritt A</small></div>
+          <div class="feld"><label for="w-VERBINDUNG">&lt;VERBINDUNG&gt; WLAN-Profil</label><input id="w-VERBINDUNG" data-ph="VERBINDUNG" autocomplete="off" spellcheck="false" placeholder="aus nmcli con show"><small>Etappe 5, Schritt C</small></div>
+        </div>
+        <div class="werte-zeile">
+          <button class="knopf" type="button" id="alles-zurueck">Häkchen zurücksetzen</button>
+        </div>
+        <div class="legende" aria-label="Kennzeichen">
+          <span><span class="mk q">Q</span> aus einer Quelle</span>
+          <span><span class="mk e">E</span> Erfahrungswert</span>
+          <span><span class="mk a">A</span> Annahme – am Gerät prüfen</span>
+        </div>
+      </aside>
+    </section>
+
+    <div class="handynav"><label class="titel-klein" for="etappe-wahl" style="display:block;margin:0 0 6px;font-family:var(--f-mono);font-size:12px;color:var(--leise)">SPRINGE ZU ETAPPE</label><select id="etappe-wahl"></select></div>
+
+    <!-- ================= ETAPPE 0 ================= -->
+    <section class="etappe" id="e0" data-titel="Material prüfen">
+      <div class="etappe-kopf"><div class="etappe-nr">00</div><h2>Material prüfen</h2><div class="meta"><b>5 Min.</b><span data-stand></span></div></div>
+      <article class="schritt" data-schritt="0-1">
+        <div class="schritt-kopf"><h3><span class="sn">0.1</span>Alles auf den Tisch</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <div class="teile">
+          <div class="teil">
+            <svg viewBox="0 0 180 92" aria-hidden="true"><rect x="22" y="12" width="136" height="70" rx="8" fill="none" stroke="currentColor" stroke-width="2"/><rect x="40" y="16" width="80" height="8" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.6"/><rect x="66" y="38" width="28" height="28" rx="3" fill="none" stroke="currentColor"/><rect x="146" y="26" width="22" height="16" fill="none" stroke="currentColor"/><rect x="146" y="48" width="22" height="16" fill="none" stroke="currentColor"/></svg>
+            <span class="tn">1</span><b>Raspberry Pi 5 · 4 GB</b><span>Modell SC1111. Nur an den Kanten anfassen.</span>
+          </div>
+          <div class="teil">
+            <svg viewBox="0 0 180 92" aria-hidden="true"><path d="M20 58 L60 30 H160 L120 58 Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 58 V72 L120 72 V58" fill="none" stroke="currentColor" stroke-width="2"/><path d="M120 72 L160 44 V30" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="92" cy="44" r="11" fill="none" stroke="var(--akzent-linie)" stroke-width="2"/><g stroke="currentColor" stroke-opacity="0.5"><line x1="70" y1="36" x2="80" y2="36"/><line x1="104" y1="52" x2="116" y2="52"/></g></svg>
+            <span class="tn">2</span><b>GeeekPi-Alu-Gehäuse + Active Cooler</b><span>Schrauben, Abstandshalter, Schraubendreher und Gummifüße liegen bei <span class="mk q" title="Quelle Q1">Q</span></span>
+          </div>
+          <div class="teil">
+            <svg viewBox="0 0 180 92" aria-hidden="true"><rect x="24" y="22" width="52" height="52" rx="10" fill="none" stroke="currentColor" stroke-width="2"/><line x1="40" y1="22" x2="40" y2="10" stroke="currentColor" stroke-width="3"/><line x1="60" y1="22" x2="60" y2="10" stroke="currentColor" stroke-width="3"/><path d="M76 48 C 110 48, 110 70, 150 70" fill="none" stroke="currentColor" stroke-width="2"/><rect x="148" y="64" width="16" height="12" rx="4" fill="none" stroke="var(--akzent-linie)" stroke-width="2"/><text x="50" y="54" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="currentColor">27 W</text></svg>
+            <span class="tn">3</span><b>Offizielles 27-W-Netzteil</b><span>5 V / 5 A. Mit nur 3 A bekommen USB-Geräte bloß 600 mA <span class="mk q" title="Quelle Q2">Q</span></span>
+          </div>
+          <div class="teil">
+            <svg viewBox="0 0 180 92" aria-hidden="true"><path d="M40 14 H70 L80 24 V80 H40 Z" fill="none" stroke="currentColor" stroke-width="2"/><g stroke="currentColor" stroke-opacity="0.6"><line x1="48" y1="16" x2="48" y2="24"/><line x1="54" y1="16" x2="54" y2="24"/><line x1="60" y1="16" x2="60" y2="24"/><line x1="66" y1="16" x2="66" y2="24"/></g><text x="60" y="58" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="currentColor">64</text><path d="M100 10 H146 L156 20 V84 H100 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.6"/><text x="128" y="56" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="currentColor" fill-opacity="0.7">SD</text></svg>
+            <span class="tn">4</span><b>microSD · SanDisk High Endurance 64 GB</b><span><span style="color:var(--warn);font-weight:700">Fehlt in deiner Liste – ohne Karte keine Etappe 2.</span> Für Dauerbetrieb gebaut; das Lite-System braucht nur wenige GB <span class="mk q" title="Quelle Q2">Q</span></span>
+          </div>
+          <div class="teil">
+            <svg viewBox="0 0 180 92" aria-hidden="true"><rect x="30" y="30" width="96" height="36" rx="8" fill="none" stroke="currentColor" stroke-width="2"/><rect x="126" y="40" width="30" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="44" y="26" width="30" height="6" fill="none" stroke="currentColor"/><rect x="82" y="26" width="18" height="6" fill="none" stroke="var(--akzent-linie)"/></svg>
+            <span class="tn">5</span><b>UGREEN-Kartenleser SD/TF</b><span>Die microSD kommt direkt in den TF-Schlitz – kein Adapter nötig.</span>
+          </div>
+        </div>
+        <div class="notiz"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L22 20 H2 Z" fill="none" stroke="currentColor" stroke-width="2"/><line x1="12" y1="10" x2="12" y2="14" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="17" r="1.2" fill="currentColor"/></svg><p>Teile 1, 2, 3 und 5 hast du. <b>Die microSD (4) fehlt noch</b> – eine High-Endurance-Karte ab 32 GB reicht. Liegt schon eine andere Markenkarte (A1/A2, ab 32 GB) herum, geht die zum Start auch; für den Dauerbetrieb an der Wand ist High Endurance die ruhigere Wahl. <span class="mk e" title="Erfahrungswert">E</span></p></div>
+        <p>Nicht nötig: Monitor, Tastatur, Maus – der Pi läuft ohne Bildschirm, du steuerst ihn vom PC aus. <span class="mk e" title="Erfahrungswert">E</span> Für den Notfall ein <b>LAN-Kabel</b> bereitlegen, falls das WLAN beim ersten Start nicht klappt.</p>
+      </article>
+    </section>
+
+    <!-- ================= ETAPPE 1 ================= -->
+    <section class="etappe" id="e1" data-titel="Zusammenbau">
+      <div class="etappe-kopf"><div class="etappe-nr">01</div><h2>Zusammenbau</h2><div class="meta"><b>20 Min.</b><span data-stand></span></div></div>
+
+      <article class="schritt" data-schritt="1-1">
+        <div class="schritt-kopf"><h3><span class="sn">1.1</span>Erden und Arbeitsplatz</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <ul>
+          <li>Kurz einen Heizkörper oder unlackiertes Metall anfassen, dann erst das Board. <span class="mk e" title="Erfahrungswert">E</span></li>
+          <li>Board nur an den Kanten halten, nicht auf die Chips drücken.</li>
+          <li>Schutzfolien vom Gehäuse abziehen. <span class="mk q" title="Quelle Q3">Q</span></li>
+        </ul>
+        <div class="pruef"><div class="ok"><span class="etikett"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 L6.5 12 L13 4.5" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>Prüfen</span><p>Das Board liegt auf Karton oder Holz – nicht auf Alufolie oder einem Metalltisch.</p></div></div>
+      </article>
+
+      <article class="schritt" data-schritt="1-2">
+        <div class="schritt-kopf"><h3><span class="sn">1.2</span>Active Cooler aufsetzen – der wichtigste Schritt</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <div class="zwei">
+          <div>
+            <ol>
+              <li>Unter dem Kühler sitzen <b>Wärmeleitpads mit Schutzfolie</b> → Folie <b>abziehen</b>. Wird oft übersehen. <span class="mk q" title="Quelle Q4">Q</span></li>
+              <li>Kühler so auflegen, dass die Pads auf den Chips liegen und die <b>zwei gefederten Push-Pins</b> über den Befestigungslöchern neben dem Prozessor stehen.</li>
+              <li>Beide Push-Pins <b>gleichzeitig</b> drücken, bis sie hörbar einrasten. Nicht verkanten. <span class="mk q" title="Quelle Q4">Q</span></li>
+              <li><b>Lüfterkabel</b> in die 4-polige Buchse <b>FAN</b> stecken – ohne Kabel dreht der Lüfter nie. <span class="mk q" title="Quelle Q4">Q</span> Die Buchse liegt am oberen Rand in der Nähe der USB-Buchsen; maßgeblich ist der Aufdruck „FAN“. <span class="mk a" title="Annahme – am Gerät prüfen">A</span></li>
+            </ol>
+          </div>
+          <figure class="zeichnung">
+            <svg viewBox="0 0 460 330" role="img" aria-label="Seitenansicht in Explosionsdarstellung: unten die Platine mit Chips, darüber die Wärmeleitpads, deren Schutzfolie abgezogen wird, darüber der Kühler mit zwei Push-Pins, die gleichzeitig nach unten gedrückt werden; das Lüfterkabel führt zur Buchse FAN.">
+              <defs><marker id="c-pfeil" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
+                <marker id="c-pfeil-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--akzent-linie)"/></marker></defs>
+              <!-- Kühler -->
+              <rect x="110" y="70" width="210" height="42" rx="6" fill="none" stroke="currentColor" stroke-width="2"/>
+              <g stroke="currentColor" stroke-opacity="0.45"><line x1="125" y1="74" x2="125" y2="108"/><line x1="140" y1="74" x2="140" y2="108"/><line x1="155" y1="74" x2="155" y2="108"/><line x1="275" y1="74" x2="275" y2="108"/><line x1="290" y1="74" x2="290" y2="108"/><line x1="305" y1="74" x2="305" y2="108"/></g>
+              <rect x="170" y="62" width="90" height="10" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <text x="215" y="56" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="currentColor">Lüfter</text>
+              <!-- Push-Pins -->
+              <g stroke="var(--akzent-linie)" stroke-width="2.4" fill="none">
+                <line x1="122" y1="58" x2="122" y2="150"/><line x1="308" y1="58" x2="308" y2="150"/>
+                <circle cx="122" cy="54" r="6" fill="var(--akzent-linie)"/><circle cx="308" cy="54" r="6" fill="var(--akzent-linie)"/>
+              </g>
+              <line x1="122" y1="22" x2="122" y2="44" stroke="var(--akzent-linie)" stroke-width="2" marker-end="url(#c-pfeil-g)"/>
+              <line x1="308" y1="22" x2="308" y2="44" stroke="var(--akzent-linie)" stroke-width="2" marker-end="url(#c-pfeil-g)"/>
+              <text x="215" y="30" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12.5" fill="var(--akzent-text)">beide gleichzeitig – klick</text>
+              <!-- Pads -->
+              <rect x="160" y="160" width="46" height="10" rx="2" fill="var(--pad)"/>
+              <rect x="222" y="160" width="36" height="10" rx="2" fill="var(--pad)"/>
+              <path d="M160 158 C 130 150, 104 138, 84 136" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 3"/>
+              <path d="M58 128 L82 122 L86 140 L62 146 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <text x="14" y="104" font-family="JetBrains Mono, monospace" font-size="12" fill="var(--akzent-text)" font-weight="600">Folie</text>
+              <text x="14" y="119" font-family="JetBrains Mono, monospace" font-size="12" fill="var(--akzent-text)" font-weight="600">abziehen!</text>
+              <text x="60" y="176" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="12" fill="currentColor">Pads</text>
+              <line x1="64" y1="172" x2="154" y2="168" stroke="currentColor" stroke-opacity="0.5" stroke-dasharray="2 3"/>
+              <!-- Platine -->
+              <rect x="40" y="206" width="380" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
+              <rect x="160" y="190" width="46" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <rect x="222" y="194" width="36" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <rect x="112" y="200" width="20" height="6" fill="none" stroke="currentColor"/><rect x="298" y="200" width="20" height="6" fill="none" stroke="currentColor"/>
+              <text x="183" y="236" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="currentColor" fill-opacity="0.8">Prozessor</text>
+              <text x="240" y="250" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="currentColor" fill-opacity="0.8">RAM</text>
+              <!-- FAN -->
+              <rect x="372" y="196" width="22" height="10" rx="2" fill="var(--akzent-linie)"/>
+              <path d="M320 90 C 380 90, 384 150, 383 192" fill="none" stroke="var(--akzent-linie)" stroke-width="2"/>
+              <circle cx="383" cy="201" r="34" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 3"/>
+              <text x="383" y="264" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="var(--akzent-text)">Stecker in FAN</text>
+              <!-- Maßlinie Platine -->
+              <line x1="40" y1="290" x2="420" y2="290" stroke="currentColor" stroke-opacity="0.4" marker-start="url(#c-pfeil)" marker-end="url(#c-pfeil)"/>
+              <text x="230" y="312" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="currentColor" fill-opacity="0.7">Platine 85 × 56 mm · Seitenansicht</text>
+            </svg>
+            <figcaption>Reihenfolge von unten nach oben: Platine → Pads (Folie ab) → Kühler, Pins rasten ein → Kabel in FAN.</figcaption>
+          </figure>
+        </div>
+        <div class="pruef">
+          <div class="ok"><span class="etikett"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 L6.5 12 L13 4.5" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>Prüfen</span><p>Kühler wackelt nicht, liegt plan, Kabel steckt fest und liegt nicht über dem Lüfterrad.</p></div>
+          <div class="nein"><span class="etikett"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4 L12 12 M12 4 L4 12" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>Wenn nicht</span><p>Folie vergessen → Pi wird heiß und drosselt. Kabel vergessen → Lüfter steht still.</p></div>
+        </div>
+      </article>
+
+      <article class="schritt" data-schritt="1-3">
+        <div class="schritt-kopf"><h3><span class="sn">1.3</span>Board ins Gehäuse</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <p>Reihenfolge laut 52Pi/GeeekPi-Anleitung für das Alu-Gehäuse <span class="mk q" title="Quelle Q3">Q</span>:</p>
+        <figure class="zeichnung">
+          <svg viewBox="0 0 960 210" role="img" aria-label="Sechs Montageschritte nebeneinander: Abstandshalter von unten an die Bodenplatte schrauben, Pi aufsetzen und hohe Abstandshalter halb aufdrehen, Seitenteil mit USB-Ausschnitten einsetzen, übrige Seitenteile einsetzen, Deckel aufschrauben, Gummifüße aufkleben.">
+            <defs><marker id="g-pf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--akzent-linie)"/></marker></defs>
+            <g font-family="JetBrains Mono, monospace" font-size="12" fill="currentColor">
+              <!-- 1 -->
+              <g transform="translate(0,0)">
+                <text x="10" y="22" fill="var(--akzent-text)" font-weight="600">1</text>
+                <path d="M20 150 L60 120 H150 L110 150 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+                <g stroke="currentColor" stroke-width="2"><line x1="42" y1="146" x2="42" y2="120"/><line x1="96" y1="146" x2="96" y2="120"/><line x1="74" y1="126" x2="74" y2="100"/><line x1="128" y1="126" x2="128" y2="100"/></g>
+                <line x1="42" y1="200" x2="42" y2="160" stroke="var(--akzent-linie)" stroke-width="2" marker-end="url(#g-pf)"/>
+                <line x1="96" y1="200" x2="96" y2="160" stroke="var(--akzent-linie)" stroke-width="2" marker-end="url(#g-pf)"/>
+                
+              </g>
+              <!-- 2 -->
+              <g transform="translate(160,0)">
+                <text x="10" y="22" fill="var(--akzent-text)" font-weight="600">2</text>
+                <path d="M20 150 L60 120 H150 L110 150 Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.5"/>
+                <path d="M30 124 L64 98 H140 L106 124 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+                <rect x="70" y="104" width="22" height="12" fill="none" stroke="currentColor"/>
+                <g stroke="var(--akzent-linie)" stroke-width="2.4"><line x1="46" y1="118" x2="46" y2="80"/><line x1="96" y1="118" x2="96" y2="80"/><line x1="76" y1="102" x2="76" y2="64"/><line x1="124" y1="102" x2="124" y2="64"/></g>
+                
+              </g>
+              <!-- 3 -->
+              <g transform="translate(320,0)">
+                <text x="10" y="22" fill="var(--akzent-text)" font-weight="600">3</text>
+                <path d="M30 124 L64 98 H140 L106 124 Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.5"/>
+                <path d="M106 124 L140 98 V150 L106 176 Z" fill="none" stroke="var(--akzent-linie)" stroke-width="2.2"/>
+                <rect x="114" y="132" width="16" height="10" fill="none" stroke="var(--akzent-linie)"/><rect x="114" y="148" width="16" height="10" fill="none" stroke="var(--akzent-linie)"/>
+                <line x1="150" y1="60" x2="128" y2="96" stroke="var(--akzent-linie)" stroke-width="2" marker-end="url(#g-pf)"/>
+                
+              </g>
+              <!-- 4 -->
+              <g transform="translate(480,0)">
+                <text x="10" y="22" fill="var(--akzent-text)" font-weight="600">4</text>
+                <path d="M30 124 L64 98 H140 L106 124 Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.5"/>
+                <path d="M106 124 L140 98 V150 L106 176 Z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M30 124 H106 V176 H30 Z" fill="none" stroke="var(--akzent-linie)" stroke-width="2.2"/>
+                <path d="M30 124 L64 98 V150 L30 176" fill="none" stroke="var(--akzent-linie)" stroke-width="2.2" stroke-dasharray="5 3"/>
+                <rect x="42" y="160" width="14" height="8" fill="none" stroke="var(--akzent-linie)"/><rect x="62" y="160" width="12" height="8" fill="none" stroke="var(--akzent-linie)"/>
+                
+              </g>
+              <!-- 5 -->
+              <g transform="translate(640,0)">
+                <text x="10" y="22" fill="var(--akzent-text)" font-weight="600">5</text>
+                <path d="M30 124 H106 V176 H30 Z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M106 124 L140 98 V150 L106 176 Z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M30 104 L64 78 H140 L106 104 Z" fill="none" stroke="var(--akzent-linie)" stroke-width="2.2"/>
+                <g stroke="var(--akzent-linie)" stroke-opacity="0.8"><line x1="62" y1="96" x2="96" y2="86"/><line x1="58" y1="100" x2="100" y2="88"/><line x1="66" y1="92" x2="92" y2="84"/></g>
+                <line x1="84" y1="108" x2="84" y2="122" stroke="var(--akzent-linie)" stroke-width="2" marker-end="url(#g-pf)"/>
+                
+              </g>
+              <!-- 6 -->
+              <g transform="translate(800,0)">
+                <text x="10" y="22" fill="var(--akzent-text)" font-weight="600">6</text>
+                <path d="M30 96 H106 V148 H30 Z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M106 96 L140 70 V122 L106 148 Z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M30 96 L64 70 H140" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                <g fill="var(--akzent-linie)"><ellipse cx="42" cy="156" rx="8" ry="4"/><ellipse cx="96" cy="156" rx="8" ry="4"/><ellipse cx="128" cy="132" rx="8" ry="4"/></g>
+                
+              </g>
+            </g>
+          </svg>
+          <figcaption>Gelb ist jeweils das Teil, das in diesem Schritt dazukommt.</figcaption>
+        </figure>
+        <ol class="folge">
+          <li>Die vier Abstandshalter mit Schrauben <b>von unten</b> an der Bodenplatte befestigen.</li>
+          <li>Pi aufsetzen, die <b>hohen Abstandshalter</b> oben auf die durchragenden Gewinde halb aufdrehen.</li>
+          <li>Pi leicht anheben, <b>Seitenteil mit den USB-Ausschnitten</b> einsetzen, Abstandshalter festziehen.</li>
+          <li>Übrige Seitenteile einsetzen – Ausschnitte an USB-C, 2× Micro-HDMI und SD-Schacht.</li>
+          <li><b>Deckel</b> aufsetzen, Lüftungsschlitze über dem Lüfter, mit den restlichen Schrauben festschrauben.</li>
+          <li>Umdrehen und die <b>Gummifüße</b> in die markierten Kreise kleben.</li>
+        </ol>
+        <div class="notiz"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L22 20 H2 Z" fill="none" stroke="currentColor" stroke-width="2"/><line x1="12" y1="10" x2="12" y2="14" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="17" r="1.2" fill="currentColor"/></svg><p>Die 52Pi-Anleitung nennt den Kühler als letzten, optionalen Schritt. Beim Kit mit Kühler setzt du ihn vorher auf (1.2), weil der Deckel ihn abdeckt. Weicht der Zettel in der Packung ab, gilt der Zettel. <span class="mk e" title="Erfahrungswert">E</span></p></div>
+        <div class="pruef"><div class="ok"><span class="etikett"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 L6.5 12 L13 4.5" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>Prüfen</span><p>Alle Buchsen frei, der SD-Schacht an der Unterseite erreichbar, nichts klappert.</p></div></div>
+      </article>
+
+      <article class="schritt" data-schritt="1-4">
+        <div class="schritt-kopf"><h3><span class="sn">1.4</span>Sicht-Check vor dem ersten Strom</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <ul>
+          <li>Kühler fest, FAN-Kabel steckt, Gehäuse zu.</li>
+          <li><b>microSD noch nicht einstecken</b> – die kommt nach Etappe 2.</li>
+          <li>Netzteil <b>noch nicht</b> anschließen.</li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- ================= ETAPPE 2 ================= -->
+    <section class="etappe" id="e2" data-titel="System auf die microSD">
+      <div class="etappe-kopf"><div class="etappe-nr">02</div><h2>System auf die microSD</h2><div class="meta"><b>20 Min.</b>davon ~10 Warten <span data-stand></span></div></div>
+      <p class="einleitung">Werkzeug: <b>Raspberry Pi Imager 2.x</b> – seit 24.11.2025 ein Assistent mit sechs Schritten <span class="mk q" title="Quelle Q5">Q</span>. Download: <a href="https://www.raspberrypi.com/software/" target="_blank" rel="noopener">raspberrypi.com/software</a></p>
+      <article class="schritt" data-schritt="2-1">
+        <div class="schritt-kopf"><h3><span class="sn">2.1</span>Imager durchklicken</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <div class="imager" role="img" aria-label="Nachbau des Imager-Assistenten: Schrittleiste Gerät, Betriebssystem, Speicher, Einstellungen, Schreiben, Fertig; im Schritt Einstellungen sind Hostname, Benutzer, WLAN mit Land DE und SSH eingeschaltet, Raspberry Pi Connect ausgeschaltet.">
+          <div class="imager-leiste"><span class="fertig">1 Gerät</span><span class="fertig">2 Betriebssystem</span><span class="fertig">3 Speicher</span><span class="an">4 Einstellungen</span><span>5 Schreiben</span><span>6 Fertig</span></div>
+          <div class="imager-body">
+            <div class="i-feld"><small>Gerät</small><div>Raspberry Pi 5</div></div>
+            <div class="i-feld"><small>Betriebssystem</small><div>Raspberry Pi OS Lite (64-bit)</div></div>
+            <div class="i-feld wichtig"><small>Hostname</small><div data-live="HOSTNAME">dashboard</div></div>
+            <div class="i-feld"><small>Lokalisierung</small><div>Berlin · de</div></div>
+            <div class="i-feld wichtig"><small>Benutzer</small><div data-live="USER">&lt;USER&gt;</div></div>
+            <div class="i-feld wichtig"><small>WLAN</small><div>Heimnetz · Land DE</div></div>
+            <div class="i-feld wichtig"><small>Fernzugriff</small><div><span class="schalter"></span>SSH an</div></div>
+            <div class="i-feld"><small>Raspberry Pi Connect</small><div><span class="schalter aus"></span>aus</div></div>
+          </div>
+        </div>
+        <ol>
+          <li>Imager am PC öffnen, microSD direkt in den TF-Schlitz des UGREEN-Lesers.</li>
+          <li><b>Gerät:</b> Raspberry Pi 5.</li>
+          <li><b>Betriebssystem:</b> „Raspberry Pi OS (other)“ → <b>Raspberry Pi OS Lite (64-bit)</b> – ohne Desktop, das ist Absicht. Basis: Debian 13 „Trixie“ (seit 02.10.2025) <span class="mk q" title="Quelle Q6">Q</span></li>
+          <li><b>Speicher:</b> die microSD – <b>genau prüfen</b>, sie wird komplett gelöscht.</li>
+          <li><b>Einstellungen</b> Seite für Seite <span class="mk q" title="Quelle Q5">Q</span>: Hostname <code data-live="HOSTNAME">dashboard</code> · Berlin/Deutschland, Tastatur <code>de</code> · Benutzer <code data-live="USER">&lt;USER&gt;</code> + Passwort (in den Passwort-Manager) · WLAN + Land <b>DE</b> · <b>SSH an</b> · Raspberry Pi Connect <b>aus</b> <span class="mk e" title="Erfahrungswert">E</span></li>
+          <li><b>Schreiben</b> → bestätigen → warten bis „Fertig“.</li>
+          <li>Karte auswerfen und in den <b>SD-Schacht an der Unterseite</b> des Pi stecken, Kontakte zum Board.</li>
+        </ol>
+        <div class="pruef">
+          <div class="ok"><span class="etikett"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 L6.5 12 L13 4.5" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>Prüfen</span><p>Imager meldet: erfolgreich geschrieben und überprüft.</p></div>
+          <div class="nein"><span class="etikett"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4 L12 12 M12 4 L4 12" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>Wenn unsicher</span><p>Laufwerksgröße prüfen: 64 GB erscheinen als ≈ 59 GB. Im Zweifel abbrechen.</p></div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ================= ETAPPE 3 ================= -->
+    <section class="etappe" id="e3" data-titel="Erster Start &amp; SSH">
+      <div class="etappe-kopf"><div class="etappe-nr">03</div><h2>Erster Start &amp; SSH</h2><div class="meta"><b>10 Min.</b><span data-stand></span></div></div>
+      <article class="schritt" data-schritt="3-1">
+        <div class="schritt-kopf"><h3><span class="sn">3.1</span>Strom an, warten, verbinden</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <div class="zwei">
+          <div>
+            <ol>
+              <li>Netzteil an den <b>USB-C-Eingang</b>. Grüne LED flackert = liest von der Karte. Beim ersten Mal <b>2–5 Minuten</b> warten – das System vergrößert sich und startet einmal neu. <span class="mk q" title="Quelle Q2">Q</span> <span class="mk e" title="Erfahrungswert">E</span></li>
+              <li>Am PC PowerShell öffnen und verbinden, beim ersten Mal „yes“, dann Passwort:</li>
+            </ol>
+            <div class="befehl"><div class="ort"><span class="wo-pc">PC · PowerShell</span><button class="kopieren" type="button">Kopieren</button></div><pre>ssh &lt;USER&gt;@&lt;HOSTNAME&gt;.local</pre></div>
+            <p>Klappt <code>.local</code> nicht: in der o2-Oberfläche unter den verbundenen Geräten die Adresse von <code data-live="HOSTNAME">dashboard</code> suchen und <code>ssh &lt;USER&gt;@&lt;IP&gt;</code> nehmen.</p>
+          </div>
+          <div class="terminal" role="img" aria-label="Beispiel einer erfolgreichen Anmeldung per SSH mit Eingabezeile Benutzer at Hostname.">
+            <div class="tl"><i></i><i></i><i></i></div>
+<pre><span class="d">PS C:\Users\Shadow&gt;</span> ssh <span class="ph" data-live="USER">&lt;USER&gt;</span>@<span class="ph" data-live="HOSTNAME">dashboard</span>.local
+<span class="d">Are you sure you want to continue
+connecting (yes/no/[fingerprint])?</span> yes
+<span class="d"><span data-live="USER">&lt;USER&gt;</span>@<span data-live="HOSTNAME">dashboard</span>.local's password:</span> ••••••••
+
+<span class="p"><span data-live="USER">&lt;USER&gt;</span>@<span data-live="HOSTNAME">dashboard</span>:~ $</span> █</pre>
+          </div>
+        </div>
+        <div class="notiz"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L22 20 H2 Z" fill="none" stroke="currentColor" stroke-width="2"/><line x1="12" y1="10" x2="12" y2="14" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="17" r="1.2" fill="currentColor"/></svg><p><b>Notfall WLAN:</b> Stecker ziehen, Pi per LAN-Kabel an den o2-Router, Stecker wieder rein, per SSH drauf, dann WLAN nachtragen mit <code>sudo nmtui</code> → „Verbindung aktivieren“. <span class="mk e" title="Erfahrungswert">E</span></p></div>
+        <div class="pruef"><div class="ok"><span class="etikett"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 L6.5 12 L13 4.5" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>Prüfen</span><p>Die Eingabezeile zeigt <code><span data-live="USER">&lt;USER&gt;</span>@<span data-live="HOSTNAME">dashboard</span>:~ $</code>.</p></div></div>
+      </article>
+    </section>
+
+    <!-- ================= ETAPPE 4 ================= -->
+    <section class="etappe" id="e4" data-titel="System aktualisieren">
+      <div class="etappe-kopf"><div class="etappe-nr">04</div><h2>System aktualisieren</h2><div class="meta"><b>10 Min.</b><span data-stand></span></div></div>
+      <article class="schritt" data-schritt="4-1">
+        <div class="schritt-kopf"><h3><span class="sn">4.1</span>Updates und Firmware</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <div class="befehl"><div class="ort"><span class="wo-pi">Pi · SSH</span><button class="kopieren" type="button">Kopieren</button></div><pre>sudo apt update
+sudo apt full-upgrade -y
+sudo rpi-eeprom-update -a
+sudo reboot</pre></div>
+        <p>Nach etwa einer Minute neu verbinden, dann prüfen:</p>
+        <div class="befehl"><div class="ort"><span class="wo-pi">Pi · SSH</span><button class="kopieren" type="button">Kopieren</button></div><pre>uname -m
+vcgencmd measure_temp
+vcgencmd get_throttled</pre></div>
+        <div class="pruef">
+          <div class="ok"><span class="etikett"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 L6.5 12 L13 4.5" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>Prüfen</span><p><code>aarch64</code> · Temperatur im Leerlauf deutlich unter 60 °C · <code>throttled=0x0</code> <span class="mk e" title="Erfahrungswert">E</span></p></div>
+          <div class="nein"><span class="etikett"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4 L12 12 M12 4 L4 12" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>Wenn nicht</span><p><code>throttled</code> ungleich <code>0x0</code> → Netzteil und Kabel prüfen, nur das 27-W-Original verwenden.</p></div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ================= ETAPPE 5 ================= -->
+    <section class="etappe" id="e5" data-titel="Feste Adresse">
+      <div class="etappe-kopf"><div class="etappe-nr">05</div><h2>Feste Adresse</h2><div class="meta"><b>10 Min.</b><span data-stand></span></div></div>
+      <p class="einleitung">Dein Netz: <b>o2-Router</b> plus <b>FRITZ!-Repeater</b>. Hängt der Pi über den Repeater, sieht der Router ihn womöglich unter einer abgewandelten Kennung – eine Reservierung im Router greift dann nicht zuverlässig. <span class="mk a" title="Annahme – am Gerät prüfen">A</span> Deshalb legst du die Adresse direkt am Pi fest, außerhalb des Bereichs, den der Router selbst verteilt. <span class="mk e" title="Erfahrungswert">E</span></p>
+      <figure class="zeichnung" style="margin-bottom:16px">
+        <svg viewBox="0 0 960 260" role="img" aria-label="Oben: o2-Router mit Adresse 1, per WLAN zum FRITZ-Repeater, per WLAN zum Pi. Unten ein Adressstrahl von 1 bis 254: der Router verteilt die Adressen 100 bis 200 selbst, der Pi bekommt fest die 250 außerhalb dieses Bereichs, so vergibt der Router sie nicht an ein anderes Gerät.">
+          <defs><marker id="n-pf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+          <g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+            <rect x="40" y="24" width="190" height="64" rx="10" fill="none" stroke="currentColor" stroke-width="2"/>
+            <text x="135" y="52" text-anchor="middle" font-weight="600">o2-Router</text>
+            <text x="135" y="72" text-anchor="middle" fill-opacity="0.75" data-live="ROUTER-IP">192.168.1.1</text>
+            <rect x="385" y="24" width="190" height="64" rx="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="6 4"/>
+            <text x="480" y="52" text-anchor="middle" font-weight="600">FRITZ!-Repeater</text>
+            <text x="480" y="72" text-anchor="middle" fill-opacity="0.75">WLAN-Brücke</text>
+            <rect x="730" y="24" width="190" height="64" rx="10" fill="none" stroke="var(--akzent-linie)" stroke-width="2.4"/>
+            <text x="825" y="52" text-anchor="middle" font-weight="600">Raspberry Pi</text>
+            <text x="825" y="72" text-anchor="middle" fill="var(--akzent-text)" data-live="PI-IP">192.168.1.250</text>
+            <line x1="232" y1="56" x2="382" y2="56" stroke="currentColor" marker-start="url(#n-pf)" marker-end="url(#n-pf)"/>
+            <text x="307" y="48" text-anchor="middle" fill-opacity="0.75">WLAN</text>
+            <line x1="577" y1="56" x2="727" y2="56" stroke="currentColor" marker-start="url(#n-pf)" marker-end="url(#n-pf)"/>
+            <text x="652" y="48" text-anchor="middle" fill-opacity="0.75">WLAN</text>
+            <!-- Adressstrahl 1..254 auf x 60..900 -->
+            <line x1="60" y1="170" x2="900" y2="170" stroke="currentColor" stroke-width="2"/>
+            <rect x="389" y="156" width="331" height="28" fill="currentColor" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/>
+            <text x="554" y="148" text-anchor="middle">verteilt der Router selbst (Beispiel .100–.200)</text>
+            <line x1="60" y1="162" x2="60" y2="178" stroke="currentColor" stroke-width="2"/>
+            <text x="60" y="204" text-anchor="middle">.1</text>
+            <text x="60" y="222" text-anchor="middle" fill-opacity="0.75">Router</text>
+            <line x1="886" y1="152" x2="886" y2="188" stroke="var(--akzent-linie)" stroke-width="3"/>
+            <circle cx="886" cy="170" r="7" fill="var(--akzent-linie)"/>
+            <text x="886" y="210" text-anchor="middle" fill="var(--akzent-text)" font-weight="600">.250 Pi, fest</text>
+            <text x="886" y="228" text-anchor="middle" fill="var(--akzent-text)">außerhalb</text>
+            <text x="389" y="204" text-anchor="middle" fill-opacity="0.75">.100</text>
+            <text x="720" y="204" text-anchor="middle" fill-opacity="0.75">.200</text>
+          </g>
+        </svg>
+        <figcaption>Warum außerhalb: Liegt die feste Adresse im verteilten Bereich, kann der Router sie einem anderen Gerät geben – dann bricht die Verbindung immer wieder ab.</figcaption>
+      </figure>
+      <article class="schritt" data-schritt="5-1">
+        <div class="schritt-kopf"><h3><span class="sn">5.1</span>A · Router-Adresse herausfinden</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <div class="befehl"><div class="ort"><span class="wo-pi">Pi · SSH</span><button class="kopieren" type="button">Kopieren</button></div><pre>ip route | grep default
+hostname -I</pre></div>
+        <p>Beispiel <code>default via 192.168.1.1</code> → Router = <code>192.168.1.1</code>, Netz = <code>192.168.1.x</code>. Trage den Router oben bei <b>&lt;ROUTER-IP&gt;</b> ein. o2-Boxen nutzen meist 192.168.1.1, Oberfläche unter <code>http://192.168.1.1</code> bzw. <code>http://o2.box</code>. <span class="mk a" title="Annahme – am Gerät prüfen">A</span></p>
+      </article>
+      <article class="schritt" data-schritt="5-2">
+        <div class="schritt-kopf"><h3><span class="sn">5.2</span>B · Freie Adresse wählen</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <p>In der o2-Oberfläche bei den DHCP-Einstellungen den Adressbereich ansehen und eine Adresse <b>außerhalb</b> nehmen, z. B. <code>192.168.1.250</code>. Findest du den Bereich nicht: eine hohe Endung wie <code>.250</code> ist fast immer frei. <span class="mk e" title="Erfahrungswert">E</span> Trage sie oben bei <b>&lt;PI-IP&gt;</b> ein.</p>
+      </article>
+      <article class="schritt" data-schritt="5-3">
+        <div class="schritt-kopf"><h3><span class="sn">5.3</span>C · Festlegen</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <p>Zuerst den Namen deines WLAN-Profils ablesen (Spalte NAME, Typ wifi) und oben bei <b>&lt;VERBINDUNG&gt;</b> eintragen:</p>
+        <div class="befehl"><div class="ort"><span class="wo-pi">Pi · SSH</span><button class="kopieren" type="button">Kopieren</button></div><pre>nmcli con show</pre></div>
+        <div class="befehl"><div class="ort"><span class="wo-pi">Pi · SSH</span><button class="kopieren" type="button">Kopieren</button></div><pre>sudo nmcli con mod "&lt;VERBINDUNG&gt;" ipv4.addresses &lt;PI-IP&gt;/24 ipv4.gateway &lt;ROUTER-IP&gt; \
+  ipv4.dns "&lt;ROUTER-IP&gt; 1.1.1.1" ipv4.method manual
+sudo nmcli con up "&lt;VERBINDUNG&gt;"</pre></div>
+        <p>Die SSH-Verbindung reißt dabei ab – neu verbinden:</p>
+        <div class="befehl"><div class="ort"><span class="wo-pc">PC · PowerShell</span><button class="kopieren" type="button">Kopieren</button></div><pre>ssh &lt;USER&gt;@&lt;PI-IP&gt;</pre></div>
+        <p><b>Alternative:</b> Steht der Pi per LAN-Kabel direkt am o2-Router, geht auch eine Reservierung in der o2-Oberfläche – bei der HomeBox 6641 höchstens 10 Regeln. <span class="mk q" title="Quelle Q7">Q</span></p>
+        <div class="pruef">
+          <div class="ok"><span class="etikett"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 L6.5 12 L13 4.5" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>Prüfen</span><p>Nach <code>sudo reboot</code> zeigt <code>hostname -I</code> wieder <code data-live="PI-IP">192.168.1.250</code>.</p></div>
+          <div class="nein"><span class="etikett"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4 L12 12 M12 4 L4 12" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>Wenn nicht</span><p>Verbindung bricht immer wieder ab → Adresse ist doppelt vergeben, andere Endung wählen.</p></div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ================= ETAPPE 6 ================= -->
+    <section class="etappe" id="e6" data-titel="Syncthing">
+      <div class="etappe-kopf"><div class="etappe-nr">06</div><h2>Syncthing</h2><div class="meta"><b>25 Min.</b><span data-stand></span></div></div>
+      <p class="einleitung">Vier Ordner, jeder nur in eine Richtung – so kann nie etwas versehentlich zurückschreiben.</p>
+      <figure class="zeichnung" style="margin-bottom:16px">
+        <svg viewBox="0 0 960 330" role="img" aria-label="Links der PC, rechts der Pi. Vault und Dashboard-Stand gehen vom PC zum Pi, am Pi nur empfangen. Sicherungen und Logs gehen vom Pi zum PC, am PC nur empfangen.">
+          <defs>
+            <marker id="s-pf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
+            <marker id="s-pfg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--akzent-linie)"/></marker>
+            <g id="s-schloss"><rect x="-7" y="-2" width="14" height="11" rx="2" fill="currentColor"/><path d="M-4.5 -2 V-6 a4.5 4.5 0 0 1 9 0 V-2" fill="none" stroke="currentColor" stroke-width="2"/></g>
+          </defs>
+          <g font-family="JetBrains Mono, monospace" font-size="13" fill="currentColor">
+            <rect x="20" y="16" width="300" height="298" rx="12" fill="none" stroke="currentColor" stroke-width="2"/>
+            <text x="40" y="44" font-weight="600" font-size="15">PC · Windows</text>
+            <rect x="640" y="16" width="300" height="298" rx="12" fill="none" stroke="var(--akzent-linie)" stroke-width="2.2"/>
+            <text x="660" y="44" font-weight="600" font-size="15" fill="var(--akzent-text)">Raspberry Pi</text>
+            <!-- Zeile 1 Vault -->
+            <text x="40" y="92">A2HOME-WORKFLOW</text><text x="40" y="110" fill-opacity="0.7" font-size="12">Obsidian-Vault</text>
+            <text x="660" y="92">~/vault</text>
+            <line x1="330" y1="96" x2="626" y2="96" stroke="var(--akzent-linie)" stroke-width="2.4" marker-end="url(#s-pfg)"/>
+            <text x="478" y="86" text-anchor="middle" font-size="12">nur senden → nur empfangen</text>
+            <use href="#s-schloss" x="916" y="92" style="color: var(--akzent-linie)"/>
+            <!-- Zeile 2 Stand -->
+            <text x="40" y="160">Dashboard-Stand</text><text x="40" y="178" fill-opacity="0.7" font-size="12">Projekt-Dateien</text>
+            <text x="660" y="160">~/sync/Dashboard-Stand</text>
+            <line x1="330" y1="164" x2="626" y2="164" stroke="var(--akzent-linie)" stroke-width="2.4" marker-end="url(#s-pfg)"/>
+            <use href="#s-schloss" x="916" y="176" style="color: var(--akzent-linie)"/>
+            <!-- Zeile 3 Sicherung -->
+            <text x="40" y="228">Pi-Dashboard-Sicherung</text>
+            <text x="660" y="228">~/dashboard/backup</text>
+            <line x1="626" y1="232" x2="330" y2="232" stroke="currentColor" stroke-width="2" marker-end="url(#s-pf)"/>
+            <use href="#s-schloss" x="300" y="240"/>
+            <!-- Zeile 4 Logs -->
+            <text x="40" y="286">pythonlogs\pi-dashboard</text>
+            <text x="660" y="286">~/dashboard/logs</text>
+            <line x1="626" y1="290" x2="330" y2="290" stroke="currentColor" stroke-width="2" marker-end="url(#s-pf)"/>
+            <use href="#s-schloss" x="300" y="298"/>
+            <text x="478" y="222" text-anchor="middle" font-size="12">nur empfangen ← nur senden</text>
+          </g>
+        </svg>
+        <figcaption>Schloss = „Nur empfangen“: diese Seite ändert nie etwas am Original. Gelb: was das Dashboard liest.</figcaption>
+      </figure>
+      <div class="tabelle" style="margin-bottom:16px"><table>
+        <thead><tr><th>Ordner</th><th>PC (Windows)</th><th>Pi</th><th>Richtung</th></tr></thead>
+        <tbody>
+          <tr><td>Obsidian-Vault</td><td><code>Dokumente\A2HOME-PRIVAT\A2HOME-WORKFLOW\A2HOME-WORKFLOW</code></td><td><code>~/vault</code></td><td>PC nur senden → Pi nur empfangen</td></tr>
+          <tr><td>Projekt-Stände</td><td><code>Dokumente\Dashboard-Stand</code></td><td><code>~/sync/Dashboard-Stand</code></td><td>PC → Pi</td></tr>
+          <tr><td>Pi-Sicherungen</td><td><code>Dokumente\Pi-Dashboard-Sicherung</code></td><td><code>~/dashboard/backup</code></td><td>Pi nur senden → PC</td></tr>
+          <tr><td>Pi-Logs</td><td><code>Dokumente\pythonlogs\pi-dashboard</code></td><td><code>~/dashboard/logs</code></td><td>Pi nur senden → PC</td></tr>
+        </tbody>
+      </table></div>
+
+      <article class="schritt" data-schritt="6-1">
+        <div class="schritt-kopf"><h3><span class="sn">6.1</span>Syncthing auf dem Pi</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <div class="befehl"><div class="ort"><span class="wo-pi">Pi · SSH</span><button class="kopieren" type="button">Kopieren</button></div><pre>sudo apt install -y syncthing
+sudo systemctl enable --now syncthing@&lt;USER&gt;.service
+mkdir -p ~/vault ~/sync/Dashboard-Stand</pre></div>
+        <p>Die Oberfläche des Pi hört nur auf sich selbst – am PC in einem <b>eigenen</b> PowerShell-Fenster einen Tunnel öffnen und offen lassen:</p>
+        <div class="befehl"><div class="ort"><span class="wo-pc">PC · PowerShell (offen lassen)</span><button class="kopieren" type="button">Kopieren</button></div><pre>ssh -L 8385:localhost:8384 &lt;USER&gt;@&lt;PI-IP&gt;</pre></div>
+        <p>Dann im Browser <code>http://localhost:8385</code> = der Pi. Port 8385, damit es nicht mit dem Syncthing auf dem PC unter <code>http://localhost:8384</code> kollidiert. <span class="mk e" title="Erfahrungswert">E</span></p>
+      </article>
+      <article class="schritt" data-schritt="6-2">
+        <div class="schritt-kopf"><h3><span class="sn">6.2</span>PC koppeln und Ordner teilen</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <ol>
+          <li>Syncthing am PC installieren: <a href="https://syncthing.net/downloads/" target="_blank" rel="noopener">syncthing.net/downloads</a></li>
+          <li>PC: „Gerät hinzufügen“ → Geräte-ID des Pi (Pi-Oberfläche → Aktionen → ID anzeigen).</li>
+          <li>PC: Ordner <b>A2HOME-WORKFLOW</b> hinzufügen, Ordnertyp <b>Nur senden</b>, im Reiter „Teilen“ den Pi anhaken, im Reiter „Ignoriermuster“:</li>
+        </ol>
+        <div class="befehl"><div class="ort"><span class="wo-pc">PC · Syncthing · Ignoriermuster</span><button class="kopieren" type="button">Kopieren</button></div><pre>.smart-env
+.obsidian/workspace*
+.trash</pre></div>
+        <ol start="4">
+          <li>Pi: Anfrage annehmen, Pfad <code>/home/<span data-live="USER">&lt;USER&gt;</span>/vault</code>, Ordnertyp <b>Nur empfangen</b>.</li>
+          <li>Genauso <b>Dashboard-Stand</b> → <code>/home/<span data-live="USER">&lt;USER&gt;</span>/sync/Dashboard-Stand</code>.</li>
+          <li>Nach Etappe 7 umgekehrt: <code>~/dashboard/backup</code> und <code>~/dashboard/logs</code> je als eigenen Ordner „Nur senden“ teilen, am PC „Nur empfangen“ nach <code>Dokumente\Pi-Dashboard-Sicherung</code> bzw. <code>Dokumente\pythonlogs\pi-dashboard</code>.</li>
+        </ol>
+        <div class="pruef"><div class="ok"><span class="etikett"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 L6.5 12 L13 4.5" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>Prüfen</span><p><code>ls ~/vault</code> zeigt <code>00_Inbox</code>, <code>30_MOCs</code> …; <code>ls ~/sync/Dashboard-Stand</code> zeigt <code>parody-games.md</code> und <code>unrealpython2.md</code>.</p></div></div>
+      </article>
+    </section>
+
+    <!-- ================= ETAPPE 7 ================= -->
+    <section class="etappe" id="e7" data-titel="Dashboard installieren">
+      <div class="etappe-kopf"><div class="etappe-nr">07</div><h2>Dashboard installieren</h2><div class="meta"><b>20 Min.</b><span data-stand></span></div></div>
+      <div class="zwei">
+        <figure class="zeichnung">
+          <svg viewBox="0 0 440 380" role="img" aria-label="Schichten von unten nach oben: microSD, Raspberry Pi OS Lite, Python-Umgebung, Dienst dashboard.service, Port 8080; oben zwei Tablets mit den Seiten wand und essen. Seitlich liest der Dienst die Zugangsdaten aus secrets.env und die Notizen aus dem Syncthing-Ordner.">
+            <defs><marker id="k-pf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+            <g font-family="JetBrains Mono, monospace" font-size="12.5" fill="currentColor">
+              <rect x="20" y="330" width="270" height="36" rx="6" fill="none" stroke="currentColor" stroke-width="1.6"/><text x="36" y="353">microSD · High Endurance 64 GB</text>
+              <rect x="20" y="286" width="270" height="36" rx="6" fill="none" stroke="currentColor" stroke-width="1.6"/><text x="36" y="309">Raspberry Pi OS Lite · Trixie</text>
+              <rect x="20" y="242" width="270" height="36" rx="6" fill="none" stroke="currentColor" stroke-width="1.6"/><text x="36" y="265">~/dashboard/venv · Python</text>
+              <rect x="20" y="198" width="270" height="36" rx="6" fill="none" stroke="var(--akzent-linie)" stroke-width="2.4"/><text x="36" y="221" fill="var(--akzent-text)" font-weight="600">dashboard.service</text>
+              <rect x="20" y="154" width="270" height="36" rx="6" fill="none" stroke="currentColor" stroke-width="1.6"/><text x="36" y="177">Port 8080</text>
+              <!-- Tablets -->
+              <rect x="20" y="20" width="126" height="84" rx="8" fill="none" stroke="currentColor" stroke-width="2"/><text x="83" y="58" text-anchor="middle" font-weight="600">/wand</text><text x="83" y="76" text-anchor="middle" fill-opacity="0.75">Tab A8</text>
+              <rect x="164" y="20" width="126" height="84" rx="8" fill="none" stroke="currentColor" stroke-width="2"/><text x="227" y="58" text-anchor="middle" font-weight="600">/essen</text><text x="227" y="76" text-anchor="middle" fill-opacity="0.75">Tab S7+</text>
+              <line x1="83" y1="152" x2="83" y2="108" stroke="currentColor" marker-end="url(#k-pf)"/>
+              <line x1="227" y1="152" x2="227" y2="108" stroke="currentColor" marker-end="url(#k-pf)"/>
+              <text x="155" y="136" text-anchor="middle" font-size="11.5" fill-opacity="0.75">WLAN · App „Dashboard“</text>
+              <!-- Seiten -->
+              <rect x="316" y="198" width="112" height="46" rx="6" fill="none" stroke="currentColor" stroke-dasharray="4 3"/><text x="372" y="217" text-anchor="middle" font-size="11">secrets.env</text><text x="372" y="233" text-anchor="middle" font-size="10.5" fill-opacity="0.7">/etc/kalorien</text>
+              <line x1="314" y1="221" x2="294" y2="216" stroke="currentColor" marker-end="url(#k-pf)"/>
+              <rect x="316" y="262" width="112" height="46" rx="6" fill="none" stroke="currentColor" stroke-dasharray="4 3"/><text x="372" y="281" text-anchor="middle" font-size="11">~/vault</text><text x="372" y="297" text-anchor="middle" font-size="10.5" fill-opacity="0.7">Syncthing</text>
+              <path d="M314 285 C 302 285, 302 234, 294 228" fill="none" stroke="currentColor" marker-end="url(#k-pf)"/>
+            </g>
+          </svg>
+          <figcaption>Was worauf läuft: Der Dienst startet von selbst, liest Zugangsdaten und Notizen und beliefert beide Tablets über Port 8080.</figcaption>
+        </figure>
+        <div>
+          <article class="schritt" data-schritt="7-1">
+            <div class="schritt-kopf"><h3><span class="sn">7.1</span>Dateien auf den Pi</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+            <p>PowerShell im entpackten Ordner <code>kalorien-dashboard</code>:</p>
+            <div class="befehl"><div class="ort"><span class="wo-pc">PC · PowerShell</span><button class="kopieren" type="button">Kopieren</button></div><pre>scp -r .\dashboard &lt;USER&gt;@&lt;PI-IP&gt;:~/dashboard
+scp .\systemd\dashboard.service .\systemd\secrets.env.beispiel &lt;USER&gt;@&lt;PI-IP&gt;:~/</pre></div>
+            <p><code>vault\Kalorien-Rezepte.md</code> am PC in den Hauptordner des Vaults kopieren – Syncthing bringt sie mit.</p>
+          </article>
+        </div>
+      </div>
+
+      <article class="schritt" data-schritt="7-2">
+        <div class="schritt-kopf"><h3><span class="sn">7.2</span>Python-Umgebung und Einstellungen</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <div class="befehl"><div class="ort"><span class="wo-pi">Pi · SSH</span><button class="kopieren" type="button">Kopieren</button></div><pre>sudo apt install -y python3-venv python3-dev
+python3 -m venv ~/dashboard/venv
+~/dashboard/venv/bin/pip install -r ~/dashboard/requirements.txt
+~/dashboard/venv/bin/pip install -r ~/dashboard/requirements-optional.txt   <span class="kom"># optional, darf fehlschlagen</span>
+nano ~/dashboard/config.json</pre></div>
+        <p>In <code>config.json</code> prüfen oder setzen:</p>
+        <div class="tabelle"><table>
+          <thead><tr><th>Schlüssel</th><th>Wert</th></tr></thead>
+          <tbody>
+            <tr><td><code>vault_pfad</code></td><td><code>"~/vault"</code></td></tr>
+            <tr><td><code>projekt_stand_ordner</code></td><td><code>"~/sync/Dashboard-Stand"</code></td></tr>
+            <tr><td><code>vault_uebersicht_pfad</code></td><td><code>""</code> – leer heißt: nimmt <code>vault_pfad</code></td></tr>
+          </tbody>
+        </table></div>
+      </article>
+
+      <article class="schritt" data-schritt="7-3">
+        <div class="schritt-kopf"><h3><span class="sn">7.3</span>Zugangsdaten ablegen</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <p>Nur hier, nie im Repo, nie im Vault, nie im Chat.</p>
+        <div class="befehl"><div class="ort"><span class="wo-pi">Pi · SSH</span><button class="kopieren" type="button">Kopieren</button></div><pre>sudo install -d -m 700 -o $USER -g $USER /etc/kalorien
+install -m 600 ~/secrets.env.beispiel /etc/kalorien/secrets.env
+nano /etc/kalorien/secrets.env</pre></div>
+        <p>Jetzt nur eintragen, was schon da ist – Claude-API-Schlüssel, später bunq und Kalender. Platzhalter dürfen stehen bleiben.</p>
+      </article>
+
+      <article class="schritt" data-schritt="7-4">
+        <div class="schritt-kopf"><h3><span class="sn">7.4</span>Dienst einrichten und Selbsttest</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <div class="befehl"><div class="ort"><span class="wo-pi">Pi · SSH</span><button class="kopieren" type="button">Kopieren</button></div><pre>sed "s/&lt;USER&gt;/$USER/g" ~/dashboard.service | sudo tee /etc/systemd/system/dashboard.service
+sudo systemctl daemon-reload
+~/dashboard/venv/bin/python ~/dashboard/selbsttest.py
+sudo systemctl enable --now dashboard.service
+sudo systemctl status dashboard.service</pre></div>
+        <p class="kleiner" style="font-size:14.5px;color:var(--leise)">Hinweis: In der ersten Zeile bleibt <code>&lt;USER&gt;</code> wörtlich stehen – <code>sed</code> ersetzt es in der Dienstdatei durch deinen Benutzernamen.</p>
+        <div class="pruef">
+          <div class="ok"><span class="etikett"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 L6.5 12 L13 4.5" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>Prüfen</span><p>Selbsttest: <b>„ERGEBNIS: ALLES OK (376 Prüfungen)“</b> · Status „active (running)“ · am PC öffnen <code>http://<span data-live="PI-IP">192.168.1.250</span>:8080/wand</code> und <code>…/essen</code>.</p></div>
+          <div class="nein"><span class="etikett"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4 L12 12 M12 4 L4 12" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>Wenn nicht</span><p>„Unbekannter Hostname“ → den Namen aus der Adresszeile in <code>config.json</code> unter <code>erlaubte_hosts</code> eintragen, Dienst neu starten. Python: <code>icalendar</code> braucht mindestens 3.10, Trixie bringt 3.13. <span class="mk e" title="Erfahrungswert: Debian 13 liefert Python 3.13">E</span></p></div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ================= ETAPPE 8 ================= -->
+    <section class="etappe" id="e8" data-titel="Tablets verbinden">
+      <div class="etappe-kopf"><div class="etappe-nr">08</div><h2>Tablets verbinden</h2><div class="meta"><b>15 Min.</b><span data-stand></span></div></div>
+      <div class="zwei">
+        <article class="schritt" data-schritt="8-1">
+          <div class="schritt-kopf"><h3><span class="sn">8.1</span>App installieren – je Tablet</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+          <ol>
+            <li>Im Browser des Tablets öffnen:</li>
+          </ol>
+          <div class="befehl"><div class="ort"><span class="wo-pc">Tablet · Browser</span><button class="kopieren" type="button">Kopieren</button></div><pre>http://&lt;PI-IP&gt;:8080/static/app/dashboard-1.0.apk</pre></div>
+          <ol start="2">
+            <li>Herunterladen → öffnen → „Unbekannte Apps installieren“ für den Browser <b>zulassen</b> → Installieren. Warnt Play Protect: „Trotzdem installieren“ – die App kommt nicht aus dem Store.</li>
+            <li>„Dashboard“ öffnen → Adresse <code>http://<span data-live="PI-IP">192.168.1.250</span>:8080</code> → Modus wählen.</li>
+            <li>Danach „Unbekannte Apps installieren“ wieder <b>ausschalten</b>.</li>
+            <li>Samsung-Akku: Einstellungen → Akku → Hintergrundnutzung → „Nie in den Standby versetzte Apps“ → „Dashboard“ hinzufügen. <span class="mk a" title="Menünamen je nach One-UI-Version">A</span></li>
+          </ol>
+        </article>
+        <figure class="zeichnung">
+          <svg viewBox="0 0 440 330" role="img" aria-label="Links das Wandtablet Galaxy Tab A8 im Querformat mit Modus Wandtablet und Kiosk, rechts das Eingabe-Tablet Galaxy Tab S7 plus mit Modus Eingabe; oben rechts in der Ecke das Feld für fünfmal Tippen, das die Einstellungen der App öffnet.">
+            <g font-family="JetBrains Mono, monospace" font-size="12.5" fill="currentColor">
+              <rect x="14" y="40" width="250" height="160" rx="14" fill="none" stroke="currentColor" stroke-width="2.2"/>
+              <rect x="26" y="52" width="226" height="136" rx="6" fill="currentColor" fill-opacity="0.06"/>
+              <rect x="212" y="52" width="40" height="36" fill="var(--akzent-linie)" fill-opacity="0.25" stroke="var(--akzent-linie)" stroke-dasharray="3 2"/>
+              <text x="232" y="75" text-anchor="middle" fill="var(--akzent-text)" font-weight="600">5×</text>
+              <text x="40" y="122" font-weight="600">Wandtablet</text>
+              <text x="40" y="142" fill-opacity="0.75">/wand · Kiosk an</text>
+              <text x="40" y="162" fill-opacity="0.75">Bildschirm bleibt an</text>
+              <text x="139" y="226" text-anchor="middle">Galaxy Tab A8 · an der Wand</text>
+              <rect x="286" y="96" width="140" height="210" rx="14" fill="none" stroke="currentColor" stroke-width="2.2" transform="rotate(8 356 200)"/>
+              <g transform="rotate(8 356 200)"><text x="304" y="180" font-weight="600">Eingabe</text><text x="304" y="200" fill-opacity="0.75">/essen</text><text x="304" y="220" fill-opacity="0.75">Kamera ok</text></g>
+              <text x="356" y="326" text-anchor="middle">Galaxy Tab S7+</text>
+              <text x="14" y="22" fill="var(--akzent-text)">Einstellungen: 5× schnell oben rechts</text>
+            </g>
+          </svg>
+          <figcaption>Dieselbe App auf beiden Tablets – der Modus entscheidet, was sie zeigt.</figcaption>
+        </figure>
+      </div>
+      <article class="schritt" data-schritt="8-2">
+        <div class="schritt-kopf"><h3><span class="sn">8.2</span>Modus je Tablet</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <div class="tabelle"><table>
+          <thead><tr><th>Tablet</th><th>Modus</th><th>Extras</th></tr></thead>
+          <tbody>
+            <tr><td>Galaxy Tab A8</td><td><b>Wandtablet</b></td><td>Haken <b>Kiosk</b> setzen → Startbildschirm „Dashboard“ + „Immer“. Bildschirm bleibt an, startet nach Neustart von selbst.</td></tr>
+            <tr><td>Galaxy Tab S7+</td><td><b>Eingabe-Tablet</b></td><td>Kamera für Mahlzeitenfotos, Zurück-Taste normal.</td></tr>
+          </tbody>
+        </table></div>
+        <div class="pruef"><div class="ok"><span class="etikett"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 L6.5 12 L13 4.5" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>Prüfen</span><p>Die Wand zeigt das Dashboard ohne Browserleiste und startet nach einem Tablet-Neustart von selbst.</p></div></div>
+      </article>
+    </section>
+
+    <!-- ================= ETAPPE 9 ================= -->
+    <section class="etappe" id="e9" data-titel="Absichern &amp; sichern">
+      <div class="etappe-kopf"><div class="etappe-nr">09</div><h2>Absichern &amp; sichern</h2><div class="meta"><b>15 Min.</b>teils optional <span data-stand></span></div></div>
+      <article class="schritt" data-schritt="9-1">
+        <div class="schritt-kopf"><h3><span class="sn">9.1</span>Automatische Sicherheitsupdates</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <div class="befehl"><div class="ort"><span class="wo-pi">Pi · SSH</span><button class="kopieren" type="button">Kopieren</button></div><pre>sudo apt install -y unattended-upgrades
+sudo dpkg-reconfigure -plow unattended-upgrades</pre></div>
+      </article>
+      <article class="schritt" data-schritt="9-2">
+        <div class="schritt-kopf"><h3><span class="sn">9.2</span>Anmelden per Schlüssel statt Passwort</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <div class="befehl"><div class="ort"><span class="wo-pc">PC · PowerShell</span><button class="kopieren" type="button">Kopieren</button></div><pre>ssh-keygen -t ed25519
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh &lt;USER&gt;@&lt;PI-IP&gt; "mkdir -p ~/.ssh &amp;&amp; cat &gt;&gt; ~/.ssh/authorized_keys"</pre></div>
+        <p>Danach klappt <code>ssh <span data-live="USER">&lt;USER&gt;</span>@<span data-live="PI-IP">192.168.1.250</span></code> ohne Passwort. <span class="mk e" title="Erfahrungswert">E</span></p>
+      </article>
+      <article class="schritt" data-schritt="9-3">
+        <div class="schritt-kopf"><h3><span class="sn">9.3</span>Tailscale – die App unterwegs mit HTTPS</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <div class="befehl"><div class="ort"><span class="wo-pi">Pi · SSH</span><button class="kopieren" type="button">Kopieren</button></div><pre>curl -fsSL https://tailscale.com/install.sh | sh
+sudo tailscale up
+sudo tailscale set --hostname=pi-dashboard
+sudo tailscale serve --bg 8080</pre></div>
+        <div class="notiz"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L22 20 H2 Z" fill="none" stroke="currentColor" stroke-width="2"/><line x1="12" y1="10" x2="12" y2="14" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="17" r="1.2" fill="currentColor"/></svg><p>Nie <code>tailscale funnel</code> – das stellt die Seiten ohne Passwort ins Internet. Details: README Abschnitt 7.</p></div>
+      </article>
+      <article class="schritt" data-schritt="9-4">
+        <div class="schritt-kopf"><h3><span class="sn">9.4</span>Was wo gesichert ist</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <div class="tabelle"><table>
+          <thead><tr><th>Was</th><th>Wo</th><th>Automatisch</th></tr></thead>
+          <tbody>
+            <tr><td>Einträge, Gewohnheiten, Verlauf</td><td><code>~/dashboard/data/kalorien.sqlite3</code></td><td>täglich nach <code>~/dashboard/backup/</code> (14 Tage) → per Syncthing auf den PC</td></tr>
+            <tr><td>Vault, Projekt-Stände</td><td>am PC (Original)</td><td>der Pi hat nur Kopien</td></tr>
+            <tr><td>Zugangsdaten</td><td><code>/etc/kalorien/secrets.env</code></td><td><b>nicht</b> gesichert – im Passwort-Manager aufbewahren</td></tr>
+            <tr><td>ganzes System</td><td>microSD</td><td>optional 1× im Monat ein Abbild der Karte am PC, z. B. mit Win32DiskImager („Lesen“) <span class="mk e" title="Erfahrungswert">E</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="pruef"><div class="ok"><span class="etikett"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 L6.5 12 L13 4.5" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>Prüfen</span><p>Am nächsten Tag liegt in <code>Dokumente\Pi-Dashboard-Sicherung</code> die erste Sicherungsdatei.</p></div></div>
+      </article>
+    </section>
+
+    <!-- ================= ETAPPE 10 ================= -->
+    <section class="etappe" id="e10" data-titel="Abnahme">
+      <div class="etappe-kopf"><div class="etappe-nr">10</div><h2>Abnahme – alles grün?</h2><div class="meta"><b>5 Min.</b><span data-stand></span></div></div>
+      <article class="schritt" data-schritt="10-1">
+        <div class="schritt-kopf"><h3><span class="sn">10.1</span>Endprüfung</h3><label class="haken"><input type="checkbox">Erledigt</label></div>
+        <div class="tabelle abnahme"><table>
+          <thead><tr><th>Prüfung</th><th>Befehl / Ort</th><th>Erwartet</th></tr></thead>
+          <tbody>
+            <tr><td>Temperatur</td><td><code>vcgencmd measure_temp</code></td><td>&lt; 60 °C im Leerlauf</td></tr>
+            <tr><td>Strom</td><td><code>vcgencmd get_throttled</code></td><td><code>throttled=0x0</code></td></tr>
+            <tr><td>Dienst</td><td><code>systemctl is-active dashboard</code></td><td><code>active</code></td></tr>
+            <tr><td>Selbsttest</td><td><code>~/dashboard/venv/bin/python ~/dashboard/selbsttest.py</code></td><td>ALLES OK</td></tr>
+            <tr><td>Sync</td><td>Syncthing-Oberflächen</td><td>alle Ordner „Aktuell“</td></tr>
+            <tr><td>Wand</td><td>Tab A8</td><td>Dashboard im Vollbild, startet nach Neustart</td></tr>
+            <tr><td>Eingabe</td><td>Tab S7+</td><td>Mahlzeit buchen → erscheint auf der Wand</td></tr>
+            <tr><td>Neustart</td><td><code>sudo reboot</code></td><td>nach ~1 Min. läuft alles von selbst</td></tr>
+          </tbody>
+        </table></div>
+        <div class="befehl"><div class="ort"><span class="wo-pi">Pi · SSH · alles auf einmal</span><button class="kopieren" type="button">Kopieren</button></div><pre>vcgencmd measure_temp; vcgencmd get_throttled; systemctl is-active dashboard</pre></div>
+      </article>
+
+      <article class="schritt" data-schritt="10-2">
+        <div class="schritt-kopf"><h3><span class="sn">10.2</span>Kurzreferenz für später</h3><label class="haken"><input type="checkbox">Gelesen</label></div>
+        <div class="tabelle"><table>
+          <tbody>
+            <tr><td>Dienst neu starten</td><td><code>sudo systemctl restart dashboard.service</code></td></tr>
+            <tr><td>Logs</td><td><code>~/dashboard/logs/</code> oder <code>journalctl -u dashboard.service -e</code></td></tr>
+            <tr><td>Dashboard-Update</td><td>README Abschnitt 1, danach Selbsttest</td></tr>
+            <tr><td>Syncthing-Status</td><td><code>systemctl status syncthing@<span data-live="USER">&lt;USER&gt;</span>.service</code></td></tr>
+            <tr><td>Sauber ausschalten</td><td><code>sudo shutdown -h now</code>, dann Stecker ziehen</td></tr>
+          </tbody>
+        </table></div>
+      </article>
+    </section>
+
+    <footer class="fuss">
+      <div>
+        <h2>Quellen</h2>
+        <ol>
+          <li><b>Q1</b> GeeekPi Raspberry Pi 5 Case with Official Active Cooler (Amazon B0CMZG29LG) – Produktbeschreibung, Lieferumfang laut Einkaufsgespräch vom 27.09.2026</li>
+          <li><b>Q2</b> <a href="https://www.raspberrypi.com/documentation/computers/getting-started.html" target="_blank" rel="noopener">Raspberry Pi Documentation – Getting started</a> (abgerufen 29.09.2026)</li>
+          <li><b>Q3</b> <a href="https://52pi.com/blogs/blog/aluminum-case-for-raspberry-pi-5-and-official-active-cooler-assembling-tutorial" target="_blank" rel="noopener">52Pi – Aluminum Case for Raspberry Pi 5 and Official Active Cooler Assembling</a> (abgerufen 29.09.2026)</li>
+          <li><b>Q4</b> <a href="https://www.manualslib.com/answers/4475625/how-to-connect-raspberry-pi-5-active-cooler-fan-cable.html" target="_blank" rel="noopener">Active-Cooler-Montage: Push-Pins, Wärmeleitpads, Buchse FAN</a> (abgerufen 29.09.2026)</li>
+          <li><b>Q5</b> <a href="https://www.raspberrypi.com/news/a-new-raspberry-pi-imager/" target="_blank" rel="noopener">Raspberry Pi News – A new Raspberry Pi Imager</a> (24.11.2025)</li>
+          <li><b>Q6</b> <a href="https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/" target="_blank" rel="noopener">Raspberry Pi News – Trixie, the new version of Raspberry Pi OS</a> (02.10.2025)</li>
+          <li><b>Q7</b> <a href="https://hilfe.o2online.de/dsl-kabel-glasfaser-router-software-internet-telefonie-34/o2-homebox-6641-hat-nur-bis-zu-10-regeln-fuer-feste-ip-adressen-reservierung-556101" target="_blank" rel="noopener">o₂ Community – HomeBox 6641: höchstens 10 Regeln für feste IP-Adressen</a> (Titel abgerufen 29.09.2026)</li>
+        </ol>
+      </div>
+      <div>
+        <h2>Nächste Module</h2>
+        <div class="naechste"><span>M02 · Waage S400 per Bluetooth</span><span>M03 · Claude-API und bunq freischalten</span><span>M04 · Kalender-Abo</span><span>M05 · X1-Oberfläche auf dem Pi</span></div>
+        <p style="color:var(--leise);margin-top:16px">Grundlage dieser Seite: Modul M01 „Raspberry Pi 5 aufbauen und einrichten“, Stand 29.09.2026. Deine Werte und Häkchen bleiben nur in diesem Browser.</p>
+      </div>
+    </footer>
+  </main>
+</div>
+
+<script>
+(function () {
+  var SPEICHER = 'pi5-werkbank-v1';
+  var STANDARD = { 'USER': '', 'HOSTNAME': 'dashboard', 'PI-IP': '192.168.1.250', 'ROUTER-IP': '192.168.1.1', 'VERBINDUNG': '' };
+  var zustand = { werte: {}, fertig: {} };
+  try { var roh = localStorage.getItem(SPEICHER); if (roh) { var z = JSON.parse(roh); zustand.werte = z.werte || {}; zustand.fertig = z.fertig || {}; } } catch (e) {}
+  function sichern() { try { localStorage.setItem(SPEICHER, JSON.stringify(zustand)); } catch (e) {} }
+  function wert(k) { var v = zustand.werte[k]; return (v == null ? STANDARD[k] : v) || ''; }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  var PH = /<(USER|HOSTNAME|PI-IP|ROUTER-IP|VERBINDUNG)>/g;
+
+  // --- Befehle: Rohtext merken, mit Werten darstellen ---
+  var befehle = Array.prototype.slice.call(document.querySelectorAll('.befehl pre'));
+  befehle.forEach(function (pre) {
+    pre.dataset.roh = pre.textContent;
+  });
+  // In der sed-Zeile ist <USER> wörtlich gemeint – nicht ersetzen
+  function darstellen() {
+    befehle.forEach(function (pre) {
+      var roh = pre.dataset.roh, html = '', letzte = 0;
+      var teile = roh.split(/(sed "s\/<USER>\/\$USER\/g")/);
+      teile.forEach(function (t) {
+        if (/^sed "s\/<USER>/.test(t)) { html += esc(t); return; }
+        html += esc(t).replace(/&lt;(USER|HOSTNAME|PI-IP|ROUTER-IP|VERBINDUNG)&gt;/g, function (m, k) {
+          var v = wert(k);
+          return v ? '<span class="ph">' + esc(v) + '</span>' : '<span class="ph leer">&lt;' + k + '&gt;</span>';
+        });
+      });
+      // Shell-Kommentare am Zeilenende (mindestens zwei Leerzeichen vor #) leise darstellen
+      html = html.split('\n').map(function (z) { return z.replace(/(\s{2,}#.*)$/, '<span class="kom">$1</span>'); }).join('\n');
+      pre.innerHTML = html;
+    });
+    document.querySelectorAll('[data-live]').forEach(function (el) {
+      var k = el.getAttribute('data-live'), v = wert(k);
+      el.textContent = v || '<' + k + '>';
+    });
+  }
+  function textFuer(pre) {
+    var teile = pre.dataset.roh.split(/(sed "s\/<USER>\/\$USER\/g")/);
+    return teile.map(function (t) {
+      if (/^sed "s\/<USER>/.test(t)) return t;
+      return t.replace(PH, function (m, k) { return wert(k) || m; });
+    }).join('').replace(/\s+$/, '');
+  }
+
+  // --- Werte-Felder ---
+  document.querySelectorAll('.feld input').forEach(function (inp) {
+    var k = inp.dataset.ph;
+    if (zustand.werte[k] != null) inp.value = zustand.werte[k];
+    inp.addEventListener('input', function () { zustand.werte[k] = inp.value.trim(); sichern(); darstellen(); });
+  });
+
+  // --- Kopieren ---
+  document.querySelectorAll('.kopieren').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var pre = btn.closest('.befehl').querySelector('pre');
+      var text = textFuer(pre);
+      var fertig = function () { btn.textContent = 'Kopiert'; btn.classList.add('ok'); setTimeout(function () { btn.textContent = 'Kopieren'; btn.classList.remove('ok'); }, 1600); };
+      var ersatz = function () {
+        var r = document.createRange(); r.selectNodeContents(pre);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        btn.textContent = 'Markiert – Strg+C';
+        setTimeout(function () { btn.textContent = 'Kopieren'; }, 2200);
+      };
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(fertig, ersatz);
+        else ersatz();
+      } catch (e) { ersatz(); }
+    });
+  });
+
+  // --- Etappen, Häkchen, Fortschritt ---
+  var etappen = Array.prototype.slice.call(document.querySelectorAll('.etappe'));
+  var schritte = Array.prototype.slice.call(document.querySelectorAll('.schritt'));
+  var liste = document.getElementById('schiene-liste');
+  var wahl = document.getElementById('etappe-wahl');
+  etappen.forEach(function (e, i) {
+    var li = document.createElement('li');
+    var a = document.createElement('a');
+    a.href = '#' + e.id;
+    a.innerHTML = '<span class="nr">' + String(i).padStart(2, '0') + '</span><span>' + e.dataset.titel + '</span><span class="stand"></span>';
+    li.appendChild(a); liste.appendChild(li);
+    var o = document.createElement('option'); o.value = e.id; o.textContent = String(i).padStart(2, '0') + ' · ' + e.dataset.titel.replace('&amp;', '&');
+    wahl.appendChild(o);
+  });
+  wahl.addEventListener('change', function () { var z = document.getElementById(wahl.value); if (z) z.scrollIntoView({ behavior: 'smooth' }); });
+
+  schritte.forEach(function (s) {
+    var cb = s.querySelector('.haken input');
+    var id = s.dataset.schritt;
+    cb.id = 'haken-' + id;
+    cb.setAttribute('aria-label', 'Schritt ' + id.replace('-', '.') + ' erledigt');
+    cb.checked = !!zustand.fertig[id];
+    s.classList.toggle('erledigt', cb.checked);
+    cb.addEventListener('change', function () {
+      zustand.fertig[id] = cb.checked; if (!cb.checked) delete zustand.fertig[id];
+      s.classList.toggle('erledigt', cb.checked); sichern(); fortschritt();
+    });
+  });
+  function fortschritt() {
+    var alle = schritte.length, erledigt = schritte.filter(function (s) { return s.querySelector('.haken input').checked; }).length;
+    var p = Math.round(erledigt / alle * 100);
+    document.getElementById('balken-fuell').style.width = p + '%';
+    document.getElementById('balken').setAttribute('aria-valuenow', p);
+    document.getElementById('zaehler').textContent = erledigt + ' von ' + alle + ' erledigt';
+    etappen.forEach(function (e, i) {
+      var ss = e.querySelectorAll('.schritt'), f = 0;
+      ss.forEach(function (s) { if (s.querySelector('.haken input').checked) f++; });
+      var a = liste.children[i].firstChild;
+      a.querySelector('.stand').textContent = f + '/' + ss.length;
+      a.classList.toggle('fertig', f === ss.length && ss.length > 0);
+      var st = e.querySelector('[data-stand]'); if (st) st.textContent = ' · ' + f + '/' + ss.length + ' erledigt';
+    });
+  }
+  document.getElementById('alles-zurueck').addEventListener('click', function () {
+    zustand.fertig = {}; sichern();
+    schritte.forEach(function (s) { s.querySelector('.haken input').checked = false; s.classList.remove('erledigt'); });
+    fortschritt();
+  });
+
+  // --- aktive Etappe in der Schiene ---
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (eintraege) {
+      eintraege.forEach(function (en) {
+        if (en.isIntersecting) {
+          var i = etappen.indexOf(en.target);
+          Array.prototype.forEach.call(liste.children, function (li, j) { li.firstChild.classList.toggle('aktiv', j === i); });
+          wahl.value = en.target.id;
+        }
+      });
+    }, { rootMargin: '-35% 0px -60% 0px' });
+    etappen.forEach(function (e) { io.observe(e); });
+  }
+
+  // --- Bildschirm anlassen (Wake Lock, optional) ---
+  var wachBtn = document.getElementById('wach'), sperre = null;
+  wachBtn.addEventListener('click', function () {
+    if (sperre) { try { sperre.release(); } catch (e) {} sperre = null; wachBtn.setAttribute('aria-pressed', 'false'); wachBtn.textContent = 'Bildschirm anlassen'; return; }
+    if (!('wakeLock' in navigator)) { wachBtn.textContent = 'Nicht verfügbar'; return; }
+    navigator.wakeLock.request('screen').then(function (l) {
+      sperre = l; wachBtn.setAttribute('aria-pressed', 'true'); wachBtn.textContent = 'Bildschirm bleibt an';
+      l.addEventListener('release', function () { sperre = null; wachBtn.setAttribute('aria-pressed', 'false'); wachBtn.textContent = 'Bildschirm anlassen'; });
+    }, function () { wachBtn.textContent = 'Nicht verfügbar'; });
+  });
+
+  darstellen();
+  fortschritt();
+})();
+</script>
+</body></html>
